@@ -118,7 +118,7 @@ class html_dom_node {
     function outertext() {
         if (isset($this->info[HDOM_INFO_OUTER])) return $this->info[HDOM_INFO_OUTER];
         if ($this->info[HDOM_INFO_BEGIN]==$this->info[HDOM_INFO_END]) return $this->text();
-        
+
         // begin tag
         $ret = $this->parser->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
 
@@ -128,7 +128,7 @@ class html_dom_node {
             foreach($this->children as $n) 
                 $ret .= $n->outertext();
         }
-        
+
         // end tag
         $ret .= $this->parser->nodes[$this->info[HDOM_INFO_END]]->text($this->tag);
         return $ret;
@@ -196,8 +196,7 @@ class html_dom_node {
             $selectors[] = array('tag'=>$tag, 'key'=>$key, 'val'=>$val);
         }
 
-        if (($levle=count($selectors))==0)
-            return array();
+        if (($levle=count($selectors))==0) return array();
 
         $ret = array();
         $head = array($this->info[HDOM_INFO_BEGIN]=>1);
@@ -220,9 +219,7 @@ class html_dom_node {
         }
 
         $final = array();
-        foreach($head as $k=>$v)
-            $final[] = $this->parser->nodes[$k];
-
+        foreach($head as $k=>$v) $final[] = $this->parser->nodes[$k];
         return $final;
     }
 
@@ -231,7 +228,7 @@ class html_dom_node {
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$this->info[HDOM_INFO_END]; ++$i) {
             $n = $this->parser->nodes[$i];
             if ($n->nodetype==HDOM_TYPE_ENDTAG) continue;
-            
+
             $pass = true;
             if ($tag && $tag!=$n->tag) $pass = false;
             if ($pass && $key && !(isset($n->attr[$key]))) $pass = false;
@@ -274,8 +271,6 @@ class html_dom_parser {
         $this->remove_noise("'<\s*script[^>]*?>(.*?)<\s*/\s*script\s*>'is", false);
         // remove pre tags
         $this->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false);
-        // remove CDATA
-        $this->remove_noise("'<\!\[CDATA\[(.*?)\]\]'is");
         // remove server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is");
 
