@@ -1,6 +1,6 @@
 <?
 /*******************************************************************************
-Version: 0.8
+Version: 0.9
 Author: S. C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
 Licensed under The MIT License
@@ -90,6 +90,8 @@ class html_dom_node {
     function __isset($var) {
         if ($var=='innertext') return true;
         if ($var=='outertext') return true;
+        //no value attr: nowrap, checked selected...
+        if(array_key_exists($var, $this->attr)) return true;
         return isset($this->attr[$var]);
     }
 

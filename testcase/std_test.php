@@ -214,17 +214,25 @@ foreach($dom->find('ul') as $ul) {
     }
 }
 
-/*
-assert(count($ret)==4);
-assert($ret[0]->innertext=='0');
-assert($ret[1]->innertext=='1');
-assert($ret[2]->innertext=='2');
-assert($ret[3]->innertext=='3');
-assert($ret[0]->outertext=='<li>0</li>');
-assert($ret[1]->outertext=='<li>1</li>');
-assert($ret[2]->outertext=='<li>2</li>');
-assert($ret[3]->outertext=='<li>3</li>');
-*/
+// -----------------------------------------------------------------------------
+// test no value attr selector
+$str = <<<HTML
+<form name="form1" method="post" action="">
+    <input type="checkbox" name="checkbox0" value="checkbox0" checked>aaa<br>
+    <input type="checkbox" name="checkbox1" value="checkbox1">bbb<br>
+    <input type="checkbox" name="checkbox2" value="checkbox2" checked>ccc<br>
+</form>
+HTML;
+
+$dom = str_get_dom($str);
+
+$counter = 0;
+foreach($dom->find('input[type=checkbox]') as $checkbox) {
+    if (isset($checkbox->checked)) {
+        assert($checkbox->value=="checkbox$counter");
+        $counter += 2;
+    }
+}
 
 // -----------------------------------------------------------------------------
 // test replacement
