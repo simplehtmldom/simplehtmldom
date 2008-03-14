@@ -1,6 +1,6 @@
 <?
 /*******************************************************************************
-Version: 0.7
+Version: 0.8
 Author: S. C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
 Licensed under The MIT License
