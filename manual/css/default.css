@@ -1,0 +1,64 @@
+body {
+margin: 0;
+padding: 0;
+font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
+font-size: 12px;
+color: #4F5155;
+}
+
+pre {
+margin: 0;
+padding: 0;
+}
+
+#content {
+margin: 20px 40px 0 40px;
+padding: 0;
+}
+
+h2 {
+background-color: #727EA3;
+border-right: 1px solid #D0D0D0;
+border-bottom: 1px solid #D0D0D0;
+color: #FFFFFF;
+font-size: 14px;
+font-weight: bold;
+margin: 20px 0px 10px 0;
+padding: 0px 4px 1px 4px;
+}
+
+#content .code {
+font-family: Monaco, Verdana, Sans-serif;
+font-size: 12px;
+background-color: #f6f6f6;
+border-bottom: 1px solid #D0D0D0;
+border-top: 1px solid #A0A0A0;
+border-left: 1px solid #A0A0A0;
+border-right: 1px solid #D0D0D0;
+color: #002166;
+display: block;
+margin: 2px 0 2px 0;
+padding: 6px 10px 6px 10px;
+}
+
+#content .var {
+font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
+color: Maroon;
+font-weight: normal;
+font-style: normal;
+}
+
+#content .comment {
+font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
+color: #888;
+font-style: normal;
+}
+
+#content .note {
+background: #FBE6F2;
+border: 1px solid #D893A1;
+color: #333;
+display: block;
+margin: 14px 0 14px 0;
+padding: 12px 10px 12px 10px;
+}
