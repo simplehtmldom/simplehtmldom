@@ -8,6 +8,22 @@ $dom = str_get_dom($str);
 assert($dom->save()==$str);
 
 // -----------------------------------------------------------------------------
+// test noise
+$str = <<<HTML
+<!--
+<img class="class0" id="id0" src="src0">
+-->
+<img class="class1" id="id1" src="src1">
+<!--<img class="class2" id="id2" src="src2">
+-->
+HTML;
+
+$dom = str_get_dom($str);
+$ret = $dom->find('img');
+assert(count($ret)==1);
+assert($dom->save()==$str);
+
+// -----------------------------------------------------------------------------
 // test last emelemt not found problem
 $str = <<<HTML
 <img class="class0" id="id0" src="src0">
@@ -244,7 +260,6 @@ foreach($dom->find('input[type=checkbox]') as $checkbox) {
 
 $ret = $dom->find('input[type=checkbox]');
 $ret[1]->checked = true;
-//echo $ret[1]->outertext;
 assert($ret[1]->outertext=='<input type="checkbox" name="checkbox1" value="checkbox1" checked>');
 
 // -----------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 <?
-// example of how to use advance selector features
+// example of how to use advanced selector features
 include('html_dom_parser.php');
 
 // -----------------------------------------------------------------------------

@@ -20,7 +20,6 @@ $files = array(
     
     array('name'=>'phpbb.htm',          'url'=>'http://www.phpbb.com/'),
     array('name'=>'python.htm',         'url'=>'http://www.python.org/'),
-    //array('name'=>'ruby.htm',           'url'=>'http://www.ruby-lang.org/en/'),
     array('name'=>'lua.htm',            'url'=>'http://www.lua.org/'),
     array('name'=>'php.htm',            'url'=>'http://www.php.net/'),
     array('name'=>'ibm.htm',            'url'=>'http://www.ibm.com/'),

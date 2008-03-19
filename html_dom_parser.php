@@ -277,7 +277,7 @@ class html_dom_parser {
         // strip out <pre> tags
         $this->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
         // strip out server side scripts
-        $this->remove_noise("'(<\?)(.*?)(\?>)'is");
+        $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
 
         // parsing
         while ($this->parse());
@@ -360,7 +360,7 @@ class html_dom_parser {
         $count = preg_match_all($pattern, $this->html, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
         for ($i=$count-1; $i>-1; --$i) {
             $key = '___noise___'.sprintf("% 3d", count($this->noise));
-            $idx = ($remove_tag) ? 0 : 1;
+            $idx = ($remove_tag) ? 1 : 0;
             $this->noise[$key] = ($remove_contents) ? '' : $matches[$i][$idx][0];
             $this->html = substr_replace($this->html, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
         }
@@ -374,7 +374,8 @@ class html_dom_parser {
     private function restore_noise($text) {
         while(($pos=strpos($text, '___noise___'))!==false) {
             $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13];
-            if (isset($this->noise[$key])) $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
+            if (isset($this->noise[$key])) 
+                $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
         }
         return $text;
     }
