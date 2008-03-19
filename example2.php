@@ -1,5 +1,5 @@
 <?
-// example of how to modify HTML contents 
+// example of how to modify HTML contents
 include('html_dom_parser.php');
 
 // get DOM from URL or file

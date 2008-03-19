@@ -234,6 +234,19 @@ foreach($dom->find('input[type=checkbox]') as $checkbox) {
     }
 }
 
+$counter = 0;
+foreach($dom->find('input[type=checkbox]') as $checkbox) {
+    if ($checkbox->checked) {
+        assert($checkbox->value=="checkbox$counter");
+        $counter += 2;
+    }
+}
+
+$ret = $dom->find('input[type=checkbox]');
+$ret[1]->checked = true;
+//echo $ret[1]->outertext;
+assert($ret[1]->outertext=='<input type="checkbox" name="checkbox1" value="checkbox1" checked>');
+
 // -----------------------------------------------------------------------------
 // test replacement
 $str = <<<HTML

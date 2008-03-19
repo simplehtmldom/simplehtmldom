@@ -74,6 +74,7 @@ class html_dom_node {
         if (isset($this->attr[$var])) return $this->attr[$var];
         if ($var=='innertext') return $this->innertext();
         if ($var=='outertext') return $this->outertext();
+        return array_key_exists($var, $this->attr);
     }
 
     function __set($var, $val) {
@@ -85,6 +86,9 @@ class html_dom_node {
             $this->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
         }
         $this->attr[$var] = $val;
+        $var_lower = strtolower($var);
+        if ($var_lower=='nowrap' || $var_lower=='checked' || $var_lower=='selected')
+            $this->attr[$var] = null;
     }
 
     function __isset($var) {

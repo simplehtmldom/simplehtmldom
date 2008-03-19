@@ -1,40 +1,60 @@
 <?
-// example of how to customize parser 
+// example of how to use advance selector features
 include('html_dom_parser.php');
 
-// HTML text extractor
-function html_extract_contents($path) {
-    // 1. create DOM object
-    $dom = new html_dom_parser;
+// -----------------------------------------------------------------------------
+// multiple selector demo
+$str = <<<HTML
+<div>
+    <div>
+        <div>ok</div>
+    </div>
+</div>
+HTML;
 
-    // 2. prepare HTML data and init everything
-    $dom->prepare(file_get_contents($path));
 
-    // 3. some contents such as 'comments', 'styles' or 'script' will treat as 'text',
-    // so we need to remove it before parsing...
+$dom = str_get_dom($str);
 
-    // strip out DOCTYPE
-    $dom->remove_noise("'<!doctype(.*?)>'is");
-    // strip out comments
-    $dom->remove_noise("'<!--(.*?)-->'is");
-    // strip out <styles> tags
-    $dom->remove_noise("'<\s*style[^>]*?>(.*?)<\s*/\s*style\s*>'is");
-    // strip out <script> tags
-    $dom->remove_noise("'<\s*script[^>]*?>(.*?)<\s*/\s*script\s*>'is");
-    // strip out <pre> tags
-    $dom->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
+foreach($dom->find('div div div') as $node)
+    echo $node->innertext . '<br>'; // result: "ok"
 
-    // 4. parsing each node
-    $ret = '';
-    while ($node=$dom->parse()) {
-        // dump node's contents which type is 'text'
-        if ($node->tag=='text')
-            $ret .= htmlspecialchars_decode($node->text());
-    }
 
-    return $ret;
+// -----------------------------------------------------------------------------
+// nested selector demo
+$str = <<<HTML
+<ul id="ul1">
+    <li>item:<span>1</span></li>
+    <li>item:<span>2</span></li>
+</ul>
+<ul id="ul2">
+    <li>item:<span>3</span></li>
+    <li>item:<span>4</span></li>
+</ul>
+HTML;
+
+$dom = str_get_dom($str);
+
+foreach($dom->find('ul') as $ul) {
+    foreach($ul->find('li') as $li)
+        echo $li->innertext . '<br>';
 }
 
-// test it!
-echo html_extract_contents('http://www.google.com/');
+// -----------------------------------------------------------------------------
+// form parsing demo
+$str = <<<HTML
+<form name="form1" method="post" action="">
+    <input type="checkbox" name="checkbox1" value="checkbox1" checked>item1<br>
+    <input type="checkbox" name="checkbox2" value="checkbox2">item2<br>
+    <input type="checkbox" name="checkbox3" value="checkbox3" checked>item3<br>
+</form>
+HTML;
+
+$dom = str_get_dom($str);
+
+foreach($dom->find('input[type=checkbox]') as $checkbox) {
+    if ($checkbox->checked)
+        echo $checkbox->name . ' is checked<br>';
+    else
+        echo $checkbox->name . ' is not checked<br>';
+}
 ?>
