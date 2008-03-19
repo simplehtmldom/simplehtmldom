@@ -22,7 +22,7 @@ define('HDOM_INFO_TEXT',    5);
 define('HDOM_INFO_INNER',   6);
 define('HDOM_INFO_OUTER',   7);
 
-// quick function
+// quick functions
 // -----------------------------------------------------------------------------
 // get dom form file
 function file_get_dom($filepath, $lowercase=true) {
@@ -124,8 +124,7 @@ class html_dom_node {
         // begin tag
         $ret = $this->parser->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
 
-        if (isset($this->info[HDOM_INFO_INNER])) 
-            $ret .= $this->info[HDOM_INFO_INNER];
+        if (isset($this->info[HDOM_INFO_INNER]))  $ret .= $this->info[HDOM_INFO_INNER];
         else {
             foreach($this->children as $n) 
                 $ret .= $n->outertext();
@@ -262,22 +261,22 @@ class html_dom_parser {
 
     // load html from string
     function load($str, $attr_name_lowercase=true) {
-        // init
-        $this->init($str, $attr_name_lowercase);
+        // prepare
+        $this->prepare($str, $attr_name_lowercase);
 
-        // remove comments
-        $this->remove_noise("'<!--(.*?)-->'is");
-        // remove css styles
-        $this->remove_noise("'<\s*style[^>]*?>(.*?)<\s*/\s*style\s*>'is", false);
-        // remove javascripts
-        $this->remove_noise("'<\s*script[^>]*?>(.*?)<\s*/\s*script\s*>'is", false);
-        // remove pre tags
-        $this->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false);
-        // remove server side scripts
+        // strip out comments
+        $this->remove_noise("'<!--(.*?)-->'is", false, false);
+        // strip out <styles> tags
+        $this->remove_noise("'<\s*style[^>]*?>(.*?)<\s*/\s*style\s*>'is", false, false);
+        // strip out <script> tags
+        $this->remove_noise("'<\s*script[^>]*?>(.*?)<\s*/\s*script\s*>'is", false, false);
+        // strip out <pre> tags
+        $this->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
+        // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is");
 
-        // parse
-        while ($this->parse()!=false);
+        // parsing
+        while ($this->parse());
     }
 
     // load html from file
@@ -294,8 +293,7 @@ class html_dom_parser {
             // outertext defined
             if (isset($this->nodes[$i]->info[HDOM_INFO_OUTER])) {
                 $ret .= $this->nodes[$i]->info[HDOM_INFO_OUTER];
-                if ($this->nodes[$i]->info[HDOM_INFO_END]>0)
-                    $i = $this->nodes[$i]->info[HDOM_INFO_END];
+                if ($this->nodes[$i]->info[HDOM_INFO_END]>0) $i = $this->nodes[$i]->info[HDOM_INFO_END];
                 continue;
             }
 
@@ -323,10 +321,9 @@ class html_dom_parser {
         return $this->root->find($selector);
     }
 
-    // initialize
-    function init($str, $attr_name_lowercase=true) {
+    // prepare HTML data and init everything
+    function prepare($str, $attr_name_lowercase=true) {
         $this->clear();
-
         $this->html = $str;
         $this->lowercase = $attr_name_lowercase;
         $this->index = 0;
@@ -336,21 +333,6 @@ class html_dom_parser {
         $this->parent = $this->root;
         $this->noise = array();
         $this->pos = 0;
-    }
-
-    // clean up memory due to php5 circular references memory leak...
-    function clear() {
-        $this->html = null;
-        $this->noise = null;
-
-        if ($this->parent)  { $this->parent->clear(); $this->parent = null; }
-        if ($this->root) { $this->root->clear(); $this->root = null;}
-
-        foreach($this->nodes as $n) {
-            $n->clear();
-            $n = null;
-        }
-        $this->nodes = array();
     }
 
     // parse html content
@@ -364,20 +346,58 @@ class html_dom_parser {
         $node->info[HDOM_INFO_BEGIN] = $this->index;
         $node->info[HDOM_INFO_END] = $this->index;
         $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
-        //$node->parent = $this->parent;
         $this->parent->children[] = $node;
         ++$this->index;
-        return true;
+        return $node;
+    }
+
+    // remove noise from html content
+    public function remove_noise($pattern, $remove_tag=true, $remove_contents=true) {
+        $count = preg_match_all($pattern, $this->html, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+        for ($i=$count-1; $i>-1; --$i) {
+            $key = '___noise___'.sprintf("% 3d", count($this->noise));
+            $idx = ($remove_tag) ? 0 : 1;
+            $this->noise[$key] = ($remove_contents) ? '' : $matches[$i][$idx][0];
+            $this->html = substr_replace($this->html, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
+        }
+
+        // reset the length of content
+        $this->size = strlen($this->html);
+        if ($this->size>0) $this->char = $this->html[0];
+    }
+
+    // restore noise to html content
+    private function restore_noise($text) {
+        while(($pos=strpos($text, '___noise___'))!==false) {
+            $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13];
+            if (isset($this->noise[$key])) $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
+        }
+        return $text;
+    }
+
+    // clean up memory due to php5 circular references memory leak...
+    private function clear() {
+        $this->html = null;
+        $this->noise = null;
+
+        if ($this->parent)  { $this->parent->clear(); $this->parent = null; }
+        if ($this->root) { $this->root->clear(); $this->root = null;}
+
+        foreach($this->nodes as $n) {
+            $n->clear();
+            $n = null;
+        }
+        $this->nodes = array();
     }
 
     // read tag info
     private function read_tag() {
         if ($this->char!='<') {
             $this->root->info[HDOM_INFO_END] = $this->index;
-            return false;
+            return null;
         }
 
-        // next 
+        // next
         $this->char = $this->html[++$this->pos];
         $this->skip($this->token_blank);
 
@@ -394,9 +414,8 @@ class html_dom_parser {
             $node->nodetype = HDOM_TYPE_ENDTAG;
             $node->tag = $this->copy_until_char('>');
             if ($this->lowercase) $node->tag = strtolower($node->tag);
-            
+
             if ($this->parent->tag!==$node->tag) {
-                //echo '!!!'.$node->tag.'!!!';
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->info[HDOM_INFO_END] = $this->index-1;
                 $node->info[HDOM_INFO_TEXT] = '</' . $node->tag . '>';
@@ -428,7 +447,7 @@ class html_dom_parser {
             $node->tag = 'text';
             // next
             if(++$this->pos<$this->size) $this->char = $this->html[$this->pos];
-            return true;
+            return $node;
         }
 
         // begin tag
@@ -442,7 +461,7 @@ class html_dom_parser {
             if ($name!='/' && $name!='') {
                 $node->info[HDOM_INFO_SPACE][] = $this->copy_skip($this->token_blank);
                 if ($this->lowercase) $name = strtolower($name);
-                
+
                 if ($this->char=='=') {
                     // next
                     $this->char = $this->html[++$this->pos];
@@ -452,10 +471,8 @@ class html_dom_parser {
                     //no value attr: nowrap, checked selected...
                     $node->attr[$name] = null;
                     $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
-                    if ($this->char!=='>') {
-                        // prev
-                        $this->char = $this->html[--$this->pos];
-                    }
+                    // prev
+                    if ($this->char!=='>') $this->char = $this->html[--$this->pos];
                 }
             }
         }
@@ -472,7 +489,7 @@ class html_dom_parser {
 
         // next
         if(++$this->pos<$this->size) $this->char = $this->html[$this->pos];
-        return true;
+        return $node;
     }
 
     // parse tag attributes
@@ -547,35 +564,6 @@ class html_dom_parser {
             if(++$this->pos<$this->size) $this->char = $this->html[$this->pos];
         }
         return $ret;
-    }
-
-    // remove noise from html content
-    private function remove_noise($pattern, $remove_tag=true, $drop_it=false) {
-        $count = preg_match_all($pattern, $this->html, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
-        for ($i=$count-1; $i>-1; --$i) {
-            if ($drop_it) {
-                $this->html = substr_replace($this->html, '', $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
-                continue;
-            }
-            $key = '___noise___'.sprintf("% 3d", count($this->noise));
-            $idx = ($remove_tag) ? 0 : 1;
-            $this->noise[$key] = $matches[$i][$idx][0];
-            $this->html = substr_replace($this->html, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
-        }
-
-        // reset the length of content
-        $this->size = strlen($this->html);
-        if ($this->size>0) $this->char = $this->html[0];
-    }
-
-    // restore noise to html content
-    private function restore_noise($text) {
-        while(($pos=strpos($text, '___noise___'))!==false) {
-            $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13];
-            if (isset($this->noise[$key]))
-                $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
-        }
-        return $text;
     }
 }
 ?>

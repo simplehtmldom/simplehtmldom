@@ -56,7 +56,7 @@ foreach($files as $f) {
     else
         echo "[success] ".$f['name']."<br>";
     
-    $dom->clear();
+    //$dom->clear();
     echo 'memory: '.memory_get_usage().'<br>';
 
     flush();
