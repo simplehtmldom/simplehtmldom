@@ -27,7 +27,7 @@ function html_extract_contents($str) {
     // 4. parsing each node
     $ret = '';
     while ($node=$dom->parse()) {
-        // dump node's contents which type is 'text'
+        // dump node's contents which tag is 'text'
         if ($node->tag=='text')
             $ret .= htmlspecialchars_decode($node->text());
     }
