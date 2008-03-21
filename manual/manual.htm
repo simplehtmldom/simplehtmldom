@@ -220,7 +220,7 @@ foreach($dom-&gt;<strong>find</strong>(<span class="var">'table.hello'</span>) a
                 <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 4. parsing each node</span><br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret = '';<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while ($node=$dom-&gt;<strong>parse</strong>()) {<br>
-    <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// dump node's contents which type is 'text'</span><br>
+    <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// dump contents of node which tag is 'text'</span><br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($node-&gt;tag==<span class="var">'text'</span>)<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret .= htmlspecialchars_decode($node-&gt;<strong>text</strong>());<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
