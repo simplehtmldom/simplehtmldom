@@ -234,7 +234,7 @@ foreach($dom->find('ul') as $ul) {
 // test no value attr selector
 $str = <<<HTML
 <form name="form1" method="post" action="">
-    <input type="checkbox" name="checkbox0" value="checkbox0" checked>aaa<br>
+    <input type="checkbox" name="checkbox0" checked value="checkbox0">aaa<br>
     <input type="checkbox" name="checkbox1" value="checkbox1">bbb<br>
     <input type="checkbox" name="checkbox2" value="checkbox2" checked>ccc<br>
 </form>
@@ -261,6 +261,10 @@ foreach($dom->find('input[type=checkbox]') as $checkbox) {
 $ret = $dom->find('input[type=checkbox]');
 $ret[1]->checked = true;
 assert($ret[1]->outertext=='<input type="checkbox" name="checkbox1" value="checkbox1" checked>');
+$ret[0]->checked = false;
+assert($ret[0]->outertext=='<input type="checkbox" name="checkbox0"  value="checkbox0">');
+$ret[0]->checked = true;
+assert($ret[0]->outertext=='<input type="checkbox" name="checkbox0" checked value="checkbox0">');
 
 // -----------------------------------------------------------------------------
 // test replacement

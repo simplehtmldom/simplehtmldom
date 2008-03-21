@@ -86,9 +86,6 @@ class html_dom_node {
             $this->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
         }
         $this->attr[$var] = $val;
-        $var_lower = strtolower($var);
-        if ($var_lower=='nowrap' || $var_lower=='checked' || $var_lower=='selected')
-            $this->attr[$var] = null;
     }
 
     function __isset($var) {
@@ -153,8 +150,8 @@ class html_dom_node {
             $ret .= ($j<$count_space) ? $this->info[HDOM_INFO_SPACE][$j++] : ' ';
 
             //no value attr: nowrap, checked selected...
-            if ($val===null) {
-                $ret .= $key;
+            if ($val===true || $val===false) {
+                if($val===true) $ret .= $key;
                 if ($j<$count_space) ++$j;
             }
             else {
@@ -355,6 +352,21 @@ class html_dom_parser {
         return $node;
     }
 
+    // clean up memory due to php5 circular references memory leak...
+    function clear() {
+        $this->html = null;
+        $this->noise = null;
+
+        if ($this->parent)  { $this->parent->clear(); $this->parent = null; }
+        if ($this->root) { $this->root->clear(); $this->root = null;}
+
+        foreach($this->nodes as $n) {
+            $n->clear();
+            $n = null;
+        }
+        $this->nodes = array();
+    }
+
     // remove noise from html content
     public function remove_noise($pattern, $remove_tag=true, $remove_contents=true) {
         $count = preg_match_all($pattern, $this->html, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
@@ -378,21 +390,6 @@ class html_dom_parser {
                 $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
         }
         return $text;
-    }
-
-    // clean up memory due to php5 circular references memory leak...
-    private function clear() {
-        $this->html = null;
-        $this->noise = null;
-
-        if ($this->parent)  { $this->parent->clear(); $this->parent = null; }
-        if ($this->root) { $this->root->clear(); $this->root = null;}
-
-        foreach($this->nodes as $n) {
-            $n->clear();
-            $n = null;
-        }
-        $this->nodes = array();
     }
 
     // read tag info
@@ -474,7 +471,7 @@ class html_dom_parser {
                 }
                 else {
                     //no value attr: nowrap, checked selected...
-                    $node->attr[$name] = null;
+                    $node->attr[$name] = true;
                     $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
                     // prev
                     if ($this->char!=='>') $this->char = $this->html[--$this->pos];

@@ -37,10 +37,8 @@ $dom = new html_dom_parser;
 
 foreach($files as $f) {
     // get file from url
-    if($f['url']!='')
-        file_put_contents($dir.$f['name'], file_get_contents($f['url']));
-    else
-        file_put_contents($dir.$f['name'], '');
+    if($f['url']!='') file_put_contents($dir.$f['name'], file_get_contents($f['url']));
+    else file_put_contents($dir.$f['name'], '');
 
     $start = microtime();
     $dom->load_file($dir.$f['name'], false);
@@ -54,14 +52,14 @@ foreach($files as $f) {
     }
     else
         echo "[success] ".$f['name']."<br>";
-    
-    //$dom->clear();
+
     echo 'memory: '.memory_get_usage().'<br>';
 
     flush();
 }
 
+$dom->clear();
 $dom = null;
-echo memory_get_usage().'<br>';
+echo '<br>memory: '.memory_get_usage().'<br>';
 
 ?>

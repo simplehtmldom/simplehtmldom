@@ -14,7 +14,6 @@ HTML;
 
 
 $dom = str_get_dom($str);
-
 foreach($dom->find('div div div') as $node)
     echo $node->innertext . '<br>'; // result: "ok"
 
@@ -33,14 +32,13 @@ $str = <<<HTML
 HTML;
 
 $dom = str_get_dom($str);
-
 foreach($dom->find('ul') as $ul) {
     foreach($ul->find('li') as $li)
         echo $li->innertext . '<br>';
 }
 
 // -----------------------------------------------------------------------------
-// form parsing demo
+// form elements parsing demo
 $str = <<<HTML
 <form name="form1" method="post" action="">
     <input type="checkbox" name="checkbox1" value="checkbox1" checked>item1<br>
@@ -50,7 +48,6 @@ $str = <<<HTML
 HTML;
 
 $dom = str_get_dom($str);
-
 foreach($dom->find('input[type=checkbox]') as $checkbox) {
     if ($checkbox->checked)
         echo $checkbox->name . ' is checked<br>';

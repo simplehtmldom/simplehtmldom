@@ -1,6 +1,6 @@
 <?
 // example of how to customize the parsing behavior
-include('html_dom_parser.php');
+include('../html_dom_parser.php');
 
 // HTML text extractor
 function html_extract_contents($str) {

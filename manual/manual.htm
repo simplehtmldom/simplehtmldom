@@ -15,6 +15,7 @@
 		$(function() {$('#container-2 > ul').tabs();});
 		$(function() {$('#container-3 > ul').tabs();});
 		$(function() {$('#container-4 > ul').tabs();});
+		$(function() {$('#container-5 > ul').tabs();});
 	});
 </script>
 </head>
@@ -182,6 +183,55 @@ foreach($dom-&gt;<strong>find</strong>(<span class="var">'table.hello'</span>) a
                 <br>
                 <span class="comment">// Write dom object contents to a file</span><br>
                 $dom-&gt;<strong>save_file</strong>(<span class="var">'result.htm'</span>);</div>
+        </div>
+    </div>
+	<h2>How to customize the parsing behavior?</h2>
+    <div id="container-5">
+        <ul>
+            <li><a href="#fragment-51"><span>Write a HTML text extractor</span></a></li>
+        </ul>
+        <div id="fragment-51">
+            <div class="code">                &lt;?<br>
+                <span class="comment">// example of how to customize the parsing behavior</span><br>
+                include(<span class="var">'html_dom_parser.php'</span>);<br>
+                <span class="comment"><br>
+                // HTML text extractor</span><br>
+                <strong>function</strong> html_extract_contents($str) {<br>
+                <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 1. create DOM object</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom = new html_dom_parser; <span class="comment"><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 2. prepare HTML data and init everything</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom-&gt;<strong>prepare</strong>($str); <span class="comment"><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 3. some contents such as 'comments', 'styles' or 'script' will be treated as 'text',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// so we need to remove it before parsing...<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// strip out DOCTYPE</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom-&gt;<strong>remove_noise</strong>(<span class="var">&quot;'&lt;!doctype(.*?)&gt;'is&quot;</span>);<br>
+                <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// strip out comments</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom-&gt;<strong>remove_noise</strong>(<span class="var">&quot;'&lt;!--(.*?)--&gt;'is&quot;</span>);<br>
+                <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// strip out &lt;styles&gt; tags</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom-&gt;<strong>remove_noise</strong>(<span class="var">&quot;'&lt;\s*style[^&gt;]*?&gt;(.*?)&lt;\s*/\s*style\s*&gt;'is&quot;</span>);<br>
+                <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// strip out &lt;script&gt; tags</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom-&gt;<strong>remove_noise</strong>(<span class="var">&quot;'&lt;\s*script[^&gt;]*?&gt;(.*?)&lt;\s*/\s*script\s*&gt;'is&quot;</span>);<br>
+                <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// strip out &lt;pre&gt; tags</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom-&gt;<strong>remove_noise</strong>(<span class="var">&quot;'&lt;\s*pre[^&gt;]*?&gt;(.*?)&lt;\s*/\s*pre\s*&gt;'is&quot;</span>, <span class="var">false</span>, <span class="var">false</span>);<br>
+                <br>
+                <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 4. parsing each node</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret = '';<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while ($node=$dom-&gt;<strong>parse</strong>()) {<br>
+    <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// dump node's contents which type is 'text'</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($node-&gt;tag==<span class="var">'text'</span>)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret .= htmlspecialchars_decode($node-&gt;<strong>text</strong>());<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return $ret;<br>
+                }                <br>
+                <br>
+                <span class="comment">// test it!</span><br>
+                $str = file_get_contents(<span class="var">'http://www.google.com/'</span>);<br>
+                echo <strong>html_extract_contents</strong>($str);<br>
+                ?&gt;<br>
+            </div>
         </div>
     </div>
 </div>
