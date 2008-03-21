@@ -46,6 +46,37 @@ assert($ret[2]->outertext=='<img class="class2" id="id2" src="src2">');
 assert($dom->save()==$str);
 
 // -----------------------------------------------------------------------------
+// test <p> tag
+$str = <<<HTML
+<div class="class0">
+    <p>ok0<a href="#">link0</a></p>
+    <div class="class1"><p>ok1<a href="#">link1</a></p></div>
+    <div class="class2"></div>
+    <p>ok2<a href="#">link2</a></p>
+</div>
+HTML;
+
+$dom = str_get_dom($str);
+$ret = $dom->find('p');
+assert($ret[0]->innertext=='ok0<a href="#">link0</a>');
+assert($ret[1]->innertext=='ok1<a href="#">link1</a>');
+assert($ret[2]->innertext=='ok2<a href="#">link2</a>');
+
+$count = 0;
+foreach($dom->find('p') as $p) {
+    $a = $p->find('a');
+    assert($a[0]->innertext=='link'.$count);
+    ++$count;
+}
+
+$ret = $dom->find('p a');
+assert($ret[0]->innertext=='link0');
+assert($ret[1]->innertext=='link1');
+assert($ret[2]->innertext=='link2');
+
+assert($dom->save()==$str);
+
+// -----------------------------------------------------------------------------
 // selector test 1
 $str = <<<HTML
 <img class="class0" id="id0" src="src0">

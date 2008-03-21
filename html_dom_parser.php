@@ -1,6 +1,6 @@
 <?
 /*******************************************************************************
-Version: 0.9
+Version: 0.91
 Author: S. C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
 Licensed under The MIT License
@@ -258,7 +258,8 @@ class html_dom_parser {
     private $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1, "\t"=>1, "\r"=>1, "\n"=>1);
     private $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\t"=>1, "\r"=>1, "\n"=>1);
     private $token_attr  = array(' '=>1, '>'=>1, "\t"=>1, "\r"=>1, "\n"=>1);
-    private $optional_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'p'=>1, 'dt'=>1, 'dd'=>1);
+    private $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'dt'=>1, 'dd'=>1);
+    private $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'tr'=>1, 'td'=>1, 'th'=>1, 'ul'=>1, 'dl'=>1);
 
     // load html from string
     function load($str, $attr_name_lowercase=true) {
@@ -273,6 +274,8 @@ class html_dom_parser {
         $this->remove_noise("'<\s*script[^>]*?>(.*?)<\s*/\s*script\s*>'is", false, false);
         // strip out <pre> tags
         $this->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
+        // strip out <code> tags
+        $this->remove_noise("'<\s*code[^>]*?>(.*?)<\s*/\s*code\s*>'is", false, false);
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
 
@@ -347,6 +350,7 @@ class html_dom_parser {
         $node->info[HDOM_INFO_BEGIN] = $this->index;
         $node->info[HDOM_INFO_END] = $this->index;
         $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
+        $node->parent = $this->parent;
         $this->parent->children[] = $node;
         ++$this->index;
         return $node;
@@ -415,22 +419,33 @@ class html_dom_parser {
             $this->skip($this->token_blank);
             $node->nodetype = HDOM_TYPE_ENDTAG;
             $node->tag = $this->copy_until_char('>');
-            if ($this->lowercase) $node->tag = strtolower($node->tag);
+            $tag_lower = strtolower($node->tag);
+            if ($this->lowercase) $node->tag = $tag_lower;
 
-            if ($this->parent->tag!==$node->tag) {
-                $node->nodetype = HDOM_TYPE_TEXT;
-                $node->info[HDOM_INFO_END] = $this->index-1;
-                $node->info[HDOM_INFO_TEXT] = '</' . $node->tag . '>';
-                $node->tag = 'text';
-                $this->parent->children[] = $node;
-                $this->parent->info[HDOM_INFO_END] = $this->index-1;
-                $node->parent = $this->parent;
+            // mapping parent node
+            if (strtolower($this->parent->tag)!==$tag_lower) {
+                if (isset($this->block_tags[strtolower($node->tag)]))  {
+                    $this->parent->info[HDOM_INFO_END] = $this->index-2;
+                    while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
+                        $this->parent = $this->parent->parent;
+                    $this->parent->info[HDOM_INFO_END] = $this->index-1;
+                    $node->parent = $this->parent;
+                }
+                else {
+                    $node->nodetype = HDOM_TYPE_TEXT;
+                    $node->info[HDOM_INFO_END] = $this->index-1;
+                    $node->info[HDOM_INFO_TEXT] = '</' . $node->tag . '>';
+                    $node->tag = 'text';
+                    $this->parent->children[] = $node;
+                    $this->parent->info[HDOM_INFO_END] = $this->index-1;
+                    $node->parent = $this->parent;
+                }
             }
             else {
                 $this->parent->info[HDOM_INFO_END] = $this->index-1;
                 $this->parent = $this->parent->parent;
+                $node->parent = $this->parent;
             }
-            $node->parent = $this->parent;
 
             // next
             if(++$this->pos<$this->size) $this->char = $this->html[$this->pos];
@@ -485,7 +500,7 @@ class html_dom_parser {
             $node->info[HDOM_INFO_END] = $this->index-1;
         }
         else {
-            if (!isset($this->optional_closing_tags[strtolower($node->tag)])) $this->parent = $node;
+            if (!isset($this->self_closing_tags[strtolower($node->tag)])) $this->parent = $node;
             else $node->info[HDOM_INFO_END] = $this->index-1;
         }
 
