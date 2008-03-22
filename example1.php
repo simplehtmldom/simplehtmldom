@@ -1,4 +1,4 @@
-<?
+<?php
 // example of how to retrieve HTML contents
 include('html_dom_parser.php');
  

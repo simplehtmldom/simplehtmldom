@@ -1,4 +1,4 @@
-<?
+<?php
 error_reporting(E_ALL);
 include('../html_dom_parser.php');
 

@@ -1,4 +1,4 @@
-<?
+<?php
 // example of how to customize the parsing behavior
 include('html_dom_parser.php');
 

@@ -1,4 +1,4 @@
-<?
+<?php
 include_once('../html_dom_parser.php');
 
 function scraping_IMDB($url) {
