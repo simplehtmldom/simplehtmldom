@@ -43,6 +43,13 @@ assert($ret[2]->innertext=='');
 assert($ret[0]->outertext=='<img class="class0" id="id0" src="src0">');
 assert($ret[1]->outertext=='<img class="class1" id="id1" src="src1">');
 assert($ret[2]->outertext=='<img class="class2" id="id2" src="src2">');
+
+assert($dom->find('img', 0)->src=='src0');
+assert($dom->find('img', 1)->src=='src1');
+assert($dom->find('img', 2)->src=='src2');
+assert($dom->find('img', 3)===null);
+assert($dom->find('img', 99)===null);
+
 assert($dom->save()==$str);
 
 // -----------------------------------------------------------------------------
@@ -61,6 +68,9 @@ $ret = $dom->find('p');
 assert($ret[0]->innertext=='ok0<a href="#">link0</a>');
 assert($ret[1]->innertext=='ok1<a href="#">link1</a>');
 assert($ret[2]->innertext=='ok2<a href="#">link2</a>');
+assert($dom->find('p', 0)->plaintext=='ok0link0');
+assert($dom->find('p', 1)->plaintext=='ok1link1');
+assert($dom->find('p', 2)->plaintext=='ok2link2');
 
 $count = 0;
 foreach($dom->find('p') as $p) {
@@ -73,6 +83,33 @@ $ret = $dom->find('p a');
 assert($ret[0]->innertext=='link0');
 assert($ret[1]->innertext=='link1');
 assert($ret[2]->innertext=='link2');
+assert($dom->find('p a', 0)->plaintext=='link0');
+assert($dom->find('p a', 1)->plaintext=='link1');
+assert($dom->find('p a', 2)->plaintext=='link2');
+
+assert($dom->save()==$str);
+
+// -----------------------------------------------------------------------------
+// test error tag
+$str = <<<HTML
+    <img class="class0" id="id0" src="src0">
+    <p>p1</p>
+    <img class="class1" id="id1" src="src1">
+    <p>
+    <img class="class2" id="id2" src="src2">
+    </a>
+</div>
+HTML;
+
+$dom = str_get_dom($str);
+$ret = $dom->find('img');
+assert(count($ret)==3);
+assert($ret[0]->src=='src0');
+assert($ret[1]->src=='src1');
+assert($ret[2]->src=='src2');
+
+$ret = $dom->find('p');
+assert($ret[0]->innertext=='p1');
 
 assert($dom->save()==$str);
 

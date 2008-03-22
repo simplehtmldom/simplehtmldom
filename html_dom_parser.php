@@ -74,12 +74,14 @@ class html_dom_node {
         if (isset($this->attr[$var])) return $this->attr[$var];
         if ($var=='innertext') return $this->innertext();
         if ($var=='outertext') return $this->outertext();
+        if ($var=='plaintext') return $this->plaintext();
         return array_key_exists($var, $this->attr);
     }
 
     function __set($var, $val) {
         if ($var=='innertext') return $this->info[HDOM_INFO_INNER] = $val;
         if ($var=='outertext') return $this->info[HDOM_INFO_OUTER] = $val;
+        if ($var=='plaintext') return $this->info[HDOM_INFO_TEXT] = $val;
         if (!isset($this->attr[$var])) {
             $count = count($this->info[HDOM_INFO_SPACE]);
             $this->info[HDOM_INFO_SPACE][$count-2] = ' ';
@@ -109,7 +111,7 @@ class html_dom_node {
         $this->children = null;
     }
 
-    // get dom node inner html
+    // get dom node's inner html
     function innertext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
         $ret = '';
@@ -117,7 +119,7 @@ class html_dom_node {
         return $ret;
     }
 
-    // get dom node outer text (with tag)
+    // get dom node's outer text (with tag)
     function outertext() {
         if (isset($this->info[HDOM_INFO_OUTER])) return $this->info[HDOM_INFO_OUTER];
         if ($this->info[HDOM_INFO_BEGIN]==$this->info[HDOM_INFO_END]) return $this->text();
@@ -127,12 +129,20 @@ class html_dom_node {
 
         if (isset($this->info[HDOM_INFO_INNER]))  $ret .= $this->info[HDOM_INFO_INNER];
         else {
-            foreach($this->children as $n) 
+            foreach($this->children as $n)
                 $ret .= $n->outertext();
         }
 
         // end tag
         $ret .= $this->parser->nodes[$this->info[HDOM_INFO_END]]->text($this->tag);
+        return $ret;
+    }
+
+    // get dom node's plain text
+    function plaintext() {
+        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
+        $ret = '';
+        foreach($this->children as $n) $ret .= $n->plaintext();
         return $ret;
     }
 
@@ -177,7 +187,7 @@ class html_dom_node {
     }
 
     // find nodes by css selector
-    function find($selector) {
+    function find($selector, $idx=-1) {
         $selector = trim($selector);
         if ($selector=='*') return $this->children;
 
@@ -222,7 +232,10 @@ class html_dom_node {
 
         $final = array();
         foreach($head as $k=>$v) $final[] = $this->parser->nodes[$k];
-        return $final;
+
+        if ($idx<0) return $final;
+        if (!isset($final[$idx])) return null;
+        return $final[$idx];
     }
 
     // seek for given condition
@@ -321,8 +334,8 @@ class html_dom_parser {
     }
 
     // find dom node by css selector
-    function find($selector) {
-        return $this->root->find($selector);
+    function find($selector, $idx=-1) {
+        return $this->root->find($selector, $idx);
     }
 
     // prepare HTML data and init everything
@@ -428,8 +441,6 @@ class html_dom_parser {
                     $this->parent->info[HDOM_INFO_END] = $this->index-2;
                     while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
                         $this->parent = $this->parent->parent;
-                    $this->parent->info[HDOM_INFO_END] = $this->index-1;
-                    $node->parent = $this->parent;
                 }
                 else {
                     $node->nodetype = HDOM_TYPE_TEXT;
@@ -437,15 +448,14 @@ class html_dom_parser {
                     $node->info[HDOM_INFO_TEXT] = '</' . $node->tag . '>';
                     $node->tag = 'text';
                     $this->parent->children[] = $node;
-                    $this->parent->info[HDOM_INFO_END] = $this->index-1;
-                    $node->parent = $this->parent;
                 }
+                $this->parent->info[HDOM_INFO_END] = $this->index-1;
             }
             else {
                 $this->parent->info[HDOM_INFO_END] = $this->index-1;
                 $this->parent = $this->parent->parent;
-                $node->parent = $this->parent;
             }
+            $node->parent = $this->parent;
 
             // next
             if(++$this->pos<$this->size) $this->char = $this->html[$this->pos];
