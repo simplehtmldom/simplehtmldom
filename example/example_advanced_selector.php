@@ -1,6 +1,6 @@
 <?php
 // example of how to use advanced selector features
-include('html_dom_parser.php');
+include('../html_dom_parser.php');
 
 // -----------------------------------------------------------------------------
 // multiple selector
