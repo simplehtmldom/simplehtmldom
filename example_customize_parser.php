@@ -23,6 +23,8 @@ function html_extract_contents($str) {
     $dom->remove_noise("'<\s*script[^>]*?>(.*?)<\s*/\s*script\s*>'is");
     // strip out <pre> tags
     $dom->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
+    // strip out <code> tags
+    $this->remove_noise("'<\s*code[^>]*?>(.*?)<\s*/\s*code\s*>'is", false, false);
 
     // 4. parsing each node
     $ret = '';

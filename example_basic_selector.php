@@ -1,5 +1,5 @@
 <?php
-// example of how to retrieve HTML contents
+// example of how to use basic selector to retrieve HTML contents
 include('html_dom_parser.php');
  
 // get DOM from URL or file

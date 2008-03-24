@@ -3,7 +3,7 @@
 include('html_dom_parser.php');
 
 // -----------------------------------------------------------------------------
-// multiple selector demo
+// multiple selector
 $str = <<<HTML
 <div>
     <div>
@@ -19,7 +19,7 @@ foreach($dom->find('div div div') as $node)
 
 
 // -----------------------------------------------------------------------------
-// nested selector demo
+// nested selector
 $str = <<<HTML
 <ul id="ul1">
     <li>item:<span>1</span></li>
@@ -38,7 +38,7 @@ foreach($dom->find('ul') as $ul) {
 }
 
 // -----------------------------------------------------------------------------
-// form elements parsing demo
+// parsing <form> elements
 $str = <<<HTML
 <form name="form1" method="post" action="">
     <input type="checkbox" name="checkbox1" value="checkbox1" checked>item1<br>
