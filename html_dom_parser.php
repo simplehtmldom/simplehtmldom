@@ -127,7 +127,8 @@ class html_dom_node {
         // begin tag
         $ret = $this->parser->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
 
-        if (isset($this->info[HDOM_INFO_INNER]))  $ret .= $this->info[HDOM_INFO_INNER];
+        if (isset($this->info[HDOM_INFO_INNER])) 
+            $ret .= $this->info[HDOM_INFO_INNER];
         else {
             foreach($this->children as $n) $ret .= $n->outertext();
         }
@@ -316,7 +317,8 @@ class html_dom_parser {
             // innertext defined
             if (isset($this->nodes[$i]->info[HDOM_INFO_INNER]) && $this->nodes[$i]->info[HDOM_INFO_END]>0) {
                 $ret .= $this->nodes[$i]->info[HDOM_INFO_INNER];
-                $i = $this->nodes[$i]->info[HDOM_INFO_END];
+                if ($this->nodes[$i]->info[HDOM_INFO_END]-1>$i)
+                    $i = $this->nodes[$i]->info[HDOM_INFO_END]-1;
             }
         }
 

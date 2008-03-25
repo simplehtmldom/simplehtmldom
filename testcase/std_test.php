@@ -114,6 +114,32 @@ assert($ret[0]->innertext=='p1');
 assert($dom->save()==$str);
 
 // -----------------------------------------------------------------------------
+// innertext test 1
+$str = <<<HTML
+<html>
+<head></head>
+<body>
+<span>foo</span>
+</body>
+</html>
+HTML;
+
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+$str2 = <<<HTML
+<html>
+<head></head>
+<body>
+<span>bar</span>
+</body>
+</html>
+HTML;
+
+$dom->find('span', 0)->innertext = 'bar';
+assert($dom->save()==$str2);
+
+// -----------------------------------------------------------------------------
 // selector test 1
 $str = <<<HTML
 <img class="class0" id="id0" src="src0">
