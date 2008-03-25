@@ -409,16 +409,20 @@ assert($ret[1]->outertext=='<div class="class1">ok</div>');
 $ret[1]->innertext = 'okok';
 assert($ret[1]->outertext=='<div class="class1">okok</div>');
 assert($ret[0]->outertext=='<div class="class0" id="id0" ><div class="class1">okok</div></div>');
+assert($dom->save()=='<div class="class0" id="id0" ><div class="class1">okok</div></div>');
 
 $ret[1]->class = 'class_test';
 assert($ret[1]->outertext=='<div class="class_test">okok</div>');
 assert($ret[0]->outertext=='<div class="class0" id="id0" ><div class="class_test">okok</div></div>');
+assert($dom->save()=='<div class="class0" id="id0" ><div class="class_test">okok</div></div>');
 
 $ret[0]->class = 'class_test';
 assert($ret[0]->outertext=='<div class="class_test" id="id0" ><div class="class_test">okok</div></div>');
+assert($dom->save()=='<div class="class_test" id="id0" ><div class="class_test">okok</div></div>');
 
 $ret[0]->innertext = 'okokok';
 assert($ret[0]->outertext=='<div class="class_test" id="id0" >okokok</div>');
+assert($dom->save()=='<div class="class_test" id="id0" >okokok</div>');
 
 // -----------------------------------------------------------------------------
 // test text
