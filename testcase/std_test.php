@@ -117,27 +117,41 @@ assert($dom->save()==$str);
 // innertext test 1
 $str = <<<HTML
 <html>
-<head></head>
-<body>
-<span>foo</span>
-</body>
+    <head></head>
+    <body>
+        <br>
+        <span>foo</span>
+    </body>
+</html>
+HTML;
+
+$str2 = <<<HTML
+<html>
+    <head></head>
+    <body>
+        <br>
+        <span>bar</span>
+    </body>
 </html>
 HTML;
 
 $dom = str_get_dom($str);
 assert($dom->save()==$str);
+$dom->find('span', 0)->innertext = 'bar';
+assert($dom->save()==$str2);
 
-$str2 = <<<HTML
+$str3 = <<<HTML
 <html>
-<head></head>
-<body>
-<span>bar</span>
-</body>
+    <head>ok</head>
+    <body>
+        <br>
+        <span>bar</span>
+    </body>
 </html>
 HTML;
 
-$dom->find('span', 0)->innertext = 'bar';
-assert($dom->save()==$str2);
+$dom->find('head', 0)->innertext = 'ok';
+assert($dom->save()==$str3);
 
 // -----------------------------------------------------------------------------
 // selector test 1
