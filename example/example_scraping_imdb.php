@@ -22,7 +22,7 @@ function scraping_IMDB($url) {
 
         foreach($div->find('*') as $node) {
             if ($node->tag=='h5')
-                $key = substr($node->plaintext, 0, -1);
+                $key = $node->plaintext;
 
             if ($node->tag=='a' && $node->plaintext!='more')
                 $val .= trim(str_replace("\n", '', $node->plaintext));
@@ -43,5 +43,5 @@ function scraping_IMDB($url) {
 $ret = scraping_IMDB('http://imdb.com/title/tt0335266/');
 
 foreach($ret as $k=>$v)
-    echo '<strong>'.$k.': </strong>'.$v.'<br>';
+    echo '<strong>'.$k.' </strong>'.$v.'<br>';
 ?>

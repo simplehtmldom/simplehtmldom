@@ -6,6 +6,9 @@ $dir = './html/';
 
 $files = array(
     array('name'=>'empty.htm',          'url'=>''),
+    array('name'=>'myspace.htm',         'url'=>'http://www.myspace.com/'),
+    
+    /*
     //array('name'=>'project_index.htm',  'url'=>'http://simplehtmldom.sourceforge.net/index.htm'),
     //array('name'=>'project_manual.htm', 'url'=>'http://simplehtmldom.sourceforge.net/manual.htm'),
     array('name'=>'google.htm',         'url'=>'http://www.google.com.tw/'),
@@ -29,6 +32,7 @@ $files = array(
     array('name'=>'answers.htm',        'url'=>'http://www.answers.com/'),
     array('name'=>'amazon.htm',         'url'=>'http://www.amazon.com/'),
     array('name'=>'youtube.htm',        'url'=>'http://www.youtube.com/watch?v=kib05Ip6GSo&feature=bz302'),
+    */
 );
 
 

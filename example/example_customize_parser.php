@@ -24,7 +24,7 @@ function html_extract_contents($str) {
     // strip out <pre> tags
     $dom->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
     // strip out <code> tags
-    $this->remove_noise("'<\s*code[^>]*?>(.*?)<\s*/\s*code\s*>'is", false, false);
+    $dom->remove_noise("'<\s*code[^>]*?>(.*?)<\s*/\s*code\s*>'is", false, false);
 
     // 4. parsing each node
     $ret = '';

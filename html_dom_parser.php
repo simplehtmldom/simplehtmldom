@@ -129,8 +129,7 @@ class html_dom_node {
 
         if (isset($this->info[HDOM_INFO_INNER]))  $ret .= $this->info[HDOM_INFO_INNER];
         else {
-            foreach($this->children as $n)
-                $ret .= $n->outertext();
+            foreach($this->children as $n) $ret .= $n->outertext();
         }
 
         // end tag
@@ -278,7 +277,6 @@ class html_dom_parser {
     function load($str, $attr_name_lowercase=true) {
         // prepare
         $this->prepare($str, $attr_name_lowercase);
-
         // strip out comments
         $this->remove_noise("'<!--(.*?)-->'is", false, false);
         // strip out <styles> tags
@@ -291,7 +289,6 @@ class html_dom_parser {
         $this->remove_noise("'<\s*code[^>]*?>(.*?)<\s*/\s*code\s*>'is", false, false);
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
-
         // parsing
         while ($this->parse());
     }
