@@ -31,21 +31,11 @@ function file_get_dom($filepath, $lowercase=true) {
     return $dom;
 }
 
-// write dom to file
-function file_put_dom($filepath, $dom) {
-    return $dom->save_file($filepath);
-}
-
 // get dom form string
 function str_get_dom($str, $lowercase=true) {
     $dom = new html_dom_parser;
     $dom->load($str, $lowercase);
     return $dom;
-}
-
-// write dom to string
-function str_put_dom($dom) {
-    return $dom->save();
 }
 
 // html dom node
@@ -191,7 +181,7 @@ class html_dom_node {
         $selector = trim($selector);
         if ($selector=='*') return $this->children;
 
-        // parse CSS selectors
+        // parse CSS selectors, pattern is modified from mootools
         $pattern = "/(\w*|\*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"'\]]*)[\"']?)?])?/";
         preg_match_all($pattern, $selector, $matches, PREG_SET_ORDER);
         $selectors = array();
@@ -267,6 +257,7 @@ class html_dom_parser {
     private $html;
     private $index;
     private $noise = array();
+    // use isset instead in_array, performance increase about 30%...
     private $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
     private $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1, "\t"=>1, "\r"=>1, "\n"=>1);
     private $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\t"=>1, "\r"=>1, "\n"=>1);
