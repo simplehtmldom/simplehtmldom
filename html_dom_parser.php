@@ -203,6 +203,7 @@ class html_dom_node {
         $ret = array();
         $head = array($this->info[HDOM_INFO_BEGIN]=>1);
 
+        // no recursive!
         for ($l=0; $l<$levle; ++$l) {
             $key = $selectors[$l]['key'];
             $val = $selectors[$l]['val'];
@@ -274,13 +275,14 @@ class html_dom_parser {
         // strip out <styles> tags
         $this->remove_noise("'<\s*style[^>]*?>(.*?)<\s*/\s*style\s*>'is", false, false);
         // strip out <script> tags
-        $this->remove_noise("'<\s*script[^>]*?>(.*?)<\s*/\s*script\s*>'is", false, false);
+        $this->remove_noise("'<\s*script[^>]*?[^/]>(.*?)<\s*/\s*script\s*>'is", false, false);
         // strip out <pre> tags
         $this->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
         // strip out <code> tags
         $this->remove_noise("'<\s*code[^>]*?>(.*?)<\s*/\s*code\s*>'is", false, false);
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
+        
         // parsing
         while ($this->parse());
     }
@@ -377,9 +379,10 @@ class html_dom_parser {
     // remove noise from html content
     public function remove_noise($pattern, $remove_tag=true, $remove_contents=true) {
         $count = preg_match_all($pattern, $this->html, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+
         for ($i=$count-1; $i>-1; --$i) {
             $key = '___noise___'.sprintf("% 3d", count($this->noise));
-            $idx = ($remove_tag) ? 1 : 0;
+            $idx = ($remove_tag) ? 0 : 1;
             $this->noise[$key] = ($remove_contents) ? '' : $matches[$i][$idx][0];
             $this->html = substr_replace($this->html, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
         }
@@ -461,6 +464,7 @@ class html_dom_parser {
             $node->nodetype = HDOM_TYPE_TEXT;
             $node->info[HDOM_INFO_END] = $this->index-1;
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>') . '>';
+            $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
             $node->tag = 'text';
             // next
             if(++$this->pos<$this->size) $this->char = $this->html[$this->pos];

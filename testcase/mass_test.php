@@ -8,7 +8,7 @@ $files = array(
     array('name'=>'empty.htm',          'url'=>''),
     array('name'=>'myspace.htm',         'url'=>'http://www.myspace.com/'),
     
-    /*
+    
     //array('name'=>'project_index.htm',  'url'=>'http://simplehtmldom.sourceforge.net/index.htm'),
     //array('name'=>'project_manual.htm', 'url'=>'http://simplehtmldom.sourceforge.net/manual.htm'),
     array('name'=>'google.htm',         'url'=>'http://www.google.com.tw/'),
@@ -32,7 +32,7 @@ $files = array(
     array('name'=>'answers.htm',        'url'=>'http://www.answers.com/'),
     array('name'=>'amazon.htm',         'url'=>'http://www.amazon.com/'),
     array('name'=>'youtube.htm',        'url'=>'http://www.youtube.com/watch?v=kib05Ip6GSo&feature=bz302'),
-    */
+    
 );
 
 
@@ -52,7 +52,7 @@ foreach($files as $f) {
     
     if (file_get_contents($dir.$f['name'])!=$dom->save()) {
         echo "[<font color='red'>failed</font>] ".$f['name']."<br>";
-        file_put_contents($dir.$f['name'].'.error', $dom->save());
+        $dom->save_file($dir.$f['name'].'.error');
     }
     else
         echo "[success] ".$f['name']."<br>";

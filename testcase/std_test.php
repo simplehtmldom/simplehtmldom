@@ -10,6 +10,32 @@ assert($dom->save()==$str);
 // -----------------------------------------------------------------------------
 // test noise
 $str = <<<HTML
+<script type="text/javascript" src="test.js">ss</script>
+<script type="text/javascript" src="test.js"/>
+<script type="text/javascript" src="test.js" />
+<script type="text/javascript" src="test.js" 
+/>
+
+<script type="text/javascript" src="test.js"/>
+
+<style type="text/css">
+@import url("style.css");
+</style>
+
+<script type="text/javascript">
+var foo = "bar";
+</script >
+HTML;
+
+$dom = str_get_dom($str);
+assert(count($dom->find('script'))==6);
+assert(count($dom->find('style'))==1);
+echo $dom->save();
+assert($dom->save()==$str);
+
+// -----------------------------------------------------------------------------
+// test noise 2
+$str = <<<HTML
 <!--
 <img class="class0" id="id0" src="src0">
 -->
