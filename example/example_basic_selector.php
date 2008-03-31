@@ -23,5 +23,5 @@ foreach($dom->find('span.gb1') as $node)
 
 // find all td tags with attribite align=center
 foreach($dom->find('td[align=center]') as $node)
-    echo $node->outertext . '<br>';
+    echo $node->innertext . '<br>';
 ?>

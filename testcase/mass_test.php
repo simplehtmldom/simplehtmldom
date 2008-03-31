@@ -6,13 +6,10 @@ $dir = './html/';
 
 $files = array(
     array('name'=>'empty.htm',          'url'=>''),
-    array('name'=>'myspace.htm',         'url'=>'http://www.myspace.com/'),
-    
-    
-    //array('name'=>'project_index.htm',  'url'=>'http://simplehtmldom.sourceforge.net/index.htm'),
-    //array('name'=>'project_manual.htm', 'url'=>'http://simplehtmldom.sourceforge.net/manual.htm'),
     array('name'=>'google.htm',         'url'=>'http://www.google.com.tw/'),
+    
     /*
+    array('name'=>'myspace.htm',         'url'=>'http://www.myspace.com/'),
     array('name'=>'mootools.htm',       'url'=>'http://www.mootools.net/'),
     array('name'=>'jquery.htm',         'url'=>'http://jquery.com/'),
     array('name'=>'scriptaculo.htm',    'url'=>'http://script.aculo.us/'),

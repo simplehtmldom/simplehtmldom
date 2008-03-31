@@ -2,13 +2,97 @@
 error_reporting(E_ALL);
 include('../html_dom_parser.php');
 
+function dump_all_nodes($dom) {
+    foreach ($dom->nodes as $n) {
+        echo $n->nodetype.'-'.htmlspecialchars($n->text()).'<br>';
+    }
+}
+
+//echo htmlspecialchars($dom->save()).'!!';
+//dump_all_nodes($dom);
+
 // -----------------------------------------------------------------------------
+// empty test
 $str = '';
 $dom = str_get_dom($str);
 assert($dom->save()==$str);
 
+$str = null;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
 // -----------------------------------------------------------------------------
-// test noise
+// test endless tag
+// test
+$str = <<<HTML
+<
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// test
+$str = <<<HTML
+<
+
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// test
+$str = <<<HTML
+
+
+<
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// test
+$str = <<<HTML
+<a
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// test
+$str = <<<HTML
+<<<<ab
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// test
+$str = <<<HTML
+<<<<ab  
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// test
+$str = <<<HTML
+<<><<>ab  
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// test
+$str = <<<HTML
+<abc
+
+
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// test
+$str = <<<HTML
+>
+HTML;
+$dom = str_get_dom($str);
+assert($dom->save()==$str);
+
+// -----------------------------------------------------------------------------
+// test noise stripping
 $str = <<<HTML
 <script type="text/javascript" src="test.js">ss</script>
 <script type="text/javascript" src="test.js"/>
@@ -38,7 +122,6 @@ HTML;
 $dom = str_get_dom($str);
 assert(count($dom->find('script'))==7);
 assert(count($dom->find('style'))==2);
-echo $dom->save();
 assert($dom->save()==$str);
 
 // -----------------------------------------------------------------------------
