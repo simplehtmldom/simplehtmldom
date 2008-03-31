@@ -672,6 +672,38 @@ $ret = $dom->find('div');
 assert(count($ret)==2);
 
 
+// -----------------------------------------------------------------------------
+// test customize parsing
+$str = <<<HTML
+<script type="text/javascript" src="test.js">ss</script>
+HTML;
+
+$my_dom = new html_dom_parser;
+$my_dom->prepare($str);
+$count = 0;
+while ($node=$dom->parse()) {
+    switch ($count) {
+        case 0: assert($node->nodetype==HDOM_TYPE_ELEMENT); break;
+        case 1: assert($node->nodetype==HDOM_TYPE_TEXT); assert($node->text()==='ss'); break;
+        case 2: assert($node->nodetype==HDOM_TYPE_ENDTAG); break;
+    }
+    ++$count;
+}
+
+$my_dom->prepare($str);
+// strip out <script> tags
+$my_dom->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is", false, false);
+$my_dom->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is", false, false);
+$count = 0;
+while ($node=$dom->parse()) {
+    switch ($count) {
+        case 0: assert($node->nodetype==HDOM_TYPE_ELEMENT); break;
+        case 1: assert($node->nodetype==HDOM_TYPE_TEXT); assert($node->text()===''); break;
+        case 2: assert($node->nodetype==HDOM_TYPE_ENDTAG); break;
+    }
+    ++$count;
+}
+
 
 // -----------------------------------------------------------------------------
 echo 'All pass!<br>';
