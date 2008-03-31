@@ -17,14 +17,16 @@ function html_extract_contents($str) {
     $dom->remove_noise("'<!doctype(.*?)>'is");
     // strip out comments
     $dom->remove_noise("'<!--(.*?)-->'is");
-    // strip out <styles> tags
-    $dom->remove_noise("'<\s*style[^>]*?>(.*?)<\s*/\s*style\s*>'is");
+    // strip out <style> tags
+    $dom->remove_noise("'<\s*style[^>]*[^/]>(.*?)<\s*/\s*style\s*>'is", false);
+    $dom->remove_noise("'<\s*style\s*>(.*?)<\s*/\s*style\s*>'is", false);
     // strip out <script> tags
-    $dom->remove_noise("'<\s*script[^>]*?>(.*?)<\s*/\s*script\s*>'is");
+    $dom->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is", false);
+    $dom->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is", false);
     // strip out <pre> tags
-    $dom->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
+    $dom->remove_noise("'<\s*pre[^>]*>(.*?)<\s*/\s*pre\s*>'is", false, false);
     // strip out <code> tags
-    $dom->remove_noise("'<\s*code[^>]*?>(.*?)<\s*/\s*code\s*>'is", false, false);
+    $dom->remove_noise("'<\s*code[^>]*>(.*?)<\s*/\s*code\s*>'is", false, false);
 
     // 4. parsing each node
     $ret = '';

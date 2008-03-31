@@ -18,6 +18,14 @@ $str = <<<HTML
 
 <script type="text/javascript" src="test.js"/>
 
+<style>
+@import url("style.css");
+</style>
+
+<script>
+var foo = "bar";
+</script>
+
 <style type="text/css">
 @import url("style.css");
 </style>
@@ -28,8 +36,8 @@ var foo = "bar";
 HTML;
 
 $dom = str_get_dom($str);
-assert(count($dom->find('script'))==6);
-assert(count($dom->find('style'))==1);
+assert(count($dom->find('script'))==7);
+assert(count($dom->find('style'))==2);
 echo $dom->save();
 assert($dom->save()==$str);
 

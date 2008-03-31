@@ -12,6 +12,7 @@ $files = array(
     //array('name'=>'project_index.htm',  'url'=>'http://simplehtmldom.sourceforge.net/index.htm'),
     //array('name'=>'project_manual.htm', 'url'=>'http://simplehtmldom.sourceforge.net/manual.htm'),
     array('name'=>'google.htm',         'url'=>'http://www.google.com.tw/'),
+    /*
     array('name'=>'mootools.htm',       'url'=>'http://www.mootools.net/'),
     array('name'=>'jquery.htm',         'url'=>'http://jquery.com/'),
     array('name'=>'scriptaculo.htm',    'url'=>'http://script.aculo.us/'),
@@ -32,7 +33,7 @@ $files = array(
     array('name'=>'answers.htm',        'url'=>'http://www.answers.com/'),
     array('name'=>'amazon.htm',         'url'=>'http://www.amazon.com/'),
     array('name'=>'youtube.htm',        'url'=>'http://www.youtube.com/watch?v=kib05Ip6GSo&feature=bz302'),
-    
+    */
 );
 
 

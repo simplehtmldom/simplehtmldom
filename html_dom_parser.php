@@ -272,14 +272,16 @@ class html_dom_parser {
         $this->prepare($str, $attr_name_lowercase);
         // strip out comments
         $this->remove_noise("'<!--(.*?)-->'is", false, false);
-        // strip out <styles> tags
-        $this->remove_noise("'<\s*style[^>]*?>(.*?)<\s*/\s*style\s*>'is", false, false);
+        // strip out <style> tags
+        $this->remove_noise("'<\s*style[^>]*[^/]>(.*?)<\s*/\s*style\s*>'is", false, false);
+        $this->remove_noise("'<\s*style\s*>(.*?)<\s*/\s*style\s*>'is", false, false);
         // strip out <script> tags
-        $this->remove_noise("'<\s*script[^>]*?[^/]>(.*?)<\s*/\s*script\s*>'is", false, false);
+        $this->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is", false, false);
+        $this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is", false, false);
         // strip out <pre> tags
-        $this->remove_noise("'<\s*pre[^>]*?>(.*?)<\s*/\s*pre\s*>'is", false, false);
+        $this->remove_noise("'<\s*pre[^>]*>(.*?)<\s*/\s*pre\s*>'is", false, false);
         // strip out <code> tags
-        $this->remove_noise("'<\s*code[^>]*?>(.*?)<\s*/\s*code\s*>'is", false, false);
+        $this->remove_noise("'<\s*code[^>]*>(.*?)<\s*/\s*code\s*>'is", false, false);
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
         
@@ -452,7 +454,7 @@ class html_dom_parser {
 
             // next
             if(++$this->pos<$this->size) $this->char = $this->html[$this->pos];
-            return true;
+            return $node;
         }
 
         $node->tag = $this->copy_until($this->token_slash);
