@@ -8,7 +8,8 @@ $files = array(
     array('name'=>'empty.htm',          'url'=>''),
     array('name'=>'google.htm',         'url'=>'http://www.google.com.tw/'),
     
-    /*
+    
+    array('name'=>'bestjobs.htm',         'url'=>'http://www.bestjobs.ro/locuri-de-munca-electrician/79233/2'),
     array('name'=>'myspace.htm',         'url'=>'http://www.myspace.com/'),
     array('name'=>'mootools.htm',       'url'=>'http://www.mootools.net/'),
     array('name'=>'jquery.htm',         'url'=>'http://jquery.com/'),
@@ -30,7 +31,7 @@ $files = array(
     array('name'=>'answers.htm',        'url'=>'http://www.answers.com/'),
     array('name'=>'amazon.htm',         'url'=>'http://www.amazon.com/'),
     array('name'=>'youtube.htm',        'url'=>'http://www.youtube.com/watch?v=kib05Ip6GSo&feature=bz302'),
-    */
+    
 );
 
 

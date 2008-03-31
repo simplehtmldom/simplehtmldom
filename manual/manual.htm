@@ -22,15 +22,15 @@
 <body>
 <h1 align="center">PHP Simple HTML DOM Parser Manual </h1>
 <div id="content">
-	<h2>Index</h2>
-	<ul>
-		<li><a href="#section_1">How to create HTML DOM object?</a></li>
-		<li><a href="#section_2">How to get HTML elements?</a></li>
-		<li><a href="#section_3">How to access the HTML element's attributes?</a> </li>
-		<li><a href="#section_4">How to get HTML contents from DOM object?</a></li>
-	<li><a href="#section_5">How to customize the parsing behavior?</a></li>
-	</ul>
-	<a name="section_1"></a>
+    <h2>Index</h2>
+    <ul>
+        <li><a href="#section_1">How to create HTML DOM object?</a></li>
+        <li><a href="#section_2">How to get HTML elements?</a></li>
+        <li><a href="#section_3">How to access the HTML element's attributes?</a> </li>
+        <li><a href="#section_4">How to get HTML contents from DOM object?</a></li>
+        <li><a href="#section_5">How to customize the parsing behavior?</a></li>
+    </ul>
+    <a name="section_1"></a>
     <h2>How to create HTML DOM object?</h2>
     <div id="container-1">
         <ul>
@@ -39,14 +39,14 @@
         </ul>
         <div id="fragment-11">
             <div class="code"> <span class="comment">// Create a DOM object from a string </span><br>
-$dom = <strong>str_get_dom</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
-<br>
-<span class="comment">// Create DOM object from a URL </span><br>
-$dom = <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>);<br>
-<br>
-<span class="comment">// Create DOM object from a file</span> <br>
-$dom = <strong>file_get_dom</strong>(<span class="var">'test.htm'</span>); <span class="comment"></span><span class="comment"><br>
-            </span></div>
+                $dom = <strong>str_get_dom</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
+                <br>
+                <span class="comment">// Create DOM object from a URL </span><br>
+                $dom = <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>);<br>
+                <br>
+                <span class="comment">// Create DOM object from a file</span> <br>
+                $dom = <strong>file_get_dom</strong>(<span class="var">'test.htm'</span>); <span class="comment"></span><span class="comment"><br>
+                </span></div>
         </div>
         <div id="fragment-12">
             <div class="code"><span class="comment"> </span> <span class="comment">// Create DOM object</span><br>
@@ -62,7 +62,7 @@ $dom = <strong>file_get_dom</strong>(<span class="var">'test.htm'</span>); <span
                 $dom-&gt;<strong>load_file</strong>(<span class="var">'test.htm'</span>);</div>
         </div>
     </div>
-	<a name="section_2"></a>
+    <a name="section_2"></a>
     <h2>How to get HTML elements?</h2>
     <div id="container-3">
         <ul>
@@ -71,11 +71,11 @@ $dom = <strong>file_get_dom</strong>(<span class="var">'test.htm'</span>); <span
             <li><a href="#fragment-33"><span>Nested selectors</span></a></li>
         </ul>
         <div id="fragment-31">
-            <div class="code"> <span class="comment">// Find all link &lt;a&gt;, returns a <strong>array</strong> of  element objects  </span><br>
+            <div class="code"> <span class="comment">// Find all link &lt;a&gt;, returns a <strong>array</strong> of element objects </span><br>
                 $result = $dom-&gt;<strong>find</strong>(<span class="var">'a'</span>);<br>
                 <br>
-                <span class="comment">// Find with  index to access the <strong>Nth</strong>  returned element object or <strong>null</strong> if not found</span><br>
-$dom-&gt;<strong>find</strong>(<span class="var">'a'</span>, <span class="var">0</span>)-&gt;<strong>href</strong>;                <br>
+                <span class="comment">// Find with index to access the <strong>Nth</strong> returned element object or <strong>null</strong> if not found</span><br>
+                $dom-&gt;<strong>find</strong>(<span class="var">'a'</span>, <span class="var">0</span>)-&gt;<strong>href</strong>; <br>
                 <br>
                 <span class="comment">// Find all &lt;div&gt; which <strong>id</strong>=gbar</span><br>
                 $result = $dom-&gt;<strong>find</strong>(<span class="var">'div#gbar'</span>);<br>
@@ -87,10 +87,10 @@ $dom-&gt;<strong>find</strong>(<span class="var">'a'</span>, <span class="var">0
                 $result = $dom-&gt;<strong>find</strong>(<span class="var">'td[align=&quot;center&quot;]'</span>);<br>
                 <br>
                 <span class="comment">// You can also omit the quotes from an attribute value for convenience</span><br>
-            $result = $dom-&gt;<strong>find</strong>(<span class="var">'td[align=center]'</span>); <br>
-            <br>
-            <span class="comment">// Returns all children in the element </span><br>
-$result = $dom-&gt;<strong>find</strong>(<span class="var">'*'</span>);            </div>
+                $result = $dom-&gt;<strong>find</strong>(<span class="var">'td[align=center]'</span>); <br>
+                <br>
+                <span class="comment">// Returns all children in the element </span><br>
+                $result = $dom-&gt;<strong>find</strong>(<span class="var">'*'</span>); </div>
         </div>
         <div id="fragment-32">
             <div class="code"> <span class="comment">// Find all &lt;li&gt; in &lt;ul&gt; </span><br>
@@ -124,7 +124,7 @@ $result = $dom-&gt;<strong>find</strong>(<span class="var">'*'</span>);         
             </div>
         </div>
     </div>
-	<a name="section_3"></a>
+    <a name="section_3"></a>
     <h2>How to access the HTML element's attributes?</h2>
     <div id="container-4">
         <ul>
@@ -148,21 +148,21 @@ $result = $dom-&gt;<strong>find</strong>(<span class="var">'*'</span>);         
         <div id="fragment-42">
             <div class="code"><span class="comment">// For example</span> <br>
                 $str = <span class="var">'&lt;div&gt;This is a &lt;strong&gt;test&lt;/strong&gt;&lt;/div&gt;'</span>;<br>
-                <span class="hl-var">$dom</span><span class="hl-code"> = </span><strong>file_get_dom</strong><span class="hl-brackets">(</span>$str<span class="hl-brackets">)</span><span class="hl-code">;</span>                <br>
+                <span class="hl-var">$dom</span><span class="hl-code"> = </span><strong>file_get_dom</strong><span class="hl-brackets">(</span>$str<span class="hl-brackets">)</span><span class="hl-code">;</span> <br>
                 $element = $dom-&gt;find(<span class="var">'div'</span>, <span class="var">0</span>); <br>
                 <br>
                 <span class="comment">// Get type name of tag (eg. a, img, div...), returns: '<strong>div</strong>' </span><br>
-$value = $element-&gt;<strong>tag</strong>;<br>
-<br>
-<span class="comment">// Get outer html text, returns: '<strong>&lt;div&gt;This is a &lt;strong&gt;test&lt;/strong&gt;&lt;/div&gt;</strong>'; </span><br>
-$value = $element-&gt;<strong>outertext</strong>;<br>
-<br>
-<span class="comment">// Get inner html text, returns: '<strong>This is a &lt;strong&gt;test&lt;/strong&gt;</strong>'; </span><br>
-$value = $element-&gt;<strong>innertext</strong>;<br>
-<br>
-<span class="comment">// Get pure text, returns: '<strong>This is a test</strong>'; </span><br>
-$value = $element-&gt;<strong>plaintext</strong>;<br>
-</div>
+                $value = $element-&gt;<strong>tag</strong>;<br>
+                <br>
+                <span class="comment">// Get outer html text, returns: '<strong>&lt;div&gt;This is a &lt;strong&gt;test&lt;/strong&gt;&lt;/div&gt;</strong>'; </span><br>
+                $value = $element-&gt;<strong>outertext</strong>;<br>
+                <br>
+                <span class="comment">// Get inner html text, returns: '<strong>This is a &lt;strong&gt;test&lt;/strong&gt;</strong>'; </span><br>
+                $value = $element-&gt;<strong>innertext</strong>;<br>
+                <br>
+                <span class="comment">// Get pure text, returns: '<strong>This is a test</strong>'; </span><br>
+                $value = $element-&gt;<strong>plaintext</strong>;<br>
+            </div>
         </div>
         <div id="fragment-43">
             <div class="code"><span class="comment">// Use <strong>isset</strong> function to test if a attribute is exist or not </span><br>
@@ -178,15 +178,15 @@ $value = $element-&gt;<strong>plaintext</strong>;<br>
             </div>
         </div>
     </div>
-	<a name="section_4"></a>
-	<h2>How to get HTML contents from DOM object?</h2>
+    <a name="section_4"></a>
+    <h2>How to get HTML contents from DOM object?</h2>
     <div id="container-2">
         <ul>
             <li><a href="#fragment-21"><span>Object-oriented way</span></a></li>
             <li><a href="#fragment-22"><span>Another way</span></a></li>
         </ul>
         <div id="fragment-21">
-			<div class="code"><span class="comment">// Get a string from dom object</span><br>
+            <div class="code"><span class="comment">// Get a string from dom object</span><br>
                 $str = $dom-&gt;<strong>save</strong>();<br>
                 <br>
                 <span class="comment">// Write dom object contents to a file</span><br>
@@ -201,14 +201,15 @@ $value = $element-&gt;<strong>plaintext</strong>;<br>
             </div>
         </div>
     </div>
-	<a name="section_5"></a>
-	<h2>How to customize the parsing behavior?</h2>
+    <a name="section_5"></a>
+    <h2>How to customize the parsing behavior?</h2>
     <div id="container-5">
         <ul>
             <li><a href="#fragment-51"><span>Write a HTML text extractor</span></a></li>
+            <li><a href="#fragment-52"><span>Tips</span></a></li>
         </ul>
         <div id="fragment-51">
-            <div class="code">                <span class="var">&lt;?php</span><br>
+            <div class="code"><span class="var">&lt;?php</span><br>
                 <span class="comment">// example of how to customize the parsing behavior</span><br>
                 include(<span class="var">'html_dom_parser.php'</span>);<br>
                 <span class="comment"><br>
@@ -216,23 +217,22 @@ $value = $element-&gt;<strong>plaintext</strong>;<br>
                 <strong>function</strong> html_extract_contents($str) {<br>
                 <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 1. create DOM object</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom = new html_dom_parser; <span class="comment"><br>
-<br>
+                <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 2. prepare HTML data and init everything</span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom-&gt;<strong>prepare</strong>($str); <span class="comment"><br>
-<br>
+                <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 3. some contents such as 'comments', 'styles' or 'script' will be treated as 'text',<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// so we need to remove it before parsing, see the example for more details
-...</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// so we need to remove it before parsing, see the example for more details ...</span><br>
                 <br>
                 <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 4. parsing each node</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret = '';<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while ($node=$dom-&gt;<strong>parse</strong>()) {<br>
-    <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// dump contents of node which tag is 'text'</span><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($node-&gt;tag==<span class="var">'text'</span>)<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret .= htmlspecialchars_decode($node-&gt;<strong>text</strong>());<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return $ret;<br>
-                }                <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret = '';<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while ($node=$dom-&gt;<strong>parse</strong>()) {<br>
+                <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// dump contents of node which tag is 'text'</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($node-&gt;tag==<span class="var">'text'</span>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret .= htmlspecialchars_decode($node-&gt;<strong>text</strong>());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return $ret;<br>
+                } <br>
                 <br>
                 <span class="comment">// test it!</span><br>
                 $str = file_get_contents(<span class="var">'http://www.google.com/'</span>);<br>
@@ -240,9 +240,27 @@ $value = $element-&gt;<strong>plaintext</strong>;<br>
                 <span class="var">?&gt;</span><br>
             </div>
         </div>
+        <div id="fragment-52">
+            <div class="code"> The method &quot;find(...)&quot; always returns <strong>elements</strong>, but method &quot;parse()&quot; returns <strong>node</strong>.<br>
+                One <strong>element</strong> may contains many <strong>nodes</strong>, for example, a <strong>element</strong> of &lt;a&gt; contains 3 <strong>nodes</strong>:<br>
+                <br>
+                <br>
+                &lt;a href=&quot;#&quot;&gt; &nbsp;<span class="var">&nbsp;</span>link0 &nbsp;<span class="var">&nbsp;&nbsp;</span><span class="var">&nbsp;&nbsp;</span><span class="var">&nbsp;</span>&lt;/a&gt;<br>
+                <span class="var">----------------&nbsp;&nbsp;&nbsp;--------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="var">&nbsp;</span>node1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node2&nbsp;&nbsp;<span class="var">&nbsp;&nbsp;</span>node3<br>
+                <br>
+                <br>
+                The attribute named $node-><strong>nodetype</strong> is particularly useful while parsing. <br>
+                Its value may be <span class="var">HDOM_TYPE_ELEMENT</span>, <span class="var">HDOM_TYPE_ENDTAG</span>, <span class="var">HDOM_TYPE_TEXT</span>. <br>
+                <br>
+                Lots of <strong>element's </strong> properties is not determined until the end of parsing loop, <br>
+                calling magic method such as <strong>innertext</strong>, <strong>outertext, <strong>plaintext</strong></strong> will cause unexceptable errors,<br>
+                any parsing optration must call <strong>node's</strong> internal method or array to prevent the problem.<br>
+                <br>
+            </div>
+        </div>
     </div>
 </div>
-
 <br>
 </body>
 </html>
