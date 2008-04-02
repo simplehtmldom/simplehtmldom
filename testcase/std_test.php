@@ -516,10 +516,14 @@ assert($ret[0]->outertext=='<div class="class_test" id="id2" ><div class="class2
 $ret[0]->tag = 'span';
 assert($ret[0]->outertext=='<span class="class_test" id="id2" ><div class="class2">ok</div></span>');
 
-// test unset
+// test unset (no more support...)
+//$dom = str_get_dom($str);
+//$ret = $dom->find('div');
+//unset($ret[0]->class);
+//assert($ret[0]->outertext=='<div id="id2" ><div class="class2">ok</div></div>');
 $dom = str_get_dom($str);
 $ret = $dom->find('div');
-unset($ret[0]->class);
+unset($ret[0]->attr['class']);
 assert($ret[0]->outertext=='<div id="id2" ><div class="class2">ok</div></div>');
 
 // -----------------------------------------------------------------------------

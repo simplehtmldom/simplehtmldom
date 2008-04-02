@@ -22,8 +22,8 @@ $dom = new html_dom_parser;
 for($i=0; $i<3; ++$i) {
     $dom->load_file('http://www.google.com.tw/');
     echo 'memory: '.memory_get_usage().'<br>';
-    $dom->clear();
 }
+$dom->clear();
 unset($dom);
 echo 'final memory: '.memory_get_usage().'<br>';
 flush();
