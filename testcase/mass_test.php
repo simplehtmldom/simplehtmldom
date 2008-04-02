@@ -61,7 +61,7 @@ foreach($files as $f) {
     flush();
 }
 
-$dom->clear();
+$dom->memory();
 $dom = null;
 echo '<br>memory: '.memory_get_usage().'<br>';
 

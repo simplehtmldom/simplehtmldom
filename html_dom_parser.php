@@ -1,6 +1,6 @@
 <?php
 /*******************************************************************************
-Version: 0.93
+Version: 0.94
 Author: S. C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
 Licensed under The MIT License
@@ -88,17 +88,19 @@ class html_dom_node {
         return isset($this->attr[$var]);
     }
 
-    function __unset($var) {
-        if (isset($this->attr[$var])) unset($this->attr[$var]);
-    }
+    //function __unset($var) {
+    //    if (isset($this->attr[$var])) unset($this->attr[$var]);
+    //}
 
     // clean up memory due to php5 circular references memory leak...
     function clear() {
-        $this->attr = null;
-        $this->info = null;
-        $this->parser = null;
-        $this->parent = null;
-        $this->children = null;
+        unset($this->tag);
+        unset($this->nodetype);
+        unset($this->info);
+        unset($this->attr);
+        unset($this->parser);
+        unset($this->parent);
+        unset($this->children);
     }
 
     // get dom node's inner html
@@ -334,15 +336,16 @@ class html_dom_parser {
     // prepare HTML data and init everything
     function prepare($str, $attr_name_lowercase=true) {
         $this->clear();
+        $this->noise = array();
+        $this->nodes = array();
         $this->html = $str;
         $this->lowercase = $attr_name_lowercase;
         $this->index = 0;
+        $this->pos = 0;
         $this->root = new html_dom_node($this);
         $this->root->tag = 'root';
         $this->root->info[HDOM_INFO_BEGIN] = -1;
         $this->parent = $this->root;
-        $this->noise = array();
-        $this->pos = 0;
     }
 
     // parse html content
@@ -364,17 +367,16 @@ class html_dom_parser {
 
     // clean up memory due to php5 circular references memory leak...
     function clear() {
-        $this->html = null;
-        $this->noise = null;
-
-        if ($this->parent)  { $this->parent->clear(); $this->parent = null; }
-        if ($this->root) { $this->root->clear(); $this->root = null;}
+        if (isset($this->html)) unset($this->html);
+        if (isset($this->noise)) unset($this->noise);
 
         foreach($this->nodes as $n) {
             $n->clear();
-            $n = null;
+            unset($n);
         }
-        $this->nodes = array();
+
+        if (isset($this->parent)) {$this->parent->clear(); unset($this->parent);}
+        if (isset($this->root)) {$this->root->clear(); unset($this->root);}
     }
 
     // remove noise from html content
