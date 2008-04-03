@@ -91,6 +91,13 @@ HTML;
 $dom = str_get_dom($str);
 assert($dom->save()==$str);
 
+// test
+$str = <<<HTML
+(<1 mol%) 
+HTML;
+$dom = str_get_dom($str);
+echo $dom->save();
+assert($dom->save()==$str);
 // -----------------------------------------------------------------------------
 // test noise stripping
 $str = <<<HTML

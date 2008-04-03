@@ -260,7 +260,7 @@ class html_dom_parser {
     private $html;
     private $index;
     private $noise = array();
-    // use isset instead in_array, performance increase about 30%...
+    // use isset instead of in_array, performance increase about 30%...
     private $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
     private $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1);
     private $token_slash = array(' '=>1, '/'=>1, '>'=>1);
@@ -272,6 +272,7 @@ class html_dom_parser {
     function load($str, $attr_name_lowercase=true) {
         // prepare
         $this->prepare($str, $attr_name_lowercase);
+
         // strip out comments
         $this->remove_noise("'<!--(.*?)-->'is", false, false);
         // strip out <style> tags
@@ -598,7 +599,7 @@ class html_dom_parser {
             if ($escape && $this->char=='\\') {
                 $ret .= $this->char;
                 // next
-                $this->char = $this->html[++$this->pos];
+                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : $this->char = null;
             }
             $ret .= $this->char;
             // next
