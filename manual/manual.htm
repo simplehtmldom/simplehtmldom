@@ -16,6 +16,7 @@
 		$(function() {$('#container-3 > ul').tabs();});
 		$(function() {$('#container-4 > ul').tabs();});
 		$(function() {$('#container-5 > ul').tabs();});
+		$(function() {$('#container-6 > ul').tabs();});
 	});
 </script>
 </head>
@@ -29,6 +30,7 @@
         <li><a href="#section_3">How to access the HTML element's attributes?</a> </li>
         <li><a href="#section_4">How to get HTML contents from DOM object?</a></li>
         <li><a href="#section_5">How to customize the parsing behavior?</a></li>
+        <li><a href="#section_6">FAQ</a></li>
     </ul>
     <a name="section_1"></a>
     <h2>How to create HTML DOM object?</h2>
@@ -246,9 +248,9 @@
                 One <strong>element</strong> may contains many <strong>nodes</strong>, for example, a <strong>element</strong> of &lt;a&gt; contains 3 <strong>nodes</strong>:<br>
                 <br>
                 <br>
-                &lt;a href=&quot;#&quot;&gt; &nbsp;<span class="var">&nbsp;</span>link0 &nbsp;<span class="var">&nbsp;&nbsp;</span><span class="var">&nbsp;&nbsp;</span><span class="var">&nbsp;</span>&lt;/a&gt;<br>
+&lt;a href=&quot;#&quot;&gt; &nbsp;<span class="var">&nbsp;</span>link0 &nbsp;<span class="var">&nbsp;&nbsp;</span><span class="var">&nbsp;&nbsp;</span><span class="var">&nbsp;</span>&lt;/a&gt;<br>
                 <span class="var">----------------&nbsp;&nbsp;&nbsp;--------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="var">&nbsp;</span>node1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node2&nbsp;&nbsp;<span class="var">&nbsp;&nbsp;</span>node3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">&nbsp;</span>node1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node2&nbsp;&nbsp;<span class="var">&nbsp;&nbsp;</span>node3<br>
                 <br>
                 <br>
                 The attribute named $node-><strong>nodetype</strong> is particularly useful to identify the type of node while parsing. <br>
@@ -260,6 +262,27 @@
                 While parsing, uses <strong>node's</strong> internal methods or array to prevent the problem.<br>
                 <br>
             </div>
+        </div>
+    </div>
+	<a name="section_6"></a>
+    <h2>FAQ</h2>
+    <div id="container-6">
+        <ul>
+            <li><a href="#fragment-61"><span>Memory leak</span></a></li>
+        </ul>
+        <div id="fragment-61">
+            <div class="code"> <span class="var">Q:</span>                <br>
+                This script is leaking memory seriously... After it finished running, it's not cleaning up dom object properly from memory.. <br>
+                <br>
+                <span class="var">A:</span>                <br>
+                Due to php5 circular references memory leak, after creating DOM object, you must call $dom-&gt;clear() to free memory. <br>
+example: <br>
+<br>
+$dom = file_get_dom(...); <br>
+<span class="comment">// do something... </span><br>
+$dom-&gt;clear(); <br>
+unset($dom); <span class="comment"><br>
+            </span></div>
         </div>
     </div>
 </div>

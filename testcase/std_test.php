@@ -93,11 +93,25 @@ assert($dom->save()==$str);
 
 // test
 $str = <<<HTML
+<abc
 (<1 mol%) 
 HTML;
 $dom = str_get_dom($str);
-echo $dom->save();
 assert($dom->save()==$str);
+
+$dom = str_get_dom('<hr><hr /><hr/>'); 
+foreach ($dom->find('hr') as $node) { 
+$node->id = 'foo'; 
+echo $node->outertext . "\n";
+}
+
+die();
+$str = <<<HTML
+<strong class="see <a href="http://www.oeb.harvard.edu/faculty/girguis/">http://www.oeb.harvard.edu/faculty/girguis/</a>">.</strong></p> 
+HTML;
+//$dom = str_get_dom($str);
+echo $str;
+
 // -----------------------------------------------------------------------------
 // test noise stripping
 $str = <<<HTML
