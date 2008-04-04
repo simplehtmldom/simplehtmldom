@@ -16,6 +16,10 @@ function scraping_digg($url) {
 
         $ret[] = $item;
     }
+    
+    // clean up memory
+    $dom->clear();
+    unset($dom);
 
     return $ret;
 }

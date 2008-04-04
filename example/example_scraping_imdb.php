@@ -33,6 +33,10 @@ function scraping_IMDB($url) {
 
         $ret[$key] = $val;
     }
+    
+    // clean up memory
+    $dom->clear();
+    unset($dom);
 
     return $ret;
 }

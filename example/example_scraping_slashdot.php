@@ -16,6 +16,10 @@ function scraping_slashdot($url) {
 
         $ret[] = $item;
     }
+    
+    // clean up memory
+    $dom->clear();
+    unset($dom);
 
     return $ret;
 }

@@ -348,6 +348,10 @@ class html_dom_parser {
         $this->root->tag = 'root';
         $this->root->info[HDOM_INFO_BEGIN] = -1;
         $this->parent = $this->root;
+        
+        // set the length of content
+        $this->size = strlen($str);
+        if ($this->size>0) $this->char = $this->html[0];
     }
 
     // parse html content
