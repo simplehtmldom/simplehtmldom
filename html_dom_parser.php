@@ -73,8 +73,9 @@ class html_dom_node {
         if ($var=='outertext') return $this->info[HDOM_INFO_OUTER] = $val;
         if ($var=='plaintext') return $this->info[HDOM_INFO_TEXT] = $val;
         if (!isset($this->attr[$var])) {
-            $count = count($this->info[HDOM_INFO_SPACE]);
-            $this->info[HDOM_INFO_SPACE][$count-2] = ' ';
+            array_unshift($this->info[HDOM_INFO_SPACE], '');
+            array_unshift($this->info[HDOM_INFO_SPACE], '');
+            array_unshift($this->info[HDOM_INFO_SPACE], ' ');
             $this->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
         }
         $this->attr[$var] = $val;
@@ -88,10 +89,6 @@ class html_dom_node {
         return isset($this->attr[$var]);
     }
 
-    //function __unset($var) {
-    //    if (isset($this->attr[$var])) unset($this->attr[$var]);
-    //}
-
     // clean up memory due to php5 circular references memory leak...
     function clear() {
         unset($this->tag);
@@ -101,6 +98,10 @@ class html_dom_node {
         unset($this->parser);
         unset($this->parent);
         unset($this->children);
+    }
+
+    function remove_attr($var) {
+        if (isset($this->attr[$var])) unset($this->attr[$var]);
     }
 
     // get dom node's inner html
@@ -147,6 +148,7 @@ class html_dom_node {
         $ret = '<'.$tag;
         $i = 0;
         $j = 0;
+
         $count_space = count($this->info[HDOM_INFO_SPACE]);
         foreach($this->attr as $key=>$val) {
             $ret .= ($j<$count_space) ? $this->info[HDOM_INFO_SPACE][$j++] : ' ';
@@ -259,6 +261,7 @@ class html_dom_parser {
     private $size;
     private $html;
     private $index;
+    private $max_node = 0;
     private $noise = array();
     // use isset instead of in_array, performance increase about 30%...
     private $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
@@ -272,7 +275,6 @@ class html_dom_parser {
     function load($str, $attr_name_lowercase=true) {
         // prepare
         $this->prepare($str, $attr_name_lowercase);
-
         // strip out comments
         $this->remove_noise("'<!--(.*?)-->'is", false, false);
         // strip out <style> tags
@@ -287,7 +289,6 @@ class html_dom_parser {
         $this->remove_noise("'<\s*code[^>]*>(.*?)<\s*/\s*code\s*>'is", false, false);
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
-
         // parsing
         while ($this->parse());
     }
@@ -416,11 +417,8 @@ class html_dom_parser {
         // next
         $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : $this->char = null;
 
-        //$this->skip($this->token_blank);
-        
         $node = new html_dom_node($this);
-        $this->nodes[] = $node;
-        
+        $this->nodes[] = $node;        
         $node->info[HDOM_INFO_BEGIN] = $this->index;
         ++$this->index;
 
@@ -483,10 +481,17 @@ class html_dom_parser {
         $node->nodetype = HDOM_TYPE_ELEMENT;
         if ($this->lowercase) $node->tag = strtolower($node->tag);
 
+        // prevent infinity loop
+        $guard = 0;
+
         // attributes
         while($this->pos<$this->size-1 && ($node->info[HDOM_INFO_SPACE][]=$this->copy_skip($this->token_blank))!='' || ($this->char!='>' && $this->char!='/')) {
             $name = $this->copy_until($this->token_equal);
-            
+
+            if($guard==$this->pos)
+                return null;
+            $guard = $this->pos;
+
             // handle endless '<'
             if($this->pos>=$this->size-1) {
                 $node->nodetype = HDOM_TYPE_TEXT;
@@ -515,16 +520,16 @@ class html_dom_parser {
                     if ($this->char!=='>') $this->char = $this->html[--$this->pos];
                 }
             }
-            
-            
         }
 
         // end slash found
-        if (($node->info[HDOM_INFO_SPACE][]=$this->copy_until_char('>'))=='/') {
+        $end_space = $this->copy_until_char('>');
+        if ($end_space=='/') {
             $node->info[HDOM_INFO_SLASH] = true;
             $node->info[HDOM_INFO_END] = $this->index-1;
         }
         else {
+            $node->info[HDOM_INFO_SPACE][] = $end_space;
             if (!isset($this->self_closing_tags[strtolower($node->tag)])) $this->parent = $node;
             else $node->info[HDOM_INFO_END] = $this->index-1;
         }
@@ -596,6 +601,7 @@ class html_dom_parser {
     private function copy_until_char($char, $escape=true) {
         $ret = '';
         while ($this->char!=$char && $this->pos<$this->size) {
+            // ignore string escape
             if ($escape && $this->char=='\\') {
                 $ret .= $this->char;
                 // next
