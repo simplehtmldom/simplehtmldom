@@ -16,21 +16,25 @@ $str = <<<HTML
 <strong class="see <a href="http://www.oeb.harvard.edu/faculty/girguis/">http://www.oeb.harvard.edu/faculty/girguis/</a>">.</strong></p> 
 HTML;
 $dom = str_get_dom($str);
-//echo '<br>'.htmlspecialchars($str);
-//echo '<br>'.htmlspecialchars($dom->save());
+// foreach ($dom->nodes as $n) 
+    // echo $n->tag.'<br>';
+// print_r($dom->find('strong', 0)->attr);
+// echo '<br>'.htmlspecialchars($str);
+// echo '<br>'.htmlspecialchars($dom->save());
 // -----------------------------------------------
 $str = <<<HTML
 <a href="http://www.oeb.harvard.edu/faculty/girguis\">http://www.oeb.harvard.edu/faculty/girguis/</a>">
 HTML;
 $dom = str_get_dom($str);
-//echo '<br>'.htmlspecialchars($str);
-//echo '<br>'.htmlspecialchars($dom->save());
+// echo '<br>'.htmlspecialchars($str);
+// echo '<br>'.htmlspecialchars($dom->save());
 // -----------------------------------------------
 $str = <<<HTML
-<strong class="''""";;''""";;\"\''''\"""''''""''> 
+<strong class="''""";;''""";;\"\''''\"""''''""''>""'''"'" 
 HTML;
 $dom = str_get_dom($str);
-//echo '<br>'.htmlspecialchars($dom->save());
+// echo '<br>'.htmlspecialchars($str);
+// echo '<br>'.htmlspecialchars($dom->save());
 //die;
 
 // -----------------------------------------------------------------------------

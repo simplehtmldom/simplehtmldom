@@ -495,7 +495,7 @@ class html_dom_parser {
             if($guard==$this->pos) {
                 // next
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : $this->char = null;
-                //return null;
+                continue;
             }
             $guard = $this->pos;
 
