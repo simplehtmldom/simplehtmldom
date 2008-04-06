@@ -492,8 +492,11 @@ class html_dom_parser {
         while($this->pos<$this->size-1 && ($node->info[HDOM_INFO_SPACE][]=$this->copy_skip($this->token_blank))!='' || ($this->char!='>' && $this->char!='/')) {
             $name = $this->copy_until($this->token_equal);
 
-            if($guard==$this->pos)
-                return null;
+            if($guard==$this->pos) {
+                // next
+                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : $this->char = null;
+                //return null;
+            }
             $guard = $this->pos;
 
             // handle endless '<'
