@@ -1,0 +1,10 @@
+[On going]
+1. Fix the bug of optional closing tags.
+2. Fix the bug of parsing line break next tot tag name.
+3. Add more advanced selector features (Thanks to Yousuke Kumakura for the patch of selector improvements).
+
+[PHP Simple HTML DOM Parser v0.94 is released]
+1. Stop infinity loop while tthe source content is BAD HTML.
+2. Fix the bug of adding new attributes to self closing tags.
+3. Fix the bug of customize parser without $dom->remove_noise();
+4. Add FAQ section in manual.

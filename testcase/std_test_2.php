@@ -115,5 +115,17 @@ $e->class = 'bar';
 assert($e->outertext=='<hr id="foo" kk=ll class="bar" />');
 
 // -----------------------------------------------------------------------------
+// test EMBED
+$str = <<<HTML
+<EMBED 
+   SRC="../graphics/sounds/1812over.mid"
+   HEIGHT=60 WIDTH=144>
+HTML;
+$dom = str_get_dom($str);
+assert($dom->find('embed', 0)->src=='../graphics/sounds/1812over.mid');
+assert($dom->find('embed', 0)->height=='60');
+assert($dom->find('embed', 0)->width=='144');
+assert($dom->save()==strtolower($str));
+// -----------------------------------------------------------------------------
 echo 'All pass!<br>';
 ?>

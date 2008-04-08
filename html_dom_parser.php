@@ -1,8 +1,9 @@
 <?php
 /*******************************************************************************
-Version: 0.94
+Version: 0.95
 Author: S. C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
+Contributions by: Yousuke Kumakura (selector improvements)
 Licensed under The MIT License
 Redistributions of files must retain the above copyright notice.
 *******************************************************************************/
@@ -115,19 +116,17 @@ class html_dom_node {
     // get dom node's outer text (with tag)
     function outertext() {
         if (isset($this->info[HDOM_INFO_OUTER])) return $this->info[HDOM_INFO_OUTER];
-        if ($this->info[HDOM_INFO_BEGIN]==$this->info[HDOM_INFO_END]) return $this->text();
 
         // begin tag
         $ret = $this->parser->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
 
-        if (isset($this->info[HDOM_INFO_INNER])) 
-            $ret .= $this->info[HDOM_INFO_INNER];
-        else {
-            foreach($this->children as $n) $ret .= $n->outertext();
-        }
+        // inner
+        if (isset($this->info[HDOM_INFO_INNER])) $ret .= $this->info[HDOM_INFO_INNER];
+        else {foreach($this->children as $n) $ret .= $n->outertext(); }
 
         // end tag
-        $ret .= $this->parser->nodes[$this->info[HDOM_INFO_END]]->text($this->tag);
+        if($this->info[HDOM_INFO_END])
+            $ret .= $this->parser->nodes[$this->info[HDOM_INFO_END]]->text($this->tag);
         return $ret;
     }
 
@@ -186,7 +185,7 @@ class html_dom_node {
         if ($selector=='*') return $this->children;
 
         // parse CSS selectors, pattern is modified from mootools
-        $pattern = "/(\w*|\*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"'\]]*)[\"']?)?])?/";
+        $pattern = "/(\w*|\*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
         preg_match_all($pattern, $selector, $matches, PREG_SET_ORDER);
         $selectors = array();
 
@@ -194,12 +193,17 @@ class html_dom_node {
             $key = null;
             $val = null;
             $tag = null;
+            $exp = '=';
             if ($v[0]=='') continue;
             $tag = $v[1];
             if(!empty($v[2])) {$key='id'; $val=$v[2];}
             if(!empty($v[3])) {$key='class'; $val=$v[3];}
-            if(!empty($v[4])) {$key=$v[4]; if(!empty($v[6])) $val=$v[6];}
-            $selectors[] = array('tag'=>$tag, 'key'=>$key, 'val'=>$val);
+            if(!empty($v[4])) {
+                $key=$v[4];
+                if(!empty($v[5])) $exp=$v[5];
+                if(!empty($v[6])) $val=$v[6];
+            }
+            $selectors[] = array('tag'=>$tag, 'key'=>$key, 'val'=>$val, 'exp'=>$exp);
         }
 
         if (($levle=count($selectors))==0) return array();
@@ -212,6 +216,7 @@ class html_dom_node {
             $key = $selectors[$l]['key'];
             $val = $selectors[$l]['val'];
             $tag = $selectors[$l]['tag'];
+            $exp = $selectors[$l]['exp'];
             if ($this->parser->lowercase) {
                 if ($tag) $tag = strtolower($tag);
                 if ($key) $key = strtolower($key);
@@ -220,7 +225,7 @@ class html_dom_node {
             $ret = array();
             foreach($head as $k=>$v) {
                 $n = ($k==-1) ? $this->parser->root : $this->parser->nodes[$k];
-                $n->seek($tag, $key, $val, $ret);
+                $n->seek($tag, $key, $val, $exp, $ret);
             }
             $head = $ret;
         }
@@ -234,7 +239,7 @@ class html_dom_node {
     }
 
     // seek for given condition
-    private function seek($tag, $key, $val, &$ret) {
+    private function seek($tag, $key, $val, $exp, &$ret) {
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$this->info[HDOM_INFO_END]; ++$i) {
             $n = $this->parser->nodes[$i];
             if ($n->nodetype==HDOM_TYPE_ENDTAG) continue;
@@ -242,7 +247,29 @@ class html_dom_node {
             $pass = true;
             if ($tag && $tag!=$n->tag) $pass = false;
             if ($pass && $key && !(isset($n->attr[$key]))) $pass = false;
-            if ($pass && $key && $val && !(isset($n->attr[$key]) && $n->attr[$key]===$val)) $pass = false;
+            if ($pass && $key && $val) {
+                switch ($exp) {
+                    case '=':
+                        $valCheck = ($n->attr[$key] === $val) ? true : false;
+                        break;
+                    case '!=':
+                        $valCheck = ($n->attr[$key] !== $val) ? true : false;
+                        break;
+                    case '^=':
+                        $valCheck = (preg_match("/^{$val}/", $n->attr[$key])) ? true : false;
+                        break;
+                    case '$=':
+                        $valCheck = (preg_match("/{$val}$/", $n->attr[$key])) ? true : false;
+                        break;
+                    case '*=':
+                        $valCheck = (preg_match("/{$val}/", $n->attr[$key])) ? true : false;
+                        break;
+                    default:
+                        $valCheck = true;
+                        break;
+                }
+                if (!isset($n->attr[$key]) || !$valCheck) $pass = false;
+            }
             if ($pass) $ret[$i] = 1;
         }
         unset($n);
@@ -252,7 +279,7 @@ class html_dom_node {
 // html dom parser
 // -----------------------------------------------------------------------------
 class html_dom_parser {
-    public 	$nodes = array();
+    public  $nodes = array();
     public  $root = null;
     public  $lowercase = false;
     private $parent = null;
@@ -268,8 +295,17 @@ class html_dom_parser {
     private $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1);
     private $token_slash = array(' '=>1, '/'=>1, '>'=>1);
     private $token_attr  = array(' '=>1, '>'=>1);
-    private $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'dt'=>1, 'dd'=>1);
-    private $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'tr'=>1, 'td'=>1, 'th'=>1, 'ul'=>1, 'dl'=>1);
+    private $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'embed'=>1);
+    private $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'dl'=>1, 'ol'=>1);
+    private $optional_closing_tags = array(
+        'th'=>array('th'=>1, 'tr'=>1, 'td'=>1), 
+        'tr'=>array('tr'=>1, 'td'=>1), 
+        'td'=>array('td'=>1),
+        'dt'=>array('dt'=>1, 'dd'=>1),
+        'dd'=>array('dd'=>1, 'dt'=>1),
+        'li'=>array('li'=>1),
+        'p'=>array('p'=>1),
+    );
 
     // load html from string
     function load($str, $attr_name_lowercase=true) {
@@ -320,8 +356,6 @@ class html_dom_parser {
             }
         }
 
-        //foreach($this->root->children as $v)
-        //    $ret .= $v->outertext();
         return $ret;
     }
 
@@ -359,14 +393,15 @@ class html_dom_parser {
         $s = $this->copy_until_char('<', false);
         if ($s=='') return $this->read_tag();
 
+        // text
         $node = new html_dom_node($this);
         $this->nodes[] = $node;
         $node->tag = 'text';
         $node->info[HDOM_INFO_BEGIN] = $this->index;
-        $node->info[HDOM_INFO_END] = $this->index;
         $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
         $node->parent = $this->parent;
         $this->parent->children[] = $node;
+
         ++$this->index;
         return $node;
     }
@@ -386,7 +421,7 @@ class html_dom_parser {
     }
 
     // remove noise from html content
-    public function remove_noise($pattern, $remove_tag=true, $remove_contents=true) {
+    function remove_noise($pattern, $remove_tag=true, $remove_contents=true) {
         $count = preg_match_all($pattern, $this->html, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
 
         for ($i=$count-1; $i>-1; --$i) {
@@ -422,7 +457,7 @@ class html_dom_parser {
         $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : $this->char = null;
 
         $node = new html_dom_node($this);
-        $this->nodes[] = $node;        
+        $this->nodes[] = $node;
         $node->info[HDOM_INFO_BEGIN] = $this->index;
         ++$this->index;
 
@@ -437,9 +472,9 @@ class html_dom_parser {
             if ($this->lowercase) $node->tag = $tag_lower;
 
             // mapping parent node
-            if (strtolower($this->parent->tag)!==$tag_lower) {
-                if (isset($this->block_tags[strtolower($node->tag)]))  {
-                    $this->parent->info[HDOM_INFO_END] = $this->index-2;
+            if (strtolower($this->parent->tag)!==$tag_lower) {                
+                if (isset($this->block_tags[$tag_lower]))  {
+                    $this->parent->info[HDOM_INFO_END] = null;
                     while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
                         $this->parent = $this->parent->parent;
                 }
@@ -460,13 +495,11 @@ class html_dom_parser {
 
             // next
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : $this->char = null;
-
             return $node;
         }
 
         $node->tag = $this->copy_until($this->token_slash);
         $node->parent = $this->parent;
-        $this->parent->children[] = $node;
 
         // text
         if (!preg_match("/^[A-Za-z0-9_\\-]+$/", $node->tag)) {
@@ -476,14 +509,28 @@ class html_dom_parser {
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
             $node->tag = 'text';
+            $this->parent->children[] = $node;
+
             // next
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : $this->char = null;
+            
             return $node;
         }
 
         // begin tag
         $node->nodetype = HDOM_TYPE_ELEMENT;
-        if ($this->lowercase) $node->tag = strtolower($node->tag);
+        $tag_lower = strtolower($node->tag);
+        if ($this->lowercase) $node->tag = $tag_lower;
+
+        // handle optional closing tags
+        if (isset($this->optional_closing_tags[$tag_lower]) ) {
+            while (isset($this->optional_closing_tags[$tag_lower][strtolower($this->parent->tag)])) {
+                $this->parent->info[HDOM_INFO_END] = 0;
+                $this->parent = $this->parent->parent;
+            }
+            $node->parent = $this->parent;
+        }
+        $this->parent->children[] = $node;
 
         // prevent infinity loop
         $guard = 0;
@@ -529,16 +576,16 @@ class html_dom_parser {
             }
         }
 
-        // end slash found
+        // chsck self closing
         $end_space = $this->copy_until_char('>');
         if ($end_space=='/') {
             $node->info[HDOM_INFO_SLASH] = true;
-            $node->info[HDOM_INFO_END] = $this->index-1;
+            $node->info[HDOM_INFO_END] = 0;
         }
         else {
             $node->info[HDOM_INFO_SPACE][] = $end_space;
+            // reset parent
             if (!isset($this->self_closing_tags[strtolower($node->tag)])) $this->parent = $node;
-            else $node->info[HDOM_INFO_END] = $this->index-1;
         }
 
         // next

@@ -10,5 +10,13 @@ assert(count($dom->find('div.example'))==43);
 assert(count($dom->find('div[class=example]'))==43);
 assert(count($dom->find('.note'))==14);
 
+assert(count($dom->find('div[class^=exa]'))==43);
+assert(count($dom->find('div[class$=mple]'))==43);
+assert(count($dom->find('div[class*=e]'))==50);
+assert(count($dom->find('div[class!=made_up]'))==51);
+
+//echo count($dom->find('div p a'));
+
+
 echo 'All pass!<br>';
 ?>

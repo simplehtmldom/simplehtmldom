@@ -673,6 +673,50 @@ assert(count($ret)==3);
 $ret = $dom->find('div');
 assert(count($ret)==2);
 
+// -----------------------------------------------------------------------------
+// test optional closing tags
+$str = <<<HTML
+<table>
+<tr><td>1<td>2<td>3
+</table>
+HTML;
+$dom = str_get_dom($str);
+assert(count($dom->find('td'))==3);
+assert($dom->find('td', 0)->innertext=='1');
+assert($dom->find('td', 0)->outertext=='<td>1');
+assert($dom->find('td', 1)->innertext=='2');
+assert($dom->find('td', 1)->outertext=='<td>2');
+assert($dom->find('td', 2)->innertext=="3\r\n");
+assert($dom->find('td', 2)->outertext=="<td>3\r\n");
+// -----------------------------------------------
+$str = <<<HTML
+<p>1
+<p>2</p>
+<p>3
+HTML;
+$dom = str_get_dom($str);
+assert(count($dom->find('p'))==3);
+assert($dom->find('p', 0)->innertext=="1\r\n");
+assert($dom->find('p', 0)->outertext=="<p>1\r\n");
+assert($dom->find('p', 1)->innertext=="2");
+assert($dom->find('p', 1)->outertext=="<p>2</p>");
+assert($dom->find('p', 2)->innertext=="3");
+assert($dom->find('p', 2)->outertext=="<p>3");
+// -----------------------------------------------
+$str = <<<HTML
+<dl><dt>1<dd>2<dt>3<dd>4</dl>
+HTML;
+$dom = str_get_dom($str);
+assert(count($dom->find('dt'))==2);
+assert(count($dom->find('dd'))==2);
+assert($dom->find('dt', 0)->innertext=="1");
+assert($dom->find('dt', 0)->outertext=="<dt>1");
+assert($dom->find('dt', 1)->innertext=="3");
+assert($dom->find('dt', 1)->outertext=="<dt>3");
+assert($dom->find('dd', 0)->innertext=="2");
+assert($dom->find('dd', 0)->outertext=="<dd>2");
+assert($dom->find('dd', 1)->innertext=="4");
+assert($dom->find('dd', 1)->outertext=="<dd>4");
 
 // -----------------------------------------------------------------------------
 // test customize parsing
