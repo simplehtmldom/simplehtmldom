@@ -1,8 +1,6 @@
 <?php
 error_reporting(E_ALL);
 require_once('../html_dom_parser.php');
-
-echo basename(__FILE__);
 $dom = new html_dom_parser;
 
 // -----------------------------------------------------------------------------
@@ -182,7 +180,7 @@ $str = <<<HTML
 HTML;
 $dom->load($str);
 // foreach ($dom->nodes as $n) 
-    // echo $n->tag.'<br>';
+// echo $n->tag.'<br>';
 // print_r($dom->find('strong', 0)->attr);
 // echo '<br>'.htmlspecialchars($str);
 // echo '<br>'.htmlspecialchars($dom->save());
@@ -205,5 +203,4 @@ $dom->load($str);
 // -----------------------------------------------------------------------------
 $dom->clear();
 unset($dom);
-echo '<br>All pass!<br><br>';
 ?>

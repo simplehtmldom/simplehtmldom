@@ -1,8 +1,6 @@
 <?php
 error_reporting(E_ALL);
 require_once('../html_dom_parser.php');
-
-echo basename(__FILE__);
 $dom = new html_dom_parser;
 
 // -----------------------------------------------------------------------------
@@ -189,5 +187,4 @@ unset($my_dom);
 // -----------------------------------------------------------------------------
 $dom->clear();
 unset($dom);
-echo '<br>All pass!<br><br>';
 ?>

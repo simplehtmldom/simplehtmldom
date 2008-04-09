@@ -6,11 +6,9 @@ $dir = './html/';
 
 $files = array(
     array('name'=>'empty.htm',          'url'=>''),
-    array('name'=>'google.htm',         'url'=>'http://www.google.com.tw/'),
-    
-    
-    array('name'=>'bestjobs.htm',         'url'=>'http://www.bestjobs.ro/locuri-de-munca-electrician/79233/2'),
-    array('name'=>'myspace.htm',         'url'=>'http://www.myspace.com/'),
+    array('name'=>'google.htm',         'url'=>'http://www.google.com/'),
+
+    array('name'=>'myspace.htm',        'url'=>'http://www.myspace.com/'),
     array('name'=>'mootools.htm',       'url'=>'http://www.mootools.net/'),
     array('name'=>'jquery.htm',         'url'=>'http://jquery.com/'),
     array('name'=>'scriptaculo.htm',    'url'=>'http://script.aculo.us/'),
@@ -19,19 +17,16 @@ $files = array(
     array('name'=>'slashdot.htm',       'url'=>'http://www.slashdot.org/'),
     array('name'=>'ror.htm',            'url'=>'http://www.rubyonrails.org/'),
     array('name'=>'yahoo.htm',          'url'=>'http://tw.yahoo.com/'),
-    
     array('name'=>'phpbb.htm',          'url'=>'http://www.phpbb.com/'),
     array('name'=>'python.htm',         'url'=>'http://www.python.org/'),
     array('name'=>'lua.htm',            'url'=>'http://www.lua.org/'),
     array('name'=>'php.htm',            'url'=>'http://www.php.net/'),
     array('name'=>'ibm.htm',            'url'=>'http://www.ibm.com/'),
-    array('name'=>'mysql.htm',          'url'=>'http://www.mysql.com/'),
     array('name'=>'java.htm',           'url'=>'http://java.sun.com/'),
     array('name'=>'flickr.htm',         'url'=>'http://www.flickr.com/tour/upload/'),
     array('name'=>'answers.htm',        'url'=>'http://www.answers.com/'),
     array('name'=>'amazon.htm',         'url'=>'http://www.amazon.com/'),
     array('name'=>'youtube.htm',        'url'=>'http://www.youtube.com/watch?v=kib05Ip6GSo&feature=bz302'),
-    
 );
 
 
@@ -59,6 +54,7 @@ foreach($files as $f) {
     echo 'memory: '.memory_get_usage().'<br>';
 
     flush();
+    set_time_limit(0);
 }
 
 $dom->clear();

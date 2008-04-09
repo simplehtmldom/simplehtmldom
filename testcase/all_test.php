@@ -1,10 +1,11 @@
 <?php
 error_reporting(E_ALL);
 
-$dir = new DirectoryIterator(getcwd());
-$dir->rewind();
-foreach ($dir as $entry) {
-    if ($entry->isFile() && strpos($entry, '_testcase.')>0)
+foreach (new DirectoryIterator(getcwd()) as $entry) {
+    if ($entry->isFile() && strpos($entry, '_testcase.')>0) {
+        echo basename($entry);
         require_once($entry);
+        echo '<br>...pass!<br><br>';
+    }
 }
 ?>

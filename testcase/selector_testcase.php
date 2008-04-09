@@ -1,8 +1,6 @@
 <?php
 error_reporting(E_ALL);
 require_once('../html_dom_parser.php');
-
-echo basename(__FILE__);
 $dom = new html_dom_parser;
 
 // -----------------------------------------------------------------------------
@@ -317,7 +315,7 @@ assert($es[2]->outertext=='<input name="letterman2" />');
 //  normal checkbox
 $str = <<<HTML
 <input type="checkbox" name="news" value="foo" />
-<input type="checkbox" name="news" value="bar" />
+<input type="checkbox" name="news" value="bar">
 <input type="checkbox" name="news" value="baz" />
 HTML;
 $dom->load($str);
@@ -334,7 +332,7 @@ assert($es[2]->value=='baz');
 //  with '[]' names checkbox
 $str = <<<HTML
 <input type="checkbox" name="news[]" value="foo" />
-<input type="checkbox" name="news[]" value="bar" />
+<input type="checkbox" name="news[]" value="bar">
 <input type="checkbox" name="news[]" value="baz" />
 HTML;
 $dom->load($str);
@@ -350,5 +348,4 @@ assert($es[2]->value=='baz');
 // -----------------------------------------------------------------------------
 $dom->clear();
 unset($dom);
-echo '<br>All pass!<br><br>';
 ?>
