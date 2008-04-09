@@ -388,24 +388,6 @@ class html_dom_parser {
         if ($this->size>0) $this->char = $this->html[0];
     }
 
-    // parse html content
-    function parse() {
-        $s = $this->copy_until_char('<', false);
-        if ($s=='') return $this->read_tag();
-
-        // text
-        $node = new html_dom_node($this);
-        $this->nodes[] = $node;
-        $node->tag = 'text';
-        $node->info[HDOM_INFO_BEGIN] = $this->index;
-        $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
-        $node->parent = $this->parent;
-        $this->parent->children[] = $node;
-
-        ++$this->index;
-        return $node;
-    }
-
     // clean up memory due to php5 circular references memory leak...
     function clear() {
         if (isset($this->html)) unset($this->html);
@@ -444,6 +426,24 @@ class html_dom_parser {
                 $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
         }
         return $text;
+    }
+
+    // parse html content
+    function parse() {
+        $s = $this->copy_until_char('<', false);
+        if ($s=='') return $this->read_tag();
+
+        // text
+        $node = new html_dom_node($this);
+        $this->nodes[] = $node;
+        $node->tag = 'text';
+        $node->info[HDOM_INFO_BEGIN] = $this->index;
+        $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
+        $node->parent = $this->parent;
+        $this->parent->children[] = $node;
+
+        ++$this->index;
+        return $node;
     }
 
     // read tag info
@@ -549,9 +549,10 @@ class html_dom_parser {
             // handle endless '<'
             if($this->pos>=$this->size-1) {
                 $node->nodetype = HDOM_TYPE_TEXT;
-                $node->info[HDOM_INFO_END] = $this->index-1;
-                $node->info[HDOM_INFO_TEXT] = '<'.$node->tag.$name;
+                $node->info[HDOM_INFO_END] = 0;
+                $node->info[HDOM_INFO_TEXT] = '<'.$node->tag;
                 if(isset($node->info[HDOM_INFO_SPACE][0])) $node->info[HDOM_INFO_TEXT] .= $node->info[HDOM_INFO_SPACE][0];
+                $node->info[HDOM_INFO_TEXT] .= $name;
                 $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
                 $node->tag = 'text';
                 return $node;

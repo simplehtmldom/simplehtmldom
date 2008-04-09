@@ -5,6 +5,7 @@ include_once('../html_dom_parser.php');
 
 echo '[multi objects clear memory]<br>init memory: '.memory_get_usage().'<br>';
 echo '------------------------------------------<br>';
+flush();
 for($i=0; $i<3; ++$i) {
     $dom = file_get_dom('http://www.google.com.tw/');
     $dom->clear();
@@ -18,6 +19,7 @@ flush();
 
 echo '<br><br>[one object]<br>init memory: '.memory_get_usage().'<br>';
 echo '------------------------------------------<br>';
+flush();
 $dom = new html_dom_parser;
 for($i=0; $i<3; ++$i) {
     $dom->load_file('http://www.google.com.tw/');
@@ -30,8 +32,9 @@ flush();
 
 
 
-echo '<br><br>[multi objects no clear memory]<br>init memory: '.memory_get_usage().'<br>';
+echo '<br><br>[multi objects without clear memory]<br>init memory: '.memory_get_usage().'<br>';
 echo '------------------------------------------<br>';
+flush();
 for($i=0; $i<3; ++$i) {
     $dom = file_get_dom('http://www.google.com.tw/');
     echo 'memory: '.memory_get_usage().'<br>';

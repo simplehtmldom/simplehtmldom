@@ -1,0 +1,193 @@
+<?php
+error_reporting(E_ALL);
+require_once('../html_dom_parser.php');
+
+echo basename(__FILE__);
+$dom = new html_dom_parser;
+
+// -----------------------------------------------------------------------------
+// empty test
+$str = '';
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = null;
+$dom->load($str);
+assert($dom->save()==$str);
+
+// -----------------------------------------------------------------------------
+// text test
+$str = <<<HTML
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"></html>
+HTML;
+$dom->load($str);
+assert(count($dom->find('text'))==2);
+
+// -----------------------------------------------------------------------------
+// string quote test
+$str = <<<HTML
+<div class="class0" id="id0" >
+    okok<br>
+    <input type=submit name="btnG" value="go" onclick='goto("url0")'>
+    <br/>
+    <div><input type=submit name="btnG2" value="go" onclick="goto('url1'+'\'')"/></div>
+    <input type=submit name="btnG2" value="go" onclick="goto('url2')"/>
+    <div><input type=submit name="btnG2" value="go" onclick='goto("url4"+"\"")'></div>
+    <br/>
+</div>
+HTML;
+$dom->load($str);
+$es = $dom->find('input');
+assert(count($es)==4);
+assert($es[0]->onclick=='goto("url0")');
+assert($es[1]->onclick=="goto('url1'+'\'')");
+assert($es[2]->onclick=="goto('url2')");
+assert($es[3]->onclick=='goto("url4"+"\"")');
+
+// -----------------------------------------------------------------------------
+// monkey test
+$str = <<<HTML
+<
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<
+
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+
+
+<
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<a
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<a<
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<<<<ab
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<<<<ab  
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<<><<>ab  
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<abc
+
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+>
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<abc
+(<1 mol%) 
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+(<1 mol%) 
+HTML;
+$dom->load($str);
+assert($dom->save()==$str);
+
+// -----------------------------------------------------------------------------
+// rnadom string test
+function str_random($length)
+{
+    $str = "";
+    srand((double)microtime()*1000000);
+    $char_list = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $char_list .= "abcdefghijklmnopqrstuvwxyz";
+    $char_list .= "1234567890";
+    $char_list .= "<>!?[]%^&*()";
+    for($i=0; $i<$length; ++$i)
+        $str .= substr($char_list,(rand()%(strlen($char_list))), 1);
+    return $str;
+}
+
+for($i=0; $i<60; ++$i) {
+    $str = str_random($i);
+    //echo $str."\n<br>";
+    $dom->load($str, false);
+    //echo $dom->save()."\n<br>";
+    assert($dom->save()==$str);
+}
+
+// -----------------------------------------------------------------------------
+// customize parsing
+$str = <<<HTML
+<script type="text/javascript" src="test.js">ss</script>
+HTML;
+
+$my_dom = new html_dom_parser;
+$my_dom->prepare($str);
+$count = 0;
+while ($node=$dom->parse()) {
+    switch ($count) {
+        case 0: assert($node->nodetype==HDOM_TYPE_ELEMENT); break;
+        case 1: assert($node->nodetype==HDOM_TYPE_TEXT); assert($node->text()==='ss'); break;
+        case 2: assert($node->nodetype==HDOM_TYPE_ENDTAG); break;
+    }
+    ++$count;
+}
+$my_dom->clear();
+unset($my_dom);
+
+// -----------------------------------------------
+$my_dom = new html_dom_parser;
+$my_dom->prepare($str);
+// strip out <script> tags
+$my_dom->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is", false, false);
+$my_dom->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is", false, false);
+$count = 0;
+while ($node=$dom->parse()) {
+    switch ($count) {
+        case 0: assert($node->nodetype==HDOM_TYPE_ELEMENT); break;
+        case 1: assert($node->nodetype==HDOM_TYPE_TEXT); assert($node->text()===''); break;
+        case 2: assert($node->nodetype==HDOM_TYPE_ENDTAG); break;
+    }
+    ++$count;
+}
+$my_dom->clear();
+unset($my_dom);
+
+// -----------------------------------------------------------------------------
+$dom->clear();
+unset($dom);
+echo '<br>All pass!<br><br>';
+?>
