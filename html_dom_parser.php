@@ -432,7 +432,7 @@ class html_dom_parser {
 
     // parse html content
     function parse() {
-        $s = $this->copy_until_char('<', false);
+        $s = $this->copy_until_char('<');
         if ($s=='') return $this->read_tag();
 
         // text
@@ -469,7 +469,7 @@ class html_dom_parser {
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
             $this->skip($this->token_blank);
             $node->nodetype = HDOM_TYPE_ENDTAG;
-            $node->tag = $this->copy_until_char('>');
+            $node->tag = $this->copy_until_char_escape('>');
             $tag_lower = strtolower($node->tag);
             if ($this->lowercase) $node->tag = $tag_lower;
 
@@ -506,10 +506,11 @@ class html_dom_parser {
         // text
         if (!preg_match("/^[A-Za-z0-9_\\-]+$/", $node->tag)) {
             $node->nodetype = HDOM_TYPE_TEXT;
-            $node->info[HDOM_INFO_END] = $this->index-1;
-            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
+            $node->info[HDOM_INFO_END] = 0;
+            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char_escape('>');
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
+            
             $node->tag = 'text';
             $this->parent->children[] = $node;
             // next
@@ -536,7 +537,12 @@ class html_dom_parser {
         $guard = 0;
 
         // attributes
-        while($this->char!==null && ($node->info[HDOM_INFO_SPACE][]=$this->copy_skip($this->token_blank))!='' || ($this->char!='>' && $this->char!='/')) {
+        while($this->char!='>' && $this->char!='/') {
+            if ($this->char!=null) {
+                if (($node->info[HDOM_INFO_SPACE][]=$this->copy_skip($this->token_blank))=='')
+                    break;
+            }
+
             $name = $this->copy_until($this->token_equal);
 
             if($guard==$this->pos) {
@@ -576,8 +582,8 @@ class html_dom_parser {
             }
         }
 
-        // chsck self closing
-        $end_space = $this->copy_until_char('>');
+        // check self closing
+        $end_space = $this->copy_until_char_escape('>');
         if ($end_space=='/') {
             $node->info[HDOM_INFO_SLASH] = true;
             $node->info[HDOM_INFO_END] = 0;
@@ -601,7 +607,7 @@ class html_dom_parser {
                 $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
                 // next
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
-                $value = $this->copy_until_char('"');
+                $value = $this->copy_until_char_escape('"');
                 // next
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
                 break;
@@ -609,7 +615,7 @@ class html_dom_parser {
                 $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_SINGLE;
                 // next
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
-                $value = $this->copy_until_char("'");
+                $value = $this->copy_until_char_escape("'");
                 // next
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
                 break;
@@ -650,12 +656,21 @@ class html_dom_parser {
         return $ret;
     }
 
-    private function copy_until_char($char, $escape=true) {
+    private function copy_until_char($char) {
         $ret = '';
         while ($this->char!=$char && $this->char!==null) {
-        //while ($this->char!=$char && $this->pos<$this->size) {
+            $ret .= $this->char;
+            // next
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+        }
+        return $ret;
+    }
+
+    private function copy_until_char_escape($char) {
+        $ret = '';
+        while ($this->char!=$char && $this->char!==null) {
             // ignore string escape
-            if ($escape && $this->char=='\\') {
+            if ($this->char=='\\') {
                 $ret .= $this->char;
                 // next
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
