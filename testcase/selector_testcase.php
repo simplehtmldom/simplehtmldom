@@ -71,6 +71,55 @@ assert($es[0]->src=='src0');
 assert($es[0]->innertext=='');
 assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
 
+// -----------------------------------------------
+// xml namespace test
+$str = <<<HTML
+<bw:bizy id="date">text</bw:bizy>
+HTML;
+$dom->load($str);
+$es = $dom->find('bw:bizy');
+assert(count($es)==1);
+assert($es[0]->id=='date');
+
+// -----------------------------------------------
+// user defined tag name test
+$str = <<<HTML
+<div_test id="1">text</div_test>
+HTML;
+$dom->load($str);
+$es = $dom->find('div_test');
+assert(count($es)==1);
+assert($es[0]->id=='1');
+// -----------------------------------------------
+$str = <<<HTML
+<div-test id="1">text</div-test>
+HTML;
+$dom->load($str);
+$es = $dom->find('div-test');
+assert(count($es)==1);
+assert($es[0]->id=='1');
+// -----------------------------------------------
+$str = <<<HTML
+<div::test id="1">text</div::test>
+HTML;
+$dom->load($str);
+$es = $dom->find('div::test');
+assert(count($es)==1);
+assert($es[0]->id=='1');
+
+// -----------------------------------------------
+// find all occurrences of id="1" regardless of the tag
+$str = <<<HTML
+<img class="class0" id="1" src="src0">
+<img class="class1" id="2" src="src1">
+<div class="class2" id="1">ok</div>
+HTML;
+$dom->load($str);
+$es = $dom->find('[id=1]');
+assert(count($es)==2);
+assert($es[0]->tag=='img');
+assert($es[1]->tag=='div');
+
 // -----------------------------------------------------------------------------
 // multiple selector test
 $str = <<<HTML

@@ -52,8 +52,8 @@ class html_dom_node {
         HDOM_INFO_BEGIN=>0,
         HDOM_INFO_END=>0,
         HDOM_INFO_TEXT=>'',
-        HDOM_INFO_SLASH=>false, 
-        HDOM_INFO_QUOTE=>array(), 
+        HDOM_INFO_SLASH=>false,
+        HDOM_INFO_QUOTE=>array(),
         HDOM_INFO_SPACE=>array(),
     );
 
@@ -186,7 +186,7 @@ class html_dom_node {
         if ($selector=='*') return $this->children;
 
         // parse CSS selectors, pattern is modified from mootools
-        $pattern = "/(\w*|\*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
+        $pattern = "/([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
         preg_match_all($pattern, $selector, $matches, PREG_SET_ORDER);
         $selectors = array();
 
@@ -298,8 +298,8 @@ class html_dom_parser {
     private $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'embed'=>1);
     private $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'dl'=>1, 'ol'=>1);
     private $optional_closing_tags = array(
-        'th'=>array('th'=>1, 'tr'=>1, 'td'=>1), 
-        'tr'=>array('tr'=>1, 'td'=>1), 
+        'th'=>array('th'=>1, 'tr'=>1, 'td'=>1),
+        'tr'=>array('tr'=>1, 'td'=>1),
         'td'=>array('td'=>1),
         'dt'=>array('dt'=>1, 'dd'=>1),
         'dd'=>array('dd'=>1, 'dt'=>1),
@@ -424,7 +424,7 @@ class html_dom_parser {
     private function restore_noise($text) {
         while(($pos=strpos($text, '___noise___'))!==false) {
             $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13];
-            if (isset($this->noise[$key])) 
+            if (isset($this->noise[$key]))
                 $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
         }
         return $text;
@@ -474,7 +474,7 @@ class html_dom_parser {
             if ($this->lowercase) $node->tag = $tag_lower;
 
             // mapping parent node
-            if (strtolower($this->parent->tag)!==$tag_lower) {                
+            if (strtolower($this->parent->tag)!==$tag_lower) {
                 if (isset($this->block_tags[$tag_lower]))  {
                     $this->parent->info[HDOM_INFO_END] = null;
                     while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
@@ -504,13 +504,13 @@ class html_dom_parser {
         $node->parent = $this->parent;
 
         // text
-        if (!preg_match("/^[A-Za-z0-9_\\-]+$/", $node->tag)) {
+        if (!preg_match("/^[A-Za-z0-9_\\-:]+$/", $node->tag)) {
             $node->nodetype = HDOM_TYPE_TEXT;
             $node->info[HDOM_INFO_END] = 0;
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char_escape('>');
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
-            
+
             $node->tag = 'text';
             $this->parent->children[] = $node;
             // next
