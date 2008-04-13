@@ -3,7 +3,7 @@
 Version: 0.95
 Author: S. C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
-Contributions by: Yousuke Kumakura (selector improvements)
+Contributions by: Yousuke Kumakura (Attribute Filters)
 Licensed under The MIT License
 Redistributions of files must retain the above copyright notice.
 *******************************************************************************/
@@ -243,30 +243,23 @@ class html_dom_node {
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$this->info[HDOM_INFO_END]; ++$i) {
             $n = $this->parser->nodes[$i];
             if ($n->nodetype==HDOM_TYPE_ENDTAG) continue;
-
             $pass = true;
             if ($tag && $tag!=$n->tag) $pass = false;
             if ($pass && $key && !(isset($n->attr[$key]))) $pass = false;
             if ($pass && $key && $val) {
                 switch ($exp) {
                     case '=':
-                        $valCheck = ($n->attr[$key] === $val) ? true : false;
-                        break;
+                        $valCheck = ($n->attr[$key] === $val) ? true : false; break;
                     case '!=':
-                        $valCheck = ($n->attr[$key] !== $val) ? true : false;
-                        break;
+                        $valCheck = ($n->attr[$key] !== $val) ? true : false; break;
                     case '^=':
-                        $valCheck = (preg_match("/^{$val}/", $n->attr[$key])) ? true : false;
-                        break;
+                        $valCheck = (preg_match("/^{$val}/", $n->attr[$key])) ? true : false; break;
                     case '$=':
-                        $valCheck = (preg_match("/{$val}$/", $n->attr[$key])) ? true : false;
-                        break;
+                        $valCheck = (preg_match("/{$val}$/", $n->attr[$key])) ? true : false; break;
                     case '*=':
-                        $valCheck = (preg_match("/{$val}/", $n->attr[$key])) ? true : false;
-                        break;
+                        $valCheck = (preg_match("/{$val}/", $n->attr[$key])) ? true : false; break;
                     default:
                         $valCheck = true;
-                        break;
                 }
                 if (!isset($n->attr[$key]) || !$valCheck) $pass = false;
             }
@@ -510,7 +503,6 @@ class html_dom_parser {
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char_escape('>');
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
-
             $node->tag = 'text';
             $this->parent->children[] = $node;
             // next

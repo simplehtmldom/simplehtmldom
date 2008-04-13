@@ -68,33 +68,54 @@
     <h2>How to get HTML elements?</h2>
     <div id="container-3">
         <ul>
-            <li><a href="#fragment-31"><span>Basic selectors</span></a></li>
-            <li><a href="#fragment-32"><span>Multiple selectors</span></a></li>
-            <li><a href="#fragment-33"><span>Nested selectors</span></a></li>
+            <li><a href="#fragment-31"><span>Basics</span></a></li>
+            <li><a href="#fragment-32"><span>Attribute Filters</span></a></li>
+            <li><a href="#fragment-33"><span>Multiple selectors</span></a></li>
+            <li><a href="#fragment-34"><span>Nested selectors</span></a></li>
         </ul>
         <div id="fragment-31">
-            <div class="code"> <span class="comment">// Find all link &lt;a&gt;, returns a <strong>array</strong> of element objects </span><br>
+            <div class="code">
+                <div class="code_help"><strong>element</strong><span class="code_help_comment">Matches all elements with the given <strong>name</strong>.</span></div>
+                <span class="comment">// Find all link &lt;a&gt;, returns a <strong>array</strong> of element objects </span><br>
                 $result = $dom-&gt;<strong>find</strong>(<span class="var">'a'</span>);<br>
                 <br>
                 <span class="comment">// Find with index to access the <strong>Nth</strong> returned element object or <strong>null</strong> if not found</span><br>
                 $dom-&gt;<strong>find</strong>(<span class="var">'a'</span>, <span class="var">0</span>)-&gt;<strong>href</strong>; <br>
                 <br>
+                <div class="code_help"><strong>#id</strong><span class="code_help_comment">Matches all element with the given <strong>id</strong> attribute.</span></div>
                 <span class="comment">// Find all &lt;div&gt; which <strong>id</strong>=gbar</span><br>
                 $result = $dom-&gt;<strong>find</strong>(<span class="var">'div#gbar'</span>);<br>
                 <br>
+                <div class="code_help"><strong>.class</strong><span class="code_help_comment">Matches all element with the given <strong>class</strong>.</span></div>
                 <span class="comment">// Find all &lt;span&gt; which <strong>class</strong>=gb1</span><br>
                 $result = $dom-&gt;<strong>find</strong>(<span class="var">'span.gb1'</span>);<br>
                 <br>
-                <span class="comment">// Find all &lt;td&gt; which attribite align=center</span><br>
-                $result = $dom-&gt;<strong>find</strong>(<span class="var">'td[align=&quot;center&quot;]'</span>);<br>
-                <br>
-                <span class="comment">// You can also omit the quotes from an attribute value for convenience</span><br>
-                $result = $dom-&gt;<strong>find</strong>(<span class="var">'td[align=center]'</span>); <br>
-                <br>
-                <span class="comment">// Returns all children in the element </span><br>
-                $result = $dom-&gt;<strong>find</strong>(<span class="var">'*'</span>); </div>
+                <div class="code_help"><strong>*</strong><span class="code_help_comment">Returns <strong>all</strong> children in the element.</span></div>
+                $result = $dom-&gt;<strong>find</strong>(<span class="var">'*'</span>); <br>
+            </div>
         </div>
         <div id="fragment-32">
+            <div class="code">
+                <div class="code_help"><strong>[attribute]</strong><span class="code_help_comment">Matches elements that <strong>have</strong> the specified attribute.</span></div>
+                $result = $dom-&gt;<strong>find</strong>(<span class="var">'[name]'</span>);<br>
+                <br>
+                <div class="code_help"><strong>[attribute=value]</strong><span class="code_help_comment">Matches elements that have the specified attribute with a certain value.</span></div>
+                <span class="comment">// Find all &lt;td&gt; which attribite align=center</span><br>
+                $result = $dom-&gt;<strong>find</strong>(<span class="var">'input[align=&quot;center&quot;]'</span>);<br>
+                <br>
+                <span class="comment">// You can also omit the quotes from an attribute value for convenience</span>                <br>
+                $result = $dom-&gt;<strong>find</strong>(<span class="var">'input[align=center]'</span>);<br>
+                <br>
+                <div class="code_help"><strong>[attribute!=value]</strong><span class="code_help_comment">Matches elements that <strong>don't have</strong> the specified attribute with a certain value.</span></div>
+                                <br>
+                <div class="code_help"><strong>[attribute^=value]</strong><span class="code_help_comment">Matches elements that have the specified attribute and it <strong>starts</strong> with a certain value.</span></div>
+                                <br>
+                <div class="code_help"><strong>[attribute$=value]</strong><span class="code_help_comment">Matches elements that have the specified attribute and it <strong>ends</strong> with a certain value.</span></div>
+                <br>
+                <div class="code_help"><strong>[attribute*=value]</strong><span class="code_help_comment">Matches elements that have the specified attribute and it <strong>contains</strong> a certain value.</span></div>
+                            </div>
+        </div>
+        <div id="fragment-33">
             <div class="code"> <span class="comment">// Find all &lt;li&gt; in &lt;ul&gt; </span><br>
                 $result = $dom-&gt;<strong>find</strong>(<span class="var">'ul li'</span>);<br>
                 <br>
@@ -108,7 +129,7 @@
                 $result = $dom-&gt;<strong>find</strong>(<span class="var">'<var class="var">'table</var> td[align=&quot;center&quot;]'</span>);<br>
             </div>
         </div>
-        <div id="fragment-33">
+        <div id="fragment-34">
             <div class="code"> <span class="comment">// Find all &lt;li&gt; in &lt;ul&gt; </span><br>
                 foreach($dom-&gt;<strong>find</strong>(<span class="var">'ul'</span>) as $ul) <br>
                 {<br>
@@ -185,7 +206,6 @@
     <div id="container-2">
         <ul>
             <li><a href="#fragment-21"><span>Object-oriented way</span></a></li>
-            <li><a href="#fragment-22"><span>Another way</span></a></li>
         </ul>
         <div id="fragment-21">
             <div class="code"><span class="comment">// Get a string from dom object</span><br>
@@ -193,14 +213,6 @@
                 <br>
                 <span class="comment">// Write dom object contents to a file</span><br>
                 $dom-&gt;<strong>save_file</strong>(<span class="var">'result.htm'</span>);</div>
-        </div>
-        <div id="fragment-22">
-            <div class="code"> <span class="comment">// Get a string from dom object</span><br>
-                $str = <strong>str_put_dom</strong>(<span class="var">$dom</span>);<br>
-                <br>
-                <span class="comment">// Writes dom object contents to a file</span><br>
-                <strong>file_put_dom</strong>(<span class="var">'result.htm', $dom</span>);<br>
-            </div>
         </div>
     </div>
     <a name="section_5"></a>
@@ -264,26 +276,31 @@
             </div>
         </div>
     </div>
-	<a name="section_6"></a>
+    <a name="section_6"></a>
     <h2>FAQ</h2>
     <div id="container-6">
         <ul>
             <li><a href="#fragment-61"><span>Memory leak</span></a></li>
         </ul>
         <div id="fragment-61">
-            <div class="code"> <span class="var">Q:</span>                <br>
+            <div class="code"> <span class="var">Q:</span> <br>
                 This script is leaking memory seriously... After it finished running, it's not cleaning up dom object properly from memory.. <br>
                 <br>
-                <span class="var">A:</span>                <br>
+                <span class="var">A:</span> <br>
                 Due to php5 circular references memory leak, after creating DOM object, you must call $dom-&gt;clear() to free memory. <br>
-example: <br>
-<br>
-$dom = file_get_dom(...); <br>
-<span class="comment">// do something... </span><br>
-$dom-&gt;clear(); <br>
-unset($dom); <span class="comment"><br>
-            </span></div>
+                example: <br>
+                <br>
+                $dom = file_get_dom(...); <br>
+                <span class="comment">// do something... </span><br>
+                $dom-&gt;clear(); <br>
+                unset($dom); <span class="comment"><br>
+                </span></div>
         </div>
+    </div>
+	<div><br>
+    Author: S.C. Chen (me578022@gmail.com)<br>
+    Contributions by: Yousuke Kumakura (Attribute Filters)    <br>
+    <br> 
     </div>
 </div>
 <br>

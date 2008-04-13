@@ -43,6 +43,24 @@ margin: 2px 0 2px 0;
 padding: 6px 10px 6px 10px;
 }
 
+.code_help {
+font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
+color: #000000;
+background-color: #CFD4E6;
+margin: 2px 2px 2px 2px;
+padding: 2px 2px 2px 2px;
+font-size: 13px;
+font-weight: normal;
+font-style: normal;
+}
+
+.code_help_comment {
+font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
+color: #0000aa;
+font-size: 11px;
+margin: 0 0 0 20px;
+}
+
 .var {
 font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
 color: Maroon;
