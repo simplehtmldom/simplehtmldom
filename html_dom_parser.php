@@ -141,6 +141,7 @@ class html_dom_node {
 
     // returns the next sibling of node
     function next_sibling($tag_text=false) {
+        if ($this->parent===null) return null;
         $idx = 0;
         $count = count($this->parent->children);
         while ($idx<$count && $this!==$this->parent->children[$idx]) ++$idx;
@@ -153,6 +154,7 @@ class html_dom_node {
 
     // returns the previous sibling of node
     function previous_sibling($tag_text=false) {
+        if ($this->parent===null) return null;
         $idx = 0;
         $count = count($this->parent->children);
         while ($idx<$count && $this!==$this->parent->children[$idx]) ++$idx;
