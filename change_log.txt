@@ -1,5 +1,6 @@
 [On going]
-1. New DOM operation methods(first_child, last_child, next_sibling, previous_sibling).
+1. (Request #1936000) New DOM operations(first_child, last_child, next_sibling, previous_sibling).
+2. Add traverse section in manual.
 #. Fix some typo of testcase.
 
 [PHP Simple HTML DOM Parser v0.95 is released]
