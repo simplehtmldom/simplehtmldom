@@ -1,6 +1,6 @@
 <?php
 /*******************************************************************************
-Version: 0.95
+Version: 0.96
 Author: S. C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
 Contributions by: Yousuke Kumakura (Attribute Filters)
@@ -46,8 +46,8 @@ class html_dom_node {
     public $attr = array();
     public $parent = null;
     public $children = array();
-    public $parser = null;
     public $nodetype = HDOM_TYPE_TEXT;
+    public $dom = null;
     public $info = array(
         HDOM_INFO_BEGIN=>0,
         HDOM_INFO_END=>0,
@@ -57,8 +57,8 @@ class html_dom_node {
         HDOM_INFO_SPACE=>array(),
     );
 
-    function __construct($parser) {
-        $this->parser = $parser;
+    function __construct($dom) {
+        $this->dom = $dom;
     }
 
     function __get($var) {
@@ -85,6 +85,7 @@ class html_dom_node {
     function __isset($var) {
         if ($var=='innertext') return true;
         if ($var=='outertext') return true;
+        if ($var=='plaintext') return true;
         //no value attr: nowrap, checked selected...
         if(array_key_exists($var, $this->attr)) return true;
         return isset($this->attr[$var]);
@@ -100,13 +101,66 @@ class html_dom_node {
         unset($this->nodetype);
         unset($this->info);
         unset($this->attr);
-        unset($this->parser);
         unset($this->parent);
         unset($this->children);
+        unset($this->dom);
     }
 
+    // remove attribute
     function remove_attr($var) {
         if (isset($this->attr[$var])) unset($this->attr[$var]);
+    }
+
+    // returns the parent of node
+    function parent() {
+        return $this->parent;
+    }
+
+    // returns children(array) of node
+    function children() {
+        return $this->children;
+    }
+
+    // returns the first child of node
+    function first_child($tag_text=false) {
+        foreach($this->children as $c) {
+            if (!$tag_text && $c->tag=='text') continue;
+            return $c;
+        }
+        return null;
+    }
+
+    // returns the last child of node
+    function last_child($tag_text=false) {
+        foreach(array_reverse($this->children) as $c) {
+            if (!$tag_text && $c->tag=='text') continue;
+            return $c;
+        }
+        return null;
+    }
+
+    // returns the next sibling of node
+    function next_sibling($tag_text=false) {
+        $idx = 0;
+        $count = count($this->parent->children);
+        while ($idx<$count && $this!==$this->parent->children[$idx]) ++$idx;
+        for ($i=$idx+1; $i<$count; ++$i) {
+            if (!$tag_text && $this->parent->children[$i]->tag=='text') continue;
+            return $this->parent->children[$i];
+        }
+        return null;
+    }
+
+    // returns the previous sibling of node
+    function previous_sibling($tag_text=false) {
+        $idx = 0;
+        $count = count($this->parent->children);
+        while ($idx<$count && $this!==$this->parent->children[$idx]) ++$idx;
+        for ($i=$idx-1; $i>-1; --$i) {
+            if (!$tag_text && $this->parent->children[$i]->tag=='text') continue;
+            return $this->parent->children[$i];
+        }
+        return null;
     }
 
     // get dom node's inner html
@@ -121,13 +175,12 @@ class html_dom_node {
     function outertext() {
         if (isset($this->info[HDOM_INFO_OUTER])) return $this->info[HDOM_INFO_OUTER];
         // begin tag
-        $ret = $this->parser->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
+        $ret = $this->dom->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
         // inner
         if (isset($this->info[HDOM_INFO_INNER])) $ret .= $this->info[HDOM_INFO_INNER];
-        else {foreach($this->children as $n) $ret .= $n->outertext(); }
+        else {foreach($this->children as $n) $ret .= $n->outertext();}
         // end tag
-        if($this->info[HDOM_INFO_END])
-            $ret .= $this->parser->nodes[$this->info[HDOM_INFO_END]]->text($this->tag);
+        if($this->info[HDOM_INFO_END]) $ret .= $this->dom->nodes[$this->info[HDOM_INFO_END]]->text($this->tag);
         return $ret;
     }
 
@@ -180,68 +233,75 @@ class html_dom_node {
         return $ret.'>';
     }
 
-    // find nodes by css selector
+    // find elements by css selector
     function find($selector, $idx=-1) {
-        $selector = trim($selector);
-        if ($selector=='*') return $this->children;
+        if (trim($selector=='*')) return $this->children;
 
-        // parse CSS selectors, pattern is modified from mootools
-        $pattern = "/([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
-        preg_match_all($pattern, $selector, $matches, PREG_SET_ORDER);
-        $selectors = array();
-
-        foreach ($matches as $v) {
-            $key = null;
-            $val = null;
-            $tag = null;
-            $exp = '=';
-            if ($v[0]=='') continue;
-            $tag = $v[1];
-            if(!empty($v[2])) {$key='id'; $val=$v[2];}
-            if(!empty($v[3])) {$key='class'; $val=$v[3];}
-            if(!empty($v[4])) {
-                $key=$v[4];
-                if(!empty($v[5])) $exp=$v[5];
-                if(!empty($v[6])) $val=$v[6];
-            }
-            $selectors[] = array('tag'=>$tag, 'key'=>$key, 'val'=>$val, 'exp'=>$exp);
-        }
-
+        $selectors = $this->parse_selector($selector);
         if (($levle=count($selectors))==0) return array();
+
         $ret = array();
         $head = array($this->info[HDOM_INFO_BEGIN]=>1);
 
         // no recursive!
         for ($l=0; $l<$levle; ++$l) {
+            $op = $selectors[$l]['op'];
             $key = $selectors[$l]['key'];
             $val = $selectors[$l]['val'];
             $tag = $selectors[$l]['tag'];
             $exp = $selectors[$l]['exp'];
-            if ($this->parser->lowercase) {
+            if ($this->dom->lowercase) {
                 if ($tag) $tag = strtolower($tag);
                 if ($key) $key = strtolower($key);
             }
 
             $ret = array();
             foreach($head as $k=>$v) {
-                $n = ($k==-1) ? $this->parser->root : $this->parser->nodes[$k];
-                $n->seek($tag, $key, $val, $exp, $ret);
+                $n = ($k==-1) ? $this->dom->root : $this->dom->nodes[$k];
+                $n->seek($op, $tag, $key, $val, $exp, $ret);
             }
             $head = $ret;
         }
 
         $final = array();
-        foreach($head as $k=>$v) $final[] = $this->parser->nodes[$k];
+        foreach($head as $k=>$v) $final[] = $this->dom->nodes[$k];
 
         if ($idx<0) return $final;
         if (!isset($final[$idx])) return null;
         return $final[$idx];
     }
 
-    // seek for given condition
-    private function seek($tag, $key, $val, $exp, &$ret) {
+    private function parse_selector($selector) {
+        $selectors = array();
+
+        // parse CSS selectors, pattern is modified from mootools
+        $pattern = "/([!]?)([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
+        preg_match_all($pattern, trim($selector), $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $v) {
+            $op = true;
+            $key = null;
+            $val = null;
+            $tag = $v[2];
+            $exp = '=';
+            if ($v[0]=='') continue;
+            if ($v[1]=='!') $op = false;
+            if(!empty($v[3])) {$key = 'id'; $val = $v[3];}
+            if(!empty($v[4])) {$key = 'class'; $val = $v[4];}
+            if(!empty($v[5])) {
+                $key = $v[5];
+                if(!empty($v[6])) $exp = $v[6];
+                if(!empty($v[7])) $val = $v[7];
+            }
+            $selectors[] = array('op'=>$op, 'tag'=>$tag, 'key'=>$key, 'val'=>$val, 'exp'=>$exp);
+        }
+        return $selectors;
+    }
+
+    // seek for given conditions
+    private function seek($op, $tag, $key, $val, $exp, &$ret) {
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$this->info[HDOM_INFO_END]; ++$i) {
-            $n = $this->parser->nodes[$i];
+            $n = $this->dom->nodes[$i];
             if ($n->nodetype==HDOM_TYPE_ENDTAG) continue;
             $pass = true;
             if ($tag && $tag!=$n->tag) $pass = false;
@@ -249,9 +309,9 @@ class html_dom_node {
             if ($pass && $key && $val) {
                 switch ($exp) {
                     case '=':
-                        $valCheck = ($n->attr[$key] === $val) ? true : false; break;
+                        $valCheck = ($n->attr[$key]===$val) ? true : false; break;
                     case '!=':
-                        $valCheck = ($n->attr[$key] !== $val) ? true : false; break;
+                        $valCheck = ($n->attr[$key]!==$val) ? true : false; break;
                     case '^=':
                         $valCheck = (preg_match("/^{$val}/", $n->attr[$key])) ? true : false; break;
                     case '$=':
@@ -263,7 +323,8 @@ class html_dom_node {
                 }
                 if (!isset($n->attr[$key]) || !$valCheck) $pass = false;
             }
-            if ($pass) $ret[$i] = 1;
+            if ($op) {if ($pass) $ret[$i] = 1;}
+            else {if (!$pass) $ret[$i] = 1;}
         }
         unset($n);
     }
@@ -318,8 +379,6 @@ class html_dom_parser {
         $this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is", false, false);
         // strip out <pre> tags
         $this->remove_noise("'<\s*pre[^>]*>(.*?)<\s*/\s*pre\s*>'is", false, false);
-        // strip out <code> tags
-        $this->remove_noise("'<\s*code[^>]*>(.*?)<\s*/\s*code\s*>'is", false, false);
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
         // parsing
@@ -436,7 +495,7 @@ class html_dom_parser {
         $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
         $node->parent = $this->parent;
         $this->parent->children[] = $node;
-        // next
+
         ++$this->index;
         return $node;
     }
@@ -530,7 +589,7 @@ class html_dom_parser {
 
         // attributes
         while($this->char!='>' && $this->char!='/') {
-            if ($this->char!=null) {
+            if ($this->char!==null) {
                 if (($node->info[HDOM_INFO_SPACE][]=$this->copy_skip($this->token_blank))=='')
                     break;
             }

@@ -147,6 +147,41 @@ for($i=0; $i<60; ++$i) {
 }
 
 // -----------------------------------------------------------------------------
+// lowercase test
+$str = <<<HTML
+<img class="class0" id="id0" src="src0">
+HTML;
+$dom->load($str);
+assert(count($dom->find('img'))==1);
+assert(count($dom->find('IMG'))==1);
+assert(isset($dom->find('img', 0)->class));
+assert(!isset($dom->find('img', 0)->CLASS));
+assert($dom->find('img', 0)->class=='class0');
+assert($dom->save()==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<IMG CLASS="class0" ID="id0" SRC="src0">
+HTML;
+$dom->load($str);
+assert(count($dom->find('img'))==1);
+assert(count($dom->find('IMG'))==1);
+assert(isset($dom->find('img', 0)->class));
+assert(!isset($dom->find('img', 0)->CLASS));
+assert($dom->find('img', 0)->class=='class0');
+assert($dom->save()==strtolower($str));
+// -----------------------------------------------
+$str = <<<HTML
+<IMG CLASS="class0" ID="id0" SRC="src0">
+HTML;
+$dom->load($str, false);
+assert(count($dom->find('img'))==0);
+assert(count($dom->find('IMG'))==1);
+assert(isset($dom->find('IMG', 0)->CLASS));
+assert(!isset($dom->find('IMG', 0)->class));
+assert($dom->find('IMG', 0)->CLASS=='class0');
+assert($dom->save()==$str);
+
+// -----------------------------------------------------------------------------
 // customize parsing
 $str = <<<HTML
 <script type="text/javascript" src="test.js">ss</script>

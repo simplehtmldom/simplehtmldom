@@ -193,7 +193,7 @@ $dom->load($str);
 // echo '<br>'.htmlspecialchars($dom->save());
 // -----------------------------------------------
 $str = <<<HTML
-<strong class="''""";;''""";;\"\''''\"""''''""''>""'''"'" 
+<strong class="''""";;''""";;\"\''''\"""''''""''>""'''"'" '
 HTML;
 $dom->load($str);
 // echo '<br>'.htmlspecialchars($str);

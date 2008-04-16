@@ -1,5 +1,26 @@
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01//EN' 'http://www.w3.org/TR/html4/strict.dtd'>
+<html lang="en">
+ <head>
+  <title>Selectors</title>
+  <link href="default.css" type="text/css" rel="stylesheet">
+  <link href="http://www.w3.org/StyleSheets/TR/W3C-WD.css" type="text/css" rel="stylesheet">
+  <script src="jquery-1.2.3.pack.js"></script>
+<script language="JavaScript" type="text/JavaScript">
+	$(document).ready(function(){
+		console.log($('a').size());
+        /*
+        $('div,p,a').each(
+            function(idx) {
+                console.log(this.href);
+            }
+        );
+        */
+	});
+</script>
+ </head>
+ <body>
   <div class="head">
-   <p><a href="http://www.w3.org/"><img height=48 alt=W3C src="http://www.w3.org/Icons/w3c_home" width=72></a>
+   <p id="p1"><a id="a1" href="http://www.w3.org/"><img height=48 alt=W3C src="http://www.w3.org/Icons/w3c_home" width=72></a>
 
    <h1 id="title">Selectors</h1>
 
@@ -9,41 +30,41 @@
 
     <dt>This version:
 
-    <dd><a href="http://www.w3.org/TR/2005/WD-css3-selectors-20051215">
+    <dd><a id="a2" href="http://www.w3.org/TR/2005/WD-css3-selectors-20051215">
                  http://www.w3.org/TR/2005/WD-css3-selectors-20051215</a>
 
     <dt>Latest version:
 
-    <dd><a href="http://www.w3.org/TR/css3-selectors">
+    <dd><a id="a3" href="http://www.w3.org/TR/css3-selectors">
                  http://www.w3.org/TR/css3-selectors</a>
 
     <dt>Previous version:
 
-    <dd><a href="http://www.w3.org/TR/2001/CR-css3-selectors-20011113">
+    <dd><a id="a4" href="http://www.w3.org/TR/2001/CR-css3-selectors-20011113">
                  http://www.w3.org/TR/2001/CR-css3-selectors-20011113</a>
 
-    <dt><a name=editors-list></a>Editors:
+    <dt><a id="a5" name=editors-list></a>Editors:
 
     <dd class="vcard"><span class="fn">Daniel Glazman</span> (Invited Expert)</dd>
 
-    <dd class="vcard"><a lang="tr" class="url fn" href="http://www.tantek.com/">Tantek &Ccedil;elik</a> (Invited Expert)
+    <dd class="vcard"><a id="a6" lang="tr" class="url fn" href="http://www.tantek.com/">Tantek &Ccedil;elik</a> (Invited Expert)
 
-    <dd class="vcard"><a href="mailto:ian@hixie.ch" class="url fn">Ian Hickson</a> (<span
-    class="company"><a href="http://www.google.com/">Google</a></span>)
+    <dd class="vcard"><a id="a7" href="mailto:ian@hixie.ch" class="url fn">Ian Hickson</a> (<span
+    class="company"><a id="a8" href="http://www.google.com/">Google</a></span>)
 
     <dd class="vcard"><span class="fn">Peter Linss</span> (former editor, <span class="company"><a
-    href="http://www.netscape.com/">Netscape/AOL</a></span>)
+    id="a9" href="http://www.netscape.com/">Netscape/AOL</a></span>)
 
     <dd class="vcard"><span class="fn">John Williams</span> (former editor, <span class="company"><a
-    href="http://www.quark.com/">Quark, Inc.</a></span>)
+    id="a10" href="http://www.quark.com/">Quark, Inc.</a></span>)
 
    </dl>
 
-   <p class="copyright"><a
-   href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">
-   Copyright</a> &copy; 2005 <a href="http://www.w3.org/"><abbr
+   <p id="p2" class="copyright"><a
+   id="a11" href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">
+   Copyright</a> &copy; 2005 <a id="a12" href="http://www.w3.org/"><abbr
    title="World Wide Web Consortium">W3C</abbr></a><sup>&reg;</sup>
-   (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts
+   (<a id="a13" href="http://www.csail.mit.edu/"><abbr title="Massachusetts
    Institute of Technology">MIT</abbr></a>, <a
    href="http://www.ercim.org/"><acronym title="European Research
    Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a
@@ -62,11 +83,11 @@
 
   <h2><a name=abstract></a>Abstract</h2>
 
-  <p><em>Selectors</em> are patterns that match against elements in a
+  <p id="p3"><em>Selectors</em> are patterns that match against elements in a
   tree. Selectors have been optimized for use with HTML and XML, and
   are designed to be usable in performance-critical code.</p>
 
-  <p><acronym title="Cascading Style Sheets">CSS</acronym> (Cascading
+  <p id="p4"><acronym title="Cascading Style Sheets">CSS</acronym> (Cascading
   Style Sheets) is a language for describing the rendering of <acronym
   title="Hypertext Markup Language">HTML</acronym> and <acronym
   title="Extensible Markup Language">XML</acronym> documents on
@@ -75,11 +96,11 @@
   describes extensions to the selectors defined in CSS level 2. These
   extended selectors will be used by CSS level 3.
 
-  <p>Selectors define the following function:</p>
+  <p id="p5">Selectors define the following function:</p>
 
   <pre>expression &#x2217; element &rarr; boolean</pre>
 
-  <p>That is, given an element and a selector, this specification
+  <p id="p6">That is, given an element and a selector, this specification
   defines whether that element matches the selector.</p>
 
   <p>These expressions can also be used, for instance, to select a set
@@ -2863,3 +2884,5 @@ the final editorial review.</p>
   <dd><a name="refsYACC"></a> S. C. Johnson; "<cite>YACC &mdash; Yet another compiler compiler</cite>", Technical Report, Murray Hill, 1975
 
 </dl>
+</body>
+</html>

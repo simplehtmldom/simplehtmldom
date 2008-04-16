@@ -15,8 +15,13 @@ assert(count($dom->find('div[class$=mple]'))==43);
 assert(count($dom->find('div[class*=e]'))==50);
 assert(count($dom->find('div[class!=made_up]'))==51);
 
-//echo count($dom->find('div p a'));
+assert(count($dom->find('p'))==324);
 
+echo count($dom->find('a'));
+
+foreach($dom->find('a') as $e) {
+    echo $e->href.'<br>';
+}
 
 echo 'All pass!<br>';
 ?>

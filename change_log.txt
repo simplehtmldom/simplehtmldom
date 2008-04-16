@@ -1,4 +1,6 @@
 [On going]
+
+[PHP Simple HTML DOM Parser v0.95 is released]
 1. New attribute filters (Thanks to Yousuke Kumakura).
 2. Fix the bug of optional-closing tags.
 3. Fix the bug of parsing the line break next to the tag's name.

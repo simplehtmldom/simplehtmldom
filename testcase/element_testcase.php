@@ -4,6 +4,52 @@ require_once('../html_dom_parser.php');
 $dom = new html_dom_parser;
 
 // -----------------------------------------------------------------------------
+// DOM tree test
+$str = <<<HTML
+<div id="div1">
+    <div id="div10"></div>
+    <div id="div11"></div>
+    <div id="div12"></div>
+</div>
+HTML;
+$dom->load($str);
+
+$e = $dom->find('div#div1', 0);
+assert($e->first_child()->id=='div10');
+assert($e->last_child()->id=='div12');
+assert($e->next_sibling()==null);
+assert($e->previous_sibling()==null);
+// -----------------------------------------------
+$str = <<<HTML
+<div id="div0">
+    <div id="div00"></div>
+</div>
+<div id="div1">
+    <div id="div10"></div>
+    <div id="div11"></div>
+    <div id="div12"></div>
+</div>
+<div id="div2"></div>
+HTML;
+$dom->load($str);
+
+$e = $dom->find('div#div1', 0);
+assert($e->first_child()->id=='div10');
+assert($e->last_child()->id=='div12');
+assert($e->next_sibling()->id=='div2');
+assert($e->previous_sibling()->id=='div0');
+
+$e = $dom->find('div#div2', 0);
+assert($e->first_child()==null);
+assert($e->last_child()==null);
+
+$e = $dom->find('div#div0 div#div00', 0);
+assert($e->first_child()==null);
+assert($e->last_child()==null);
+assert($e->next_sibling()==null);
+assert($e->previous_sibling()==null);
+
+// -----------------------------------------------------------------------------
 // no value attr test
 $str = <<<HTML
 <form name="form1" method="post" action="">
@@ -51,7 +97,7 @@ $str = <<<HTML
 HTML;
 $dom->load($str);
 assert($dom->save()==$str);
-
+// -----------------------------------------------
 $str2 = <<<HTML
 <html>
     <head></head>
@@ -63,7 +109,7 @@ $str2 = <<<HTML
 HTML;
 $dom->find('span', 0)->innertext = 'bar';
 assert($dom->save()==$str2);
-
+// -----------------------------------------------
 $str3 = <<<HTML
 <html>
     <head>ok</head>
