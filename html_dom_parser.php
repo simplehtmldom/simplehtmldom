@@ -381,6 +381,8 @@ class html_dom_parser {
         $this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is", false, false);
         // strip out <pre> tags
         $this->remove_noise("'<\s*pre[^>]*>(.*?)<\s*/\s*pre\s*>'is", false, false);
+        // strip out <code> tags
+        $this->remove_noise("'<\s*code[^>]*>(.*?)<\s*/\s*code\s*>'is", false, false);
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
         // parsing

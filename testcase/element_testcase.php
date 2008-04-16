@@ -5,6 +5,20 @@ $dom = new html_dom_parser;
 
 // -----------------------------------------------------------------------------
 // DOM tree test
+$dom->load('');
+$e = $dom->root;
+assert($e->first_child()==null);
+assert($e->last_child()==null);
+assert($e->next_sibling()==null);
+assert($e->previous_sibling()==null);
+// -----------------------------------------------
+$dom->load('<div id="div1"></div>');
+$e = $dom->root;
+assert($e->first_child()->id=='div1');
+assert($e->last_child()->id=='div1');
+assert($e->next_sibling()==null);
+assert($e->previous_sibling()==null);
+// -----------------------------------------------
 $str = <<<HTML
 <div id="div1">
     <div id="div10"></div>
@@ -232,7 +246,7 @@ $str = <<<HTML
    SRC="../graphics/sounds/1812over.mid"
    HEIGHT=60 WIDTH=144>
 HTML;
-$dom = str_get_dom($str);
+$dom->load($str);
 $e = $dom->find('embed', 0);
 assert($e->src=='../graphics/sounds/1812over.mid');
 assert($e->height=='60');
@@ -248,6 +262,7 @@ $str = <<<HTML
     </pre>
 </div>
 HTML;
+$dom->load($str);
 assert(count($dom->find('input'))==0);
 
 // -----------------------------------------------------------------------------
@@ -259,7 +274,10 @@ $str = <<<HTML
     </CODE>
 </div>
 HTML;
+$dom->load($str);
+assert(count($dom->find('code'))==1);
 assert(count($dom->find('input'))==0);
+echo 'a';
 
 // -----------------------------------------------------------------------------
 $dom->clear();
