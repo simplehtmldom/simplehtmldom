@@ -12,12 +12,16 @@ assert($e->last_child()==null);
 assert($e->next_sibling()==null);
 assert($e->previous_sibling()==null);
 // -----------------------------------------------
-$dom->load('<div id="div1"></div>');
+$str = '<div id="div1"></div>';
+$dom->load($str);
 $e = $dom->root;
 assert($e->first_child()->id=='div1');
 assert($e->last_child()->id=='div1');
 assert($e->next_sibling()==null);
 assert($e->previous_sibling()==null);
+assert($e->plaintext=='');
+assert($e->innertext==$str);
+assert($e->outertext==$str);
 // -----------------------------------------------
 $str = <<<HTML
 <div id="div1">
@@ -277,7 +281,6 @@ HTML;
 $dom->load($str);
 assert(count($dom->find('code'))==1);
 assert(count($dom->find('input'))==0);
-echo 'a';
 
 // -----------------------------------------------------------------------------
 $dom->clear();

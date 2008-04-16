@@ -175,6 +175,7 @@ class html_dom_node {
 
     // get dom node's outer text (with tag)
     function outertext() {
+        if ($this->tag=='root') return $this->dom->save();
         if (isset($this->info[HDOM_INFO_OUTER])) return $this->info[HDOM_INFO_OUTER];
         // begin tag
         $ret = $this->dom->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
