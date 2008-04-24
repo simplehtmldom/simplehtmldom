@@ -88,9 +88,14 @@ $str = <<<HTML
 HTML;
 $dom->load($str);
 
-echo $dom->find("#div1", 0)->children[1]->id;
-echo $dom->find("#div1", 0)->children[1]->children[1]->id;
-echo $dom->find("#div1", 0)->children(1)->children(1)->id;
+assert($dom->find("#div1", 0)->id=='div1');
+assert($dom->find("#div1", 0)->children(0)->id=='div10');
+assert($dom->find("#div1", 0)->children(1)->children(1)->id=='div111');
+assert($dom->find("#div1", 0)->children(1)->children(1)->children(2)->id=='div1112');
+
+assert($dom->find("#div1", 0)->children[1]->id=='div11');
+assert($dom->find("#div1", 0)->children[1]->children[1]->id=='div111');
+assert($dom->find("#div1", 0)->children[1]->children[1]->children[1]->id=='div1111');
 
 // -----------------------------------------------------------------------------
 // no value attr test
