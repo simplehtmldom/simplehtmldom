@@ -66,6 +66,31 @@ assert($e->first_child()==null);
 assert($e->last_child()==null);
 assert($e->next_sibling()==null);
 assert($e->previous_sibling()==null);
+// -----------------------------------------------
+$str = <<<HTML
+<div id="div0">
+    <div id="div00"></div>
+</div>
+<div id="div1">
+    <div id="div10"></div>
+    <div id="div11">
+        <div id="div110"></div>
+        <div id="div111">
+            <div id="div1110"></div>
+            <div id="div1111"></div>
+            <div id="div1112"></div>
+        </div>
+        <div id="div112"></div>
+    </div>
+    <div id="div12"></div>
+</div>
+<div id="div2"></div>
+HTML;
+$dom->load($str);
+
+echo $dom->find("#div1", 0)->children[1]->id;
+echo $dom->find("#div1", 0)->children[1]->children[1]->id;
+echo $dom->find("#div1", 0)->children(1)->children(1)->id;
 
 // -----------------------------------------------------------------------------
 // no value attr test
@@ -174,6 +199,15 @@ $dom->load($str);
 $es = $dom->find('div');
 unset($es[0]->attr['class']);
 assert($es[0]->outertext=='<div id="id2" ><div class="class2">ok</div></div>');
+
+// -----------------------------------------------
+$str = <<<HTML
+<select name=something><options>blah</options><options>blah2</options></select>
+HTML;
+$dom->load($str);
+$e = $dom->find('select[name=something]', 0);
+$e->innertext = '';
+assert($e->outertext =='<select name=something></select>');
 
 // -----------------------------------------------------------------------------
 // nested replacement test

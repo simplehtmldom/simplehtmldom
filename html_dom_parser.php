@@ -48,6 +48,7 @@ class html_dom_node {
     public $children = array();
     public $nodetype = HDOM_TYPE_TEXT;
     public $dom = null;
+    public $nodes = array();
     public $info = array(
         HDOM_INFO_BEGIN=>0,
         HDOM_INFO_END=>0,
@@ -103,6 +104,7 @@ class html_dom_node {
         unset($this->attr);
         unset($this->parent);
         unset($this->children);
+        unset($this->nodes);
         unset($this->dom);
     }
 
@@ -116,60 +118,50 @@ class html_dom_node {
         return $this->parent;
     }
 
-    // returns children(array) of node
-    function children() {
-        return $this->children;
+    // returns children of node
+    function children($idx=-1) {
+        if ($idx==-1) return $this->children;
+        if (isset($this->children[$idx])) return $this->children[$idx];
+        return null;
     }
 
     // returns the first child of node
     function first_child($tag_text=false) {
-        foreach($this->children as $c) {
-            if (!$tag_text && $c->tag=='text') continue;
-            return $c;
-        }
+        if (count($this->children)>0) return $this->children[0];
         return null;
     }
 
     // returns the last child of node
     function last_child($tag_text=false) {
-        foreach(array_reverse($this->children) as $c) {
-            if (!$tag_text && $c->tag=='text') continue;
-            return $c;
-        }
+        if (($count=count($this->children))>0) return $this->children[$count-1];
         return null;
     }
 
     // returns the next sibling of node
-    function next_sibling($tag_text=false) {
+    function next_sibling() {
         if ($this->parent===null) return null;
         $idx = 0;
         $count = count($this->parent->children);
         while ($idx<$count && $this!==$this->parent->children[$idx]) ++$idx;
-        for ($i=$idx+1; $i<$count; ++$i) {
-            if (!$tag_text && $this->parent->children[$i]->tag=='text') continue;
-            return $this->parent->children[$i];
-        }
-        return null;
+        if (++$idx>=$count) return null;
+        return $this->parent->children[$idx];
     }
 
     // returns the previous sibling of node
-    function previous_sibling($tag_text=false) {
+    function previous_sibling() {
         if ($this->parent===null) return null;
         $idx = 0;
         $count = count($this->parent->children);
         while ($idx<$count && $this!==$this->parent->children[$idx]) ++$idx;
-        for ($i=$idx-1; $i>-1; --$i) {
-            if (!$tag_text && $this->parent->children[$i]->tag=='text') continue;
-            return $this->parent->children[$i];
-        }
-        return null;
+        if (--$idx<0) return null;
+        return $this->parent->children[$idx];
     }
 
     // get dom node's inner html
     function innertext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
         $ret = '';
-        foreach($this->children as $n) $ret .= $n->outertext();
+        foreach($this->nodes as $n) $ret .= $n->outertext();
         return $ret;
     }
 
@@ -181,7 +173,7 @@ class html_dom_node {
         $ret = $this->dom->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
         // inner
         if (isset($this->info[HDOM_INFO_INNER])) $ret .= $this->info[HDOM_INFO_INNER];
-        else {foreach($this->children as $n) $ret .= $n->outertext();}
+        else {foreach($this->nodes as $n) $ret .= $n->outertext();}
         // end tag
         if($this->info[HDOM_INFO_END]) $ret .= $this->dom->nodes[$this->info[HDOM_INFO_END]]->text($this->tag);
         return $ret;
@@ -191,7 +183,7 @@ class html_dom_node {
     function plaintext() {
         if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
         $ret = '';
-        foreach($this->children as $n) $ret .= $n->plaintext();
+        foreach($this->nodes as $n) $ret .= $n->plaintext();
         return $ret;
     }
 
@@ -499,7 +491,7 @@ class html_dom_parser {
         $node->info[HDOM_INFO_BEGIN] = $this->index;
         $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
         $node->parent = $this->parent;
-        $this->parent->children[] = $node;
+        $this->parent->nodes[] = $node;
 
         ++$this->index;
         return $node;
@@ -542,7 +534,7 @@ class html_dom_parser {
                     $node->info[HDOM_INFO_END] = $this->index-1;
                     $node->info[HDOM_INFO_TEXT] = '</' . $node->tag . '>';
                     $node->tag = 'text';
-                    $this->parent->children[] = $node;
+                    $this->parent->nodes[] = $node;
                 }
                 $this->parent->info[HDOM_INFO_END] = $this->index-1;
             }
@@ -568,7 +560,7 @@ class html_dom_parser {
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
             $node->tag = 'text';
-            $this->parent->children[] = $node;
+            $this->parent->nodes[] = $node;
             // next
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
             return $node;
@@ -588,6 +580,7 @@ class html_dom_parser {
             $node->parent = $this->parent;
         }
         $this->parent->children[] = $node;
+        $this->parent->nodes[] = $node;
 
         // prevent infinity loop
         $guard = 0;
