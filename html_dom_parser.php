@@ -126,18 +126,18 @@ class html_dom_node {
     }
 
     // returns the first child of node
-    function first_child($tag_text=false) {
+    function first_child() {
         if (count($this->children)>0) return $this->children[0];
         return null;
     }
 
     // returns the last child of node
-    function last_child($tag_text=false) {
+    function last_child() {
         if (($count=count($this->children))>0) return $this->children[$count-1];
         return null;
     }
 
-    // returns the next sibling of node
+    // returns the next sibling of node    
     function next_sibling() {
         if ($this->parent===null) return null;
         $idx = 0;
@@ -156,6 +156,14 @@ class html_dom_node {
         if (--$idx<0) return null;
         return $this->parent->children[$idx];
     }
+
+    // old fashion camel naming conventions
+    function parentNode() {return $this->parent();}
+    function childNodes($idx=-1) {return $this->children($idex);}
+    function firstChild() {return $this->first_child();}
+    function lastChild() {return $this->first_child();}
+    function nextSibling() {return $this->next_sibling();}
+    function previousSibling() {return $this->previous_sibling();}
 
     // get dom node's inner html
     function innertext() {
