@@ -7,7 +7,6 @@ $dir = './html/';
 $files = array(
     array('name'=>'empty.htm',          'url'=>''),
     array('name'=>'google.htm',         'url'=>'http://www.google.com/'),
-
     array('name'=>'myspace.htm',        'url'=>'http://www.myspace.com/'),
     array('name'=>'mootools.htm',       'url'=>'http://www.mootools.net/'),
     array('name'=>'jquery.htm',         'url'=>'http://jquery.com/'),
@@ -39,7 +38,7 @@ foreach($files as $f) {
     else file_put_contents($dir.$f['name'], '');
 
     $start = microtime();
-    $dom->load_file($dir.$f['name'], false);
+    $dom->load(file_get_contents($dir.$f['name']), false);
     list($eu, $es) = explode(' ', microtime());
     list($bu, $bs) = explode(' ', $start);
     echo sprintf('(%.1f)', ((float)$eu+(float)$es-(float)$bu-(float)$bs)*1000).'<br>';

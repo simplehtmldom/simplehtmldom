@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="pragma" content="no-cache">
+<link href="default.css" rel="stylesheet" type="text/css">
+<title>PHP Simple HTML DOM Parser</title>
+<link href="css/default.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="css/ui.tabs.css" type="text/css" media="print, projection, screen">
+</head>
+<body>
+<h1 align="center">PHP Simple HTML DOM Parser Manual </h1>
+<div id="content">
+  <h2>Index</h2>
+  <ul>
+    <li><a href="manual.htm">Back to index</a></li>
+  </ul>
+  <h2>Function Reference</h2>
+  <div class="code"> <strong>Helper</strong> functions
+    <table width="100%"  border="0" cellspacing="2" cellpadding="2">
+      <tr bgcolor="#CCCCCC">
+        <td width="370" class="code_help">
+          <div align="center">Name</div>
+        </td>
+        <td class="code_help">
+          <div align="center">Description</div>
+        </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td><span class="returns">dom</span> <strong>str_get_dom </strong>( <span class="var">string $content</span> )</td>
+        <td class="description">Creates a DOM object from a <strong>string</strong>.</td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td><span class="returns">dom</span> <strong>file_get_dom </strong>( <span class="var">string $filename</span> )</td>
+        <td class="description">Creates a DOM object from a <strong>file</strong> or a <strong>URL</strong>.</td>
+      </tr>
+    </table>
+    <br>
+    <strong>DOM</strong> methods &amp; properties <br>
+    <table width="100%"  border="0" cellspacing="2" cellpadding="2">
+      <tr bgcolor="#CCCCCC">
+        <td width="370" class="code_help">
+          <div align="center">Name</div>
+        </td>
+        <td class="code_help">
+          <div align="center">Description</div>
+        </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">void</div>
+          $dom-&gt;<strong>load</strong> (<span class="var">string $content [, bool $lowercase]</span> )</td>
+        <td class="description"> Load contents from a <strong>string</strong>.<br>
+          $<strong>lowercase </strong>(optional): if value is <strong>true</strong>, all tag and attribute names will convert to lowercase for the convenience of query, default value is <strong>true</strong>. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">void</div>
+          $dom-&gt;<strong>load_file</strong> (<span class="var"> string $filename</span> )</td>
+        <td class="description"> Load contents from a from a <strong>file</strong> or a <strong>URL</strong>.</td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">string</div>
+          $dom-&gt;<strong>save</strong> ( <span class="var">[string $filename]</span> )</td>
+        <td class="description">Dumps the internal DOM tree back into a <strong>string</strong>.<br>
+          If the <strong>$filename</strong> is set, result string will save to file. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">void</div>
+          $dom-&gt;<strong>clear</strong> ()</td>
+        <td class="description">Clean up memory.</td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">mixed</div>
+          $dom-&gt;<strong>find</strong> (<span class="var"> string $selector [, int $index] </span>)</td>
+        <td bgcolor="#DDDDDD" class="description">Find elements by the <strong>CSS selector</strong>. <br>
+          Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise return an <strong>array of object</strong>. </td>
+      </tr>
+    </table>
+    <br>
+    <strong>Element</strong> methods &amp; properties <br>
+    <table width="100%"  border="0" cellspacing="2" cellpadding="2">
+      <tr bgcolor="#CCCCCC">
+        <td width="370" class="code_help">
+          <div align="center">Name</div>
+        </td>
+        <td class="code_help">
+          <div align="center">Description</div>
+        </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">mixed</div>
+          $e-&gt;<strong>find</strong> (<span class="var"> string $selector [, int $index] </span>)</td>
+        <td class="description">Find children by the <strong>CSS selector</strong>. <br>
+          Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise, return an <strong>array</strong> of object. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">string</div>
+          $e-&gt;<span class="var"><strong>attribute</strong></span></td>
+        <td class="description">Read or write element's <strong>attribure value</strong>. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">void</div>
+          $e-&gt;<span class="var"><strong>attribute</strong></span><strong> = null </strong></td>
+        <td class="description"><strong>Remove</strong> the attribute of element. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">string</div>
+          $e-&gt;<strong>tag</strong></td>
+        <td class="description">Read or write the <strong>tag name</strong> of element.</td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">string</div>
+          $e-&gt;<strong>outertext</strong></td>
+        <td class="description">Read or write the <strong>outer HTML text </strong> of element.</td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">string</div>
+          $e-&gt;<strong>innertext</strong></td>
+        <td class="description">Read or write the <strong>inner HTML text </strong> of element.</td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">string</div>
+          $e-&gt;<strong>plaintext</strong></td>
+        <td class="description">Read or write the <strong>plain text </strong> of element.</td>
+      </tr>
+    </table>
+    <strong><br>
+    DOM</strong> Traversing<br>
+    <table width="100%"  border="0" cellspacing="2" cellpadding="2">
+      <tr bgcolor="#CCCCCC">
+        <td width="370" class="code_help">
+          <div align="center">Name</div>
+        </td>
+        <td class="code_help">
+          <div align="center">Description</div>
+        </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">mixed</div>
+          $e-&gt;<strong>children</strong> ( <span class="var">[int $index]</span> ) </td>
+        <td class="description">Returns the Nth <strong>child object</strong> if <strong>index</strong> is set, otherwise return an <strong>array of children</strong>. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">element</div>
+          $e-&gt;<strong>parent</strong> () </td>
+        <td class="description">Returns the <strong>parent</strong> of element. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">element</div>
+          $e-&gt;<strong>first_child</strong> () </td>
+        <td class="description">Returns the <strong>first child</strong> of element, or <strong>null</strong> if not found. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">element</div>
+          $e-&gt;<strong>last_child </strong>() </td>
+        <td class="description">Returns the <strong>last child</strong> of element, or <strong>null</strong> if not found. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">element</div>
+          $e-&gt;<strong>next_sibling </strong>() </td>
+        <td class="description">Returns the <strong>next sibling</strong> of element, or<strong> null</strong> if not found. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">element</div>
+          $e-&gt;<strong>prev_sibling </strong>() </td>
+        <td class="description">Returns the <strong>previous sibling</strong> of element, or <strong>null</strong> if not found. </td>
+      </tr>
+    </table>
+    <br>
+    <strong>DOM</strong> parsing methods (<span class="var">Use only if you want to customize the parsing behavior</span>) <br>
+    <table width="100%"  border="0" cellspacing="2" cellpadding="2">
+      <tr bgcolor="#CCCCCC">
+        <td width="370" class="code_help">
+          <div align="center">Name</div>
+        </td>
+        <td class="code_help">
+          <div align="center">Description</div>
+        </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">void</div>
+          $dom-&gt;<strong>prepare</strong> ( <span class="var">string $content</span> )</td>
+        <td class="description">prepare HTML data and init everything.</td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td>
+          <div class="returns">void</div>
+          $dom-&gt;<strong>remove_noise</strong> ( <span class="var">string $pattern<br>
+          [, $remove_tag [, $remove_contents]] </span>)</td>
+        <td class="description">Remove noise from html content before parsing.<strong><br>
+          $pattern</strong>: regular expression.<br>
+          <strong>$remove_tag</strong> (optional): drop the noise tag, default value is <strong>true</strong>. <br>
+          <strong>$remove_content </strong>(optional): drop the noise content, default value is <strong>true</strong>. </td>
+      </tr>
+      <tr bgcolor="#DDDDDD">
+        <td height="34">
+          <div class="returns">node</div>
+          $dom-&gt;<strong>parse</strong> ()</td>
+        <td class="description">Returns the parsed <strong>node</strong>, or <strong>null</strong> while end of parsing. </td>
+      </tr>
+    </table>
+  </div>
+  <div><br>
+    Author: S.C. Chen (me578022@gmail.com)<br>
+    Contributions by: Yousuke Kumakura (Attribute Filters) <br>
+    <br>
+  </div>
+</div>
+</body>
+</html>

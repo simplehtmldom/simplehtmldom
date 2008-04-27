@@ -1,7 +1,15 @@
 [On going]
 1. (Request #1936000) New DOM operations(first_child, last_child, next_sibling, previous_sibling).
-2. Add traverse section in manual.
+2. New method to remove attribute.
+3. Add the solution while server behind proxy in FAQ (Thanks to Yousuke Shaggy).
+4. Add traverse section in manual.
+5. Now file_get_dom supports full file_get_contents parameters.
+6. Fix the bug of self-closing tags in the end of file.
+7. Fix the bug of blanks in the end of tag.
+4. Add Reference section in manual.
 #. Fix some typo of testcase.
+
+ 
 
 [PHP Simple HTML DOM Parser v0.95 is released]
 1. New attribute filters (Thanks to Yousuke Kumakura).

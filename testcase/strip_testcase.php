@@ -1,4 +1,6 @@
 <?php
+// -----------------------------------------------------------------------------
+// setup
 error_reporting(E_ALL);
 require_once('../html_dom_parser.php');
 $dom = new html_dom_parser;
@@ -15,7 +17,7 @@ $str = <<<HTML
 HTML;
 $dom->load($str);
 assert(count($dom->find('img'))==1);
-assert($dom->save()==$str);
+assert($dom==$str);
 // -----------------------------------------------
 $str = <<<HTML
 <script type="text/javascript" src="test1.js">ss</script>
@@ -61,7 +63,8 @@ HTML;
 $dom->load($str);
 assert(count($dom->find('script'))==8);
 assert(count($dom->find('style'))==3);
-assert($dom->save()==$str);
+//echo "\n\n\n\n".$dom->save();
+assert($dom==$str);
 
 // -----------------------------------------------------------------------------
 // test comments
@@ -76,6 +79,7 @@ $dom->load($str);
 assert(count($dom->find('input'))==0);
 
 // -----------------------------------------------------------------------------
+// tear down
 $dom->clear();
 unset($dom);
 ?>

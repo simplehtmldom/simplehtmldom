@@ -82,3 +82,21 @@ display: block;
 margin: 14px 0 14px 0;
 padding: 12px 10px 12px 10px;
 }
+
+.description {
+font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
+font-size: 11px;
+color: #333;
+text-ident: 30px;
+font-style: normal;
+}
+
+.returns {
+font-family: Monaco, Verdana, Sans-serif;
+font-size: 10px;
+color: #888;
+float: left;
+text-align: right;
+margin: 0 4px 0 0;
+width: 48px;
+}

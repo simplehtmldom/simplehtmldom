@@ -16,19 +16,20 @@ define('HDOM_QUOTE_SINGLE', 1);
 define('HDOM_QUOTE_NO',     3);
 define('HDOM_INFO_BEGIN',   0);
 define('HDOM_INFO_END',     1);
-define('HDOM_INFO_SLASH',   2);
-define('HDOM_INFO_QUOTE',   3);
-define('HDOM_INFO_SPACE',   4);
-define('HDOM_INFO_TEXT',    5);
-define('HDOM_INFO_INNER',   6);
-define('HDOM_INFO_OUTER',   7);
+define('HDOM_INFO_QUOTE',   2);
+define('HDOM_INFO_SPACE',   3);
+define('HDOM_INFO_TEXT',    4);
+define('HDOM_INFO_INNER',   5);
+define('HDOM_INFO_OUTER',   6);
+define('HDOM_INFO_ENDSPACE',7);
 
-// quick functions
+// helper functions
 // -----------------------------------------------------------------------------
 // get dom form file
-function file_get_dom($filepath, $lowercase=true) {
+function file_get_dom() {
     $dom = new html_dom_parser;
-    $dom->load_file($filepath, $lowercase);
+    $args = func_get_args();
+    $dom->load(call_user_func_array('file_get_contents', $args), true);
     return $dom;
 }
 
@@ -49,47 +50,43 @@ class html_dom_node {
     public $nodetype = HDOM_TYPE_TEXT;
     public $dom = null;
     public $nodes = array();
-    public $info = array(
-        HDOM_INFO_BEGIN=>0,
-        HDOM_INFO_END=>0,
-        HDOM_INFO_TEXT=>'',
-        HDOM_INFO_SLASH=>false,
-        HDOM_INFO_QUOTE=>array(),
-        HDOM_INFO_SPACE=>array(),
-    );
+    public $info = array(HDOM_INFO_BEGIN=>0, HDOM_INFO_END=>0, HDOM_INFO_TEXT=>'', HDOM_INFO_QUOTE=>array(), HDOM_INFO_SPACE=>array(), HDOM_INFO_ENDSPACE=>'');
 
     function __construct($dom) {
         $this->dom = $dom;
     }
 
-    function __get($var) {
-        if (isset($this->attr[$var])) return $this->attr[$var];
-        if ($var=='innertext') return $this->innertext();
-        if ($var=='outertext') return $this->outertext();
-        if ($var=='plaintext') return $this->plaintext();
-        return array_key_exists($var, $this->attr);
+    function __get($name) {
+        if (isset($this->attr[$name])) return $this->attr[$name];
+        switch($name) {
+            case 'outertext': return $this->outertext();
+            case 'innertext': return $this->innertext();
+            case 'plaintext': return $this->plaintext();
+            default: return array_key_exists($name, $this->attr);
+        }
     }
 
-    function __set($var, $val) {
-        if ($var=='innertext') return $this->info[HDOM_INFO_INNER] = $val;
-        if ($var=='outertext') return $this->info[HDOM_INFO_OUTER] = $val;
-        if ($var=='plaintext') return $this->info[HDOM_INFO_TEXT] = $val;
-        if (!isset($this->attr[$var])) {
-            array_unshift($this->info[HDOM_INFO_SPACE], '');
-            array_unshift($this->info[HDOM_INFO_SPACE], '');
-            array_unshift($this->info[HDOM_INFO_SPACE], ' ');
+    function __set($name, $value) {
+        switch($name) {
+            case 'outertext': return $this->info[HDOM_INFO_OUTER] = $value;
+            case 'innertext': return $this->info[HDOM_INFO_INNER] = $value;
+            case 'plaintext': return $this->info[HDOM_INFO_TEXT] = $value;
+        }
+        if (!isset($this->attr[$name])) {
+            $this->info[HDOM_INFO_SPACE][] = array(' ', '', ''); 
             $this->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
         }
-        $this->attr[$var] = $val;
+        $this->attr[$name] = $value;
     }
 
-    function __isset($var) {
-        if ($var=='innertext') return true;
-        if ($var=='outertext') return true;
-        if ($var=='plaintext') return true;
+    function __isset($name) {
+        switch($name) {
+            case 'outertext': return true;
+            case 'innertext': return true;
+            case 'plaintext': return true;
+        }
         //no value attr: nowrap, checked selected...
-        if(array_key_exists($var, $this->attr)) return true;
-        return isset($this->attr[$var]);
+        return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
     }
 
     function __toString() {
@@ -106,11 +103,6 @@ class html_dom_node {
         unset($this->children);
         unset($this->nodes);
         unset($this->dom);
-    }
-
-    // remove attribute
-    function remove_attr($var) {
-        if (isset($this->attr[$var])) unset($this->attr[$var]);
     }
 
     // returns the parent of node
@@ -148,7 +140,7 @@ class html_dom_node {
     }
 
     // returns the previous sibling of node
-    function previous_sibling() {
+    function prev_sibling() {
         if ($this->parent===null) return null;
         $idx = 0;
         $count = count($this->parent->children);
@@ -156,14 +148,6 @@ class html_dom_node {
         if (--$idx<0) return null;
         return $this->parent->children[$idx];
     }
-
-    // old fashion camel naming conventions
-    function parentNode() {return $this->parent();}
-    function childNodes($idx=-1) {return $this->children($idex);}
-    function firstChild() {return $this->first_child();}
-    function lastChild() {return $this->first_child();}
-    function nextSibling() {return $this->next_sibling();}
-    function previousSibling() {return $this->previous_sibling();}
 
     // get dom node's inner html
     function innertext() {
@@ -195,7 +179,7 @@ class html_dom_node {
         return $ret;
     }
 
-    // get node text
+    // get node's text
     function text($tag=null) {
         if ($tag===null) $tag = $this->tag;
         if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
@@ -203,42 +187,33 @@ class html_dom_node {
 
         $ret = '<'.$tag;
         $i = 0;
-        $j = 0;
 
-        $count_space = count($this->info[HDOM_INFO_SPACE]);
         foreach($this->attr as $key=>$val) {
-            $ret .= ($j<$count_space) ? $this->info[HDOM_INFO_SPACE][$j++] : ' ';
-
-            //no value attr: nowrap, checked selected...
-            if ($val===true || $val===false) {
-                if($val===true) $ret .= $key;
-                if ($j<$count_space) ++$j;
+            // skip removed attribute
+            if ($val===null || $val===false) {
+                ++$i; 
+                continue;
             }
-            else {
-                $quote = '"';
-                if ($this->info[HDOM_INFO_QUOTE][$i]==HDOM_QUOTE_DOUBLE) $quote = '"';
-                else if ($this->info[HDOM_INFO_QUOTE][$i]==HDOM_QUOTE_SINGLE) $quote = "'";
-                else $quote = '';
-
+            $ret .= $this->info[HDOM_INFO_SPACE][$i][0];
+            //no value attr: nowrap, checked selected...
+            if ($val===true)
                 $ret .= $key;
-                if ($j<$count_space) $ret .= $this->info[HDOM_INFO_SPACE][$j++];
-
-                $ret .= '=';
-                if ($j<$count_space) $ret .= $this->info[HDOM_INFO_SPACE][$j++];
-
-                $ret .= $quote.$val.$quote;
+            else {
+                $quote = '';
+                switch($this->info[HDOM_INFO_QUOTE][$i]) {
+                    case HDOM_QUOTE_DOUBLE: $quote = '"'; break;
+                    case HDOM_QUOTE_SINGLE: $quote = "'"; break;
+                }
+                $ret .= $key.$this->info[HDOM_INFO_SPACE][$i][1].'='.$this->info[HDOM_INFO_SPACE][$i][2].$quote.$val.$quote;
             }
             ++$i;
         }
-
-        if ($j<$count_space) $ret .= $this->info[HDOM_INFO_SPACE][$j];
-        if($this->info[HDOM_INFO_SLASH]) $ret .= '/';
-        return $ret.'>';
+        return $ret . $this->info[HDOM_INFO_ENDSPACE] . '>';
     }
 
     // find elements by css selector
     function find($selector, $idx=-1) {
-        if (trim($selector=='*')) return $this->children;
+        if ($selector=='*') return $this->children;
 
         $selectors = $this->parse_selector($selector);
         if (($levle=count($selectors))==0) return array();
@@ -270,8 +245,7 @@ class html_dom_node {
         foreach($head as $k=>$v) $final[] = $this->dom->nodes[$k];
 
         if ($idx<0) return $final;
-        if (!isset($final[$idx])) return null;
-        return $final[$idx];
+        return (isset($final[$idx])) ? $final[$idx] : null;
     }
 
     private function parse_selector($selector) {
@@ -331,6 +305,22 @@ class html_dom_node {
         }
         unset($n);
     }
+
+    // old fashion camel naming conventions
+    function getAttribute($name) {return $this->__get($name);}
+    function setAttribute($name, $value) {$this->__set($name, $value);}
+    function hasAttribute($name) {return $this->__isset($name);}
+    function removeAttribute($name) {$this->__set($name, null);}
+    function getElementById($id) {return $this->find("#$id", 0);}
+    function getElementsById($id, $idx=-1) {return $this->find("#$id", $idx);}
+    function getElementByTagName($name) {return $this->find($name, 0);}
+    function getElementsByTagName($name, $idx=-1) {return $this->find($name, $idx);}
+    function parentNode() {return $this->parent();}
+    function childNodes($idx=-1) {return $this->children($idx);}
+    function firstChild() {return $this->first_child();}
+    function lastChild() {return $this->last_child();}
+    function nextSibling() {return $this->next_sibling();}
+    function previousSibling() {return $this->prev_sibling();}
 }
 
 // html dom parser
@@ -369,9 +359,9 @@ class html_dom_parser {
     }
 
     // load html from string
-    function load($str, $attr_name_lowercase=true) {
+    function load($str, $lowercase=true) {
         // prepare
-        $this->prepare($str, $attr_name_lowercase);
+        $this->prepare($str, $lowercase);
         // strip out comments
         $this->remove_noise("'<!--(.*?)-->'is", false, false);
         // strip out <style> tags
@@ -391,15 +381,17 @@ class html_dom_parser {
     }
 
     // load html from file
-    function load_file($filepath, $attr_name_lowercase=true) {
-        $this->load(file_get_contents($filepath), $attr_name_lowercase);
+    function load_file() {
+        $args = func_get_args();
+        $this->load(call_user_func_array('file_get_contents', $args), true);
     }
 
     // save dom as string
-    function save() {
+    function save($filepath='') {
         $ret = '';
         $count = count($this->nodes);
         for ($i=0; $i<$count; ++$i) {
+            
             // outertext defined
             if (isset($this->nodes[$i]->info[HDOM_INFO_OUTER])) {
                 $ret .= $this->nodes[$i]->info[HDOM_INFO_OUTER];
@@ -416,12 +408,8 @@ class html_dom_parser {
                     $i = $this->nodes[$i]->info[HDOM_INFO_END]-1;
             }
         }
+        if ($filepath!=='') file_put_contents($filepath, $ret);
         return $ret;
-    }
-
-    // save dom string to file
-    function save_file($filepath) {
-        return file_put_contents($filepath, $this->save());
     }
 
     // find dom node by css selector
@@ -430,12 +418,12 @@ class html_dom_parser {
     }
 
     // prepare HTML data and init everything
-    function prepare($str, $attr_name_lowercase=true) {
+    function prepare($str, $lowercase=true) {
         $this->clear();
         $this->noise = array();
         $this->nodes = array();
         $this->html = $str;
-        $this->lowercase = $attr_name_lowercase;
+        $this->lowercase = $lowercase;
         $this->index = 0;
         $this->pos = 0;
         $this->root = new html_dom_node($this);
@@ -590,16 +578,12 @@ class html_dom_parser {
         $this->parent->children[] = $node;
         $this->parent->nodes[] = $node;
 
-        // prevent infinity loop
-        $guard = 0;
+        $guard = 0; // prevent infinity loop
+        $space = array($this->copy_skip($this->token_blank), '', '');
 
-        // attributes
-        while($this->char!='>' && $this->char!='/') {
-            if ($this->char!==null) {
-                if (($node->info[HDOM_INFO_SPACE][]=$this->copy_skip($this->token_blank))=='')
-                    break;
-            }
-
+        // handle attributes
+        do {
+            if ($this->char!==null && $space[0]=='') break;
             $name = $this->copy_until($this->token_equal);
 
             if($guard==$this->pos) {
@@ -610,11 +594,11 @@ class html_dom_parser {
             $guard = $this->pos;
 
             // handle endless '<'
-            if($this->pos>=$this->size-1) {
+            if($this->pos>=$this->size-1 && $this->char!='>') {
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->info[HDOM_INFO_END] = 0;
                 $node->info[HDOM_INFO_TEXT] = '<'.$node->tag;
-                if(isset($node->info[HDOM_INFO_SPACE][0])) $node->info[HDOM_INFO_TEXT] .= $node->info[HDOM_INFO_SPACE][0];
+                $node->info[HDOM_INFO_TEXT] .= $space[0];
                 $node->info[HDOM_INFO_TEXT] .= $name;
                 $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
                 $node->tag = 'text';
@@ -622,31 +606,35 @@ class html_dom_parser {
             }
 
             if ($name!='/' && $name!='') {
-                $node->info[HDOM_INFO_SPACE][] = $this->copy_skip($this->token_blank);
+                $space[1] = $this->copy_skip($this->token_blank);
                 if ($this->lowercase) $name = strtolower($name);
                 if ($this->char=='=') {
                     // next
                     $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
-                    $this->parse_attr($node, $name);
+                    $this->parse_attr($node, $name, $space);
                 }
                 else {
                     //no value attr: nowrap, checked selected...
-                    $node->attr[$name] = true;
                     $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
+                    $node->attr[$name] = true;
                     // prev
                     if ($this->char!='>') $this->char = $this->html[--$this->pos];
                 }
+                $node->info[HDOM_INFO_SPACE][] = $space;
+                $space = array($this->copy_skip($this->token_blank), '', '');
             }
-        }
+            else
+                break;
+        } while($this->char!='>' && $this->char!='/');
+
+        $node->info[HDOM_INFO_ENDSPACE] = $space[0];
 
         // check self closing
-        $end_space = $this->copy_until_char_escape('>');
-        if ($end_space=='/') {
-            $node->info[HDOM_INFO_SLASH] = true;
+        if ($this->copy_until_char_escape('>')=='/') {    
+            $node->info[HDOM_INFO_ENDSPACE] .= '/';
             $node->info[HDOM_INFO_END] = 0;
         }
         else {
-            $node->info[HDOM_INFO_SPACE][] = $end_space;
             // reset parent
             if (!isset($this->self_closing_tags[strtolower($node->tag)])) $this->parent = $node;
         }
@@ -656,8 +644,8 @@ class html_dom_parser {
     }
 
     // parse attributes
-    private function parse_attr($node, $name) {
-        $node->info[HDOM_INFO_SPACE][] = $this->copy_skip($this->token_blank);
+    private function parse_attr($node, $name, &$space) {
+        $space[2] = $this->copy_skip($this->token_blank);
 
         switch($this->char) {
             case '"':
@@ -738,5 +726,18 @@ class html_dom_parser {
         }
         return $ret;
     }
+
+    // old fashion Camel naming conventions
+    function childNodes($idx=-1) {return $this->root->childNodes($idx);}
+    function firstChild() {return $this->root->first_child();}
+    function lastChild() {return $this->root->last_child();}
+    function getElementById($id) {return $this->find("#$id", 0);}
+    function getElementsById($id, $idx=-1) {return $this->find("#$id", $idx);}
+    function getElementByTagName($name) {return $this->find($name, 0);}
+    function getElementsByTagName($name, $idx=-1) {return $this->find($name, $idx);}
+    function loadFile() {$args = func_get_args();$this->load(call_user_func_array('file_get_contents', $args), true);}
+
+    // deprecated names
+    function save_file($filepath) {return $this->save($filepath);}
 }
 ?>

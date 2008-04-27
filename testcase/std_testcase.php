@@ -1,4 +1,6 @@
 <?php
+// -----------------------------------------------------------------------------
+// setup
 error_reporting(E_ALL);
 require_once('../html_dom_parser.php');
 $dom = new html_dom_parser;
@@ -44,12 +46,21 @@ assert($es[1]->onclick=="goto('url1'+'\'')");
 assert($es[2]->onclick=="goto('url2')");
 assert($es[3]->onclick=='goto("url4"+"\"")');
 
+// -----------------------------------------------
+$str = <<<HTML
+<div class='class0' id="id0" aa='aa' bb="bb" cc='"cc"' dd="'dd'"></div>
+HTML;
+$dom->load($str);
+assert($dom==$str);
+assert($dom->save()==$str);
+
 // -----------------------------------------------------------------------------
 // monkey test
 $str = <<<HTML
 <
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
@@ -57,6 +68,7 @@ $str = <<<HTML
 
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
@@ -65,36 +77,42 @@ $str = <<<HTML
 <
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
 <a
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
 <a<
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
 <<<<ab
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
 <<<<ab  
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
 <<><<>ab  
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
@@ -102,12 +120,14 @@ $str = <<<HTML
 
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
 >
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
@@ -115,12 +135,14 @@ $str = <<<HTML
 (<1 mol%) 
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
 $str = <<<HTML
 (<1 mol%) 
 HTML;
 $dom->load($str);
+assert($dom==$str);
 assert($dom->save()==$str);
 
 // -----------------------------------------------------------------------------
@@ -143,7 +165,7 @@ for($i=0; $i<60; ++$i) {
     //echo $str."\n<br>";
     $dom->load($str, false);
     //echo $dom->save()."\n<br>";
-    assert($dom->save()==$str);
+    assert($dom==$str);
 }
 
 // -----------------------------------------------------------------------------
@@ -157,7 +179,7 @@ assert(count($dom->find('IMG'))==1);
 assert(isset($dom->find('img', 0)->class));
 assert(!isset($dom->find('img', 0)->CLASS));
 assert($dom->find('img', 0)->class=='class0');
-assert($dom->save()==$str);
+assert($dom==$str);
 // -----------------------------------------------
 $str = <<<HTML
 <IMG CLASS="class0" ID="id0" SRC="src0">
@@ -168,7 +190,7 @@ assert(count($dom->find('IMG'))==1);
 assert(isset($dom->find('img', 0)->class));
 assert(!isset($dom->find('img', 0)->CLASS));
 assert($dom->find('img', 0)->class=='class0');
-assert($dom->save()==strtolower($str));
+assert($dom==strtolower($str));
 // -----------------------------------------------
 $str = <<<HTML
 <IMG CLASS="class0" ID="id0" SRC="src0">
@@ -179,7 +201,7 @@ assert(count($dom->find('IMG'))==1);
 assert(isset($dom->find('IMG', 0)->CLASS));
 assert(!isset($dom->find('IMG', 0)->class));
 assert($dom->find('IMG', 0)->CLASS=='class0');
-assert($dom->save()==$str);
+assert($dom==$str);
 
 // -----------------------------------------------------------------------------
 // customize parsing
@@ -220,6 +242,7 @@ $my_dom->clear();
 unset($my_dom);
 
 // -----------------------------------------------------------------------------
+// tear down
 $dom->clear();
 unset($dom);
 ?>

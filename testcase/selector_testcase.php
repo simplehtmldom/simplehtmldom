@@ -1,4 +1,6 @@
 <?php
+// -----------------------------------------------------------------------------
+// setup
 error_reporting(E_ALL);
 require_once('../html_dom_parser.php');
 $dom = new html_dom_parser;
@@ -404,6 +406,7 @@ assert($es[2]->name=='news[]');
 assert($es[2]->value=='baz');
 
 // -----------------------------------------------------------------------------
+// tear down
 $dom->clear();
 unset($dom);
 ?>

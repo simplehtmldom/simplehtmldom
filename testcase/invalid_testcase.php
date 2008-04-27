@@ -1,4 +1,6 @@
 <?php
+// -----------------------------------------------------------------------------
+// setup
 error_reporting(E_ALL);
 require_once('../html_dom_parser.php');
 $dom = new html_dom_parser;
@@ -139,7 +141,7 @@ HTML;
 $dom->load($str);
 assert(count($dom->find('img'))==2);
 assert(count($dom->find('img'))==2);
-assert($dom->save()==$str);
+assert($dom==$str);
 
 // -----------------------------------------------------------------------------
 // nvalid test 2
@@ -155,7 +157,7 @@ HTML;
 $dom->load($str);
 assert(count($dom->find('span'))==2);
 assert(count($dom->find('div'))==2);
-assert($dom->save()==$str);
+assert($dom==$str);
 
 // -----------------------------------------------------------------------------
 // invalid test 3
@@ -171,7 +173,7 @@ HTML;
 $dom->load($str);
 assert(count($dom->find('span'))==3);
 assert(count($dom->find('div'))==2);
-assert($dom->save()==$str);
+assert($dom==$str);
 
 // -----------------------------------------------------------------------------
 // BAD HTML test
@@ -201,6 +203,7 @@ $dom->load($str);
 //die;
 
 // -----------------------------------------------------------------------------
+// tear down
 $dom->clear();
 unset($dom);
 ?>

@@ -1,4 +1,6 @@
 <?php
+// -----------------------------------------------------------------------------
+// setup
 error_reporting(E_ALL);
 require_once('../html_dom_parser.php');
 $dom = new html_dom_parser;
@@ -56,6 +58,7 @@ assert($es[0]->innertext=='p1');
 assert($dom->save()==$str);
 
 // -----------------------------------------------------------------------------
+// tear down
 $dom->clear();
 unset($dom);
 ?>
