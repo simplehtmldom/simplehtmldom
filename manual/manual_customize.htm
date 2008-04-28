@@ -6,14 +6,6 @@
 <link href="default.css" rel="stylesheet" type="text/css">
 <title>PHP Simple HTML DOM Parser</title>
 <link href="css/default.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="css/ui.tabs.css" type="text/css" media="print, projection, screen">
-<script src="js/jquery-1.2.3.pack.js"></script>
-<script src="js/ui.tabs.pack.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/JavaScript">
-	$(document).ready(function(){
-		$(function() {$('#container_customize > ul').tabs();});
-	});
-</script>
 </head>
 <body>
 <h1 align="center">PHP Simple HTML DOM Parser Manual </h1>
@@ -25,12 +17,14 @@
   <h2>How to customize the parsing behavior?</h2>
   <div id="container_customize">
     <ul>
-      <li><a href="#fragment_customize_extractor"><span>Write a HTML text extractor</span></a></li>
-      <li><a href="#fragment_customize_tips"><span>Tips</span></a></li>
+      <li><a href="#extractor"><span>Write a HTML text extractor</span></a></li>
+      <li><a href="#tips"><span>Tips</span></a></li>
     </ul>
+    <a name="#extractor"></a>
+    <h2>Write a HTML text extractor</h2>
     <div id="fragment_customize_extractor">
       <div class="code"><span class="var">&lt;?php</span><br>
-        <span class="comment">// example of how to customize the parsing behavior</span><br>
+          <span class="comment">// example of how to customize the parsing behavior</span><br>
         include(<span class="var">'html_dom_parser.php'</span>);<br>
         <span class="comment"><br>
         // HTML text extractor</span><br>
@@ -60,6 +54,8 @@
         <span class="var">?&gt;</span><br>
       </div>
     </div>
+    <a name="#tips"></a>
+    <h2>Tips</h2>
     <div id="fragment_customize_tips">
       <div class="code"> <br>
         The method &quot;find(...)&quot; always returns <strong>elements</strong>, but method &quot;parse()&quot; returns <strong>node</strong>.<br>
