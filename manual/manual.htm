@@ -19,7 +19,7 @@
 </script>
 </head>
 <body>
-<h1><a name="top"></a>PHP Simple HTML DOM Parser Manual </h1>
+<h1><a name="top"></a>PHP Simple HTML DOM Parser Manual</h1>
 <div id="content">
   <h2>Index</h2>
   <ul>
@@ -27,8 +27,8 @@
     <li><a href="#section_find">How to find HTML elements?</a></li>
     <li><a href="#section_access">How to access the HTML element's attributes?</a> </li>
     <li><a href="#section_traverse">How to traverse the DOM tree?</a></li>
-    <li><a href="#section_dump">How to dump  contents of DOM object?</a></li>
-    <li><a href="manual_functionlist.htm">API Reference</a></li>
+    <li><a href="#section_dump">How to dump contents of DOM object?</a></li>
+    <li><a href="manual_api.htm">API Reference</a></li>
     <li><a href="manual_faq.htm">FAQ</a></li>
   </ul>
   <a name="section_create"></a>
@@ -149,7 +149,7 @@
         $es = $dom-&gt;find(<span class="var">'<strong>table.hello td</strong>'</span>);<br>
         <br>
         <span class="comment">// Find all td tags with attribite align=center in table tags </span><br>
-        $es = $dom-&gt;find(<span class="var">'<span class="var">'<strong>table</strong></span><strong> td[align=center]</strong>'</span>);<br>
+        $es = $dom-&gt;find(<span class="var">''<strong>table</strong><strong> td[align=center]</strong>'</span>);<br>
       </div>
     </div>
     <div id="frag_find_textcomment">
@@ -206,11 +206,11 @@
         <br>
         echo $e-&gt;<strong>tag</strong>; <span class="comment">// Returns: &quot; <strong>div</strong>&quot;</span><br>
         echo $e-&gt;<strong>outertext</strong>; <span class="comment">// Returns: &quot; <strong>&lt;div&gt;foo &lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;</strong>&quot;</span><br>
-        echo $e-&gt;<strong>innertext</strong>; <span class="comment">// Returns: &quot; <strong><strong>foo</strong>&lt;b&gt;bar&lt;/b&gt;</strong>&quot;</span><br>
-        echo $e-&gt;<strong>plaintext</strong>; <span class="comment">// Returns: &quot; <strong><strong>foo</strong> </strong><strong>bar</strong>&quot;<br>
+        echo $e-&gt;<strong>innertext</strong>; <span class="comment">// Returns: &quot; <strong>foo&lt;b&gt;bar&lt;/b&gt;</strong>&quot;</span><br>
+        echo $e-&gt;<strong>plaintext</strong>; <span class="comment">// Returns: &quot; <strong>foo </strong><strong>bar</strong>&quot;<br>
         <br>
         </span>
-        <table width="100%"  border="0" cellspacing="2" cellpadding="1">
+        <table width="100%"  border="0" cellspacing="1" cellpadding="1">
           <tr bgcolor="#CCCCCC">
             <th width="25%">Attribute Name</th>
             <th width="75%">Usage</th>
@@ -254,7 +254,6 @@
     <ul>
       <li><a href="#frag_traverse_background"><span>Background Knowledge</span></a></li>
       <li><a href="#frag_traverse_traverse"><span>Traverse the DOM tree</span></a></li>
-      <li><a href="#frag_traverse_camel"><span>Camel naming conventions</span></a></li>
     </ul>
     <div id="frag_traverse_background">
       <div class="code"> <span class="comment">// If you are not so familiar with HTML DOM, check this <a href="http://php.net/manual/en/book.dom.php" target="_blank"><span class="var">link</span></a> to learn more... </span><br>
@@ -266,177 +265,49 @@
     </div>
     <div id="frag_traverse_traverse">
       <div class="code">
-        <table width="100%"  border="0" cellspacing="2" cellpadding="2">
+        <table width="100%"  border="0" cellspacing="1" cellpadding="1">
           <tr>
             <th> Method </th>
             <th> Description</th>
           </tr>
           <tr>
             <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>children</strong> ( <span class="var">[int $index]</span> ) </td>
+              <div class="returns">mixed</div>$e-&gt;<strong>children</strong> ( <span class="var">[int $index]</span> ) </td>
             <td>Returns the Nth <strong>child object</strong> if <strong>index</strong> is set, otherwise return an <strong>array of children</strong>. </td>
           </tr>
           <tr>
             <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>parent</strong> () </td>
+              <div class="returns">element</div>$e-&gt;<strong>parent</strong> () </td>
             <td>Returns the <strong>parent</strong> of element. </td>
           </tr>
           <tr>
             <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>first_child</strong> () </td>
+              <div class="returns">element</div>$e-&gt;<strong>first_child</strong> () </td>
             <td>Returns the <strong>first child</strong> of element, or <strong>null</strong> if not found. </td>
           </tr>
           <tr>
             <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>last_child </strong>() </td>
+              <div class="returns">element</div>$e-&gt;<strong>last_child</strong> () </td>
             <td>Returns the <strong>last child</strong> of element, or <strong>null</strong> if not found. </td>
           </tr>
           <tr>
             <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>next_sibling </strong>() </td>
+              <div class="returns">element</div>$e-&gt;<strong>next_sibling</strong> () </td>
             <td>Returns the <strong>next sibling</strong> of element, or<strong> null</strong> if not found. </td>
           </tr>
           <tr>
             <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>prev_sibling </strong>() </td>
+              <div class="returns">element</div>$e-&gt;<strong>prev_sibling</strong> () </td>
             <td>Returns the <strong>previous sibling</strong> of element, or <strong>null</strong> if not found. </td>
           </tr>
         </table>
       </div>
     </div>
-    <div id="frag_traverse_camel">
-      <div class="code">You can also call methods with W3C STANDARD camel naming convertions.<br>
-        <br>
-        <table width="100%"  border="0" cellspacing="1" cellpadding="2">
-          <tr>
-            <th width="50%">Method</th>
-            <th>Mapping</th>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">string</div>
-              $e-&gt;<strong>getAttribute</strong> ( <span class="var">$name</span> ) </td>
-            <td>
-              <div class="returns">string</div>
-              $e-&gt;<span class="var"><strong>attribute</strong></span></td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">void</div>
-              $e-&gt;<strong>setAttribute</strong> ( <span class="var">$name, $value</span> ) </td>
-            <td>
-              <div class="returns">void</div>
-              $value = $e-&gt;<span class="var"><strong>attribute</strong></span></td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">bool</div>
-              $e-&gt;<strong>hasAttribute</strong> ( <span class="var">$name</span> ) </td>
-            <td>
-              <div class="returns">bool</div>
-              <strong>isset</strong>($e-&gt;<span class="var"><strong>attribute</strong></span><strong>)</strong></td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">void</div>
-              $e-&gt;<strong>removeAttribute</strong> ( <span class="var">$name</span> ) </td>
-            <td>
-              <div class="returns">void</div>
-              $e-&gt;<span class="var"><strong>attribute</strong></span><strong> = null </strong></td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>getElementById</strong> ( <span class="var">$id</span> ) </td>
-            <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>find</strong> (<span class="var"> &quot;#$id&quot;, 0 </span>)</td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>getElementsById</strong> ( <span class="var">$id [,$index] </span> ) </td>
-            <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>find</strong> (<span class="var"> &quot;#$id&quot; [, int $index] </span>)</td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>getElementByTagName</strong> (<span class="var">$name</span> ) </td>
-            <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>find</strong> (<span class="var"> $name, 0 </span>)</td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>getElementsByTagName</strong> ( <span class="var">$name [, $index]</span> ) </td>
-            <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>find</strong> (<span class="var"> $name [, int $index] </span>)</td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>parentNode</strong> () </td>
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>parent</strong> () </td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>childNodes</strong> ( <span class="var">[$index]</span> ) </td>
-            <td>
-              <div class="returns">mixed</div>
-              $e-&gt;<strong>children</strong> ( <span class="var">[int $index]</span> ) </td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>firstChild</strong> () </td>
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>first_child</strong> () </td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>lastChild</strong> () </td>
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>last_child </strong>() </td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>nextSibling</strong> () </td>
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>next_sibling </strong>() </td>
-          </tr>
-          <tr bgcolor="#EEEEEE">
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>previousSibling</strong> () </td>
-            <td>
-              <div class="returns">element</div>
-              $e-&gt;<strong>prev_sibling </strong>() </td>
-          </tr>
-        </table>
-      </div>
-    </div>
+    
   </div>
   <a name="section_dump"></a>
-  <h2>How to dump  contents of DOM object?</h2>
-	<span class="top"><a href="#top">Top</a></span>
+  <h2>How to dump contents of DOM object?</h2>
+  <span class="top"><a href="#top">Top</a></span>
   <div id="container_dump">
     <ul>
       <li><a href="#frag_dump_quick"><span>Quick way</span></a></li>
@@ -447,7 +318,7 @@
         $str = $dom-&gt;<strong>save</strong>();<br>
         <br>
         <span class="comment">// Dumps the internal DOM tree back into a file</span> <br>
-        $dom-&gt;<strong><strong>save</strong></strong>(<span class="var">'result.htm'</span>);</div>
+        $dom-&gt;<strong>save</strong>(<span class="var">'result.htm'</span>);</div>
     </div>
     <div id="frag_dump_quick">
       <div class="code"><span class="comment">// </span><span class="comment">Dumps the internal DOM tree back into string </span><br>

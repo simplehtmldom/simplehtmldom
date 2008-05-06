@@ -94,15 +94,6 @@ td {
 background-color: #dddddd;
 }
 
-.note {
-background: #FBE6F2;
-border: 1px solid #D893A1;
-color: #333;
-display: block;
-margin: 14px 0 14px 0;
-padding: 12px 10px 12px 10px;
-}
-
 .description {
 font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
 font-size: 11px;

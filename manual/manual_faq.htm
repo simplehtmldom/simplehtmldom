@@ -2,13 +2,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="pragma" content="no-cache">
 <link href="default.css" rel="stylesheet" type="text/css">
 <title>PHP Simple HTML DOM Parser</title>
 <link href="css/default.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<h1><a name="top"></a>PHP Simple HTML DOM Parser Manual </h1>
+<h1><a name="top"></a>PHP Simple HTML DOM Parser Manual</h1>
 <div id="content">
   <h2>Index</h2>
   <ul>
@@ -48,7 +47,7 @@ The attribute named $node-><strong>nodetype</strong> is particularly useful to i
 Its value may be <span class="var">HDOM_TYPE_ELEMENT</span>, <span class="var">HDOM_TYPE_ENDTAG</span>, <span class="var">HDOM_TYPE_TEXT</span>. <br>
 <br>
 Lots of <strong>element's </strong> properties is not determined until the end of parsing loop, <br>
-calling any magic methods such as <strong>innertext</strong>, <strong>outertext, <strong>plaintext</strong></strong> will cause <span class="var">unexceptable errors</span>!<br>
+calling any magic methods such as <strong>innertext</strong>, <strong>outertext, plaintext</strong> will cause <span class="var">unexceptable errors</span>!<br>
 <br>
 While parsing, uses <strong>node's</strong> internal methods or array to prevent the problem.<br>
 <br>
@@ -125,8 +124,7 @@ echo <strong>html_extract_contents</strong>($str);<br>
         $dom= <strong>file_get_dom</strong>(<span class="var">'http://www.php.net'</span>, <span class="var">false</span>, <span class="var">$context</span>); <br>
         ... <span class="comment"><br>
         </span></div>
-      <div></div>
-    </div>
+      </div>
     <br>
     Author: S.C. Chen (me578022@gmail.com)<br>
     Contributions by: Yousuke Kumakura (Attribute Filters) <br>
