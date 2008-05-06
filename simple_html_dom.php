@@ -1,6 +1,6 @@
 <?php
 /*******************************************************************************
-Version: 0.96
+Version: 0.97
 Author: S. C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
 Contributions by: Yousuke Kumakura (Attribute Filters)
@@ -29,21 +29,21 @@ define('HDOM_INFO_ENDSPACE',7);
 // get dom form file
 function file_get_dom() {
     $args = func_get_args();
-    $dom = new html_dom_parser;
+    $dom = new simple_html_dom;
     $dom->load(call_user_func_array('file_get_contents', $args), true);
     return $dom;
 }
 
 // get dom form string
 function str_get_dom($str, $lowercase=true) {
-    $dom = new html_dom_parser;
+    $dom = new simple_html_dom;
     $dom->load($str, $lowercase);
     return $dom;
 }
 
-// html dom node
+// simple html dom node
 // -----------------------------------------------------------------------------
-class html_dom_node {
+class simple_html_dom_node {
     public $tag = '';
     public $attr = array();
     public $parent = null;
@@ -435,7 +435,7 @@ class simple_html_dom {
         $this->lowercase = $lowercase;
         $this->index = 0;
         $this->pos = 0;
-        $this->root = new html_dom_node($this);
+        $this->root = new simple_html_dom_node($this);
         $this->root->tag = 'root';
         $this->root->info[HDOM_INFO_BEGIN] = -1;
         $this->parent = $this->root;
@@ -490,7 +490,7 @@ class simple_html_dom {
         if ($s=='') return $this->read_tag();
 
         // text
-        $node = new html_dom_node($this);
+        $node = new simple_html_dom_node($this);
         $this->nodes[] = $node;
         $node->tag = 'text';
         $node->info[HDOM_INFO_BEGIN] = $this->index;
@@ -510,7 +510,7 @@ class simple_html_dom {
         }
         $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
 
-        $node = new html_dom_node($this);
+        $node = new simple_html_dom_node($this);
         $this->nodes[] = $node;
         $node->info[HDOM_INFO_BEGIN] = $this->index;
         ++$this->index;

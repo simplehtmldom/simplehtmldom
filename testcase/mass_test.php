@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-include_once('../html_dom_parser.php');
+include_once('../simple_html_dom.php');
 
 $dir = './html/';
 
@@ -30,7 +30,7 @@ $files = array(
 
 
 echo 'memory: '.memory_get_usage().'<br>';
-$dom = new html_dom_parser;
+$dom = new simple_html_dom;
 
 foreach($files as $f) {
     // get file from url

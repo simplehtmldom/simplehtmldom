@@ -1,4 +1,7 @@
 [On going]
+1. Important!! Dile and class name changed (html_dom_parser->simple_html_dom)!
+2. Fix the bug of regular expression escaping chars.
+3. Add comment blocks handling process.
 
 [PHP Simple HTML DOM Parser v0.96 is released]
 1. (Request #1936000) New DOM operations(first_child, last_child, next_sibling, previous_sibling).
@@ -10,8 +13,6 @@
 7. Fix the bug of blanks in the end of tag.
 8. Add Reference section in manual.
 #. Fix some typo of testcase.
-
- 
 
 [PHP Simple HTML DOM Parser v0.95 is released]
 1. New attribute filters (Thanks to Yousuke Kumakura).

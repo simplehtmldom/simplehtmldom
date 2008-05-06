@@ -1,6 +1,6 @@
 <?php
 // example of how to modify HTML contents
-include('../html_dom_parser.php');
+include('../simple_html_dom.php');
 
 // get DOM from URL or file
 $dom = file_get_dom('http://www.google.com/');

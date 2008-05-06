@@ -1,11 +1,11 @@
 <?php
 // example of how to customize the parsing behavior
-include('../html_dom_parser.php');
+include('../simple_html_dom.php');
 
 // HTML text extractor
 function html_extract_contents($str) {
     // 1. create DOM object
-    $parser = new html_dom_parser;
+    $parser = new simple_html_dom;
 
     // 2. prepare HTML data and init everything
     $parser->prepare($str);

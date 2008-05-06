@@ -1,5 +1,5 @@
 <?php
-include_once('../html_dom_parser.php');
+include_once('../simple_html_dom.php');
 
 function scraping_digg($url) {
     // create DOM

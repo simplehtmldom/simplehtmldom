@@ -2,8 +2,8 @@
 // -----------------------------------------------------------------------------
 // setup
 error_reporting(E_ALL);
-require_once('../html_dom_parser.php');
-$dom = new html_dom_parser;
+require_once('../simple_html_dom.php');
+$dom = new simple_html_dom;
 
 // -----------------------------------------------------------------------------
 // empty test
@@ -60,8 +60,6 @@ $str = <<<HTML
 <
 HTML;
 $dom->load($str);
-echo $dom;
-
 assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
@@ -211,7 +209,7 @@ $str = <<<HTML
 <script type="text/javascript" src="test.js">ss</script>
 HTML;
 
-$my_dom = new html_dom_parser;
+$my_dom = new simple_html_dom;
 $my_dom->prepare($str);
 $count = 0;
 while ($node=$dom->parse()) {
@@ -226,7 +224,7 @@ $my_dom->clear();
 unset($my_dom);
 
 // -----------------------------------------------
-$my_dom = new html_dom_parser;
+$my_dom = new simple_html_dom;
 $my_dom->prepare($str);
 // strip out <script> tags
 $my_dom->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is", false, false);

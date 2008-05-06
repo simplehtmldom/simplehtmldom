@@ -2,8 +2,8 @@
 // -----------------------------------------------------------------------------
 // setup
 error_reporting(E_ALL);
-require_once('../html_dom_parser.php');
-$dom = new html_dom_parser;
+require_once('../simple_html_dom.php');
+$dom = new simple_html_dom;
 
 // -----------------------------------------------------------------------------
 // innertext test

@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-include_once('../html_dom_parser.php');
+include_once('../simple_html_dom.php');
 $dom = file_get_dom('slickspeed.htm');
 
 assert(count($dom->find('#title'))==1);
