@@ -406,6 +406,19 @@ assert($es[2]->name=='news[]');
 assert($es[2]->value=='baz');
 
 // -----------------------------------------------------------------------------
+// regular expression syntax escaping
+$str = <<<HTML
+<div>
+<a href="image/one.png">one</a>
+<a href="image/two.jpg">two</a>
+<a href="/favorites/aaa">three (text)</a>
+</div>
+HTML;
+$dom->load($str);
+assert(count($dom->find('a[href^="image/"]'))==2);
+assert(count($dom->find('a[href*="/favorites/"]'))==1);
+
+// -----------------------------------------------------------------------------
 // tear down
 $dom->clear();
 unset($dom);

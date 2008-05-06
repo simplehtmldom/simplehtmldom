@@ -2,7 +2,6 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="pragma" content="no-cache">
 <link href="default.css" rel="stylesheet" type="text/css">
 <title>PHP Simple HTML DOM Parser</title>
 <link href="css/default.css" rel="stylesheet" type="text/css">
@@ -24,6 +23,7 @@
 <div id="content">
   <h2>Index</h2>
   <ul>
+    <li><a href="#section_quickstart">Quick Start</a></li>
     <li><a href="#section_create">How to create HTML DOM object?</a></li>
     <li><a href="#section_find">How to find HTML elements?</a></li>
     <li><a href="#section_access">How to access the HTML element's attributes?</a> </li>
@@ -33,6 +33,265 @@
     <li><a href="manual_faq.htm">FAQ</a></li>
     <li><a href="manual_functionlist.htm">Function Reference</a></li>
   </ul>
+  <a name="section_quickstart"></a>
+  <h2>Tutorial</h2>
+  <div id="container_create">
+    <ul>
+      <li><a href="#fragment_Lesson_1"><span>Lesson 1</span></a></li>
+      <li><a href="#fragment_Lesson_2"><span>Lesson 2</span></a></li>
+	  <li><a href="#fragment_Lesson_3"><span>Lesson 3</span></a></li>
+	  <li><a href="#fragment_Lesson_4"><span>Lesson 4</span></a></li>
+    </ul>
+	<div id="fragment_Lesson_1">
+      <div class="code">
+        <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="420">&lt;?php</td>
+            <td class="comment">// If you can't understand following code, learn <a href="http://www.php.net/">PHP</a> and <a href="http://www.w3.org/html/">HTML</a> first, please!</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">include</span>('<span class="var">html_dom_parser.php</span>');</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$dom = file_get_dom(<span class="var">"http://www.google.com/"</span>); </td>
+            <td class="comment">// 1. <strong>Create</strong> a DOM object from a file or a URL.</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $dom-&gt;find(<span class="var">&quot;a&quot;</span>, <span class="var">0</span>)-&gt;<span class="var">href</span>;</td>
+            <td class="comment">// 3. <strong>Find</strong> first link.</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">foreach</span>($dom-&gt;find(<span class="var">&quot;img&quot;</span>) <span class="keyword">as</span> $e) { </td>
+            <td class="comment">// 2. <strong>Find</strong> all images.</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">&nbsp;&nbsp;&nbsp; echo</span> $e-&gt;<span class="var">src</span>;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>}</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>?&gt;<span class="comment"></span></td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div id="fragment_Lesson_2">
+      <div class="code">
+        <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="420">&lt;?php</td>
+            <td class="comment">// If you are not so familiar with <strong>CSS selector</strong>, check this <a href="http://docs.jquery.com/Selectors" target="_blank">link</a> to learn more</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">include</span>('<span class="var">html_dom_parser.php</span>');</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$dom = str_get_dom(<span class="var">&quot;&lt;div calss=&quot;foobar&quot;&gt;foo&lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;&quot;</span>);<br>
+            </td>
+            <td class="comment">// 1. <strong>Create</strong> a DOM object from a string.</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$e = $dom-&gt;find(<span class="var">&quot;div[class=foobar]&quot;</span>, <span class="var">0</span>);</td>
+            <td class="comment">// 2. <strong>Find</strong> first &lt;div class=&quot;foobar&quot;&gt; tag with <strong>CSS Selector</strong>.</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;tag;</td>
+            <td class="comment">// 3. Special attribute(<strong>tag</strong>), result: &quot;div&quot;.</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;outertext;</td>
+            <td class="comment">// 4. Special attribute(<strong>outertext</strong>), result: &quot;&lt;div class=&quot;foobar&quot;&gt;foo&lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;&quot;.</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;innertext;</td>
+            <td class="comment">// 5. Special attribute(<strong>innertext</strong>), result: &quot;foo&lt;b&gt;bar&lt;/b&gt;&quot;.</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;plaintext;</td>
+            <td class="comment">// 6. Special attribute(<strong>plaintext</strong>), result: &quot;foobar&quot;.</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td> $dom-&gt;save(<span class="var">&quot;my_test.htm&quot;</span>);</td>
+            <td class="comment">// 7. <strong>Dump</strong> the modified HTML to a file.</td>
+          </tr>
+          <tr>
+            <td>?&gt;<span class="comment"></span></td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+	<div id="fragment_Lesson_3">
+          <div class="code">
+            <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="420">&lt;?php</td>
+                <td class="comment">// If you can't understand following code, learn <a href="http://www.php.net/">PHP</a> and <a href="http://www.w3.org/html/">HTML</a> first, please!</td>
+              </tr>
+              <tr>
+                <td><span class="keyword">include</span>('<span class="var">html_dom_parser.php</span>');</td>
+                <td class="comment">&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="comment">&nbsp;</td>
+              </tr>
+              <tr>
+                <td>$dom = file_get_dom(<span class="var">"test.htm"</span>); </td>
+                <td class="comment">// 1. <strong>Create</strong> a DOM object from a file or a URL.</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="comment">&nbsp;</td>
+              </tr>
+              <tr>
+                <td><span class="keyword">foreach</span>($dom-&gt;find(<span class="var">&quot;img&quot;</span>) <span class="keyword">as</span> $e)</td>
+                <td class="comment">// 2. <strong>Find</strong> first &lt;img&gt; tag.</td>
+              </tr>
+              <tr>
+                <td>{</td>
+                <td class="comment">&nbsp;</td>
+              </tr>
+              <tr>
+                <td><span class="keyword">&nbsp;&nbsp;&nbsp; if</span>(<span class="keyword">isset</span>($e-&gt;href))</td>
+                <td class="comment">// 3. <strong>Determine</strong> whether a attribute exist?</td>
+              </tr>
+              <tr>
+                <td><span class="keyword">&nbsp;&nbsp;&nbsp; </span>{</td>
+                <td class="comment">&nbsp;</td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>$value = $e-&gt;href;</td>
+                <td class="comment">// 4. <strong>Get</strong> a attribute.</td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>$e-&gt;href = <span class="var">&quot;my_link&quot;</span>;</td>
+                <td class="comment">// 5. <strong>Set</strong> a attribute.</td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>$e-&gt;alt = <span class="var">null</span>;</td>
+                <td class="comment">// 6. <strong>Remove</strong> a attribute.</td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>$e-&gt;alt = <span class="var">&quot;my_hint&quot;</span>;</td>
+                <td class="comment">// 7. <strong>Add</strong> a attribute.</td>
+              </tr>
+              <tr>
+                <td>&nbsp;&nbsp;&nbsp; <span class="keyword"></span>}</td>
+                <td class="comment">&nbsp;</td>
+              </tr>
+              <tr>
+                <td>}</td>
+                <td class="comment">&nbsp;</td>
+              </tr>
+              <tr>
+                <td>?&gt;<span class="comment"></span></td>
+                <td class="comment">&nbsp;</td>
+              </tr>
+            </table>
+          </div>
+    </div>
+	<div id="fragment_Lesson_4">
+      <div class="code">
+        <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="420">&lt;?php</td>
+            <td class="comment">// If you can't understand following code, learn <a href="http://www.php.net/">PHP</a> and <a href="http://www.w3.org/html/">HTML</a> first, please!</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">include</span>('<span class="var">html_dom_parser.php</span>');</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$dom = file_get_dom(<span class="var">"test.htm"</span>); </td>
+            <td class="comment">// 1. <strong>Create</strong> a DOM object from a file or a URL.</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>$e = $dom-&gt;find(<span class="var">&quot;div[id=content]&quot;, 0</span>);</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;children(<span class="var">1</span>)-&gt;children(<span class="var">2</span>)-&gt;<span class="var">id</span>;</td>
+            <td class="comment">// 2. <strong>Find</strong> first &lt;img&gt; tag.</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;first_child()-&gt;<span class="var">id</span>;</td>
+            <td class="comment">// 2. <strong>Find</strong> first &lt;img&gt; tag.</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;last_child()-&gt;<span class="var">id</span>;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;next_sibling()-&gt;<span class="var">id</span>;</td>
+            <td class="comment">// 2. <strong>Find</strong> first &lt;img&gt; tag.</td>
+          </tr>
+          <tr>
+            <td><span class="keyword">echo</span> $e-&gt;prev_sibling()-&gt;<span class="var">id</span>;</td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+          <tr>
+            <td>?&gt;<span class="comment"></span></td>
+            <td class="comment">&nbsp;</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
   <a name="section_create"></a>
   <h2>How to create HTML DOM object?</h2>
   <div id="container_create">
@@ -41,27 +300,23 @@
       <li><a href="#fragment_create_oo"><span>Object-oriented way</span></a></li>
     </ul>
     <div id="fragment_create_quick">
-      <div class="code"><span class="comment">// Create a DOM object from a string </span><br>
+      <div class="code"><span class="comment">// Create a DOM object from a <strong>string</strong> </span><br>
         $dom = <strong>str_get_dom</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
         <br>
-        <span class="comment">// Create a DOM object from a URL </span><br>
+        <span class="comment">// Create a DOM object from a <strong>file</strong> or a <strong>URL</strong> </span><br>
         $dom = <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>);<br>
-        <br>
-        <span class="comment">// Create a DOM object from a file</span> <br>
-        $dom = <strong>file_get_dom</strong>(<span class="var">'test.htm'</span>); <span class="comment"></span><span class="comment"><br>
+        $dom = <strong>file_get_dom</strong>(<span class="var">'test.htm'</span>);<span class="comment"><br>
         </span></div>
     </div>
     <div id="fragment_create_oo">
       <div class="code"><span class="comment">// Create DOM object</span><br>
         $dom = new <strong>html_dom_parser</strong>();<br>
         <br>
-        <span class="comment">// Load contents from a string </span><br>
+        <span class="comment">// Load contents from a <strong>string</strong> </span><br>
         $dom-&gt;<strong>load</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
         <br>
-        <span class="comment">// Load contents from a URL </span> <br>
+        <span class="comment">// Load contents from a <strong>file</strong> or a <strong>URL</strong> </span> <br>
         $dom-&gt;<strong>load_file</strong>(<span class="var">'http://www.google.com/'</span>);<br>
-        <br>
-        <span class="comment">// Load contents from a file</span> <br>
         $dom-&gt;<strong>load_file</strong>(<span class="var">'test.htm'</span>);</div>
     </div>
   </div>
@@ -205,7 +460,7 @@
         <br>
         <br>
         <div class="code_help"><strong>Example</strong></div>
-        <span class="hl-var">$dom</span><span class="hl-code"> = </span>str_get_dom<span class="hl-brackets">(</span><span class="var">&quot;&lt;div&gt;foo &lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;</span> <br>
+        $dom = str_get_dom(<span class="var">&quot;&lt;div&gt;foo &lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;&quot;</span>);<br>
         $element = $dom-&gt;find(<span class="var">&quot;div&quot;</span>, <span class="var">0</span>);<br>
         <br>
         echo $element-&gt;<strong>tag</strong>; <span class="comment">// Returns: &quot; <strong>div</strong>&quot;</span><br>

@@ -9,6 +9,7 @@ Redistributions of files must retain the above copyright notice.
 *******************************************************************************/
 
 define('HDOM_TYPE_ELEMENT', 1);
+define('HDOM_TYPE_COMMENT', 2);
 define('HDOM_TYPE_TEXT',    3);
 define('HDOM_TYPE_ENDTAG',  4);
 define('HDOM_QUOTE_DOUBLE', 0);
@@ -27,8 +28,8 @@ define('HDOM_INFO_ENDSPACE',7);
 // -----------------------------------------------------------------------------
 // get dom form file
 function file_get_dom() {
-    $dom = new html_dom_parser;
     $args = func_get_args();
+    $dom = new html_dom_parser;
     $dom->load(call_user_func_array('file_get_contents', $args), true);
     return $dom;
 }
@@ -50,10 +51,20 @@ class html_dom_node {
     public $nodetype = HDOM_TYPE_TEXT;
     public $dom = null;
     public $nodes = array();
-    public $info = array(HDOM_INFO_BEGIN=>0, HDOM_INFO_END=>0, HDOM_INFO_TEXT=>'', HDOM_INFO_QUOTE=>array(), HDOM_INFO_SPACE=>array(), HDOM_INFO_ENDSPACE=>'');
+    public $info = array(
+        HDOM_INFO_BEGIN=>0,
+        HDOM_INFO_END=>0,
+        HDOM_INFO_TEXT=>'',
+        HDOM_INFO_ENDSPACE=>'',
+        HDOM_INFO_QUOTE=>array(),
+        HDOM_INFO_SPACE=>array());
 
     function __construct($dom) {
         $this->dom = $dom;
+    }
+
+    function __toString() {
+        return $this->outertext();
     }
 
     function __get($name) {
@@ -87,10 +98,6 @@ class html_dom_node {
         }
         //no value attr: nowrap, checked selected...
         return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
-    }
-
-    function __toString() {
-        return $this->outertext();
     }
 
     // clean up memory due to php5 circular references memory leak...
@@ -182,8 +189,12 @@ class html_dom_node {
     // get node's text
     function text($tag=null) {
         if ($tag===null) $tag = $this->tag;
-        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
-        if ($this->nodetype==HDOM_TYPE_ENDTAG) return '</'.$tag.'>';
+
+        switch($this->nodetype) {
+            case HDOM_TYPE_TEXT:    return $this->info[HDOM_INFO_TEXT];
+            case HDOM_TYPE_COMMENT: return $this->info[HDOM_INFO_TEXT];
+            case HDOM_TYPE_ENDTAG:  return '</'.$tag.'>';
+        }
 
         $ret = '<'.$tag;
         $i = 0;
@@ -284,21 +295,20 @@ class html_dom_node {
             if ($tag && $tag!=$n->tag) $pass = false;
             if ($pass && $key && !(isset($n->attr[$key]))) $pass = false;
             if ($pass && $key && $val) {
+                $check = true;
                 switch ($exp) {
                     case '=':
-                        $valCheck = ($n->attr[$key]===$val) ? true : false; break;
+                        $check = ($n->attr[$key]===$val) ? true : false; break;
                     case '!=':
-                        $valCheck = ($n->attr[$key]!==$val) ? true : false; break;
+                        $check = ($n->attr[$key]!==$val) ? true : false; break;
                     case '^=':
-                        $valCheck = (preg_match("/^{$val}/", $n->attr[$key])) ? true : false; break;
+                        $check = (preg_match("/^".preg_quote($val,'/')."/", $n->attr[$key])) ? true : false; break;
                     case '$=':
-                        $valCheck = (preg_match("/{$val}$/", $n->attr[$key])) ? true : false; break;
+                        $check = (preg_match("/".preg_quote($val,'/')."$/", $n->attr[$key])) ? true : false; break;
                     case '*=':
-                        $valCheck = (preg_match("/{$val}/", $n->attr[$key])) ? true : false; break;
-                    default:
-                        $valCheck = true;
+                        $check = (preg_match("/".preg_quote($val,'/')."/", $n->attr[$key])) ? true : false; break;
                 }
-                if (!isset($n->attr[$key]) || !$valCheck) $pass = false;
+                if (!isset($n->attr[$key]) || !$check) $pass = false;
             }
             if ($op) {if ($pass) $ret[$i] = 1;}
             else {if (!$pass) $ret[$i] = 1;}
@@ -306,7 +316,7 @@ class html_dom_node {
         unset($n);
     }
 
-    // old fashion camel naming conventions
+    // camel naming conventions
     function getAttribute($name) {return $this->__get($name);}
     function setAttribute($name, $value) {$this->__set($name, $value);}
     function hasAttribute($name) {return $this->__isset($name);}
@@ -391,7 +401,6 @@ class html_dom_parser {
         $ret = '';
         $count = count($this->nodes);
         for ($i=0; $i<$count; ++$i) {
-            
             // outertext defined
             if (isset($this->nodes[$i]->info[HDOM_INFO_OUTER])) {
                 $ret .= $this->nodes[$i]->info[HDOM_INFO_OUTER];
@@ -499,9 +508,7 @@ class html_dom_parser {
             $this->root->info[HDOM_INFO_END] = $this->index;
             return null;
         }
-
-        // next
-        $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+        $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
 
         $node = new html_dom_node($this);
         $this->nodes[] = $node;
@@ -510,8 +517,7 @@ class html_dom_parser {
 
         // end tag
         if ($this->char=='/') {
-            // next
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             $this->skip($this->token_blank);
             $node->nodetype = HDOM_TYPE_ENDTAG;
             $node->tag = $this->copy_until_char_escape('>');
@@ -540,25 +546,36 @@ class html_dom_parser {
             }
 
             $node->parent = $this->parent;
-            // next
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
         }
 
         $node->tag = $this->copy_until($this->token_slash);
         $node->parent = $this->parent;
 
+        // comment
+        if ($node->tag=='!--___noise___') {
+            $node->nodetype = HDOM_TYPE_COMMENT;
+            $node->info[HDOM_INFO_END] = 0;
+            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char_escape('>');
+            $node->tag = 'comment';
+            if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
+            $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
+            $this->parent->nodes[] = $node;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
+            return $node;
+        }
+
         // text
         if (!preg_match("/^[A-Za-z0-9_\\-:]+$/", $node->tag)) {
             $node->nodetype = HDOM_TYPE_TEXT;
             $node->info[HDOM_INFO_END] = 0;
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char_escape('>');
+            $node->tag = 'text';
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
-            $node->tag = 'text';
             $this->parent->nodes[] = $node;
-            // next
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
         }
 
@@ -587,8 +604,7 @@ class html_dom_parser {
             $name = $this->copy_until($this->token_equal);
 
             if($guard==$this->pos) {
-                // next
-                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                 continue;
             }
             $guard = $this->pos;
@@ -609,16 +625,14 @@ class html_dom_parser {
                 $space[1] = $this->copy_skip($this->token_blank);
                 if ($this->lowercase) $name = strtolower($name);
                 if ($this->char=='=') {
-                    // next
-                    $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+                    $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                     $this->parse_attr($node, $name, $space);
                 }
                 else {
                     //no value attr: nowrap, checked selected...
                     $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
                     $node->attr[$name] = true;
-                    // prev
-                    if ($this->char!='>') $this->char = $this->html[--$this->pos];
+                    if ($this->char!='>') $this->char = $this->html[--$this->pos]; // prev
                 }
                 $node->info[HDOM_INFO_SPACE][] = $space;
                 $space = array($this->copy_skip($this->token_blank), '', '');
@@ -638,31 +652,25 @@ class html_dom_parser {
             // reset parent
             if (!isset($this->self_closing_tags[strtolower($node->tag)])) $this->parent = $node;
         }
-        // next
-        $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+        $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         return $node;
     }
 
     // parse attributes
     private function parse_attr($node, $name, &$space) {
         $space[2] = $this->copy_skip($this->token_blank);
-
         switch($this->char) {
             case '"':
                 $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
-                // next
-                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                 $value = $this->copy_until_char_escape('"');
-                // next
-                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                 break;
             case '\'':
                 $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_SINGLE;
-                // next
-                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                 $value = $this->copy_until_char_escape("'");
-                // next
-                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                 break;
             default:
                 $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
@@ -674,8 +682,7 @@ class html_dom_parser {
     private function skip($chars) {
         while ($this->char!==null) {
             if (!isset($chars[$this->char])) return;
-            // next
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         }
     }
 
@@ -684,8 +691,7 @@ class html_dom_parser {
         while ($this->char!==null) {
             if (!isset($chars[$this->char])) return $ret;
             $ret .= $this->char;
-            // next
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         }
         return $ret;
     }
@@ -695,8 +701,7 @@ class html_dom_parser {
         while ($this->char!==null) {
             if (isset($chars[$this->char])) return $ret;
             $ret .= $this->char;
-            // next
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         }
         return $ret;
     }
@@ -705,8 +710,7 @@ class html_dom_parser {
         $ret = '';
         while ($this->char!=$char && $this->char!==null) {
             $ret .= $this->char;
-            // next
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         }
         return $ret;
     }
@@ -717,17 +721,15 @@ class html_dom_parser {
             // ignore string escape
             if ($this->char=='\\') {
                 $ret .= $this->char;
-                // next
-                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             }
             $ret .= $this->char;
-            // next
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null;
+            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         }
         return $ret;
     }
 
-    // old fashion Camel naming conventions
+    // camel naming conventions
     function childNodes($idx=-1) {return $this->root->childNodes($idx);}
     function firstChild() {return $this->root->first_child();}
     function lastChild() {return $this->root->last_child();}

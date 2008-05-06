@@ -1,15 +1,21 @@
 body {
 margin: 0;
 padding: 0;
-font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
-font-size: 12px;
+font-family: verdana,arial,helvetica,sans-serif;
+font-size: 11px;
 color: #4F5155;
 }
 
 #content {
-margin: 20px 40px 0 40px;
+margin: 10px 30px 0 30px;
 line-height: 16px;
 padding: 0;
+}
+
+h1 {
+font-size: 20px;
+margin: 6px 0px 0px 0px;
+padding: 0px 0px 0px 0px;
 }
 
 h2 {
@@ -19,8 +25,8 @@ border-bottom: 1px solid #D0D0D0;
 color: #FFFFFF;
 font-size: 14px;
 font-weight: bold;
-margin: 20px 0px 6px 0px;
-padding: 0px 4px 1px 4px;
+margin: 10px 2px 6px 2px;
+padding: 1px 10px 1px 10px;
 }
 
 ul {
@@ -28,19 +34,44 @@ margin: 0px 0px 0 0px;
 padding: 0px 40px 0px 40px;
 }
 
+.top {
+font-size: 11px;
+float: right;
+}
+
 .code {
-font-family: Monaco, Verdana, Sans-serif;
-font-size: 12px;
-line-height: 14px;
-background-color: #f6f6f6;
-border-bottom: 1px solid #D0D0D0;
-border-top: 1px solid #A0A0A0;
-border-left: 1px solid #A0A0A0;
-border-right: 1px solid #D0D0D0;
-color: #002166;
 display: block;
-margin: 2px 0 2px 0;
-padding: 6px 10px 6px 10px;
+font-family: "Consolas","Courier New",Courier,mono;
+font-size: 9pt;
+overflow:auto;
+border-top: 1px solid #D0D0D0;
+border-bottom: 1px solid #A0A0A0;
+border-right: 1px solid #A0A0A0;
+border-left: 1px solid #D0D0D0;
+padding: 2px 5px 2px 20px;
+line-height: 1.2em;
+margin: 4px 10px 4px 10px;
+color: #0000aa;
+background: #F1F1F1 url(Code_BG.gif) left top repeat-y;
+}
+
+.code A:link {color: #000099; text-decoration: none; font-weight: bold;}
+.code A:visited {color: #000099; text-decoration: none; font-weight: bold;}
+.code A:active {color: #000099; text-decoration: none; font-weight: bold;}
+.code A:hover {color: #0000ff; text-decoration: underline; font-weight: bold;}
+
+.code .keyword {
+color: #007700;
+}
+
+.code .comment {
+color: #888888;
+font-size: 8pt;
+font-family: verdana,arial,helvetica,sans-serif;
+}
+
+.code .var {
+color: #770000;
 }
 
 .code_help {
@@ -59,19 +90,6 @@ font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
 color: #0000aa;
 font-size: 11px;
 margin: 0 0 0 20px;
-}
-
-.var {
-font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
-color: Maroon;
-font-weight: normal;
-font-style: normal;
-}
-
-.comment {
-font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
-color: #888;
-font-style: normal;
 }
 
 .note {

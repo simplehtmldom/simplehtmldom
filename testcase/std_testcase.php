@@ -60,6 +60,8 @@ $str = <<<HTML
 <
 HTML;
 $dom->load($str);
+echo $dom;
+
 assert($dom==$str);
 assert($dom->save()==$str);
 // -----------------------------------------------
