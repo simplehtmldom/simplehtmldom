@@ -333,9 +333,9 @@ class html_dom_node {
     function previousSibling() {return $this->prev_sibling();}
 }
 
-// html dom parser
+// simple html dom parser
 // -----------------------------------------------------------------------------
-class html_dom_parser {
+class simple_html_dom {
     public  $nodes = array();
     public  $root = null;
     public  $lowercase = false;
