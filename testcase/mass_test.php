@@ -15,7 +15,7 @@ $files = array(
     array('name'=>'microsoft.htm',      'url'=>'http://www.microsoft.com/'),
     array('name'=>'slashdot.htm',       'url'=>'http://www.slashdot.org/'),
     array('name'=>'ror.htm',            'url'=>'http://www.rubyonrails.org/'),
-    array('name'=>'yahoo.htm',          'url'=>'http://tw.yahoo.com/'),
+    array('name'=>'yahoo.htm',          'url'=>'http://www.yahoo.com/'),
     array('name'=>'phpbb.htm',          'url'=>'http://www.phpbb.com/'),
     array('name'=>'python.htm',         'url'=>'http://www.python.org/'),
     array('name'=>'lua.htm',            'url'=>'http://www.lua.org/'),

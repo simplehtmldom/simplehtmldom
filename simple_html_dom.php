@@ -350,9 +350,9 @@ class simple_html_dom {
     // use isset instead of in_array, performance increase about 30%...
     private $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
     private $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1);
-    private $token_slash = array(' '=>1, '/'=>1, '>'=>1);
+    private $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\n"=>1, "\t"=>1);
     private $token_attr  = array(' '=>1, '>'=>1);
-    private $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'embed'=>1);
+    private $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
     private $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'dl'=>1, 'ol'=>1);
     private $optional_closing_tags = array(
         'th'=>array('th'=>1, 'tr'=>1, 'td'=>1),

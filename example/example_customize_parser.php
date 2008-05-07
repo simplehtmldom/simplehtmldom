@@ -8,7 +8,7 @@ function html_extract_contents($str) {
     $parser = new simple_html_dom;
 
     // 2. prepare HTML data and init everything
-    $parser->prepare($str);
+    $parser->prepare($str, false);
 
     // 3. some contents such as 'comments', 'styles' or 'script' will be treated as 'text',
     // so we need to remove it before parsing...
@@ -32,10 +32,17 @@ function html_extract_contents($str) {
     $ret = '';
     while ($node=$parser->parse()) {
         // dump node's contents which tag is 'text'
-        if ($node->tag=='text')
-            $ret .= htmlspecialchars_decode($node->text());
+        if ($node->nodetype==HDOM_TYPE_TEXT) {
+            $text = $node->text();
+
+            // skip some BAD-HTML-mis-match block tags
+            if (strpos($text, '</')!==false)
+                continue;
+
+            $ret .= htmlspecialchars_decode($text);
+        }
     }
-    
+
     // clean up memory
     $parser->clear();
     unset($parser);
