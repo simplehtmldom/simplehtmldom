@@ -6,7 +6,21 @@ require_once('../simple_html_dom.php');
 $dom = new simple_html_dom;
 
 // -----------------------------------------------------------------------------
-// selector test 1
+// "\t" or "\n" in tag test
+// std selector test 1
+$str = <<<HTML
+<img 
+class="class0" id="id0" src="src0">
+<img
+ class="class1" id="id1" src="src1">
+<img class="class2" id="id2" src="src2">
+HTML;
+$dom->load($str);
+$e = $dom->find('img');
+assert(count($e)==3);
+
+// -----------------------------------------------------------------------------
+// std selector test 1
 $str = <<<HTML
 <img class="class0" id="id0" src="src0">
 <img class="class1" id="id1" src="src1">

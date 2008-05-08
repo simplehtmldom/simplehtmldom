@@ -1,9 +1,9 @@
 <?php
 include_once('../simple_html_dom.php');
 
-function scraping_digg($url) {
+function scraping_digg() {
     // create DOM
-    $dom = file_get_dom($url);
+    $dom = file_get_dom('http://digg.com/');
 
     // get news block
     foreach($dom->find('div.news-summary') as $article) {
@@ -25,12 +25,13 @@ function scraping_digg($url) {
 }
 
 
-// test it!
 // -----------------------------------------------------------------------------
+// test it!
+
 // "http://digg.com" will check user_agent header...
 ini_set('user_agent', 'My-Application/2.5');
 
-$ret = scraping_digg('http://digg.com/');
+$ret = scraping_digg();
 
 foreach($ret as $v) {
     echo $v['title'].'<br>';

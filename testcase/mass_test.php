@@ -45,7 +45,7 @@ foreach($files as $f) {
     
     if (file_get_contents($dir.$f['name'])!=$dom->save()) {
         echo "[<font color='red'>failed</font>] ".$f['name']."<br>";
-        $dom->save_file($dir.$f['name'].'.error');
+        $dom->save($dir.$f['name'].'.error');
     }
     else
         echo "[success] ".$f['name']."<br>";

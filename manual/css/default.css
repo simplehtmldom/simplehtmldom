@@ -6,11 +6,6 @@ font-size: 12px;
 color: #4F5155;
 }
 
-A:link {text-decoration: none;}
-A:visited {text-decoration: none;}
-A:active {text-decoration: none;}
-A:hover {text-decoration: underline;}
-
 #content {
 margin: 0 20px 0 20px;
 line-height: 16px;

@@ -259,7 +259,7 @@ class simple_html_dom_node {
         return (isset($final[$idx])) ? $final[$idx] : null;
     }
 
-    private function parse_selector($selector) {
+    protected function parse_selector($selector) {
         $selectors = array();
 
         // parse CSS selectors, pattern is modified from mootools
@@ -287,7 +287,7 @@ class simple_html_dom_node {
     }
 
     // seek for given conditions
-    private function seek($op, $tag, $key, $val, $exp, &$ret) {
+    protected function seek($op, $tag, $key, $val, $exp, &$ret) {
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$this->info[HDOM_INFO_END]; ++$i) {
             $n = $this->dom->nodes[$i];
             if ($n->nodetype==HDOM_TYPE_ENDTAG) continue;
@@ -339,22 +339,22 @@ class simple_html_dom {
     public  $nodes = array();
     public  $root = null;
     public  $lowercase = false;
-    private $parent = null;
-    private $pos;
-    private $char;
-    private $size;
-    private $html;
-    private $index;
-    private $max_node = 0;
-    private $noise = array();
+    protected $parent = null;
+    protected $pos;
+    protected $char;
+    protected $size;
+    protected $html;
+    protected $index;
+    protected $max_node = 0;
+    protected $noise = array();
     // use isset instead of in_array, performance increase about 30%...
-    private $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
-    private $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1);
-    private $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\n"=>1, "\t"=>1);
-    private $token_attr  = array(' '=>1, '>'=>1);
-    private $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
-    private $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'dl'=>1, 'ol'=>1);
-    private $optional_closing_tags = array(
+    protected $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
+    protected $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1);
+    protected $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\r"=>1, "\n"=>1, "\t"=>1);
+    protected $token_attr  = array(' '=>1, '>'=>1);
+    protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
+    protected $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'dl'=>1, 'ol'=>1);
+    protected $optional_closing_tags = array(
         'th'=>array('th'=>1, 'tr'=>1, 'td'=>1),
         'tr'=>array('tr'=>1, 'td'=>1),
         'td'=>array('td'=>1),
@@ -475,7 +475,7 @@ class simple_html_dom {
     }
 
     // restore noise to html content
-    private function restore_noise($text) {
+    protected function restore_noise($text) {
         while(($pos=strpos($text, '___noise___'))!==false) {
             $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13];
             if (isset($this->noise[$key]))
@@ -503,7 +503,7 @@ class simple_html_dom {
     }
 
     // read tag info
-    private function read_tag() {
+    protected function read_tag() {
         if ($this->char!='<') {
             $this->root->info[HDOM_INFO_END] = $this->index;
             return null;
@@ -657,7 +657,7 @@ class simple_html_dom {
     }
 
     // parse attributes
-    private function parse_attr($node, $name, &$space) {
+    protected function parse_attr($node, $name, &$space) {
         $space[2] = $this->copy_skip($this->token_blank);
         switch($this->char) {
             case '"':
@@ -679,14 +679,14 @@ class simple_html_dom {
         $node->attr[$this->restore_noise($name)] = $this->restore_noise($value);
     }
 
-    private function skip($chars) {
+    protected function skip($chars) {
         while ($this->char!==null) {
             if (!isset($chars[$this->char])) return;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         }
     }
 
-    private function copy_skip($chars) {
+    protected function copy_skip($chars) {
         $ret = '';
         while ($this->char!==null) {
             if (!isset($chars[$this->char])) return $ret;
@@ -696,7 +696,7 @@ class simple_html_dom {
         return $ret;
     }
 
-    private function copy_until($chars) {
+    protected function copy_until($chars) {
         $ret = '';
         while ($this->char!==null) {
             if (isset($chars[$this->char])) return $ret;
@@ -706,7 +706,7 @@ class simple_html_dom {
         return $ret;
     }
 
-    private function copy_until_char($char) {
+    protected function copy_until_char($char) {
         $ret = '';
         while ($this->char!=$char && $this->char!==null) {
             $ret .= $this->char;
@@ -715,7 +715,7 @@ class simple_html_dom {
         return $ret;
     }
 
-    private function copy_until_char_escape($char) {
+    protected function copy_until_char_escape($char) {
         $ret = '';
         while ($this->char!=$char && $this->char!==null) {
             // ignore string escape
@@ -738,8 +738,5 @@ class simple_html_dom {
     function getElementByTagName($name) {return $this->find($name, 0);}
     function getElementsByTagName($name, $idx=-1) {return $this->find($name, $idx);}
     function loadFile() {$args = func_get_args();$this->load(call_user_func_array('file_get_contents', $args), true);}
-
-    // deprecated names
-    function save_file($filepath) {return $this->save($filepath);}
 }
 ?>

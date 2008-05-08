@@ -1,9 +1,9 @@
 <?php
 include_once('../simple_html_dom.php');
 
-function scraping_slashdot($url) {
+function scraping_slashdot() {
     // create DOM
-    $dom = file_get_dom($url);
+    $dom = file_get_dom('http://slashdot.org/');
 
     // get article block
     foreach($dom->find('div.article') as $article) {
@@ -24,10 +24,9 @@ function scraping_slashdot($url) {
     return $ret;
 }
 
-
-// test it!
 // -----------------------------------------------------------------------------
-$ret = scraping_slashdot('http://slashdot.org/');
+// test it!
+$ret = scraping_slashdot();
 
 foreach($ret as $v) {
     echo $v['title'].'<br>';

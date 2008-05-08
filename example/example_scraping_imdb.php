@@ -42,8 +42,8 @@ function scraping_IMDB($url) {
 }
 
 
-// test it!
 // -----------------------------------------------------------------------------
+// test it!
 $ret = scraping_IMDB('http://imdb.com/title/tt0335266/');
 
 foreach($ret as $k=>$v)

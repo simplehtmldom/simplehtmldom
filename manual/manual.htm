@@ -54,13 +54,13 @@
       <div class="code"><span class="comment">// Create DOM object</span><br>
         $dom = new <strong>simple_html_dom</strong>();<br>
         <br>
-        <span class="comment">// Load contents from a string</span><br>
+        <span class="comment">// Load HTML from a string</span><br>
         $dom-&gt;<strong>load</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
         <br>
-        <span class="comment">// Load contents from a URL </span> <br>
+        <span class="comment">// Load HTML from a URL </span> <br>
         $dom-&gt;<strong>load_file</strong>(<span class="var">'http://www.google.com/'</span>);<br>
         <br>
-        <span class="comment">// Load contents from a file</span> <br>
+        <span class="comment">// Load HTML from a file</span> <br>
         $dom-&gt;<strong>load_file</strong>(<span class="var">'test.htm'</span>);</div>
     </div>
   </div>
@@ -106,7 +106,7 @@
     </div>
     <div id="frag_find_attr">
       <div class="code">
-        <table width="100%"  border="0" cellspacing="3" cellpadding="1">
+        <table width="100%"  border="0" cellspacing="1" cellpadding="1">
           <tr>
             <th width="25%">Filter</th>
             <th width="75%">Description</th>
@@ -206,7 +206,7 @@
         <br>
         echo $e-&gt;<strong>tag</strong>; <span class="comment">// Returns: &quot; <strong>div</strong>&quot;</span><br>
         echo $e-&gt;<strong>outertext</strong>; <span class="comment">// Returns: &quot; <strong>&lt;div&gt;foo &lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;</strong>&quot;</span><br>
-        echo $e-&gt;<strong>innertext</strong>; <span class="comment">// Returns: &quot; <strong>foo&lt;b&gt;bar&lt;/b&gt;</strong>&quot;</span><br>
+        echo $e-&gt;<strong>innertext</strong>; <span class="comment">// Returns: &quot; <strong>foo &lt;b&gt;bar&lt;/b&gt;</strong>&quot;</span><br>
         echo $e-&gt;<strong>plaintext</strong>; <span class="comment">// Returns: &quot; <strong>foo </strong><strong>bar</strong>&quot;<br>
         <br>
         </span>
@@ -264,7 +264,7 @@
         echo $dom-&gt;<strong>getElementById</strong>(<span class="var">&quot;div1&quot;</span>)-&gt;<strong>childNodes</strong>(<span class="var">1</span>)-&gt;<strong>childNodes</strong>(<span class="var">1</span>)-&gt;<strong>childNodes</strong>(<span class="var">2</span>)-&gt;<strong>getAttribute</strong>(<span class="var">'id'</span>); </div>
     </div>
     <div id="frag_traverse_traverse">
-      <div class="code">
+      <div class="code">You can also call methods with <a href="manual_api.htm#camel"><span class="var">Camel naming convertions</span></a>.<br>
         <table width="100%"  border="0" cellspacing="1" cellpadding="1">
           <tr>
             <th> Method </th>

@@ -1,10 +1,12 @@
 [On going]
 1. Important!! file and class name changed (html_dom_parser->simple_html_dom)!
-2. Fix the bug of regular expression escaping chars.
-3. Fix the bug of "\n" or "\t" in tags.
-4. Supports comments.
-5. Add self-closing tags: 'base', 'spacer'.
-6. 'save_file' no suppport anymore.
+2. Important!! ($dom->save_file) will not support anymore.
+3. New node type "comment" (eg. $dom->find('comment')).
+4. Add self-closing tags: 'base', 'spacer'.
+5. Fix the bug of regular expression escaping chars ($dom->find).
+6. Fix the bug of line-kreaker and "\t" in tags.
+7. Remove example "example_customize_parser.php".
+8. New example "example_utility.php".
 
 [PHP Simple HTML DOM Parser v0.96 is released]
 1. (Request #1936000) New DOM operations(first_child, last_child, next_sibling, previous_sibling).
