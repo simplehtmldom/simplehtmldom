@@ -102,8 +102,6 @@ class simple_html_dom_node {
 
     // clean up memory due to php5 circular references memory leak...
     function clear() {
-        unset($this->tag);
-        unset($this->nodetype);
         unset($this->info);
         unset($this->attr);
         unset($this->parent);
@@ -355,12 +353,13 @@ class simple_html_dom {
     protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
     protected $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'dl'=>1, 'ol'=>1);
     protected $optional_closing_tags = array(
-        'th'=>array('th'=>1, 'tr'=>1, 'td'=>1),
-        'tr'=>array('tr'=>1, 'td'=>1),
+        'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
+        'th'=>array('th'=>1),
         'td'=>array('td'=>1),
+        'ul'=>array('ul'=>1, 'li'=>1),
+        'li'=>array('li'=>1),
         'dt'=>array('dt'=>1, 'dd'=>1),
         'dd'=>array('dd'=>1, 'dt'=>1),
-        'li'=>array('li'=>1),
         'p'=>array('p'=>1),
     );
 

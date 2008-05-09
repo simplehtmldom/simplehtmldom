@@ -44,6 +44,60 @@ $dom->find('head', 0)->innertext = 'ok';
 assert($dom==$str3);
 
 // -----------------------------------------------------------------------------
+// outertext test
+$str = <<<HTML
+<table>
+<tr><th>Head1</th><th>Head2</th><th>Head3</th></tr>
+<tr><td>1</td><td>2</td><td>3</td></tr>
+</table>
+HTML;
+$dom->load($str);
+assert($dom->find('tr', 0)->outertext=='<tr><th>Head1</th><th>Head2</th><th>Head3</th></tr>');
+assert($dom->find('tr', 1)->outertext=='<tr><td>1</td><td>2</td><td>3</td></tr>');
+// -----------------------------------------------
+$str = <<<HTML
+<table><tr><th>Head1</th><th>Head2</th><th>Head3</th><tr><td>1</td><td>2</td><td>3</td></table>
+HTML;
+$dom->load($str);
+assert($dom->find('tr', 0)->outertext=='<tr><th>Head1</th><th>Head2</th><th>Head3</th>');
+assert($dom->find('tr', 1)->outertext=='<tr><td>1</td><td>2</td><td>3</td>');
+
+// -----------------------------------------------
+$str = <<<HTML
+<ul><li><b>li11</b></li><li><b>li12</b></li></ul><ul><li><b>li21</b></li><li><b>li22</b></li></ul>
+HTML;
+$dom->load($str);
+assert($dom->find('ul', 0)->outertext=='<ul><li><b>li11</b></li><li><b>li12</b></li></ul>');
+assert($dom->find('ul', 1)->outertext=='<ul><li><b>li21</b></li><li><b>li22</b></li></ul>');
+
+// -----------------------------------------------
+$str = <<<HTML
+<ul><li><b>li11</b></li><li><b>li12</b></li><ul><li><b>li21</b></li><li><b>li22</b></li>
+HTML;
+$dom->load($str);
+assert($dom->find('ul', 0)->outertext=='<ul><li><b>li11</b></li><li><b>li12</b></li>');
+assert($dom->find('ul', 1)->outertext=='<ul><li><b>li21</b></li><li><b>li22</b></li>');
+
+// -----------------------------------------------
+$str = <<<HTML
+<ul><li><b>li11</b><li><b>li12</b></li><ul><li><b>li21</b></li><li><b>li22</b>
+HTML;
+$dom->load($str);
+assert($dom->find('ul', 0)->outertext=='<ul><li><b>li11</b><li><b>li12</b></li>');
+assert($dom->find('ul', 1)->outertext=='<ul><li><b>li21</b></li><li><b>li22</b>');
+
+// -----------------------------------------------
+$str = <<<HTML
+<table>
+<tr><th>Head1</th><th>Head2</th><th>Head3</th></tr>
+<tr><td>1</td><td>2</td><td>3</td></tr>
+</table>
+HTML;
+$dom->load($str);
+assert($dom->find('tr', 0)->outertext=='<tr><th>Head1</th><th>Head2</th><th>Head3</th></tr>');
+assert($dom->find('tr', 1)->outertext=='<tr><td>1</td><td>2</td><td>3</td></tr>');
+
+// -----------------------------------------------------------------------------
 // replacement test
 $str = <<<HTML
 <div class="class1" id="id2" ><div class="class2">ok</div></div>
