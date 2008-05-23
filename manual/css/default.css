@@ -76,19 +76,26 @@ color: #888;
 color: #770000;
 }
 
+table {
+width: 100%;
+}
+
 th {
 font-family: Lucida Grande, Verdana, Geneva, Sans-serif;
-color: #000000;
+line-height: 11px;
+color: #333333;
 background-color: #CFD4E6;
 margin: 2px 2px 2px 2px;
 padding: 2px 2px 2px 2px;
-font-size: 13px;
+font-size: 11px;
+text-align: left;
 font-weight: normal;
-font-style: normal;
 }
 
 td {
 background-color: #dddddd;
+padding:1px;
+spacing:1px;
 }
 
 .description {

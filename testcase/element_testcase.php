@@ -19,7 +19,7 @@ HTML;
 $dom->load($str);
 assert($dom==$str);
 // -----------------------------------------------
-$str2 = <<<HTML
+$str = <<<HTML
 <html>
     <head></head>
     <body>
@@ -29,9 +29,9 @@ $str2 = <<<HTML
 </html>
 HTML;
 $dom->find('span', 0)->innertext = 'bar';
-assert($dom==$str2);
+assert($dom==$str);
 // -----------------------------------------------
-$str3 = <<<HTML
+$str = <<<HTML
 <html>
     <head>ok</head>
     <body>
@@ -41,7 +41,7 @@ $str3 = <<<HTML
 </html>
 HTML;
 $dom->find('head', 0)->innertext = 'ok';
-assert($dom==$str3);
+assert($dom==$str);
 
 // -----------------------------------------------------------------------------
 // outertext test

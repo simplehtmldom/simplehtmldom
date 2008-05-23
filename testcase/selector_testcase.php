@@ -20,7 +20,7 @@ $e = $dom->find('img');
 assert(count($e)==3);
 
 // -----------------------------------------------------------------------------
-// std selector test 1
+// std selector test
 $str = <<<HTML
 <img class="class0" id="id0" src="src0">
 <img class="class1" id="id1" src="src1">
@@ -95,6 +95,39 @@ assert(count($es)==1);
 assert($es[0]->src=='src0');
 assert($es[0]->innertext=='');
 assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
+
+// -----------------------------------------------
+// text
+$str = <<<HTML
+<b>text1</b><b>text2</b>
+HTML;
+$dom->load($str);
+$es = $dom->find('text');
+assert(count($es)==2);
+assert($es[0]->text()=='text1');
+assert($es[0]->innertext=='text1');
+assert($es[0]->outertext=='text1');
+assert($es[0]->plaintext=='text1');
+assert($es[1]->text()=='text2');
+assert($es[1]->innertext=='text2');
+assert($es[1]->outertext=='text2');
+assert($es[1]->plaintext=='text2');
+
+$str = <<<HTML
+<b>text1</b><b>text2</b>
+HTML;
+$dom->load($str);
+$es = $dom->find('b text');
+assert(count($es)==2);
+assert($es[0]->text()=='text1');
+assert($es[0]->innertext=='text1');
+assert($es[0]->outertext=='text1');
+assert($es[0]->plaintext=='text1');
+assert($es[1]->text()=='text2');
+assert($es[1]->innertext=='text2');
+assert($es[1]->outertext=='text2');
+assert($es[1]->plaintext=='text2');
+
 
 // -----------------------------------------------
 // xml namespace test

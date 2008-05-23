@@ -1,9 +1,10 @@
 <?php
 /*******************************************************************************
-Version: 0.97
-Author: S. C. Chen (me578022@gmail.com)
+Version: 0.98
+Website: http://sourceforge.net/projects/simplehtmldom/
+Author: S.C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
-Contributions by: Yousuke Kumakura (Attribute Filters)
+Contributions by: Yousuke Kumakura (Attribute filters)
 Licensed under The MIT License
 Redistributions of files must retain the above copyright notice.
 *******************************************************************************/
@@ -28,8 +29,8 @@ define('HDOM_INFO_ENDSPACE',7);
 // -----------------------------------------------------------------------------
 // get dom form file
 function file_get_dom() {
-    $args = func_get_args();
     $dom = new simple_html_dom;
+    $args = func_get_args();
     $dom->load(call_user_func_array('file_get_contents', $args), true);
     return $dom;
 }
@@ -102,6 +103,7 @@ class simple_html_dom_node {
 
     // clean up memory due to php5 circular references memory leak...
     function clear() {
+        unset($this->tag);
         unset($this->info);
         unset($this->attr);
         unset($this->parent);
@@ -157,6 +159,7 @@ class simple_html_dom_node {
     // get dom node's inner html
     function innertext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
+        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
         $ret = '';
         foreach($this->nodes as $n) $ret .= $n->outertext();
         return $ret;
@@ -178,6 +181,7 @@ class simple_html_dom_node {
 
     // get dom node's plain text
     function plaintext() {
+        if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
         if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
         $ret = '';
         foreach($this->nodes as $n) $ret .= $n->plaintext();
@@ -445,16 +449,14 @@ class simple_html_dom {
 
     // clean up memory due to php5 circular references memory leak...
     function clear() {
-        if (isset($this->html)) unset($this->html);
-        if (isset($this->noise)) unset($this->noise);
-
         foreach($this->nodes as $n) {
             $n->clear();
             unset($n);
         }
-
         if (isset($this->parent)) {$this->parent->clear(); unset($this->parent);}
         if (isset($this->root)) {$this->root->clear(); unset($this->root);}
+        unset($this->html);
+        unset($this->noise);
     }
 
     // remove noise from html content

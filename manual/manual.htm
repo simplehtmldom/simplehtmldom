@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link href="default.css" rel="stylesheet" type="text/css">
-<title>PHP Simple HTML DOM Parser</title>
+<title>PHP Simple HTML DOM Parser: Manual</title>
 <link href="css/default.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/ui.tabs.css" type="text/css" media="print, projection, screen">
 <script type="text/javascript" src="js/jquery-1.2.3.pack.js"></script>
@@ -33,7 +33,7 @@
   </ul>
   <a name="section_create"></a>
   <h2>How to create HTML DOM object?</h2>
-  <span class="top"><a href="#top">Top</a></span>
+  <a class="top" href="#top">Top</a>
   <div id="container_create">
     <ul>
       <li><a href="#frag_create_quick"><span>Quick way</span></a></li>
@@ -46,12 +46,12 @@
         <span class="comment">// Create a DOM object from a URL</span><br>
         $dom = <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>);<br>
         <br>
-        <span class="comment">// Create a DOM object from a file</span><br>
+        <span class="comment">// Create a DOM object from a HTML file</span><br>
         $dom = <strong>file_get_dom</strong>(<span class="var">'test.htm'</span>);<span class="comment"><br>
         </span></div>
     </div>
     <div id="frag_create_oo">
-      <div class="code"><span class="comment">// Create DOM object</span><br>
+      <div class="code"><span class="comment">// Create a DOM object</span><br>
         $dom = new <strong>simple_html_dom</strong>();<br>
         <br>
         <span class="comment">// Load HTML from a string</span><br>
@@ -60,13 +60,13 @@
         <span class="comment">// Load HTML from a URL </span> <br>
         $dom-&gt;<strong>load_file</strong>(<span class="var">'http://www.google.com/'</span>);<br>
         <br>
-        <span class="comment">// Load HTML from a file</span> <br>
+        <span class="comment">// Load HTML from a HTML file</span> <br>
         $dom-&gt;<strong>load_file</strong>(<span class="var">'test.htm'</span>);</div>
     </div>
   </div>
   <a name="section_find"></a>
   <h2>How to find HTML elements?</h2>
-  <span class="top"><a href="#top">Top</a></span>
+  <a class="top" href="#top">Top</a>
   <div id="container_find">
     <ul>
       <li><a href="#frag_find_basic"><span>Basics</span></a></li>
@@ -106,7 +106,7 @@
     </div>
     <div id="frag_find_attr">
       <div class="code">
-        <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+        <table cellpadding="1" cellspacing="1">
           <tr>
             <th width="25%">Filter</th>
             <th width="75%">Description</th>
@@ -177,7 +177,7 @@
   </div>
   <a name="section_access"></a>
   <h2>How to access the HTML element's attributes?</h2>
-  <span class="top"><a href="#top">Top</a></span>
+  <a class="top" href="#top">Top</a>
   <div id="container_access">
     <ul>
       <li><a href="#frag_access_attr"><span>Get, Set and Remove attributes</span></a></li>
@@ -210,7 +210,7 @@
         echo $e-&gt;<strong>plaintext</strong>; <span class="comment">// Returns: &quot; <strong>foo </strong><strong>bar</strong>&quot;<br>
         <br>
         </span>
-        <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+        <table cellspacing="1" cellpadding="1">
           <tr bgcolor="#CCCCCC">
             <th width="25%">Attribute Name</th>
             <th width="75%">Usage</th>
@@ -249,7 +249,7 @@
   </div>
   <a name="section_traverse"></a>
   <h2>How to traverse the DOM tree?</h2>
-  <span class="top"><a href="#top">Top</a></span>
+  <a class="top" href="#top">Top</a>
   <div id="container_traverse">
     <ul>
       <li><a href="#frag_traverse_background"><span>Background Knowledge</span></a></li>
@@ -265,7 +265,7 @@
     </div>
     <div id="frag_traverse_traverse">
       <div class="code">You can also call methods with <a href="manual_api.htm#camel"><span class="var">Camel naming convertions</span></a>.<br>
-        <table width="100%"  border="0" cellspacing="1" cellpadding="1">
+        <table cellspacing="1" cellpadding="1">
           <tr>
             <th> Method </th>
             <th> Description</th>
@@ -307,7 +307,7 @@
   </div>
   <a name="section_dump"></a>
   <h2>How to dump contents of DOM object?</h2>
-  <span class="top"><a href="#top">Top</a></span>
+  <a class="top" href="#top">Top</a>
   <div id="container_dump">
     <ul>
       <li><a href="#frag_dump_quick"><span>Quick way</span></a></li>
