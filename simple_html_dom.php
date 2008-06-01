@@ -45,11 +45,11 @@ function str_get_dom($str, $lowercase=true) {
 // simple html dom node
 // -----------------------------------------------------------------------------
 class simple_html_dom_node {
-    public $tag = '';
+    public $tag = 'text';
+    public $nodetype = HDOM_TYPE_TEXT;
     public $attr = array();
     public $parent = null;
     public $children = array();
-    public $nodetype = HDOM_TYPE_TEXT;
     public $dom = null;
     public $nodes = array();
     public $info = array(
@@ -58,7 +58,8 @@ class simple_html_dom_node {
         HDOM_INFO_TEXT=>'',
         HDOM_INFO_ENDSPACE=>'',
         HDOM_INFO_QUOTE=>array(),
-        HDOM_INFO_SPACE=>array());
+        HDOM_INFO_SPACE=>array()
+    );
 
     function __construct($dom) {
         $this->dom = $dom;
@@ -104,12 +105,13 @@ class simple_html_dom_node {
     // clean up memory due to php5 circular references memory leak...
     function clear() {
         unset($this->tag);
-        unset($this->info);
+        unset($this->nodetype);
         unset($this->attr);
         unset($this->parent);
         unset($this->children);
         unset($this->nodes);
         unset($this->dom);
+        unset($this->info);
     }
 
     // returns the parent of node
@@ -236,11 +238,8 @@ class simple_html_dom_node {
 
         // no recursive!
         for ($l=0; $l<$levle; ++$l) {
-            $op = $selectors[$l]['op'];
-            $key = $selectors[$l]['key'];
-            $val = $selectors[$l]['val'];
-            $tag = $selectors[$l]['tag'];
-            $exp = $selectors[$l]['exp'];
+            list($op, $tag, $key, $val, $exp) = $selectors[$l];
+
             if ($this->dom->lowercase) {
                 if ($tag) $tag = strtolower($tag);
                 if ($key) $key = strtolower($key);
@@ -269,11 +268,7 @@ class simple_html_dom_node {
         preg_match_all($pattern, trim($selector), $matches, PREG_SET_ORDER);
 
         foreach ($matches as $v) {
-            $op = true;
-            $key = null;
-            $val = null;
-            $tag = $v[2];
-            $exp = '=';
+            list($op, $tag, $key, $val, $exp) = array(true, $v[2], null, null, '=');
             if ($v[0]=='') continue;
             if ($v[1]=='!') $op = false;
             if(!empty($v[3])) {$key = 'id'; $val = $v[3];}
@@ -283,7 +278,7 @@ class simple_html_dom_node {
                 if(!empty($v[6])) $exp = $v[6];
                 if(!empty($v[7])) $val = $v[7];
             }
-            $selectors[] = array('op'=>$op, 'tag'=>$tag, 'key'=>$key, 'val'=>$val, 'exp'=>$exp);
+            $selectors[] = array($op, $tag, $key, $val, $exp);
         }
         return $selectors;
     }
@@ -338,18 +333,17 @@ class simple_html_dom_node {
 // simple html dom parser
 // -----------------------------------------------------------------------------
 class simple_html_dom {
-    public  $nodes = array();
-    public  $root = null;
-    public  $lowercase = false;
+    public $nodes = array();
+    public $root = null;
+    public $lowercase = false;
+    protected $html = '';
     protected $parent = null;
     protected $pos;
     protected $char;
     protected $size;
-    protected $html;
     protected $index;
-    protected $max_node = 0;
     protected $noise = array();
-    // use isset instead of in_array, performance increase about 30%...
+    // use isset instead of in_array, performance boost about 30%...
     protected $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
     protected $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1);
     protected $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\r"=>1, "\n"=>1, "\t"=>1);
@@ -407,7 +401,8 @@ class simple_html_dom {
             // outertext defined
             if (isset($this->nodes[$i]->info[HDOM_INFO_OUTER])) {
                 $ret .= $this->nodes[$i]->info[HDOM_INFO_OUTER];
-                if ($this->nodes[$i]->info[HDOM_INFO_END]>0) $i = $this->nodes[$i]->info[HDOM_INFO_END];
+                if ($this->nodes[$i]->info[HDOM_INFO_END]>0)
+                    $i = $this->nodes[$i]->info[HDOM_INFO_END];
                 continue;
             }
 
@@ -453,6 +448,7 @@ class simple_html_dom {
             $n->clear();
             unset($n);
         }
+
         if (isset($this->parent)) {$this->parent->clear(); unset($this->parent);}
         if (isset($this->root)) {$this->root->clear(); unset($this->root);}
         unset($this->html);
@@ -472,7 +468,8 @@ class simple_html_dom {
 
         // reset the length of content
         $this->size = strlen($this->html);
-        if ($this->size>0) $this->char = $this->html[0];
+        if ($this->size>0)
+            $this->char = $this->html[0];
     }
 
     // restore noise to html content
@@ -493,7 +490,6 @@ class simple_html_dom {
         // text
         $node = new simple_html_dom_node($this);
         $this->nodes[] = $node;
-        $node->tag = 'text';
         $node->info[HDOM_INFO_BEGIN] = $this->index;
         $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
         $node->parent = $this->parent;
@@ -614,9 +610,7 @@ class simple_html_dom {
             if($this->pos>=$this->size-1 && $this->char!='>') {
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->info[HDOM_INFO_END] = 0;
-                $node->info[HDOM_INFO_TEXT] = '<'.$node->tag;
-                $node->info[HDOM_INFO_TEXT] .= $space[0];
-                $node->info[HDOM_INFO_TEXT] .= $name;
+                $node->info[HDOM_INFO_TEXT] = '<'.$node->tag . $space[0] . $name;
                 $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
                 $node->tag = 'text';
                 return $node;
@@ -720,7 +714,7 @@ class simple_html_dom {
         $ret = '';
         while ($this->char!=$char && $this->char!==null) {
             // ignore string escape
-            if ($this->char=='\\') {
+            if ($this->char==='\\') {
                 $ret .= $this->char;
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             }
