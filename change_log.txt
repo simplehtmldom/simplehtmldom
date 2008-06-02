@@ -1,5 +1,7 @@
+#$Rev$
+
 [On going]
-1. Fix the bug of clear memory.
+1. Fix the bug of $dom->clear().
 2. Fix the bug of text nodes' innertext.
 
 
