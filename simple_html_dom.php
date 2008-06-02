@@ -1,7 +1,6 @@
 <?php
 /*******************************************************************************
-Version: 0.98
-Svn: $Rev$
+Version: 0.98 ($Rev$)
 Website: http://sourceforge.net/projects/simplehtmldom/
 Author: S.C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
