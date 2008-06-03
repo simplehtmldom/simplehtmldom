@@ -8,10 +8,20 @@ function dump_memory() {
     echo 'peak: ' . number_format(memory_get_peak_usage(), 0, '.', ',') . ' bytes, end: ' . number_format(memory_get_usage(), 0, '.', ',') . " bytes<br>";
 }
 
-echo 'init ' . number_format(memory_get_usage(), 0, '.', ',') . " bytes<br><br>";
+echo 'init ' . number_format(memory_get_usage(), 0, '.', ',') . " bytes";
 
+echo '<br><br>[load file]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
+echo '------------------------------------------<br>';
+flush();
+for($i=0; $i<3; ++$i) {
+    $str = file_get_contents($filename);
+    unset($str);
+    dump_memory();
+}
+echo 'final: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
+flush();
 
-echo '[multi objects clear memory]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
+echo '<br><br>[multi objects clear memory]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
 echo '------------------------------------------<br>';
 flush();
 for($i=0; $i<3; ++$i) {
