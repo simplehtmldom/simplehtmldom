@@ -1,4 +1,5 @@
 <?php
+// $Rev$
 error_reporting(E_ALL);
 
 foreach (new DirectoryIterator(getcwd()) as $entry) {
