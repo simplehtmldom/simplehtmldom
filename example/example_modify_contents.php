@@ -14,5 +14,5 @@ foreach($dom->find('input') as $node)
     $node->outertext = '[INPUT]';
 
 // dump contents
-echo $dom->save();
+echo $dom;
 ?>
