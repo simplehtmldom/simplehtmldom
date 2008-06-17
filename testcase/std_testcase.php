@@ -47,6 +47,36 @@ assert($es[1]->onclick=="goto('url1'+'\'')");
 assert($es[2]->onclick=="goto('url2')");
 assert($es[3]->onclick=='goto("url4"+"\"")');
 
+// -----------------------------------------------------------------------------
+// clone test
+$str = <<<HTML
+<div class="class0" id="id0" >
+    okok<br>
+    <input type=submit name="btnG" value="go" onclick='goto("url0")'>
+    <br/>
+    <div><input type=submit name="btnG2" value="go" onclick="goto('url1'+'\'')"/></div>
+    <input type=submit name="btnG2" value="go" onclick="goto('url2')"/>
+    <div><input type=submit name="btnG2" value="go" onclick='goto("url4"+"\"")'></div>
+    <br/>
+</div>
+HTML;
+$dom->load($str);
+$es = $dom->find('input');
+assert(count($es)==4);
+assert($es[0]->onclick=='goto("url0")');
+assert($es[1]->onclick=="goto('url1'+'\'')");
+assert($es[2]->onclick=="goto('url2')");
+assert($es[3]->onclick=='goto("url4"+"\"")');
+
+unset($es);
+$dom2 = clone($dom);
+$es = $dom2->find('input');
+assert(count($es)==4);
+assert($es[0]->onclick=='goto("url0")');
+assert($es[1]->onclick=="goto('url1'+'\'')");
+assert($es[2]->onclick=="goto('url2')");
+assert($es[3]->onclick=='goto("url4"+"\"")');
+
 // -----------------------------------------------
 $str = <<<HTML
 <div class='class0' id="id0" aa='aa' bb="bb" cc='"cc"' dd="'dd'"></div>

@@ -38,8 +38,12 @@ assert(count($e)==3);
 // tag
 assert(count($dom->find('img'))==3);
 assert(count($dom->find('!img'))==2);
+assert(count($dom->find(' !img'))==2);
+assert(count($dom->find(' ! img'))==2);
 assert(count($dom->find('text'))==2);
 assert(count($dom->find('!text'))==3);
+assert(count($dom->find(' !text'))==3);
+assert(count($dom->find(' ! text'))==3);
 
 // -----------------------------------------------
 // class
@@ -396,6 +400,9 @@ $str = <<<HTML
 <input name="milkman" />
 <input name="letterman2" />
 <input name="newmilk" />
+<div class="foo hello bar"></div>
+<div class="foo bar hello"></div>
+<div class="hello foo bar"></div>
 HTML;
 $dom->load($str);
 
@@ -417,9 +424,13 @@ assert($es[1]->outertext=='<input name="milkman" />');
 assert($es[2]->name=='letterman2');
 assert($es[2]->outertext=='<input name="letterman2" />');
 
+$es = $dom->find('[class*=hello]');
+assert($es[0]->outertext=='<div class="foo hello bar"></div>');
+assert($es[1]->outertext=='<div class="foo bar hello"></div>');
+assert($es[2]->outertext=='<div class="hello foo bar"></div>');
+
 // -----------------------------------------------------------------------------
 // Testcase for '[]' names element
-// -----------------------------------------------------------------------------
 //  normal checkbox
 $str = <<<HTML
 <input type="checkbox" name="news" value="foo" />
@@ -465,6 +476,58 @@ HTML;
 $dom->load($str);
 assert(count($dom->find('a[href^="image/"]'))==2);
 assert(count($dom->find('a[href*="/favorites/"]'))==1);
+
+// -----------------------------------------------------------------------------
+// 
+$str = <<<HTML
+<p>aaa</p>
+<b>bbb</b>
+<i>ccc</i>
+HTML;
+$dom->load($str);
+
+$es = $dom->find('p,b,i');
+assert(count($es)==3);
+assert($es[0]->tag=='p');
+assert($es[1]->tag=='b');
+assert($es[2]->tag=='i');
+
+$es = $dom->find('p, b, i');
+assert(count($es)==3);
+assert($es[0]->tag=='p');
+assert($es[1]->tag=='b');
+assert($es[2]->tag=='i');
+
+$es = $dom->find('p,  b  ,   i');
+assert(count($es)==3);
+assert($es[0]->tag=='p');
+assert($es[1]->tag=='b');
+assert($es[2]->tag=='i');
+
+$es = $dom->find('p ,b ,i');
+assert(count($es)==3);
+assert($es[0]->tag=='p');
+assert($es[1]->tag=='b');
+assert($es[2]->tag=='i');
+
+$es = $dom->find('b,p,i');
+assert(count($es)==3);
+assert($es[0]->tag=='p');
+assert($es[1]->tag=='b');
+assert($es[2]->tag=='i');
+
+$es = $dom->find('i,b,p');
+assert(count($es)==3);
+assert($es[0]->tag=='p');
+assert($es[1]->tag=='b');
+assert($es[2]->tag=='i');
+
+$es = $dom->find('p,b,i,p,b');
+assert(count($es)==3);
+assert($es[0]->tag=='p');
+assert($es[1]->tag=='b');
+assert($es[2]->tag=='i');
+
 
 // -----------------------------------------------------------------------------
 // tear down

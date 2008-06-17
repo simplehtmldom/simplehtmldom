@@ -228,63 +228,96 @@ class simple_html_dom_node {
 
     // find elements by css selector
     function find($selector, $idx=-1) {
+        $selector = trim($selector);
         if ($selector=='*') return $this->children;
 
         $selectors = $this->parse_selector($selector);
-        if (($levle=count($selectors))==0) return array();
+        if (($count=count($selectors))==0) return array();
+        $found_keys = array();
 
-        $ret = array();
-        $head = array($this->info[HDOM_INFO_BEGIN]=>1);
+        // find each selector
+        for ($c=0; $c<$count; ++$c) {
+            if (($levle=count($selectors[0]))==0) return array();
+            $head = array($this->info[HDOM_INFO_BEGIN]=>1);
 
-        // no recursive!
-        for ($l=0; $l<$levle; ++$l) {
-            list($op, $tag, $key, $val, $exp) = $selectors[$l];
-
-            if ($this->dom->lowercase) {
-                if ($tag) $tag = strtolower($tag);
-                if ($key) $key = strtolower($key);
+            // handle descendant selectors, no recursive!
+            for ($l=0; $l<$levle; ++$l) {
+                $ret = array();
+                foreach($head as $k=>$v) {
+                    $n = ($k==-1) ? $this->dom->root : $this->dom->nodes[$k];
+                    $n->seek($selectors[$c][$l], $ret);
+                }
+                $head = $ret;
             }
 
-            $ret = array();
             foreach($head as $k=>$v) {
-                $n = ($k==-1) ? $this->dom->root : $this->dom->nodes[$k];
-                $n->seek($op, $tag, $key, $val, $exp, $ret);
+                if (!isset($found_keys[$k]))
+                    $found_keys[$k] = 1;
             }
-            $head = $ret;
         }
 
-        $final = array();
-        foreach($head as $k=>$v) $final[] = $this->dom->nodes[$k];
+        // sort keys
+        ksort($found_keys);
 
-        if ($idx<0) return $final;
-        return (isset($final[$idx])) ? $final[$idx] : null;
+        $found = array();
+        foreach($found_keys as $k=>$v)
+            $found[] = $this->dom->nodes[$k];
+
+        // return nth-element or array
+        if ($idx<0) return $found;
+        return (isset($found[$idx])) ? $found[$idx] : null;
     }
 
     protected function parse_selector($selector) {
         $selectors = array();
+        $count = 0;
+
+        // preprocess
+        $selector = str_replace(' !', '! ', $selector);
+        while(strpos($selector, '! ')!==false)
+            $selector = str_replace('! ', '!', $selector);
+        $selector = str_replace(' ,', ', ', $selector);
+        while(strpos($selector, ', ')!==false)
+            $selector = str_replace(', ', ',', $selector);
 
         // parse CSS selectors, pattern is modified from mootools
-        $pattern = "/([!]?)([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
+        $pattern = "/([,])?([!])?([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
         preg_match_all($pattern, trim($selector), $matches, PREG_SET_ORDER);
 
         foreach ($matches as $v) {
-            list($op, $tag, $key, $val, $exp) = array(true, $v[2], null, null, '=');
+            list($or, $exclude, $tag, $key, $val, $exp) = array(false, false, $v[3], null, null, '=');
+
             if ($v[0]=='') continue;
-            if ($v[1]=='!') $op = false;
-            if(!empty($v[3])) {$key = 'id'; $val = $v[3];}
-            if(!empty($v[4])) {$key = 'class'; $val = $v[4];}
-            if(!empty($v[5])) {
-                $key = $v[5];
-                if(!empty($v[6])) $exp = $v[6];
-                if(!empty($v[7])) $val = $v[7];
+            if ($v[1]==',') $or = true;
+            if ($v[2]=='!') $exclude = true;
+            if(!empty($v[4])) {$key = 'id'; $val = $v[4];}
+            if(!empty($v[5])) {$key = 'class'; $val = $v[5];}
+            if(!empty($v[6])) {
+                $key = $v[6];
+                if(!empty($v[7])) $exp = $v[7];
+                if(!empty($v[8])) $val = $v[8];
             }
-            $selectors[] = array($op, $tag, $key, $val, $exp);
+
+            // convert to lowercase 
+            if ($this->dom->lowercase) {
+                $tag = strtolower($tag);
+                $key = strtolower($key);
+            }
+
+            // multiple symbol found
+            if($v[1]==',') ++$count;
+            if (!isset($selectors[$count])) $selectors[$count] = array();
+            
+            $selectors[$count][] = array($or, $exclude, $tag, $key, $val, $exp);
         }
+
         return $selectors;
     }
 
     // seek for given conditions
-    protected function seek($op, $tag, $key, $val, $exp, &$ret) {
+    protected function seek($selector, &$ret) {
+        list($or, $exclude, $tag, $key, $val, $exp) = $selector;
+
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$this->info[HDOM_INFO_END]; ++$i) {
             $n = $this->dom->nodes[$i];
             if ($n->nodetype==HDOM_TYPE_ENDTAG) continue;
@@ -307,7 +340,9 @@ class simple_html_dom_node {
                 }
                 if (!isset($n->attr[$key]) || !$check) $pass = false;
             }
-            if ($op) {if ($pass) $ret[$i] = 1;}
+
+            // handle exclude
+            if (!$exclude) {if ($pass) $ret[$i] = 1;}
             else {if (!$pass) $ret[$i] = 1;}
         }
         unset($n);

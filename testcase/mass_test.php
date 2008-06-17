@@ -24,7 +24,6 @@ $files = array(
     array('name'=>'ibm.htm',            'url'=>'http://www.ibm.com/'),
     array('name'=>'java.htm',           'url'=>'http://java.sun.com/'),
     array('name'=>'flickr.htm',         'url'=>'http://www.flickr.com/tour/upload/'),
-    array('name'=>'answers.htm',        'url'=>'http://www.answers.com/'),
     array('name'=>'amazon.htm',         'url'=>'http://www.amazon.com/'),
     array('name'=>'youtube.htm',        'url'=>'http://www.youtube.com/watch?v=kib05Ip6GSo&feature=bz302'),
 );
