@@ -520,6 +520,32 @@ assert($es[0]->tag=='p');
 assert($es[1]->tag=='b');
 assert($es[2]->tag=='i');
 
+// -----------------------------------------------------------------------------
+// multiple selector test2
+$str = <<<HTML
+<div class="hello">should verify</div>
+<div class="foo hello bar">should verify</div>
+<div class="foo bar hello">should verify</div>
+<div class="hello foo bar">should verify</div>
+<div class="helloworld">should not verify</div>
+<div class="worldhello">should not verify</div>
+<div class="worldhelloworld">should not verify</div>
+HTML;
+
+$dom->load($str);
+$es = $dom->find('[class="hello"],[class*="hello "],[class*=" hello"]');
+assert(count($es)==4);
+assert($es[0]->class=='hello');
+assert($es[1]->class=='foo hello bar');
+assert($es[2]->class=='foo bar hello');
+assert($es[3]->class=='hello foo bar');
+
+$es = $dom->find('.hello');
+assert(count($es)==4);
+assert($es[0]->class=='hello');
+assert($es[1]->class=='foo hello bar');
+assert($es[2]->class=='foo bar hello');
+assert($es[3]->class=='hello foo bar');
 
 // -----------------------------------------------------------------------------
 // tear down

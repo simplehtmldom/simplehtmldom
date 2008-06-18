@@ -3,7 +3,7 @@
 include('../simple_html_dom.php');
 
 // -----------------------------------------------------------------------------
-// multiple selector
+// descendant selector
 $str = <<<HTML
 <div>
     <div>

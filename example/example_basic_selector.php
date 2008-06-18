@@ -13,6 +13,10 @@ foreach($dom->find('a') as $node)
 foreach($dom->find('img') as $node)
     echo $node->src . '<br>';
 
+// find all image with full tag
+foreach($dom->find('img') as $node)
+    echo $node->outertext . '<br>';
+
 // find all div tags with id=gbar
 foreach($dom->find('div#gbar') as $node)
     echo $node->innertext . '<br>';
@@ -24,4 +28,10 @@ foreach($dom->find('span.gb1') as $node)
 // find all td tags with attribite align=center
 foreach($dom->find('td[align=center]') as $node)
     echo $node->innertext . '<br>';
+    
+// extract text from table
+echo $dom->find('td[align=center]', 1)->plaintext.'<br><hr>';
+
+// extract text from HTML
+echo $dom->plaintext;
 ?>

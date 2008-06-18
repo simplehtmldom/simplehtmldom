@@ -13,6 +13,7 @@ define('HDOM_TYPE_ELEMENT', 1);
 define('HDOM_TYPE_COMMENT', 2);
 define('HDOM_TYPE_TEXT',    3);
 define('HDOM_TYPE_ENDTAG',  4);
+define('HDOM_TYPE_ROOT',    5);
 define('HDOM_QUOTE_DOUBLE', 0);
 define('HDOM_QUOTE_SINGLE', 1);
 define('HDOM_QUOTE_NO',     3);
@@ -53,7 +54,7 @@ class simple_html_dom_node {
     public $dom = null;
     public $nodes = array();
     public $info = array(
-        HDOM_INFO_BEGIN=>0,
+        HDOM_INFO_BEGIN=>-1,
         HDOM_INFO_END=>0,
         HDOM_INFO_TEXT=>'',
         HDOM_INFO_ENDSPACE=>'',
@@ -61,7 +62,7 @@ class simple_html_dom_node {
         HDOM_INFO_SPACE=>array()
     );
 
-    function __construct($dom) {
+    function __construct($dom=null) {
         $this->dom = $dom;
     }
 
@@ -187,8 +188,8 @@ class simple_html_dom_node {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
         if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
         if ($this->nodetype==HDOM_TYPE_COMMENT) return '';
-        if ($this->tag=='script') return '';
-        if ($this->tag=='style') return '';
+        if (strcasecmp($this->tag, 'script')==0) return '';
+        if (strcasecmp($this->tag, 'style')==0) return '';
         $ret = '';
         foreach($this->nodes as $n) $ret .= $n->plaintext();
         return $ret;
@@ -326,25 +327,38 @@ class simple_html_dom_node {
             if ($tag && $tag!=$n->tag) $pass = false;
             if ($pass && $key && !(isset($n->attr[$key]))) $pass = false;
             if ($pass && $key && $val) {
-                $check = true;
-                switch ($exp) {
-                    case '=':
-                        $check = ($n->attr[$key]===$val) ? true : false; break;
-                    case '!=':
-                        $check = ($n->attr[$key]!==$val) ? true : false; break;
-                    case '^=':
-                        $check = (preg_match("/^".preg_quote($val,'/')."/", $n->attr[$key])) ? true : false; break;
-                    case '$=':
-                        $check = (preg_match("/".preg_quote($val,'/')."$/", $n->attr[$key])) ? true : false; break;
-                    case '*=':
-                        $check = (preg_match("/".preg_quote($val,'/')."/", $n->attr[$key])) ? true : false; break;
+                if (strcasecmp($key, 'class')==0) {
+                    foreach(explode(' ',$n->attr[$key]) as $k) {
+                        $check = $this->match($exp, $val, $k);
+                        if ($check)
+                            break;
+                    }
                 }
-                if (!isset($n->attr[$key]) || !$check) $pass = false;
+                else
+                    $check = $this->match($exp, $val, $n->attr[$key]);
+                if (!$check) $pass = false;
             }
-            
+
             if ($pass) $ret[$i] = 1;
         }
         unset($n);
+    }
+
+    protected function match($exp, $pattern, $value) {
+        $check = true;
+        switch ($exp) {
+            case '=':
+                $check = ($value===$pattern) ? true : false; break;
+            case '!=':
+                $check = ($value!==$pattern) ? true : false; break;
+            case '^=':
+                $check = (preg_match("/^".preg_quote($pattern,'/')."/", $value)) ? true : false; break;
+            case '$=':
+                $check = (preg_match("/".preg_quote($pattern,'/')."$/", $value)) ? true : false; break;
+            case '*=':
+                $check = (preg_match("/".preg_quote($pattern,'/')."/", $value)) ? true : false; break;
+        }
+        return $check;
     }
 
     // camel naming conventions
@@ -400,6 +414,14 @@ class simple_html_dom {
         return $this->save();
     }
 
+    function __get($name) {
+        switch($name) {
+            case 'outertext': return $this->save();
+            case 'innertext': return $this->root->innertext();
+            case 'plaintext': return $this->root->plaintext();
+        }
+    }
+
     // load html from string
     function load($str, $lowercase=true) {
         // prepare
@@ -420,12 +442,17 @@ class simple_html_dom {
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
         // parsing
         while ($this->parse());
+        $this->root->info[HDOM_INFO_END] = $this->index;
     }
 
     // load html from file
     function load_file() {
         $args = func_get_args();
         $this->load(call_user_func_array('file_get_contents', $args), true);
+    }
+
+    function set_callback($function_name) {
+        $this->callback = $function_name;
     }
 
     // save dom as string
@@ -436,7 +463,7 @@ class simple_html_dom {
         $func_callback = $this->callback;
         for ($i=0; $i<$count; ++$i) {
             // trigger callback
-            if ($this->callback!==null)
+            if ($func_callback!==null)
                 $handle =  $func_callback($this->nodes[$i]);
 
             // outertext defined
@@ -476,8 +503,7 @@ class simple_html_dom {
         $this->pos = 0;
         $this->root = new simple_html_dom_node($this);
         $this->root->tag = 'root';
-        $this->root->nodetype = HDOM_TYPE_ELEMENT;
-        $this->root->info[HDOM_INFO_BEGIN] = -1;
+        $this->root->nodetype = HDOM_TYPE_ROOT;
         $this->parent = $this->root;
         // set the length of content
         $this->size = strlen($str);
