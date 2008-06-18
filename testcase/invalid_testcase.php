@@ -97,6 +97,19 @@ assert($dom->find('td', 1)->innertext=='2');
 assert($dom->find('td', 1)->outertext=='<td>2');
 assert($dom->find('td', 2)->innertext=="3\r\n");
 assert($dom->find('td', 2)->outertext=="<td>3\r\n");
+
+$str = <<<HTML
+<table>
+<tr>
+    <td><b>1</b></td>
+    <td><b>2</b></td>
+    <td><b>3</b></td>
+</table>
+HTML;
+$dom = str_get_dom($str);
+assert(count($dom->find('tr td'))==3);
+
+
 // -----------------------------------------------
 $str = <<<HTML
 <p>1

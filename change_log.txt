@@ -8,6 +8,7 @@
 5. Fix the bug of $dom->clear().
 6. Fix the bug of text nodes' innertext.
 7. Fix the bug of comment nodes' innertext.
+7. Fix the bug of decendent selector with optional tags.
 
 
 [PHP Simple HTML DOM Parser v0.97 is released]

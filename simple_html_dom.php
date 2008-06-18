@@ -319,8 +319,12 @@ class simple_html_dom_node {
     // seek for given conditions
     protected function seek($selector, &$ret) {
         list($or, $tag, $key, $val, $exp) = $selector;
+        
+        $end = $this->info[HDOM_INFO_END];
+        if ($end==0)
+            $end = $this->parent->info[HDOM_INFO_END]-1;
 
-        for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$this->info[HDOM_INFO_END]; ++$i) {
+        for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$end; ++$i) {
             $n = $this->dom->nodes[$i];
             if ($n->nodetype==HDOM_TYPE_ENDTAG) continue;
             $pass = true;
@@ -592,7 +596,7 @@ class simple_html_dom {
             // mapping parent node
             if (strtolower($this->parent->tag)!==$tag_lower) {
                 if (isset($this->block_tags[$tag_lower]))  {
-                    $this->parent->info[HDOM_INFO_END] = null;
+                    $this->parent->info[HDOM_INFO_END] = 0;
                     while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
                         $this->parent = $this->parent->parent;
                 }
