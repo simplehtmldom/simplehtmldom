@@ -37,13 +37,7 @@ assert(count($e)==3);
 // -----------------------------------------------
 // tag
 assert(count($dom->find('img'))==3);
-assert(count($dom->find('!img'))==2);
-assert(count($dom->find(' !img'))==2);
-assert(count($dom->find(' ! img'))==2);
 assert(count($dom->find('text'))==2);
-assert(count($dom->find('!text'))==3);
-assert(count($dom->find(' !text'))==3);
-assert(count($dom->find(' ! text'))==3);
 
 // -----------------------------------------------
 // class
@@ -52,14 +46,12 @@ assert(count($es)==1);
 assert($es[0]->src=='src0');
 assert($es[0]->innertext=='');
 assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
-assert(count($dom->find('!img.class0'))==4);
 
 $es = $dom->find('.class0');
 assert(count($es)==1);
 assert($es[0]->src=='src0');
 assert($es[0]->innertext=='');
 assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
-assert(count($dom->find('!.class0'))==4);
 
 // -----------------------------------------------
 // id
@@ -478,7 +470,7 @@ assert(count($dom->find('a[href^="image/"]'))==2);
 assert(count($dom->find('a[href*="/favorites/"]'))==1);
 
 // -----------------------------------------------------------------------------
-// 
+// multiple selector test
 $str = <<<HTML
 <p>aaa</p>
 <b>bbb</b>

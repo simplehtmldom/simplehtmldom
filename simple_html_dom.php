@@ -162,6 +162,7 @@ class simple_html_dom_node {
     function innertext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
         if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
+        if ($this->nodetype==HDOM_TYPE_COMMENT) return $this->info[HDOM_INFO_TEXT];
         $ret = '';
         foreach($this->nodes as $n) $ret .= $n->outertext();
         return $ret;
@@ -185,6 +186,9 @@ class simple_html_dom_node {
     function plaintext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
         if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
+        if ($this->nodetype==HDOM_TYPE_COMMENT) return '';
+        if ($this->tag=='script') return '';
+        if ($this->tag=='style') return '';
         $ret = '';
         foreach($this->nodes as $n) $ret .= $n->plaintext();
         return $ret;
@@ -274,28 +278,25 @@ class simple_html_dom_node {
 
         // preprocess
         $selector = str_replace(' !', '! ', $selector);
-        while(strpos($selector, '! ')!==false)
-            $selector = str_replace('! ', '!', $selector);
+        while(strpos($selector, '! ')!==false) $selector = str_replace('! ', '!', $selector);
         $selector = str_replace(' ,', ', ', $selector);
-        while(strpos($selector, ', ')!==false)
-            $selector = str_replace(', ', ',', $selector);
+        while(strpos($selector, ', ')!==false) $selector = str_replace(', ', ',', $selector);
 
         // parse CSS selectors, pattern is modified from mootools
-        $pattern = "/([,])?([!])?([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
+        $pattern = "/([,])?([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
         preg_match_all($pattern, trim($selector), $matches, PREG_SET_ORDER);
 
         foreach ($matches as $v) {
-            list($or, $exclude, $tag, $key, $val, $exp) = array(false, false, $v[3], null, null, '=');
+            list($or, $tag, $key, $val, $exp) = array(false, $v[2], null, null, '=');
 
             if ($v[0]=='') continue;
             if ($v[1]==',') $or = true;
-            if ($v[2]=='!') $exclude = true;
-            if(!empty($v[4])) {$key = 'id'; $val = $v[4];}
-            if(!empty($v[5])) {$key = 'class'; $val = $v[5];}
-            if(!empty($v[6])) {
-                $key = $v[6];
-                if(!empty($v[7])) $exp = $v[7];
-                if(!empty($v[8])) $val = $v[8];
+            if(!empty($v[3])) {$key = 'id'; $val = $v[3];}
+            if(!empty($v[4])) {$key = 'class'; $val = $v[4];}
+            if(!empty($v[5])) {
+                $key = $v[5];
+                if(!empty($v[6])) $exp = $v[6];
+                if(!empty($v[7])) $val = $v[7];
             }
 
             // convert to lowercase 
@@ -308,7 +309,7 @@ class simple_html_dom_node {
             if($v[1]==',') ++$count;
             if (!isset($selectors[$count])) $selectors[$count] = array();
             
-            $selectors[$count][] = array($or, $exclude, $tag, $key, $val, $exp);
+            $selectors[$count][] = array($or, $tag, $key, $val, $exp);
         }
 
         return $selectors;
@@ -316,7 +317,7 @@ class simple_html_dom_node {
 
     // seek for given conditions
     protected function seek($selector, &$ret) {
-        list($or, $exclude, $tag, $key, $val, $exp) = $selector;
+        list($or, $tag, $key, $val, $exp) = $selector;
 
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$this->info[HDOM_INFO_END]; ++$i) {
             $n = $this->dom->nodes[$i];
@@ -340,10 +341,8 @@ class simple_html_dom_node {
                 }
                 if (!isset($n->attr[$key]) || !$check) $pass = false;
             }
-
-            // handle exclude
-            if (!$exclude) {if ($pass) $ret[$i] = 1;}
-            else {if (!$pass) $ret[$i] = 1;}
+            
+            if ($pass) $ret[$i] = 1;
         }
         unset($n);
     }
@@ -377,6 +376,7 @@ class simple_html_dom {
     protected $char;
     protected $size;
     protected $index;
+    public $callback = null;
     protected $noise = array();
     // use isset instead of in_array, performance boost about 30%...
     protected $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
@@ -432,7 +432,13 @@ class simple_html_dom {
     function save($filepath='') {
         $ret = '';
         $count = count($this->nodes);
+
+        $func_callback = $this->callback;
         for ($i=0; $i<$count; ++$i) {
+            // trigger callback
+            if ($this->callback!==null)
+                $handle =  $func_callback($this->nodes[$i]);
+
             // outertext defined
             if (isset($this->nodes[$i]->info[HDOM_INFO_OUTER])) {
                 $ret .= $this->nodes[$i]->info[HDOM_INFO_OUTER];
@@ -470,6 +476,7 @@ class simple_html_dom {
         $this->pos = 0;
         $this->root = new simple_html_dom_node($this);
         $this->root->tag = 'root';
+        $this->root->nodetype = HDOM_TYPE_ELEMENT;
         $this->root->info[HDOM_INFO_BEGIN] = -1;
         $this->parent = $this->root;
         // set the length of content
@@ -564,10 +571,10 @@ class simple_html_dom {
                         $this->parent = $this->parent->parent;
                 }
                 else {
-                    $node->nodetype = HDOM_TYPE_TEXT;
+                    $node->nodetype = HDOM_TYPE_ENDTAG;
                     $node->info[HDOM_INFO_END] = $this->index-1;
                     $node->info[HDOM_INFO_TEXT] = '</' . $node->tag . '>';
-                    $node->tag = 'text';
+                    $node->tag = $node->tag;
                     $this->parent->nodes[] = $node;
                 }
                 $this->parent->info[HDOM_INFO_END] = $this->index-1;
@@ -586,10 +593,10 @@ class simple_html_dom {
         $node->parent = $this->parent;
 
         // comment
-        if ($node->tag=='!--___noise___') {
+        if (strpos($node->tag, '!--')===0) {
             $node->nodetype = HDOM_TYPE_COMMENT;
             $node->info[HDOM_INFO_END] = 0;
-            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char_escape('>');
+            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
             $node->tag = 'comment';
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);

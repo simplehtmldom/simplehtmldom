@@ -23,7 +23,7 @@ assert($e->last_child()->id=='div1');
 assert($e->next_sibling()==null);
 assert($e->prev_sibling()==null);
 assert($e->plaintext=='');
-assert($e->innertext=='');
+assert($e->innertext=='<div id="div1"></div>');
 assert($e->outertext==$str);
 // -----------------------------------------------
 $str = <<<HTML
