@@ -66,43 +66,6 @@ class simple_html_dom_node {
         $this->dom = $dom;
     }
 
-    function __toString() {
-        return $this->outertext();
-    }
-
-    function __get($name) {
-        if (isset($this->attr[$name])) return $this->attr[$name];
-        switch($name) {
-            case 'outertext': return $this->outertext();
-            case 'innertext': return $this->innertext();
-            case 'plaintext': return $this->plaintext();
-            default: return array_key_exists($name, $this->attr);
-        }
-    }
-
-    function __set($name, $value) {
-        switch($name) {
-            case 'outertext': return $this->info[HDOM_INFO_OUTER] = $value;
-            case 'innertext': return $this->info[HDOM_INFO_INNER] = $value;
-            case 'plaintext': return $this->info[HDOM_INFO_TEXT] = $value;
-        }
-        if (!isset($this->attr[$name])) {
-            $this->info[HDOM_INFO_SPACE][] = array(' ', '', ''); 
-            $this->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
-        }
-        $this->attr[$name] = $value;
-    }
-
-    function __isset($name) {
-        switch($name) {
-            case 'outertext': return true;
-            case 'innertext': return true;
-            case 'plaintext': return true;
-        }
-        //no value attr: nowrap, checked selected...
-        return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
-    }
-
     // clean up memory due to php5 circular references memory leak...
     function clear() {
         unset($this->tag);
@@ -144,7 +107,8 @@ class simple_html_dom_node {
         if ($this->parent===null) return null;
         $idx = 0;
         $count = count($this->parent->children);
-        while ($idx<$count && $this!==$this->parent->children[$idx]) ++$idx;
+        while ($idx<$count && $this!==$this->parent->children[$idx])
+            ++$idx;
         if (++$idx>=$count) return null;
         return $this->parent->children[$idx];
     }
@@ -154,7 +118,8 @@ class simple_html_dom_node {
         if ($this->parent===null) return null;
         $idx = 0;
         $count = count($this->parent->children);
-        while ($idx<$count && $this!==$this->parent->children[$idx]) ++$idx;
+        while ($idx<$count && $this!==$this->parent->children[$idx])
+            ++$idx;
         if (--$idx<0) return null;
         return $this->parent->children[$idx];
     }
@@ -162,10 +127,11 @@ class simple_html_dom_node {
     // get dom node's inner html
     function innertext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
-        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
-        if ($this->nodetype==HDOM_TYPE_COMMENT) return $this->info[HDOM_INFO_TEXT];
+        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+        if ($this->nodetype==HDOM_TYPE_COMMENT) return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
         $ret = '';
-        foreach($this->nodes as $n) $ret .= $n->outertext();
+        foreach($this->nodes as $n)
+            $ret .= $n->outertext();
         return $ret;
     }
 
@@ -173,35 +139,46 @@ class simple_html_dom_node {
     function outertext() {
         if ($this->tag=='root') return $this->dom->save();
         if (isset($this->info[HDOM_INFO_OUTER])) return $this->info[HDOM_INFO_OUTER];
-        // begin tag
-        $ret = $this->dom->nodes[$this->info[HDOM_INFO_BEGIN]]->text();
-        // inner
-        if (isset($this->info[HDOM_INFO_INNER])) $ret .= $this->info[HDOM_INFO_INNER];
-        else {foreach($this->nodes as $n) $ret .= $n->outertext();}
-        // end tag
-        if($this->info[HDOM_INFO_END]) $ret .= $this->dom->nodes[$this->info[HDOM_INFO_END]]->text($this->tag);
+
+        // render begin tag
+        $ret = $this->dom->nodes[$this->info[HDOM_INFO_BEGIN]]->makeup();
+
+        // render inner text
+        if (isset($this->info[HDOM_INFO_INNER]))
+            $ret .= $this->info[HDOM_INFO_INNER];
+        else {
+            foreach($this->nodes as $n)
+                $ret .= $n->outertext();
+        }
+        // render end tag
+        if($this->info[HDOM_INFO_END])
+            $ret .= $this->dom->nodes[$this->info[HDOM_INFO_END]]->makeup($this->tag);
+
         return $ret;
     }
 
     // get dom node's plain text
     function plaintext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
-        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->info[HDOM_INFO_TEXT];
+        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
         if ($this->nodetype==HDOM_TYPE_COMMENT) return '';
         if (strcasecmp($this->tag, 'script')==0) return '';
         if (strcasecmp($this->tag, 'style')==0) return '';
         $ret = '';
-        foreach($this->nodes as $n) $ret .= $n->plaintext();
+
+        foreach($this->nodes as $n)
+            $ret .= $n->plaintext();
+
         return $ret;
     }
 
-    // get node's text
-    function text($tag=null) {
+    // build node's text with tag
+    function makeup($tag=null) {
         if ($tag===null) $tag = $this->tag;
 
         switch($this->nodetype) {
-            case HDOM_TYPE_TEXT:    return $this->info[HDOM_INFO_TEXT];
-            case HDOM_TYPE_COMMENT: return $this->info[HDOM_INFO_TEXT];
+            case HDOM_TYPE_TEXT:    return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+            case HDOM_TYPE_COMMENT: return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
             case HDOM_TYPE_ENDTAG:  return '</'.$tag.'>';
         }
 
@@ -222,7 +199,7 @@ class simple_html_dom_node {
                 $quote = '';
                 switch($this->info[HDOM_INFO_QUOTE][$i]) {
                     case HDOM_QUOTE_DOUBLE: $quote = '"'; break;
-                    case HDOM_QUOTE_SINGLE: $quote = "'"; break;
+                    case HDOM_QUOTE_SINGLE: $quote = '\''; break;
                 }
                 $ret .= $key.$this->info[HDOM_INFO_SPACE][$i][1].'='.$this->info[HDOM_INFO_SPACE][$i][2].$quote.$val.$quote;
             }
@@ -334,8 +311,7 @@ class simple_html_dom_node {
                 if (strcasecmp($key, 'class')==0) {
                     foreach(explode(' ',$n->attr[$key]) as $k) {
                         $check = $this->match($exp, $val, $k);
-                        if ($check)
-                            break;
+                        if ($check) break;
                     }
                 }
                 else
@@ -343,7 +319,8 @@ class simple_html_dom_node {
                 if (!$check) $pass = false;
             }
 
-            if ($pass) $ret[$i] = 1;
+            if ($pass)
+                $ret[$i] = 1;
         }
         unset($n);
     }
@@ -363,6 +340,43 @@ class simple_html_dom_node {
                 $check = (preg_match("/".preg_quote($pattern,'/')."/", $value)) ? true : false; break;
         }
         return $check;
+    }
+    
+    function __toString() {
+        return $this->outertext();
+    }
+
+    function __get($name) {
+        if (isset($this->attr[$name])) return $this->attr[$name];
+        switch($name) {
+            case 'outertext': return $this->outertext();
+            case 'innertext': return $this->innertext();
+            case 'plaintext': return $this->plaintext();
+            default: return array_key_exists($name, $this->attr);
+        }
+    }
+
+    function __set($name, $value) {
+        switch($name) {
+            case 'outertext': return $this->info[HDOM_INFO_OUTER] = $value;
+            case 'innertext': return $this->info[HDOM_INFO_INNER] = $value;
+            case 'plaintext': return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+        }
+        if (!isset($this->attr[$name])) {
+            $this->info[HDOM_INFO_SPACE][] = array(' ', '', ''); 
+            $this->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
+        }
+        $this->attr[$name] = $value;
+    }
+
+    function __isset($name) {
+        switch($name) {
+            case 'outertext': return true;
+            case 'innertext': return true;
+            case 'plaintext': return true;
+        }
+        //no value attr: nowrap, checked selected...
+        return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
     }
 
     // camel naming conventions
@@ -413,18 +427,6 @@ class simple_html_dom {
         'dd'=>array('dd'=>1, 'dt'=>1),
         'p'=>array('p'=>1),
     );
-
-    function __toString() {
-        return $this->save();
-    }
-
-    function __get($name) {
-        switch($name) {
-            case 'outertext': return $this->save();
-            case 'innertext': return $this->root->innertext();
-            case 'plaintext': return $this->root->plaintext();
-        }
-    }
 
     // load html from string
     function load($str, $lowercase=true) {
@@ -478,7 +480,7 @@ class simple_html_dom {
                 continue;
             }
 
-            $ret .= $this->nodes[$i]->text();
+            $ret .= $this->nodes[$i]->makeup();
 
             // innertext defined
             if (isset($this->nodes[$i]->info[HDOM_INFO_INNER]) && $this->nodes[$i]->info[HDOM_INFO_END]>0) {
@@ -527,33 +529,6 @@ class simple_html_dom {
         unset($this->noise);
     }
 
-    // remove noise from html content
-    function remove_noise($pattern, $remove_tag=true, $remove_contents=true) {
-        $count = preg_match_all($pattern, $this->html, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
-
-        for ($i=$count-1; $i>-1; --$i) {
-            $key = '___noise___'.sprintf("% 3d", count($this->noise));
-            $idx = ($remove_tag) ? 0 : 1;
-            $this->noise[$key] = ($remove_contents) ? '' : $matches[$i][$idx][0];
-            $this->html = substr_replace($this->html, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
-        }
-
-        // reset the length of content
-        $this->size = strlen($this->html);
-        if ($this->size>0)
-            $this->char = $this->html[0];
-    }
-
-    // restore noise to html content
-    protected function restore_noise($text) {
-        while(($pos=strpos($text, '___noise___'))!==false) {
-            $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13];
-            if (isset($this->noise[$key]))
-                $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
-        }
-        return $text;
-    }
-
     // parse html content
     function parse() {
         $s = $this->copy_until_char('<');
@@ -563,7 +538,7 @@ class simple_html_dom {
         $node = new simple_html_dom_node($this);
         $this->nodes[] = $node;
         $node->info[HDOM_INFO_BEGIN] = $this->index;
-        $node->info[HDOM_INFO_TEXT] = $this->restore_noise($s);
+        $node->info[HDOM_INFO_TEXT] = $s;
         $node->parent = $this->parent;
         $this->parent->nodes[] = $node;
 
@@ -629,7 +604,7 @@ class simple_html_dom {
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
             $node->tag = 'comment';
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
-            $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
+            $node->info[HDOM_INFO_TEXT] = $node->info[HDOM_INFO_TEXT];
             $this->parent->nodes[] = $node;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
@@ -642,7 +617,7 @@ class simple_html_dom {
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char_escape('>');
             $node->tag = 'text';
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
-            $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
+            $node->info[HDOM_INFO_TEXT] = $node->info[HDOM_INFO_TEXT];
             $this->parent->nodes[] = $node;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
@@ -683,7 +658,7 @@ class simple_html_dom {
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->info[HDOM_INFO_END] = 0;
                 $node->info[HDOM_INFO_TEXT] = '<'.$node->tag . $space[0] . $name;
-                $node->info[HDOM_INFO_TEXT] = $this->restore_noise($node->info[HDOM_INFO_TEXT]);
+                $node->info[HDOM_INFO_TEXT] = $node->info[HDOM_INFO_TEXT];
                 $node->tag = 'text';
                 return $node;
             }
@@ -711,7 +686,7 @@ class simple_html_dom {
         $node->info[HDOM_INFO_ENDSPACE] = $space[0];
 
         // check self closing
-        if ($this->copy_until_char_escape('>')=='/') {    
+        if ($this->copy_until_char_escape('>')=='/') {
             $node->info[HDOM_INFO_ENDSPACE] .= '/';
             $node->info[HDOM_INFO_END] = 0;
         }
@@ -736,14 +711,14 @@ class simple_html_dom {
             case '\'':
                 $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_SINGLE;
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
-                $value = $this->copy_until_char_escape("'");
+                $value = $this->copy_until_char_escape('\'');
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                 break;
             default:
                 $node->info[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
                 $value = $this->copy_until($this->token_attr);
         }
-        $node->attr[$this->restore_noise($name)] = $this->restore_noise($value);
+        $node->attr[$name] = $this->restore_noise($value);
     }
 
     protected function skip($chars) {
@@ -794,6 +769,45 @@ class simple_html_dom {
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         }
         return $ret;
+    }
+
+    // remove noise from html content
+    function remove_noise($pattern, $remove_tag=true, $remove_contents=true) {
+        $count = preg_match_all($pattern, $this->html, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
+
+        for ($i=$count-1; $i>-1; --$i) {
+            $key = '___noise___'.sprintf('% 3d', count($this->noise));
+            $idx = ($remove_tag) ? 0 : 1;
+            $this->noise[$key] = ($remove_contents) ? '' : $matches[$i][$idx][0];
+            $this->html = substr_replace($this->html, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
+        }
+
+        // reset the length of content
+        $this->size = strlen($this->html);
+        if ($this->size>0)
+            $this->char = $this->html[0];
+    }
+
+    // restore noise to html content
+    function restore_noise($text) {
+        while(($pos=strpos($text, '___noise___'))!==false) {
+            $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13];
+            if (isset($this->noise[$key]))
+                $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
+        }
+        return $text;
+    }
+
+    function __toString() {
+        return $this->save();
+    }
+
+    function __get($name) {
+        switch($name) {
+            case 'outertext': return $this->save();
+            case 'innertext': return $this->root->innertext();
+            case 'plaintext': return $this->root->plaintext();
+        }
     }
 
     // camel naming conventions

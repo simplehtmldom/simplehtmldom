@@ -236,44 +236,6 @@ assert($dom->find('IMG', 0)->CLASS=='class0');
 assert($dom==$str);
 
 // -----------------------------------------------------------------------------
-// customize parsing
-$str = <<<HTML
-<script type="text/javascript" src="test.js">ss</script>
-HTML;
-
-$my_dom = new simple_html_dom;
-$my_dom->prepare($str);
-$count = 0;
-while ($node=$dom->parse()) {
-    switch ($count) {
-        case 0: assert($node->nodetype==HDOM_TYPE_ELEMENT); break;
-        case 1: assert($node->nodetype==HDOM_TYPE_TEXT); assert($node->text()==='ss'); break;
-        case 2: assert($node->nodetype==HDOM_TYPE_ENDTAG); break;
-    }
-    ++$count;
-}
-$my_dom->clear();
-unset($my_dom);
-
-// -----------------------------------------------
-$my_dom = new simple_html_dom;
-$my_dom->prepare($str);
-// strip out <script> tags
-$my_dom->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is", false, false);
-$my_dom->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is", false, false);
-$count = 0;
-while ($node=$dom->parse()) {
-    switch ($count) {
-        case 0: assert($node->nodetype==HDOM_TYPE_ELEMENT); break;
-        case 1: assert($node->nodetype==HDOM_TYPE_TEXT); assert($node->text()===''); break;
-        case 2: assert($node->nodetype==HDOM_TYPE_ENDTAG); break;
-    }
-    ++$count;
-}
-$my_dom->clear();
-unset($my_dom);
-
-// -----------------------------------------------------------------------------
 // tear down
 $dom->clear();
 unset($dom);
