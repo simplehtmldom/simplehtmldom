@@ -457,6 +457,7 @@ class simple_html_dom {
         $this->load(call_user_func_array('file_get_contents', $args), true);
     }
 
+    // set callback function
     function set_callback($function_name) {
         $this->callback = $function_name;
     }
@@ -564,7 +565,7 @@ class simple_html_dom {
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             $this->skip($this->token_blank);
             $node->nodetype = HDOM_TYPE_ENDTAG;
-            $node->tag = $this->copy_until_char_escape('>');
+            $node->tag = $this->copy_until_char('>');
             $tag_lower = strtolower($node->tag);
             if ($this->lowercase) $node->tag = $tag_lower;
 
@@ -614,7 +615,7 @@ class simple_html_dom {
         if (!preg_match("/^[A-Za-z0-9_\\-:]+$/", $node->tag)) {
             $node->nodetype = HDOM_TYPE_TEXT;
             $node->info[HDOM_INFO_END] = 0;
-            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char_escape('>');
+            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
             $node->tag = 'text';
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $node->info[HDOM_INFO_TEXT] = $node->info[HDOM_INFO_TEXT];
@@ -749,26 +750,47 @@ class simple_html_dom {
     }
 
     protected function copy_until_char($char) {
-        $ret = '';
-        while ($this->char!=$char && $this->char!==null) {
-            $ret .= $this->char;
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
+        if ($this->char===null) return '';
+
+        if (($pos = strpos($this->html, $char, $this->pos))===false) {
+            $ret = substr($this->html, $this->pos, $this->size-$this->pos);
+            $this->char = null;
+            $this->pos = $this->size;
+            return $ret;
         }
+
+        if ($pos==$this->pos) return '';
+
+        $ret = substr($this->html, $this->pos, $pos-$this->pos);
+        $this->char = $this->html[$pos];
+        $this->pos = $pos;
         return $ret;
     }
 
     protected function copy_until_char_escape($char) {
-        $ret = '';
-        while ($this->char!=$char && $this->char!==null) {
-            // ignore string escape
-            if ($this->char==='\\') {
-                $ret .= $this->char;
-                $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
+        if ($this->char===null) return '';
+
+        $start = $this->pos;
+        while(1) {
+            if (($pos = strpos($this->html, $char, $start))===false) {
+                $ret = substr($this->html, $this->pos, $this->size-$this->pos);
+                $this->char = null;
+                $this->pos = $this->size;
+                return $ret;
             }
-            $ret .= $this->char;
-            $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
+
+            if ($pos==$this->pos) return '';
+
+            if ($this->html[$pos-1]==='\\') {
+                $start = $pos+1;
+                continue;
+            }
+
+            $ret = substr($this->html, $this->pos, $pos-$this->pos);
+            $this->char = $this->html[$pos];
+            $this->pos = $pos;
+            return $ret;
         }
-        return $ret;
     }
 
     // remove noise from html content

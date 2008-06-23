@@ -1,17 +1,16 @@
 #$Rev$
 
 [On going]
-1. New "multiple selectors" selector features: $dom->find('p,a,b');
-2. New "multiple calss" selector features. 
+1. Performance turning (boost 10%).
+2. Supports "multiple calss" selector features: <div class="a b c"></div>.
 3. New "callback function" features.
-4. New text extract from HTML:  $dom->plaintext;
-5. Fix the bug of $dom->clear().
-6. Fix the bug of text nodes' innertext.
-7. Fix the bug of comment nodes' innertext.
-8. Fix the bug of decendent selector with optional tags.
-9. Change simple_html_dom_node method "text()" to "makeup()". 
-10. Change "$dom->remove_noise()" as protected method. 
-
+4. New "multiple selectors" features: $dom->find('p,a,b');
+5. Supports extract contents from HTML features:  $dom->plaintext;
+6. Fix the bug of $dom->clear().
+7. Fix the bug of text nodes' innertext.
+8. Fix the bug of comment nodes' innertext.
+9. Fix the bug of decendent selector with optional tags.
+10. Change simple_html_dom_node method name from "text()" to "makeup()". 
 
 [PHP Simple HTML DOM Parser v0.97 is released]
 1. Important!! file and class name changed (html_dom_parser->simple_html_dom)!
