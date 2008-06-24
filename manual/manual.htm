@@ -10,6 +10,7 @@
 <script type="text/javascript" src="js/ui.tabs.pack.js"></script>
 <script language="JavaScript" type="text/JavaScript">
 	$(document).ready(function(){
+		$(function() {$('#container_quickstart > ul').tabs();});
 		$(function() {$('#container_create > ul').tabs();});
 		$(function() {$('#container_find > ul').tabs();});
 		$(function() {$('#container_access > ul').tabs();});
@@ -24,6 +25,7 @@
 <div id="content">
   <h2>Index</h2>
   <ul>
+		<li><a href="#section_quickstart">Quick Start</a></li>
     <li><a href="#section_create">How to create HTML DOM object?</a></li>
     <li><a href="#section_find">How to find HTML elements?</a></li>
     <li><a href="#section_access">How to access the HTML element's attributes?</a> </li>
@@ -33,6 +35,68 @@
     <li><a href="manual_api.htm">API Reference</a></li>
     <li><a href="manual_faq.htm">FAQ</a></li>
   </ul>
+	
+	<a name="section_quickstart"></a>
+  <h2>Quick Start</h2>
+  <a class="top" href="#top">Top</a>
+	<div id="container_quickstart">
+    <ul>
+      <li><a href="#fragment-11"><span>Get HTML elements</span></a></li>
+      <li><a href="#fragment-12"><span>Modify HTML elements</span></a></li>
+      <li><a href="#fragment-13"><span>Extract contents from HTML</span></a></li>
+      <li><a href="#fragment-14"><span>Scraping Slashdot!</span></a></li>
+    </ul>
+    <div id="fragment-11">
+      <div class="code">
+        <span class="comment">// Create DOM from URL or file</span><br>
+        $dom = <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>);<br>
+        <br>
+        <span class="comment">// Find all images </span><br>
+        foreach($dom-&gt;<strong>find</strong>(<span class="var">'img'</span>) as $element) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo $element-&gt;<strong>src</strong> . <span class="var">'&lt;br&gt;'</span>;<br>
+<br>
+<span class="comment">// Find all links </span><br>
+foreach($dom-&gt;<strong>find</strong>(<span class="var">'a'</span>) as $element) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo $element-&gt;<strong>href</strong> . <span class="var">'&lt;br&gt;'</span>;      </div>
+    </div>
+    <div id="fragment-12">
+      <div class="code">
+        <span class="comment">// Create DOM from string</span><br>
+        $dom = <strong>str_get_dom</strong>(<span class="var">'&lt;div id=&quot;hello&quot;&gt;Hello&lt;/div&gt;&lt;div id=&quot;world&quot;&gt;World&lt;/div&gt;'</span>);<span class="comment"><br>
+        <br>
+        </span>
+        
+$dom-&gt;<strong>find</strong>(<span class="var">'div', 1</span>)-&gt;<strong>class</strong> = <span class="var">'bar'</span>;<br>
+<br>
+$dom-&gt;<strong>find</strong>(<span class="var">'div[id=hello]', 0</span>)-&gt;<strong>innertext</strong> = <span class="var">'foo'</span>;<br>
+        <br>
+        echo $dom; <span class="comment">// Output: &lt;div id=&quot;hello&quot;&gt;<strong>foo</strong>&lt;/div&gt;&lt;div id=&quot;world&quot; <strong>class=&quot;bar&quot;</strong>&gt;World&lt;/div&gt;</span> </div>
+    </div>
+    <div id="fragment-13">
+      <div class="code"><br>
+        <span class="comment">// Dump contents (without tags) from HTML</span><br>
+        echo <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>)-&gt;<strong>plaintext</strong>;
+				<br><br>
+      </div>
+    </div>
+    <div id="fragment-14">
+      <div class="code">
+        <span class="comment">// Create DOM from URL</span><br>
+        $dom = <strong>file_get_dom</strong>(<span class="var">'http://slashdot.org/'</span>);<br>
+        <br>
+        <span class="comment">// Find all article blocks</span><br>
+        foreach($dom-&gt;<strong>find</strong>(<span class="var">'div.article'</span>) as $article) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$item[<span class="var">'title'</span>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= $article-&gt;<strong>find</strong>(<span class="var">'div.title'</span>, <span class="var">0</span>)-&gt;<strong>plaintext</strong>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$item[<span class="var">'intro'</span>]&nbsp;&nbsp;&nbsp;&nbsp;= $article-&gt;<strong>find</strong>(<span class="var">'div.intro'</span>, <span class="var">0</span>)-&gt;<strong>plaintext</strong>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$item[<span class="var">'details'</span>]&nbsp;= $article-&gt;<strong>find</strong>(<span class="var">'div.details'</span>, <span class="var">0</span>)-&gt;<strong>plaintext</strong>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$articles[] = $item;<br>
+        }<br>
+        <br>
+        print_r($articles);
+      </div>
+    </div>
+  </div>
+	
   <a name="section_create"></a>
   <h2>How to create HTML DOM object?</h2>
   <a class="top" href="#top">Top</a>

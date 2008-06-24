@@ -1,16 +1,20 @@
 #$Rev$
 
 [On going]
+
+
+[PHP Simple HTML DOM Parser v0.98 is released]
 1. Performance turning (boost 20%).
-2. Supports "multiple calss" selector features: <div class="a b c"></div>.
-3. New "callback function" features.
-4. New "multiple selectors" features: $dom->find('p,a,b');
-5. Supports extract contents from HTML features:  $dom->plaintext;
-6. Fix the bug of $dom->clear().
-7. Fix the bug of text nodes' innertext.
-8. Fix the bug of comment nodes' innertext.
-9. Fix the bug of decendent selector with optional tags.
-10. Change simple_html_dom_node method name from "text()" to "makeup()". 
+2. Supports "multiple calss" selector feature: <div class="a b c"></div>.
+3. New "callback function" feature.
+4. New "multiple selectors" feature: $dom->find('p,a,b');
+5. New examples.
+6. Supports extract contents from HTML features:  $dom->plaintext;
+7. Fix the bug of $dom->clear().
+8. Fix the bug of text nodes' innertext.
+9. Fix the bug of comment nodes' innertext.
+10. Fix the bug of decendent selector with optional tags.
+11. Change simple_html_dom_node method name from "text()" to "makeup()". 
 
 [PHP Simple HTML DOM Parser v0.97 is released]
 1. Important!! file and class name changed (html_dom_parser->simple_html_dom)!
