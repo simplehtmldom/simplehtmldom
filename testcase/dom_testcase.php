@@ -224,6 +224,37 @@ $e->type = NULL;
 assert($e=="<input>");
 
 // -----------------------------------------------------------------------------
+// extract text
+$str = <<<HTML
+<b>okok</b>
+HTML;
+$dom->load($str);
+assert($dom==$str);
+assert($dom->plaintext=='okok');
+
+$str = <<<HTML
+<div><b>okok</b></div>
+HTML;
+$dom->load($str);
+assert($dom==$str);
+assert($dom->plaintext=='okok');
+
+$str = <<<HTML
+<div><b>okok</b>
+HTML;
+$dom->load($str);
+assert($dom==$str);
+assert($dom->plaintext=='okok');
+
+$str = <<<HTML
+<b>okok</b></div>
+HTML;
+$dom->load($str);
+assert($dom==$str);
+assert($dom->plaintext=='okok');
+
+
+// -----------------------------------------------------------------------------
 // old fashion camel naming conventions test
 $str = <<<HTML
 <input type="checkbox" id="checkbox" name="checkbox" value="checkbox" checked>
