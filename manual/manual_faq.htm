@@ -9,12 +9,9 @@
 <body>
 <h1><a name="top"></a>PHP Simple HTML DOM Parser Manual</h1>
 <div id="content">
-  <h2>Index</h2>
-  <ul>
-    <li><a href="manual.htm">Back to index</a></li>
-  </ul>
   <h2>FAQ</h2>
   <ul>
+		<li><a href="manual.htm">Back</a></li>
     <li><a href="#hosting">Problem with hosting</a></li>
     <li><a href="#proxy">Behind a proxy</a></li>
     <li><a href="#memory_leak">Memory leak!</a></li>
@@ -24,9 +21,9 @@
     <a class="top" href="#top">Top</a>
     <div class="code"> <span class="var">Q:</span> On my local server everything works fine, but when I put it on my esternal server it doesn't work. <br>
       <br>
-      <span class="var">A:</span> The "file_get_dom" function is a wrapper of "file_get_contents" function,  you must set "<strong>allow_url_fopen</strong>" as TRUE in "php.ini" to allow accessing files via HTTP or FTP. However, some hosting venders disabled PHP's "allow_url_fopen" flag for security issues... PHP provides excellent support for "curl" library to do the same job, Use curl to get the page, then call "str_get_dom" to create DOM object. <br>
+      <span class="var">A:</span> The "file_get_dom" function is a wrapper of "file_get_contents" function,  you must set "<strong>allow_url_fopen</strong>" as <strong>TRUE</strong> in "php.ini" to allow accessing files via HTTP or FTP. However, some hosting venders disabled PHP's "allow_url_fopen" flag for security issues... PHP provides excellent support for "curl" library to do the same job, Use curl to get the page, then call "str_get_dom" to create DOM object. <br>
       <br>
-      example: <br>
+      Example: <br>
        <br>
       $curl = curl_init(); <br>
       curl_setopt(<span class="var">$curl, CURLOPT_URL, 'http://????????'</span>);  <br>
@@ -45,7 +42,7 @@
         <br>
         <span class="var">A:</span> Thanks for Shaggy to provide the solution. <br>
          <br>
-        example: <br>
+        Example: <br>
          <br>
         <span class="comment">// Define a context for HTTP. </span><br>
         $context = array<br>
@@ -70,7 +67,7 @@
       <br>
       <span class="var">A:</span> Due to php5 circular references memory leak, after creating DOM object, you must call $dom-&gt;clear() to free memory if call file_get_dom() more then once. <br>
       <br>
-      example: <br>
+      Example: <br>
       <br>
       $dom = file_get_dom(...); <br>
       <span class="comment">// do something... </span><br>
@@ -78,7 +75,8 @@
       unset($dom);</div>
     <br>
     Author: S.C. Chen (me578022@gmail.com)<br>
-    Contributions by: Yousuke Kumakura (Attribute Filters) <br>
+Original idea is from Jose Solorzano's <a href="http://php-html.sourceforge.net/">HTML Parser for PHP 4</a>. <br>
+Contributions by: Yousuke Kumakura (Attribute Filters) <br>
   </div>
 </div>
 </body>

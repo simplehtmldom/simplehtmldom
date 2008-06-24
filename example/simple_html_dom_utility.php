@@ -26,7 +26,7 @@ echo html_no_comment('http://www.google.com/');
 
 
 // -----------------------------------------------------------------------------
-// search elements that contains an especific text
+// search elements that contains an specific text
 function find_contains($dom, $selector, $keyword, $index=-1) {
     $ret = array();
     foreach ($dom->find($selector) as $e) {

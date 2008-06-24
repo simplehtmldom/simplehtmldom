@@ -243,7 +243,7 @@ if(isset($e-&gt;<strong>href</strong>)) <br>
     </div>
     <div id="frag_access_tips">
       <div class="code"><span class="comment">// Extract contents from HTML </span><br>
-echo $dom-&gt;<strong>plaintext</strong>;<br>
+echo <strong>$dom</strong>-&gt;<strong>plaintext</strong>;<br>
 <br> 
 <span class="comment">
         // <strong>Wrap</strong> a element</span><br>
@@ -350,7 +350,7 @@ $element-&gt;<strong>outertext</strong> = <span class="var">'&lt;div&gt;foo</spa
       <li><a href="#frag_callback"><span>Callback function</span></a></li>
     </ul>
     <div id="frag_callback">
-      <div class="code"><span class="comment">// Write a function with parameter &quot;<strong>$element</strong>&quot; </span><br>
+      <div class="code"><span class="comment">// Write a function with parameter &quot;<strong>$element</strong>&quot;</span><br>
         function my_callback(<span class="var">$element</span>) {<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Hide all &lt;b&gt; tags </span><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($element-&gt;tag==<span class="var">'b'</span>)<br> 
@@ -360,7 +360,7 @@ $element-&gt;<strong>outertext</strong> = <span class="var">'&lt;div&gt;foo</spa
         <span class="comment">// Register the  callback function with it's <strong>function name</strong></span><br>
         $dom-&gt;<strong>set_callback</strong>(<span class="var">my_callback'</span>);<br>
         <br>
-        <span class="comment">// Callback function will be trigger while dumping</span><br>
+        <span class="comment">// Callback function will be invoked while dumping</span><br>
         echo $dom;
       </div>
     </div>
@@ -368,7 +368,8 @@ $element-&gt;<strong>outertext</strong> = <span class="var">'&lt;div&gt;foo</spa
 
   <div><br>
     Author: S.C. Chen (me578022@gmail.com)<br>
-    Contributions by: Yousuke Kumakura (Attribute Filters) <br>
+Original idea is from Jose Solorzano's <a href="http://php-html.sourceforge.net/">HTML Parser for PHP 4</a>. <br>
+Contributions by: Yousuke Kumakura (Attribute Filters) <br>
   </div>
 </div>
 </body>
