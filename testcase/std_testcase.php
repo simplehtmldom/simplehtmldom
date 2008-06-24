@@ -24,7 +24,8 @@ $str = <<<HTML
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"></html>
 HTML;
 $dom->load($str);
-assert(count($dom->find('text'))==2);
+assert(count($dom->find('unknown'))==1);
+assert(count($dom->find('text'))==1);
 
 // -----------------------------------------------------------------------------
 // string quote test

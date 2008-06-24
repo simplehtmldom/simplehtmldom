@@ -14,6 +14,7 @@ define('HDOM_TYPE_COMMENT', 2);
 define('HDOM_TYPE_TEXT',    3);
 define('HDOM_TYPE_ENDTAG',  4);
 define('HDOM_TYPE_ROOT',    5);
+define('HDOM_TYPE_UNKNOWN', 6);
 define('HDOM_QUOTE_DOUBLE', 0);
 define('HDOM_QUOTE_SINGLE', 1);
 define('HDOM_QUOTE_NO',     3);
@@ -127,8 +128,12 @@ class simple_html_dom_node {
     // get dom node's inner html
     function innertext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
-        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
-        if ($this->nodetype==HDOM_TYPE_COMMENT) return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+        switch ($this->nodetype) {
+            case HDOM_TYPE_TEXT: return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+            case HDOM_TYPE_COMMENT: return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+            case HDOM_TYPE_UNKNOWN: return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+        }
+
         $ret = '';
         foreach($this->nodes as $n)
             $ret .= $n->outertext();
@@ -160,8 +165,11 @@ class simple_html_dom_node {
     // get dom node's plain text
     function plaintext() {
         if (isset($this->info[HDOM_INFO_INNER])) return $this->info[HDOM_INFO_INNER];
-        if ($this->nodetype==HDOM_TYPE_TEXT) return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
-        if ($this->nodetype==HDOM_TYPE_COMMENT) return '';
+        switch ($this->nodetype) {
+            case HDOM_TYPE_TEXT: return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+            case HDOM_TYPE_COMMENT: return '';
+            case HDOM_TYPE_UNKNOWN: return '';
+        }
         if (strcasecmp($this->tag, 'script')==0) return '';
         if (strcasecmp($this->tag, 'style')==0) return '';
         $ret = '';
@@ -179,6 +187,7 @@ class simple_html_dom_node {
         switch($this->nodetype) {
             case HDOM_TYPE_TEXT:    return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
             case HDOM_TYPE_COMMENT: return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
+            case HDOM_TYPE_UNKNOWN: return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
             case HDOM_TYPE_ENDTAG:  return '</'.$tag.'>';
         }
 
@@ -598,14 +607,20 @@ class simple_html_dom {
         $node->tag = $this->copy_until($this->token_slash);
         $node->parent = $this->parent;
 
-        // comment
-        if (strpos($node->tag, '!--')===0) {
-            $node->nodetype = HDOM_TYPE_COMMENT;
+        // doctype, cdata & comments...
+        if (isset($node->tag[0]) && $node->tag[0]=='!') {
             $node->info[HDOM_INFO_END] = 0;
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
-            $node->tag = 'comment';
+
+            if (isset($node->tag[2]) && $node->tag[1]=='-' && $node->tag[2]=='-') {
+                $node->nodetype = HDOM_TYPE_COMMENT;
+                $node->tag = 'comment';
+            } else {
+                $node->nodetype = HDOM_TYPE_UNKNOWN;
+                $node->tag = 'unknown';
+            }
+
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
-            $node->info[HDOM_INFO_TEXT] = $node->info[HDOM_INFO_TEXT];
             $this->parent->nodes[] = $node;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
@@ -613,12 +628,9 @@ class simple_html_dom {
 
         // text
         if (!preg_match("/^[A-Za-z0-9_\\-:]+$/", $node->tag)) {
-            $node->nodetype = HDOM_TYPE_TEXT;
             $node->info[HDOM_INFO_END] = 0;
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
-            $node->tag = 'text';
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
-            $node->info[HDOM_INFO_TEXT] = $node->info[HDOM_INFO_TEXT];
             $this->parent->nodes[] = $node;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
@@ -659,7 +671,6 @@ class simple_html_dom {
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->info[HDOM_INFO_END] = 0;
                 $node->info[HDOM_INFO_TEXT] = '<'.$node->tag . $space[0] . $name;
-                $node->info[HDOM_INFO_TEXT] = $node->info[HDOM_INFO_TEXT];
                 $node->tag = 'text';
                 return $node;
             }

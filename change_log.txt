@@ -1,7 +1,7 @@
 #$Rev$
 
 [On going]
-1. Performance turning (boost 10%).
+1. Performance turning (boost 20%).
 2. Supports "multiple calss" selector features: <div class="a b c"></div>.
 3. New "callback function" features.
 4. New "multiple selectors" features: $dom->find('p,a,b');
