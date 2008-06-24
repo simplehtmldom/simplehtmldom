@@ -466,6 +466,44 @@ assert(count($dom->find('a[href^="image/"]'))==2);
 assert(count($dom->find('a[href*="/favorites/"]'))==1);
 
 // -----------------------------------------------------------------------------
+// multiple class test
+$str = <<<HTML
+<div class="hello">should verify</div>
+<div class="foo hello bar">should verify</div>
+<div class="foo bar hello">should verify</div>
+<div class="hello foo bar">should verify</div>
+<div class="helloworld">should not verify</div>
+<div class="worldhello">should not verify</div>
+<div class="worldhelloworld">should not verify</div>
+HTML;
+
+$dom->load($str);
+$es = $dom->find('[class="hello"],[class*="hello "],[class*=" hello"]');
+assert(count($es)==4);
+assert($es[0]->class=='hello');
+assert($es[1]->class=='foo hello bar');
+assert($es[2]->class=='foo bar hello');
+assert($es[3]->class=='hello foo bar');
+
+$es = $dom->find('.hello');
+assert(count($es)==4);
+assert($es[0]->class=='hello');
+assert($es[1]->class=='foo hello bar');
+assert($es[2]->class=='foo bar hello');
+assert($es[3]->class=='hello foo bar');
+
+// -----------------------------------------------------------------------------
+// multiple class test 2
+$str = <<<HTML
+<div class="aa bb"></div>
+HTML;
+$dom->load($str);
+assert(count($dom->find('[class=aa]'))==1);
+assert(count($dom->find('[class=bb]'))==1);
+assert(count($dom->find('[class="aa bb"]'))==1);
+assert(count($dom->find('[class=aa], [class=bb]'))==1);
+
+// -----------------------------------------------------------------------------
 // multiple selector test
 $str = <<<HTML
 <p>aaa</p>
@@ -517,31 +555,13 @@ assert($es[1]->tag=='b');
 assert($es[2]->tag=='i');
 
 // -----------------------------------------------------------------------------
-// multiple selector test2
+// multiple selector test 2
 $str = <<<HTML
-<div class="hello">should verify</div>
-<div class="foo hello bar">should verify</div>
-<div class="foo bar hello">should verify</div>
-<div class="hello foo bar">should verify</div>
-<div class="helloworld">should not verify</div>
-<div class="worldhello">should not verify</div>
-<div class="worldhelloworld">should not verify</div>
+<img title="aa" src="src">
+<a href="href" title="aa"></a>
 HTML;
-
 $dom->load($str);
-$es = $dom->find('[class="hello"],[class*="hello "],[class*=" hello"]');
-assert(count($es)==4);
-assert($es[0]->class=='hello');
-assert($es[1]->class=='foo hello bar');
-assert($es[2]->class=='foo bar hello');
-assert($es[3]->class=='hello foo bar');
-
-$es = $dom->find('.hello');
-assert(count($es)==4);
-assert($es[0]->class=='hello');
-assert($es[1]->class=='foo hello bar');
-assert($es[2]->class=='foo bar hello');
-assert($es[3]->class=='hello foo bar');
+assert(count($dom->find('a[title], img[title]'))==2);
 
 // -----------------------------------------------------------------------------
 // tear down

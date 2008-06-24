@@ -17,7 +17,6 @@
   <ul>
     <li><a href="#hosting">Problem with hosting</a></li>
     <li><a href="#proxy">Behind a proxy</a></li>
-    <li><a href="#customize">How to customize the parsing behavior?</a></li>
     <li><a href="#memory_leak">Memory leak!</a></li>
   </ul>
 	<div> <a name="hosting"></a>
@@ -64,53 +63,6 @@
         ...<br>
       </div>
     </div>
-  <a name="customize"></a>
-  <h2>How to customize the parsing behavior?</h2>
-  <a class="top" href="#top">Top</a>
-  <div class="code"> The method &quot;find(...)&quot; always returns <strong>elements</strong>, but method &quot;parse()&quot; returns <strong>node</strong>.<br>
-    One <strong>element</strong> may contains many <strong>nodes</strong>, for example, a <strong>element</strong> of &lt;a&gt; contains 3 <strong>nodes</strong>:<br>
-    <br>
-&lt;a href=&quot;#&quot;&gt; &nbsp;<span class="var">&nbsp;</span> link&nbsp;<span class="var">&nbsp;&nbsp;</span><span class="var">&nbsp;&nbsp;</span><span class="var">&nbsp; </span>&lt;/a&gt;<br>
-    <span class="var">----------------&nbsp;&nbsp;&nbsp;--------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------</span><br>
-    node1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="var">&nbsp;</span>node2&nbsp;&nbsp;<span class="var">&nbsp; &nbsp;</span><span class="var"> &nbsp;</span>node3<br>
-    <br>
-    The attribute named $node-><strong>nodetype</strong> is particularly useful to identify the type of node while parsing. <br>
-    Its value may be <span class="var">HDOM_TYPE_ELEMENT</span>, <span class="var">HDOM_TYPE_COMMENT</span>, <span class="var">HDOM_TYPE_TEXT</span>, <span class="var">HDOM_TYPE_ENDTAG</span>. <br>
-    <br>
-    Lots of <strong>element's </strong> properties is not determined until the end of parsing loop, <br>
-    calling any magic methods such as <strong>innertext</strong>, <strong>outertext, plaintext</strong> will cause <span class="var">unexceptable errors</span>!<br>
-    <br>
-    While parsing, uses <strong>node's</strong> internal methods or array to prevent the problem.<br>
-    <br>
-    <span class="comment">// example of how to customize the parsing behavior (example_utility.php) </span><br>
-    <span class="comment"><br>
-    // HTML text extractor</span><br>
-    <strong>function</strong> html_to_text($str) {<br>
-    <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 1. create DOM object</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom = new html_dom_parser(); <span class="comment"><br>
-    <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 2. prepare HTML data and init everything</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$dom-&gt;<strong>prepare</strong>($str);<span class="comment"><br>
-    <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 3. some contents such as 'comments', 'styles' or 'script' will be treated as 'text',<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// so we need to remove it before parsing, see the example for more details ...</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$parser-&gt;remove_noise(<span class="var">&quot;'&lt;!doctype(.*?)&gt;'is&quot;</span>);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$parser-&gt;remove_noise(<span class="var">&quot;'&lt;!--(.*?)--&gt;'is&quot;</span>);<br>
-    <br>
-    <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 4. parsing each node</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret = '';<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while ($node=$dom-&gt;<strong>parse</strong>()) {<br>
-    <span class="comment">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// dump contents of node which tag is 'text'</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if ($node-&gt;nodetype==<span class="var">HDOM_TYPE_TEXT</span>)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ret .= htmlspecialchars_decode($node-&gt;<strong>text</strong>());<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return $ret;<br>
-    } <br>
-    <br>
-    <span class="comment">// test it!</span><br>
-    $str = file_get_contents(<span class="var">'http://www.google.com/'</span>);<br>
-    echo html_to_text($str);<br>
-  </div>
     <a name="memory_leak"></a>
     <h2>Memory leak!</h2>
     <a class="top" href="#top">Top</a>

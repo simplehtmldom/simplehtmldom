@@ -25,16 +25,16 @@
         <th>Description</th>
       </tr>
       <tr>
-        <td><span class="returns">dom</span> <strong>str_get_dom </strong>( <span class="var">string $content</span> )</td>
+        <td><span class="returns">dom</span> str_get_dom ( <span class="var">string $content</span> )</td>
         <td class="description">Creates a DOM object from a <strong>string</strong>.</td>
       </tr>
       <tr>
-        <td><span class="returns">dom</span> <strong>file_get_dom </strong>( <span class="var">string $filename</span> )</td>
+        <td><span class="returns">dom</span> file_get_dom ( <span class="var">string $filename</span> )</td>
         <td class="description">Creates a DOM object from a <strong>file</strong> or a <strong>URL</strong>.</td>
       </tr>
     </table>
     <br>
-    <strong>DOM</strong> methods<br>
+    <strong>DOM</strong> methods &amp; properties <br>
     <table cellspacing="1" cellpadding="1">
       <tr>
         <th width="320"> Name</th>
@@ -42,34 +42,45 @@
       </tr>
       <tr>
         <td>
+          <div class="returns">string</div>
+          plaintext</td>
+        <td class="description">Returns the contents extracted from HTML.</td>
+      </tr>
+      <tr>
+        <td>
           <div class="returns">void</div>
-          $dom-&gt;<strong>load</strong> ( <span class="var">string $content </span>)</td>
+          clear ()</td>
+        <td class="description">Clean up memory.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="returns">void</div>
+          load ( <span class="var">string $content </span>)</td>
         <td class="description"> Load contents from a <strong>string</strong>. </td>
       </tr>
       <tr>
         <td>
-          <div class="returns">void</div>
-          $dom-&gt;<strong>load_file</strong> (<span class="var"> string $filename</span> )</td>
-        <td class="description"> Load contents from a from a <strong>file</strong> or a <strong>URL</strong>.</td>
-      </tr>
-      <tr>
-        <td>
           <div class="returns">string</div>
-          $dom-&gt;<strong>save</strong> ( <span class="var">[string $filename]</span> )</td>
+          save ( <span class="var">[string $filename]</span> )</td>
         <td class="description">Dumps the internal DOM tree back into a <strong>string</strong>. If the <strong>$filename</strong> is set, result string will save to file. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">void</div>
-          $dom-&gt;<strong>clear</strong> ()</td>
-        <td class="description">Clean up memory.</td>
+          load_file (<span class="var"> string $filename</span> )</td>
+        <td class="description"> Load contents from a from a <strong>file</strong> or a <strong>URL</strong>.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="returns">void</div>
+          set_callback ( <span class="var">string $function_name </span>)</td>
+        <td class="description">Set a callback function. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">mixed</div>
-          $dom-&gt;<strong>find</strong> (<span class="var"> string $selector [, int $index] </span>)</td>
-        <td class="description">Find elements by the <strong>CSS selector</strong>. <br>
-          Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise return an <strong>array of object</strong>. </td>
+          find (<span class="var"> string $selector [, int $index] </span>)</td>
+        <td class="description">Find elements by the <strong>CSS selector</strong>. Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise return an <strong>array of object</strong>. </td>
       </tr>
     </table>
     <br>
@@ -81,45 +92,39 @@
       </tr>
       <tr>
         <td>
-          <div class="returns">mixed</div>
-          $e-&gt;<strong>find</strong> (<span class="var"> string $selector [, int $index] </span>)</td>
-        <td class="description">Find children by the <strong>CSS selector</strong>. Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise, return an <strong>array</strong> of object. </td>
-      </tr>
-      <tr>
-        <td>
           <div class="returns">string</div>
-          $e-&gt;<span class="var"><strong>attribute</strong></span></td>
+          <span class="var">[attribute]</span></td>
         <td class="description">Read or write element's <strong>attribure value</strong>. </td>
       </tr>
       <tr>
         <td>
-          <div class="returns">void</div>
-          $e-&gt;<span class="var"><strong>attribute</strong></span><strong> = null </strong></td>
-        <td class="description"><strong>Remove</strong> the attribute of element. </td>
-      </tr>
-      <tr>
-        <td>
           <div class="returns">string</div>
-          $e-&gt;<strong>tag</strong></td>
+          tag</td>
         <td class="description">Read or write the <strong>tag name</strong> of element.</td>
       </tr>
       <tr>
         <td>
           <div class="returns">string</div>
-          $e-&gt;<strong>outertext</strong></td>
+          outertext</td>
         <td class="description">Read or write the <strong>outer HTML text </strong> of element.</td>
       </tr>
       <tr>
         <td>
           <div class="returns">string</div>
-          $e-&gt;<strong>innertext</strong></td>
+          innertext</td>
         <td class="description">Read or write the <strong>inner HTML text </strong> of element.</td>
       </tr>
       <tr>
         <td>
           <div class="returns">string</div>
-          $e-&gt;<strong>plaintext</strong></td>
+          plaintext</td>
         <td class="description">Read or write the <strong>plain text </strong> of element.</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="returns">mixed</div>
+          find (<span class="var"> string $selector [, int $index] </span>)</td>
+        <td class="description">Find children by the <strong>CSS selector</strong>. Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise, return an <strong>array</strong> of object. </td>
       </tr>
     </table>
     <strong><br>
@@ -132,67 +137,38 @@
       <tr>
         <td>
           <div class="returns">mixed</div>
-          $e-&gt;<strong>children</strong> ( <span class="var">[int $index]</span> ) </td>
+          $e-&gt;children ( <span class="var">[int $index]</span> ) </td>
         <td class="description">Returns the Nth <strong>child object</strong> if <strong>index</strong> is set, otherwise return an <strong>array of children</strong>. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
-          $e-&gt;<strong>parent</strong> () </td>
+          $e-&gt;parent () </td>
         <td class="description">Returns the <strong>parent</strong> of element. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
-          $e-&gt;<strong>first_child</strong> () </td>
+          $e-&gt;first_child () </td>
         <td class="description">Returns the <strong>first child</strong> of element, or <strong>null</strong> if not found. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
-          $e-&gt;<strong>last_child </strong>() </td>
+          $e-&gt;last_child () </td>
         <td class="description">Returns the <strong>last child</strong> of element, or <strong>null</strong> if not found. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
-          $e-&gt;<strong>next_sibling </strong>() </td>
+          $e-&gt;next_sibling () </td>
         <td class="description">Returns the <strong>next sibling</strong> of element, or<strong> null</strong> if not found. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
-          $e-&gt;<strong>prev_sibling </strong>() </td>
+          $e-&gt;prev_sibling () </td>
         <td class="description">Returns the <strong>previous sibling</strong> of element, or <strong>null</strong> if not found. </td>
-      </tr>
-    </table>
-    <br>
-    <strong>DOM</strong> parsing methods (<span class="var">Only if you want to customize the parsing behavior</span>) <br>
-    <table cellspacing="1" cellpadding="1">
-      <tr>
-        <th> Name</th>
-        <th> Description</th>
-      </tr>
-      <tr>
-        <td width="565">
-          <div class="returns">void</div>
-          $dom-&gt;<strong>prepare</strong> ( <span class="var">string $content</span> )</td>
-        <td width="414" class="description">prepare HTML data and init everything.</td>
-      </tr>
-      <tr>
-        <td>
-          <div class="returns">void</div>
-          $dom-&gt;<strong>remove_noise</strong> ( <span class="var">string $pattern [, $remove_tag [, $remove_contents]] </span>)</td>
-        <td class="description">Remove noise from html content before parsing.<strong><br>
-          $pattern</strong>: regular expression.<br>
-          <strong>$remove_tag</strong> (optional): drop the noise tag, default value is <strong>true</strong>. <br>
-          <strong>$remove_content </strong>(optional): drop the noise content, default value is <strong>true</strong>. </td>
-      </tr>
-      <tr>
-        <td height="34">
-          <div class="returns">node</div>
-          $dom-&gt;<strong>parse</strong> ()</td>
-        <td class="description">Returns the parsed <strong>node</strong>, or <strong>null</strong> while end of parsing. </td>
       </tr>
     </table>
   </div>

@@ -259,79 +259,75 @@ class simple_html_dom_node {
         return (isset($found[$idx])) ? $found[$idx] : null;
     }
 
-    protected function parse_selector($selector) {
+    protected function parse_selector($selector_string) {
+        // pattern of CSS selectors, modified from mootools
+        $pattern = "/([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
+
+        // handle multiple selectors
+        $selector_list = split(',', $selector_string);
         $selectors = array();
-        $count = 0;
 
-        // preprocess
-        $selector = str_replace(' !', '! ', $selector);
-        while(strpos($selector, '! ')!==false) $selector = str_replace('! ', '!', $selector);
-        $selector = str_replace(' ,', ', ', $selector);
-        while(strpos($selector, ', ')!==false) $selector = str_replace(', ', ',', $selector);
+        foreach($selector_list as $selector) {
+            $result = array();
+            preg_match_all($pattern, trim($selector), $matches, PREG_SET_ORDER);
 
-        // parse CSS selectors, pattern is modified from mootools
-        $pattern = "/([,])?([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
-        preg_match_all($pattern, trim($selector), $matches, PREG_SET_ORDER);
+            foreach ($matches as $m) {
+                list($tag, $key, $val, $exp) = array($m[1], null, null, '=');
 
-        foreach ($matches as $v) {
-            list($or, $tag, $key, $val, $exp) = array(false, $v[2], null, null, '=');
+                if ($m[0]=='') continue;
+                if(!empty($m[2])) {$key='id'; $val=$m[2];}
+                if(!empty($m[3])) {$key='class'; $val=$m[3];}
+                if(!empty($m[4])) {$key=$m[4];}
+                if(!empty($m[5])) {$exp=$m[5];}
+                if(!empty($m[6])) {$val=$m[6];}
 
-            if ($v[0]=='') continue;
-            if ($v[1]==',') $or = true;
-            if(!empty($v[3])) {$key = 'id'; $val = $v[3];}
-            if(!empty($v[4])) {$key = 'class'; $val = $v[4];}
-            if(!empty($v[5])) {
-                $key = $v[5];
-                if(!empty($v[6])) $exp = $v[6];
-                if(!empty($v[7])) $val = $v[7];
+                // convert to lowercase
+                if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
+
+                $result[] = array($tag, $key, $val, $exp);
             }
-
-            // convert to lowercase 
-            if ($this->dom->lowercase) {
-                $tag = strtolower($tag);
-                $key = strtolower($key);
-            }
-
-            // multiple symbol found
-            if($v[1]==',') ++$count;
-            if (!isset($selectors[$count])) $selectors[$count] = array();
-            
-            $selectors[$count][] = array($or, $tag, $key, $val, $exp);
+            $selectors[] = $result;
         }
-
         return $selectors;
     }
 
     // seek for given conditions
     protected function seek($selector, &$ret) {
-        list($or, $tag, $key, $val, $exp) = $selector;
-        
+        list($tag, $key, $val, $exp) = $selector;
+
         $end = $this->info[HDOM_INFO_END];
         if ($end==0)
             $end = $this->parent->info[HDOM_INFO_END]-1;
 
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$end; ++$i) {
-            $n = $this->dom->nodes[$i];
-            if ($n->nodetype==HDOM_TYPE_ENDTAG) continue;
+            $node = $this->dom->nodes[$i];
+            if ($node->nodetype==HDOM_TYPE_ENDTAG) continue;
             $pass = true;
-            if ($tag && $tag!=$n->tag) $pass = false;
-            if ($pass && $key && !(isset($n->attr[$key]))) $pass = false;
+
+            // compare tag
+            if ($tag && $tag!=$node->tag) {$pass=false;}
+            // compare key
+            if ($pass && $key && !(isset($node->attr[$key]))) {$pass=false;}
+            // compare value
             if ($pass && $key && $val) {
-                if (strcasecmp($key, 'class')==0) {
-                    foreach(explode(' ',$n->attr[$key]) as $k) {
+                $check = $this->match($exp, $val, $node->attr[$key]);
+
+                // handle multiple class
+                if (!$check && strcasecmp($key, 'class')==0) {
+                    foreach(explode(' ',$node->attr[$key]) as $k) {
                         $check = $this->match($exp, $val, $k);
                         if ($check) break;
                     }
                 }
-                else
-                    $check = $this->match($exp, $val, $n->attr[$key]);
-                if (!$check) $pass = false;
+
+                if (!$check)
+                    $pass = false;
             }
 
             if ($pass)
                 $ret[$i] = 1;
         }
-        unset($n);
+        unset($node);
     }
 
     protected function match($exp, $pattern, $value) {
@@ -609,7 +605,6 @@ class simple_html_dom {
 
         // doctype, cdata & comments...
         if (isset($node->tag[0]) && $node->tag[0]=='!') {
-            $node->info[HDOM_INFO_END] = 0;
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
 
             if (isset($node->tag[2]) && $node->tag[1]=='-' && $node->tag[2]=='-') {
@@ -628,7 +623,6 @@ class simple_html_dom {
 
         // text
         if (!preg_match("/^[A-Za-z0-9_\\-:]+$/", $node->tag)) {
-            $node->info[HDOM_INFO_END] = 0;
             $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
             if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
             $this->parent->nodes[] = $node;
