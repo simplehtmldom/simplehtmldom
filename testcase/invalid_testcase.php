@@ -98,6 +98,7 @@ assert($dom->find('td', 1)->outertext=='<td>2');
 assert($dom->find('td', 2)->innertext=="3\r\n");
 assert($dom->find('td', 2)->outertext=="<td>3\r\n");
 
+// -----------------------------------------------
 $str = <<<HTML
 <table>
 <tr>
@@ -109,6 +110,19 @@ HTML;
 $dom = str_get_dom($str);
 assert(count($dom->find('tr td'))==3);
 
+// -----------------------------------------------
+$str = <<<HTML
+<table>
+<tr><td><b>11</b></td><td><b>12</b></td><td><b>13</b></td>
+<tr><td><b>21</b></td><td><b>32</b></td><td><b>43</b></td>
+</table>
+HTML;
+$dom = str_get_dom($str);
+assert(count($dom->find('tr'))==2);
+assert(count($dom->find('tr td'))==6);
+assert($dom->find('tr', 1)->outertext=="<tr><td><b>21</b></td><td><b>32</b></td><td><b>43</b></td>\r\n");
+assert($dom->find('tr', 1)->innertext=="<td><b>21</b></td><td><b>32</b></td><td><b>43</b></td>\r\n");
+assert($dom->find('tr', 1)->plaintext=="213243\r\n");
 
 // -----------------------------------------------
 $str = <<<HTML
@@ -140,6 +154,24 @@ assert($dom->find('dd', 0)->outertext=="<dd>2");
 assert($dom->find('dd', 1)->innertext=="4");
 assert($dom->find('dd', 1)->outertext=="<dd>4");
 
+// -----------------------------------------------
+$str = <<<HTML
+<dl id="dl1"><dt>11<dd>12<dt>13<dd>14</dl>
+<dl id="dl2"><dt>21<dd>22<dt>23<dd>24</dl>
+HTML;
+$dom = str_get_dom($str);
+assert(count($dom->find('#dl1 dt'))==2);
+assert(count($dom->find('#dl2  dd'))==2);
+assert($dom->find('dl', 0)->innertext=="<dt>11<dd>12<dt>13<dd>14");
+assert($dom->find('dl', 1)->innertext=="<dt>21<dd>22<dt>23<dd>24");
+
+// -----------------------------------------------
+$str = <<<HTML
+<ul id="ul1"><li><b>1</b><li><b>2</b></ul>
+<ul id="ul2"><li><b>3</b><li><b>4</b></ul>
+HTML;
+$dom = str_get_dom($str);
+assert(count($dom->find('ul[id=ul1] li'))==2);
 // -----------------------------------------------------------------------------
 // invalid test 1
 $str = <<<HTML

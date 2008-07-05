@@ -12,11 +12,26 @@
   <h2>FAQ</h2>
   <ul>
 		<li><a href="manual.htm">Back</a></li>
+		<li><a href="#find">Problem with finding</a></li>
     <li><a href="#hosting">Problem with hosting</a></li>
     <li><a href="#proxy">Behind a proxy</a></li>
     <li><a href="#memory_leak">Memory leak!</a></li>
   </ul>
-	<div> <a name="hosting"></a>
+	<div>
+		<a name="find"></a>
+    <h2>Problem with finding</h2>
+    <a class="top" href="#top">Top</a>
+	  <div class="code"> <span class="var">Q:</span> Element not found in such case:<br>
+	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="var"></span>&lt;div style=&quot;padding: 0px 2px;&quot;&gt;&lt;span class=&quot;rf&quot;&gt;...&lt;/span&gt;&lt;/div&gt;<br>
+	    <br>
+	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="var"></span>$dom-&gt;find('div[style*=padding: 0px 2px;] span[class=rf]');<br>
+      <br>
+      <span class="var">A:</span> If there is blank in selectors, quote it! <br>
+      <br>
+      Example: <br>
+       <br>
+      $dom-&gt;find('div[style*=<strong>&quot;padding: 0px 2px;&quot;</strong>] span[class=rf]')</div>
+		<a name="hosting"></a>
     <h2>Problem with hosting</h2>
     <a class="top" href="#top">Top</a>
     <div class="code"> <span class="var">Q:</span> On my local server everything works fine, but when I put it on my esternal server it doesn't work. <br>

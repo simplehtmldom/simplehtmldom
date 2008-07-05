@@ -453,6 +453,18 @@ assert($es[2]->name=='news[]');
 assert($es[2]->value=='baz');
 
 // -----------------------------------------------------------------------------
+//  with '[]' names checkbox 2
+$str = <<<HTML
+<input type="checkbox" name="news[foo]" value="foo" />
+<input type="checkbox" name="news[bar]" value="bar">
+HTML;
+$dom->load($str);
+$es = $dom->find('[name=news[foo]]');
+assert(count($es)==1);
+assert($es[0]->name=='news[foo]');
+assert($es[0]->value=='foo');
+
+// -----------------------------------------------------------------------------
 // regular expression syntax escaping
 $str = <<<HTML
 <div>

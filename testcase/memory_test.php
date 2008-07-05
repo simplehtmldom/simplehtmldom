@@ -31,6 +31,7 @@ function stat_dom($dom) {
 
 echo 'init ' . number_format(memory_get_usage(), 0, '.', ',') . " bytes";
 
+
 echo '<br><br>[load file]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
 echo '------------------------------------------<br>';
 flush();
@@ -38,6 +39,22 @@ for($i=0; $i<3; ++$i) {
     $str = file_get_contents($filename);
     unset($str);
     dump_memory();
+}
+echo 'final: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
+flush();
+
+
+$str = file_get_contents($filename);
+echo '<br><br>[multi objects clear memory]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
+echo '------------------------------------------<br>';
+flush();
+for($i=0; $i<3; ++$i) {
+    $dom = str_get_dom($str);
+    //stat_dom($dom);
+    $dom->clear();
+    unset($dom);
+    dump_memory();
+    flush();
 }
 echo 'final: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
 flush();
@@ -51,6 +68,7 @@ for($i=0; $i<3; ++$i) {
     $dom->clear();
     unset($dom);
     dump_memory();
+    flush();
 }
 echo 'final: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
 flush();

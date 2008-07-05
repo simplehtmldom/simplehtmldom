@@ -1,6 +1,6 @@
 <?php
 /*******************************************************************************
-Version: 0.98 ($Rev$)
+Version: 0.99 ($Rev$)
 Website: http://sourceforge.net/projects/simplehtmldom/
 Author: S.C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
@@ -421,7 +421,6 @@ class simple_html_dom {
     protected $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\r"=>1, "\n"=>1, "\t"=>1);
     protected $token_attr  = array(' '=>1, '>'=>1);
     protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
-    protected $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'dl'=>1, 'ol'=>1);
     protected $optional_closing_tags = array(
         'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
         'th'=>array('th'=>1),
@@ -432,6 +431,10 @@ class simple_html_dom {
         'dd'=>array('dd'=>1, 'dt'=>1),
         'p'=>array('p'=>1),
     );
+
+    function __destruct() {
+        $this->clear();
+    }
 
     // load html from string
     function load($str, $lowercase=true) {
@@ -576,24 +579,13 @@ class simple_html_dom {
 
             // mapping parent node
             if (strtolower($this->parent->tag)!==$tag_lower) {
-                if (isset($this->block_tags[$tag_lower]))  {
-                    $this->parent->info[HDOM_INFO_END] = 0;
-                    while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
-                        $this->parent = $this->parent->parent;
-                }
-                else {
-                    $node->nodetype = HDOM_TYPE_ENDTAG;
-                    $node->info[HDOM_INFO_END] = $this->index-1;
-                    $node->info[HDOM_INFO_TEXT] = '</' . $node->tag . '>';
-                    $node->tag = $node->tag;
-                    $this->parent->nodes[] = $node;
-                }
-                $this->parent->info[HDOM_INFO_END] = $this->index-1;
+                $this->parent->info[HDOM_INFO_END] = 0;
+                while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
+                    $this->parent = $this->parent->parent;
             }
-            else {
-                $this->parent->info[HDOM_INFO_END] = $this->index-1;
+            $this->parent->info[HDOM_INFO_END] = $this->index-1;
+            if ($this->parent->parent)
                 $this->parent = $this->parent->parent;
-            }
 
             $node->parent = $this->parent;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
