@@ -574,6 +574,12 @@ class simple_html_dom {
             $this->skip($this->token_blank);
             $node->nodetype = HDOM_TYPE_ENDTAG;
             $node->tag = $this->copy_until_char('>');
+
+            // skip attributes in end tag
+            $pos = strpos($node->tag, ' ');
+            if ($pos!==false)
+                $node->tag = substr($node->tag, 0, $pos);
+
             $tag_lower = strtolower($node->tag);
             if ($this->lowercase) $node->tag = $tag_lower;
 

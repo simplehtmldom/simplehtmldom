@@ -59,7 +59,7 @@ document.write('<SCR'+'IPT src="zone?zid=159&pid=0&random='+Math.floor(89999999*
 
 <script type="text/javascript">
 var foo = "bar";
-</script >
+</script>
 HTML;
 $dom->load($str);
 assert(count($dom->find('script'))==8);
