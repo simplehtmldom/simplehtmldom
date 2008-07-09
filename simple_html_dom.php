@@ -86,7 +86,7 @@ class simple_html_dom_node {
 
     // returns children of node
     function children($idx=-1) {
-        if ($idx==-1) return $this->children;
+        if ($idx===-1) return $this->children;
         if (isset($this->children[$idx])) return $this->children[$idx];
         return null;
     }
@@ -170,8 +170,8 @@ class simple_html_dom_node {
             case HDOM_TYPE_COMMENT: return '';
             case HDOM_TYPE_UNKNOWN: return '';
         }
-        if (strcasecmp($this->tag, 'script')==0) return '';
-        if (strcasecmp($this->tag, 'style')==0) return '';
+        if (strcasecmp($this->tag, 'script')===0) return '';
+        if (strcasecmp($this->tag, 'style')===0) return '';
         $ret = '';
 
         foreach($this->nodes as $n)
@@ -220,22 +220,22 @@ class simple_html_dom_node {
     // find elements by css selector
     function find($selector, $idx=-1) {
         $selector = trim($selector);
-        if ($selector=='*') return $this->children;
+        if ($selector==='*') return $this->children;
 
         $selectors = $this->parse_selector($selector);
-        if (($count=count($selectors))==0) return array();
+        if (($count=count($selectors))===0) return array();
         $found_keys = array();
 
         // find each selector
         for ($c=0; $c<$count; ++$c) {
-            if (($levle=count($selectors[0]))==0) return array();
+            if (($levle=count($selectors[0]))===0) return array();
             $head = array($this->info[HDOM_INFO_BEGIN]=>1);
 
             // handle descendant selectors, no recursive!
             for ($l=0; $l<$levle; ++$l) {
                 $ret = array();
                 foreach($head as $k=>$v) {
-                    $n = ($k==-1) ? $this->dom->root : $this->dom->nodes[$k];
+                    $n = ($k===-1) ? $this->dom->root : $this->dom->nodes[$k];
                     $n->seek($selectors[$c][$l], $ret);
                 }
                 $head = $ret;
@@ -274,7 +274,7 @@ class simple_html_dom_node {
             foreach ($matches as $m) {
                 list($tag, $key, $val, $exp) = array($m[1], null, null, '=');
 
-                if ($m[0]=='') continue;
+                if ($m[0]==='') continue;
                 if(!empty($m[2])) {$key='id'; $val=$m[2];}
                 if(!empty($m[3])) {$key='class'; $val=$m[3];}
                 if(!empty($m[4])) {$key=$m[4];}
@@ -296,12 +296,12 @@ class simple_html_dom_node {
         list($tag, $key, $val, $exp) = $selector;
 
         $end = $this->info[HDOM_INFO_END];
-        if ($end==0)
+        if ($end===0)
             $end = $this->parent->info[HDOM_INFO_END]-1;
 
         for($i=$this->info[HDOM_INFO_BEGIN]+1; $i<$end; ++$i) {
             $node = $this->dom->nodes[$i];
-            if ($node->nodetype==HDOM_TYPE_ENDTAG) continue;
+            if ($node->nodetype===HDOM_TYPE_ENDTAG) continue;
             $pass = true;
 
             // compare tag
@@ -313,7 +313,7 @@ class simple_html_dom_node {
                 $check = $this->match($exp, $val, $node->attr[$key]);
 
                 // handle multiple class
-                if (!$check && strcasecmp($key, 'class')==0) {
+                if (!$check && strcasecmp($key, 'class')===0) {
                     foreach(explode(' ',$node->attr[$key]) as $k) {
                         $check = $this->match($exp, $val, $k);
                         if ($check) break;
@@ -541,7 +541,7 @@ class simple_html_dom {
     // parse html content
     function parse() {
         $s = $this->copy_until_char('<');
-        if ($s=='') return $this->read_tag();
+        if ($s==='') return $this->read_tag();
 
         // text
         $node = new simple_html_dom_node($this);
@@ -557,7 +557,7 @@ class simple_html_dom {
 
     // read tag info
     protected function read_tag() {
-        if ($this->char!='<') {
+        if ($this->char!=='<') {
             $this->root->info[HDOM_INFO_END] = $this->index;
             return null;
         }
@@ -569,7 +569,7 @@ class simple_html_dom {
         ++$this->index;
 
         // end tag
-        if ($this->char=='/') {
+        if ($this->char==='/') {
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             $this->skip($this->token_blank);
             $node->nodetype = HDOM_TYPE_ENDTAG;
@@ -598,14 +598,14 @@ class simple_html_dom {
             return $node;
         }
 
-        $node->tag = $this->copy_until($this->token_slash);
+        $tag = $this->copy_until($this->token_slash);
         $node->parent = $this->parent;
 
         // doctype, cdata & comments...
-        if (isset($node->tag[0]) && $node->tag[0]=='!') {
-            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
+        if (isset($tag[0]) && $tag[0]==='!') {
+            $node->info[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
 
-            if (isset($node->tag[2]) && $node->tag[1]=='-' && $node->tag[2]=='-') {
+            if (isset($tag[2]) && $tag[1]==='-' && $tag[2]==='-') {
                 $node->nodetype = HDOM_TYPE_COMMENT;
                 $node->tag = 'comment';
             } else {
@@ -613,16 +613,16 @@ class simple_html_dom {
                 $node->tag = 'unknown';
             }
 
-            if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
+            if ($this->char==='>') $node->info[HDOM_INFO_TEXT].='>';
             $this->parent->nodes[] = $node;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
         }
 
         // text
-        if (!preg_match("/^[A-Za-z0-9_\\-:]+$/", $node->tag)) {
-            $node->info[HDOM_INFO_TEXT] = '<' . $node->tag . $this->copy_until_char('>');
-            if ($this->char=='>') $node->info[HDOM_INFO_TEXT].='>';
+        if (!preg_match("/^[A-Za-z0-9_\\-:]+$/", $tag)) {
+            $node->info[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
+            if ($this->char==='>') $node->info[HDOM_INFO_TEXT].='>';
             $this->parent->nodes[] = $node;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
@@ -630,8 +630,8 @@ class simple_html_dom {
 
         // begin tag
         $node->nodetype = HDOM_TYPE_ELEMENT;
-        $tag_lower = strtolower($node->tag);
-        if ($this->lowercase) $node->tag = $tag_lower;
+        $tag_lower = strtolower($tag);
+        $node->tag = ($this->lowercase) ? $tag_lower : $tag;
 
         // handle optional closing tags
         if (isset($this->optional_closing_tags[$tag_lower]) ) {
@@ -649,10 +649,10 @@ class simple_html_dom {
 
         // handle attributes
         do {
-            if ($this->char!==null && $space[0]=='') break;
+            if ($this->char!==null && $space[0]==='') break;
             $name = $this->copy_until($this->token_equal);
 
-            if($guard==$this->pos) {
+            if($guard===$this->pos) {
                 $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                 continue;
             }
@@ -662,15 +662,15 @@ class simple_html_dom {
             if($this->pos>=$this->size-1 && $this->char!='>') {
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->info[HDOM_INFO_END] = 0;
-                $node->info[HDOM_INFO_TEXT] = '<'.$node->tag . $space[0] . $name;
+                $node->info[HDOM_INFO_TEXT] = '<'.$tag . $space[0] . $name;
                 $node->tag = 'text';
                 return $node;
             }
 
-            if ($name!='/' && $name!='') {
+            if ($name!=='/' && $name!=='') {
                 $space[1] = $this->copy_skip($this->token_blank);
                 if ($this->lowercase) $name = strtolower($name);
-                if ($this->char=='=') {
+                if ($this->char==='=') {
                     $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
                     $this->parse_attr($node, $name, $space);
                 }
@@ -685,12 +685,12 @@ class simple_html_dom {
             }
             else
                 break;
-        } while($this->char!='>' && $this->char!='/');
+        } while($this->char!=='>' && $this->char!=='/');
 
         $node->info[HDOM_INFO_ENDSPACE] = $space[0];
 
         // check self closing
-        if ($this->copy_until_char_escape('>')=='/') {
+        if ($this->copy_until_char_escape('>')==='/') {
             $node->info[HDOM_INFO_ENDSPACE] .= '/';
             $node->info[HDOM_INFO_END] = 0;
         }
@@ -743,13 +743,12 @@ class simple_html_dom {
     }
 
     protected function copy_until($chars) {
-        $ret = '';
+        $pos = $this->pos;
         while ($this->char!==null) {
-            if (isset($chars[$this->char])) return $ret;
-            $ret .= $this->char;
+            if (isset($chars[$this->char])) break;
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
         }
-        return $ret;
+        return substr($this->html, $pos, $this->pos-$pos);
     }
 
     protected function copy_until_char($char) {
@@ -762,7 +761,7 @@ class simple_html_dom {
             return $ret;
         }
 
-        if ($pos==$this->pos) return '';
+        if ($pos===$this->pos) return '';
 
         $ret = substr($this->html, $this->pos, $pos-$this->pos);
         $this->char = $this->html[$pos];
@@ -782,7 +781,7 @@ class simple_html_dom {
                 return $ret;
             }
 
-            if ($pos==$this->pos) return '';
+            if ($pos===$this->pos) return '';
 
             if ($this->html[$pos-1]==='\\') {
                 $start = $pos+1;

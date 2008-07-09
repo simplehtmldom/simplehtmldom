@@ -45,7 +45,7 @@ flush();
 
 
 $str = file_get_contents($filename);
-echo '<br><br>[multi objects clear memory]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
+echo '<br><br>[multi objects str_get_dom clear memory]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
 echo '------------------------------------------<br>';
 flush();
 for($i=0; $i<3; ++$i) {
@@ -59,7 +59,7 @@ for($i=0; $i<3; ++$i) {
 echo 'final: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
 flush();
 
-echo '<br><br>[multi objects clear memory]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
+echo '<br><br>[multi objects file_get_dom clear memory]<br>init memory: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
 echo '------------------------------------------<br>';
 flush();
 for($i=0; $i<3; ++$i) {
@@ -80,9 +80,9 @@ flush();
 $dom = new simple_html_dom;
 for($i=0; $i<3; ++$i) {
     $dom->load_file($filename);
+    $dom->clear();
     dump_memory();
 }
-$dom->clear();
 unset($dom);
 echo 'final: '.number_format(memory_get_usage(), 0, '.', ',').'<br>';
 flush();

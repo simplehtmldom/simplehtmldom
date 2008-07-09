@@ -6,11 +6,12 @@ include_once('../simple_html_dom.php');
 $all = 0;
 $min = 10000;
 $max = 0;
+$count = 20;
 
 $str = file_get_contents('./html/google.htm');
 $dom = new simple_html_dom;
 
-for ($i=0; $i<20; ++$i) {
+for ($i=0; $i<$count; ++$i) {
     $start = microtime();
     $dom->load($str, false);
     list($eu, $es) = explode(' ', microtime());
@@ -31,5 +32,5 @@ echo '<br>-------------------------<br>';
 echo 'min: ' . $min . '<br>';
 echo 'max: ' . $max . '<br>';
 
-echo '<br>avg: ' . $all/20 . '<br>';
+echo '<br>avg: ' . $all/$count . '<br>';
 ?>
