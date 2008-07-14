@@ -2,7 +2,7 @@
 
 [On going]
 1. Fix the bug of optional-closing tags.
-2. Add __destruct().
+2. Fix the bug of attributes in end tags.
 
 
 [PHP Simple HTML DOM Parser v0.98 is released]

@@ -85,6 +85,38 @@ assert($e->outertext=='<hr id="foo" kk=ll class="bar" />');
 // -----------------------------------------------------------------------------
 // optional closing tags test
 $str = <<<HTML
+<body>
+</b><.b></a>
+</body>
+HTML;
+$dom = str_get_dom($str);
+
+assert($dom->find('body', 0)->outertext==$str);
+
+// -----------------------------------------------
+// optional closing tags test
+$str = <<<HTML
+<body>
+<div>
+</body>
+HTML;
+$dom = str_get_dom($str);
+
+assert($dom->find('body', 0)->outertext==$str);
+
+// -----------------------------------------------
+// optional closing tags test
+$str = <<<HTML
+<body>
+<div> </a> </div>
+</body>
+HTML;
+$dom = str_get_dom($str);
+
+assert($dom->find('body', 0)->outertext==$str);
+
+// -----------------------------------------------
+$str = <<<HTML
 <table>
 <tr><td>1<td>2<td>3
 </table>

@@ -404,8 +404,9 @@ class simple_html_dom_node {
 // simple html dom parser
 // -----------------------------------------------------------------------------
 class simple_html_dom {
-    public $nodes = array();
     public $root = null;
+    public $nodes = array();
+    public $children = array();
     public $lowercase = false;
     protected $html = '';
     protected $parent = null;
@@ -421,6 +422,7 @@ class simple_html_dom {
     protected $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\r"=>1, "\n"=>1, "\t"=>1);
     protected $token_attr  = array(' '=>1, '>'=>1);
     protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
+    protected $block_tags = array('div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'body'=>1);
     protected $optional_closing_tags = array(
         'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
         'th'=>array('th'=>1),
@@ -520,6 +522,7 @@ class simple_html_dom {
         $this->root->tag = 'root';
         $this->root->nodetype = HDOM_TYPE_ROOT;
         $this->parent = $this->root;
+        $this->children[] = $this->root;
         // set the length of content
         $this->size = strlen($str);
         if ($this->size>0) $this->char = $this->html[0];
@@ -581,19 +584,32 @@ class simple_html_dom {
                 $node->tag = substr($node->tag, 0, $pos);
 
             $tag_lower = strtolower($node->tag);
-            if ($this->lowercase) $node->tag = $tag_lower;
+            if ($this->lowercase) $node->tag = $tag_lower; 
 
             // mapping parent node
-            if (strtolower($this->parent->tag)!==$tag_lower) {
-                $this->parent->info[HDOM_INFO_END] = 0;
-                while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
-                    $this->parent = $this->parent->parent;
+            $parent_lower = strtolower($this->parent->tag);
+            if ($parent_lower!==$tag_lower) {
+                if (isset($this->block_tags[$tag_lower]) || isset($this->optional_closing_tags[$parent_lower])) {
+                    $this->parent->info[HDOM_INFO_END] = 0;
+                    while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
+                        $this->parent = $this->parent->parent;
+                }
+                else {
+                    $node->info[HDOM_INFO_TEXT] = '</' . $node->tag;
+                    $this->parent->info[HDOM_INFO_END] = $this->index-1;
+                    $node->parent = $this->parent;
+                    $this->parent->children[] = $node;
+                    $this->parent->nodes[] = $node;
+                    $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
+                    return $node;
+                }
             }
+
             $this->parent->info[HDOM_INFO_END] = $this->index-1;
             if ($this->parent->parent)
                 $this->parent = $this->parent->parent;
-
             $node->parent = $this->parent;
+            
             $this->char = (++$this->pos<$this->size) ? $this->html[$this->pos] : null; // next
             return $node;
         }
