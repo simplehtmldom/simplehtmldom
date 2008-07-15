@@ -1,5 +1,6 @@
 <?php
 // $Rev$
+// -----------------------------------------------------------------------------
 error_reporting(E_ALL);
 
 include_once('../../simple_html_dom_native.php');
