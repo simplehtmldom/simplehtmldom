@@ -1,13 +1,15 @@
 #$Rev$
 
 [On going]
-1. Fix the bug of optional-closing tags.
-2. Fix the bug of attributes in end tags.
+1. New file "simple_html_dom_native.php", based on native DOMDocument, very fast!
+1. Fixed bug #2012551 (optional-closing tags).
+2. Fixed bug #2011286 (attributes in end tags).
+3. Fixed bug (problem with <body> tag's innertext).
 
 
 [PHP Simple HTML DOM Parser v0.98 is released]
 1. Performance turning (boost 20%).
-2. Supports "multiple calss" selector feature: <div class="a b c"></div>.
+2. Supports "multiple class" selector feature: <div class="a b c"></div>.
 3. New "callback function" feature.
 4. New "multiple selectors" feature: $dom->find('p,a,b');
 5. New examples.

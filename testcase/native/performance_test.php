@@ -2,15 +2,14 @@
 // $Rev$
 error_reporting(E_ALL);
 
-//include_once('../simple_html_dom.php');
-include_once('../simple_html_dom_native.php');
+include_once('../../simple_html_dom_native.php');
 
 $all = 0;
 $min = 10000;
 $max = 0;
 $count = 20;
 
-$str = file_get_contents('./html/google.htm');
+$str = file_get_contents('../html/google.htm');
 $dom = new simple_html_dom;
 
 for ($i=0; $i<$count; ++$i) {

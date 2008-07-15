@@ -365,7 +365,6 @@ class simple_html_dom_node {
         switch($name) {
             case 'outertext': return $this->info[HDOM_INFO_OUTER] = $value;
             case 'innertext': return $this->info[HDOM_INFO_INNER] = $value;
-            case 'plaintext': return $this->dom->restore_noise($this->info[HDOM_INFO_TEXT]);
         }
         if (!isset($this->attr[$name])) {
             $this->info[HDOM_INFO_SPACE][] = array(' ', '', ''); 
