@@ -8,6 +8,7 @@ $dir = './html/';
 $files = array(
     array('name'=>'empty.htm',          'url'=>''),
     array('name'=>'google.htm',         'url'=>'http://www.google.com/'),
+    array('name'=>'cyberciti.htm',         'url'=>'http://www.cyberciti.biz/tips/configure-ubuntu-grub-to-load-freebsd.html'),
     array('name'=>'myspace.htm',        'url'=>'http://www.myspace.com/'),
     array('name'=>'mootools.htm',       'url'=>'http://www.mootools.net/'),
     array('name'=>'jquery.htm',         'url'=>'http://jquery.com/'),

@@ -28,6 +28,7 @@ $str = <<<HTML
     </body>
 </html>
 HTML;
+$dom->load($str);
 $dom->find('span', 0)->innertext = 'bar';
 assert($dom==$str);
 // -----------------------------------------------
@@ -40,8 +41,24 @@ $str = <<<HTML
     </body>
 </html>
 HTML;
+$dom->load($str);
 $dom->find('head', 0)->innertext = 'ok';
 assert($dom==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<b>foo</b>
+HTML;
+$dom->load($str);
+
+$e = $dom->find('b text', 0);
+assert($e->innertext=='foo');
+assert($e->outertext=='foo');
+$e->innertext = 'bar';
+assert($e->innertext=='bar');
+assert($e->outertext=='bar');
+$e = $dom->find('b', 0);
+assert($e->innertext=='bar');
+assert($e->outertext=='<b>bar</b>');
 
 // -----------------------------------------------------------------------------
 // outertext test
@@ -75,7 +92,7 @@ $str = <<<HTML
 <ul><li><b>li11</b></li><li><b>li12</b></li><ul><li><b>li21</b></li><li><b>li22</b></li>
 HTML;
 $dom->load($str);
-assert($dom->find('ul', 0)->outertext=='<ul><li><b>li11</b></li><li><b>li12</b></li>');
+assert($dom->find('ul', 0)->outertext=='<ul><li><b>li11</b></li><li><b>li12</b></li><ul><li><b>li21</b></li><li><b>li22</b></li>');
 assert($dom->find('ul', 1)->outertext=='<ul><li><b>li21</b></li><li><b>li22</b></li>');
 
 // -----------------------------------------------
@@ -83,7 +100,7 @@ $str = <<<HTML
 <ul><li><b>li11</b><li><b>li12</b></li><ul><li><b>li21</b></li><li><b>li22</b>
 HTML;
 $dom->load($str);
-assert($dom->find('ul', 0)->outertext=='<ul><li><b>li11</b><li><b>li12</b></li>');
+assert($dom->find('ul', 0)->outertext=='<ul><li><b>li11</b><li><b>li12</b></li><ul><li><b>li21</b></li><li><b>li22</b>');
 assert($dom->find('ul', 1)->outertext=='<ul><li><b>li21</b></li><li><b>li22</b>');
 
 // -----------------------------------------------

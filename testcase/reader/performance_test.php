@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 error_reporting(E_ALL);
 
-include_once('../../simple_html_dom_native.php');
+include_once('../../simple_html_dom_reader.php');
 
 $all = 0;
 $min = 10000;

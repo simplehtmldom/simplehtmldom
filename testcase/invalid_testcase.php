@@ -90,7 +90,6 @@ $str = <<<HTML
 </body>
 HTML;
 $dom = str_get_dom($str);
-
 assert($dom->find('body', 0)->outertext==$str);
 
 // -----------------------------------------------
@@ -101,7 +100,7 @@ $str = <<<HTML
 </body>
 HTML;
 $dom = str_get_dom($str);
-
+assert($dom==$str);
 assert($dom->find('body', 0)->outertext==$str);
 
 // -----------------------------------------------
@@ -250,6 +249,21 @@ HTML;
 $dom->load($str);
 assert(count($dom->find('span'))==3);
 assert(count($dom->find('div'))==2);
+assert($dom==$str);
+// -----------------------------------------------------------------------------
+// invalid test 4
+$str = <<<HTML
+<ul class="menublock">
+    </li>
+        <ul>
+            <li>
+                <a href="http://www.cyberciti.biz/tips/pollsarchive">Polls Archive</a>
+            </li>
+        </ul>
+    </li>
+</ul>
+HTML;
+$dom->load($str);
 assert($dom==$str);
 
 // -----------------------------------------------------------------------------

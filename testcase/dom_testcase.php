@@ -251,7 +251,7 @@ $str = <<<HTML
 HTML;
 $dom->load($str);
 assert($dom==$str);
-assert($dom->plaintext=='okok');
+assert($dom->plaintext=='okok</div>');
 
 
 // -----------------------------------------------------------------------------

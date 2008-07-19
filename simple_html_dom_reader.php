@@ -35,13 +35,13 @@ function str_get_dom($str) {
 // -----------------------------------------------------------------------------
 class simple_html_dom_node {
     public $dnode = null;
-    public $dom = null;
+    public $doc = null;
     public $begin = -1;
     public $end = -1;
     public $_info = array();
 
-    function __construct($dom, $dnode) {
-        $this->dom = $dom;
+    function __construct($doc, $dnode) {
+        $this->doc = $doc;
         $this->dnode = $dnode;
         $dnode->__bind = &$this;
     }
@@ -50,9 +50,13 @@ class simple_html_dom_node {
         return $this->outertext();
     }
 
+    function __call($name, $args) {
+        return call_user_func_array(array($this->dnode, $name), $args);
+    }
+
     function __get($name) {
         if ($this->dnode->nodeName[0]!=='#' && $this->dnode->hasAttribute($name))
-               return $this->dnode->getAttribute($name);
+            return $this->dnode->getAttribute($name);
 
         switch($name) {
             case 'tag': return $this->dnode->nodeName;
@@ -93,7 +97,7 @@ class simple_html_dom_node {
             $str = $this->dnode->nodeValue;
             if ($this->dnode->nodeName!=='#cdata-section')
                 $str = htmlentities($str, ENT_COMPAT,'UTF-8');
-            $str = mb_convert_encoding($str, $this->dom->encoding, 'UTF-8');
+            $str = mb_convert_encoding($str, $this->doc->encoding, 'UTF-8');
             $ret .= $str;
         }
         return $ret;
@@ -120,7 +124,12 @@ class simple_html_dom_node {
                     $str .= ' ';
                     foreach($this->dnode->attributes as $a) {
                         $str .= $a->name;
-                        $str .= '="' . urldecode(mb_convert_encoding($a->value, $this->dom->encoding, 'UTF-8')) . '" ';
+                        $val = urldecode(mb_convert_encoding($a->value, $this->doc->encoding, 'UTF-8'));
+                        // chack single or double quote
+                        if(($pos=strpos($val, '"')!==false) && $pos>=0 && $val[$pos-1]!=='\\')
+                            $str .= '=\'' .$val  . '\' ';
+                        else
+                            $str .= '="' . $val . '" ';
                     }
                     // trim last blank
                     $str = substr($str, 0, -1);
@@ -172,7 +181,7 @@ class simple_html_dom_node {
             $str = $this->dnode->nodeValue;
             if ($this->dnode->nodeName!=='#cdata-section')
                 $str = htmlentities($str, ENT_COMPAT, 'UTF-8');
-            $str = mb_convert_encoding($str, $this->dom->encoding, 'UTF-8');
+            $str = mb_convert_encoding($str, $this->doc->encoding, 'UTF-8');
             $ret .= $str;
         }
         return $ret;
@@ -181,8 +190,6 @@ class simple_html_dom_node {
     // find elements by css selector
     function find($selector, $idx=-1) {
         $selector = trim($selector);
-        //if ($selector==='*') return $this->children;
-
         $selectors = $this->parse_selector($selector);
         if (($count=count($selectors))===0) return array();
         $found_keys = array();
@@ -198,7 +205,7 @@ class simple_html_dom_node {
             for ($l=0; $l<$levle; ++$l) {
                 $ret = array();
                 foreach($head as $k=>$v) {
-                    $n = ($l==0) ? $this : $this->dom->nodes[$k];
+                    $n = ($l==0) ? $this : $this->doc->nodes[$k];
                     $n->seek($selectors[$c][$l], $ret);
                 }
                 $head = $ret;
@@ -215,7 +222,7 @@ class simple_html_dom_node {
 
         $found = array();
         foreach($found_keys as $k=>$v)
-            $found[] = $this->dom->nodes[$k];
+            $found[] = $this->doc->nodes[$k];
 
         // return nth-element or array
         if ($idx<0) return $found;
@@ -273,7 +280,7 @@ class simple_html_dom_node {
         //echo "<br>\n";
 
         for($i=$this->begin; $i<$this->end; ++$i) {
-            $node = $this->dom->nodes[$i];
+            $node = $this->doc->nodes[$i];
             $pass = true;
             
             //echo $tag . '->' . $node->dnode->nodeName."\n";
@@ -332,30 +339,28 @@ class simple_html_dom_node {
         }
         return $check;
     }
-/*
-    
-
-    function __isset($name) {
-    }
-*/
 }
 
 // simple html dom parser
 // -----------------------------------------------------------------------------
 class simple_html_dom {
-    public $dom = null;
+    public $doc = null;
     public $root = null;
     public $nodes = array();
     public $total = 0;
+    
+    function __destruct() {
+        $this->clear();
+    }
 
     function __get($name) {
-        if (isset($this->dom->{$name}))
-            return $this->dom->{$name};
+        if (isset($this->doc->{$name}))
+            return $this->doc->{$name};
     }
 
     function __set($name, $value) {
-        if (isset($this->dom->{$name}))
-            $this->dom->{$name} = $value;
+        if (isset($this->doc->{$name}))
+            $this->doc->{$name} = $value;
     }
 
     function __toString() {
@@ -370,11 +375,21 @@ class simple_html_dom {
 
     // load html from string
     function load($str) {
-        $this->dom = new DOMDocument();
-        $this->dom->recover = true;
-        $this->dom->preserveWhiteSpace = true;
-        @$this->dom->loadHTML($str);
-        $this->root = new simple_html_dom_node($this, $this->dom->childNodes->item(1));
+        $out = array();
+        // get html's encoding meta tag
+        preg_match_all("/<meta\s*http-equiv=[\"']?content-type[\"']?\s*content=\"([^\"]*)\"\s*>/is", $str, $out, PREG_PATTERN_ORDER);
+        
+        if (isset($out[0][0])) {
+            $str = str_replace($out[0][0], '', $str);
+            $str = $out[0][0] . $str;
+            file_put_contents('temp.htm', $str);
+        }
+        
+        $this->doc = new DOMDocument();
+        $this->doc->recover = true;
+        $this->doc->preserveWhiteSpace = true;
+        @$this->doc->loadHTML($str);
+        $this->root = new simple_html_dom_node($this, $this->doc->childNodes->item(1));
         $this->parse($this->root);
     }
 
@@ -400,16 +415,23 @@ class simple_html_dom {
     // clean up memory
     function clear() {
         foreach($this->nodes as $n) {
-            $n->dom = null;
+            $n->doc = null;
             $n->dnode->__bind = null;
             $n->dnode = null;
             $n = null;
         }
-        $this->root->dom = null;
+        $this->root->doc = null;
         $this->root->dnode->__bind = null;
         $this->root->dnode = null;
         $this->root = null;
-        $this->dom = null;
+        $this->doc = null;
+    }
+    
+    // save dom as string
+    function save($filepath='') {
+        $ret = $this->root;
+        if ($filepath!=='') file_put_contents($filepath, $ret);
+        return $ret;
     }
 }
 ?>

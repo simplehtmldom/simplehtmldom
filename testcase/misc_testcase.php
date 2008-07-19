@@ -55,8 +55,7 @@ assert($es[2]->src=='src2');
 
 $es = $dom->find('p');
 assert($es[0]->innertext=='p1');
-
-assert($dom->save()==$str);
+assert($dom==$str);
 
 // -----------------------------------------------------------------------------
 // tear down
