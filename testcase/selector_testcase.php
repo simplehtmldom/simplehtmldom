@@ -23,21 +23,24 @@ assert(count($e)==3);
 // -----------------------------------------------------------------------------
 // std selector test
 $str = <<<HTML
+<div>
 <img class="class0" id="id0" src="src0">
 <img class="class1" id="id1" src="src1">
 <img class="class2" id="id2" src="src2">
+</div>
 HTML;
 $dom->load($str);
 
 // -----------------------------------------------
 // all
-$e = $dom->find('*');
-assert(count($e)==3);
+assert(count($dom->find('*'))==1);
+assert(count($dom->find('div *'))==3);
+assert(count($dom->find('div img *'))==0);
 
 // -----------------------------------------------
 // tag
 assert(count($dom->find('img'))==3);
-assert(count($dom->find('text'))==2);
+assert(count($dom->find('text'))==4);
 
 // -----------------------------------------------
 // class
@@ -462,6 +465,18 @@ $dom->load($str);
 $es = $dom->find('[name=news[foo]]');
 assert(count($es)==1);
 assert($es[0]->name=='news[foo]');
+assert($es[0]->value=='foo');
+
+// -----------------------------------------------------------------------------
+//  with '[]' names 3
+$str = <<<HTML
+<div name="div[]">
+    <input type="checkbox" name="checkbox[]" value="foo" />
+</div>
+HTML;
+$dom->load($str);
+$es = $dom->find('div[name=div[]] input[name=checkbox[]]');
+assert(count($es)==1);
 assert($es[0]->value=='foo');
 
 // -----------------------------------------------------------------------------

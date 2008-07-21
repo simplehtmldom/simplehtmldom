@@ -208,10 +208,8 @@ class simple_html_dom_node {
 
     // find elements by css selector
     function find($selector, $idx=-1) {
-        $selector = trim($selector);
-        if ($selector==='*') return $this->children;
-
         $selectors = $this->parse_selector($selector);
+
         if (($count=count($selectors))===0) return array();
         $found_keys = array();
 
@@ -250,47 +248,24 @@ class simple_html_dom_node {
         return (isset($found[$idx])) ? $found[$idx] : null;
     }
 
-    protected function parse_selector($selector_string) {
-        // pattern of CSS selectors, modified from mootools
-        $pattern = "/([A-Za-z0-9_\\-:]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?])?/";
-
-        // handle multiple selectors
-        $selector_list = split(',', $selector_string);
-        $selectors = array();
-
-        foreach($selector_list as $selector) {
-            $result = array();
-            preg_match_all($pattern, trim($selector), $matches, PREG_SET_ORDER);
-
-            foreach ($matches as $m) {
-                list($tag, $key, $val, $exp) = array($m[1], null, null, '=');
-                if ($m[0]==='') continue;
-                if(!empty($m[2])) {$key='id'; $val=$m[2];}
-                if(!empty($m[3])) {$key='class'; $val=$m[3];}
-                if(!empty($m[4])) {$key=$m[4];}
-                if(!empty($m[5])) {$exp=$m[5];}
-                if(!empty($m[6])) {$val=$m[6];}
-
-                // convert to lowercase
-                if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
-
-                $result[] = array($tag, $key, $val, $exp);
-            }
-            $selectors[] = $result;
-        }
-        return $selectors;
-    }
-
     // seek for given conditions
     protected function seek($selector, &$ret) {
         list($tag, $key, $val, $exp) = $selector;
 
-        if (($end = $this->_[HDOM_INFO_END])===0)
-            $end = $this->parent->_[HDOM_INFO_END]-1;
+        if (!isset($this->_[HDOM_INFO_END])) return;
+
+        $end = $this->_[HDOM_INFO_END];
+        if ($end===0) $end = $this->parent->_[HDOM_INFO_END]-1;
 
         for($i=$this->_[HDOM_INFO_BEGIN]+1; $i<$end; ++$i) {
             $node = $this->dom->nodes[$i];
             $pass = true;
+
+            if ($tag==='*') {
+                if (in_array($node, $this->children, true))
+                    $ret[$i] = 1;
+                continue;
+            }
 
             // compare tag
             if ($tag && $tag!=$node->tag) {$pass=false;}
@@ -309,8 +284,8 @@ class simple_html_dom_node {
                 if (!$check) $pass = false;
             }
             if ($pass) $ret[$i] = 1;
+            unset($node);
         }
-        unset($node);
     }
 
     protected function match($exp, $pattern, $value) {
@@ -328,6 +303,37 @@ class simple_html_dom_node {
                 $check = (preg_match("/".preg_quote($pattern,'/')."/", $value)) ? true : false; break;
         }
         return $check;
+    }
+
+    protected function parse_selector($selector_string) {
+        // pattern of CSS selectors, modified from mootools
+        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?\])? /U";
+
+        // handle multiple selectors
+        $selector_list = split(',', $selector_string);
+        $selectors = array();
+
+        foreach($selector_list as $selector) {
+            $result = array();
+            preg_match_all($pattern, trim($selector).' ', $matches, PREG_SET_ORDER);
+
+            foreach ($matches as $m) {
+                list($tag, $key, $val, $exp) = array($m[1], null, null, '=');
+                if ($m[0]==='') continue;
+                if(!empty($m[2])) {$key='id'; $val=$m[2];}
+                if(!empty($m[3])) {$key='class'; $val=$m[3];}
+                if(!empty($m[4])) {$key=$m[4];}
+                if(!empty($m[5])) {$exp=$m[5];}
+                if(!empty($m[6])) {$val=$m[6];}
+
+                // convert to lowercase
+                if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
+
+                $result[] = array($tag, $key, $val, $exp);
+            }
+            $selectors[] = $result;
+        }
+        return $selectors;
     }
 
     function __toString() {
@@ -399,11 +405,11 @@ class simple_html_dom {
     protected $index;
     public $callback = null;
     protected $noise = array();
+    protected $token_blank = " \t\r\n";
+    protected $token_equal = ' =/><';
+    protected $token_slash = " />\r\n\t";
+    protected $token_attr = ' >';
     // use isset instead of in_array, performance boost about 30%...
-    protected $token_blank = array(' '=>1, "\t"=>1, "\r"=>1, "\n"=>1);
-    protected $token_equal = array(' '=>1, '='=>1, '/'=>1, '>'=>1, '<'=>1);
-    protected $token_slash = array(' '=>1, '/'=>1, '>'=>1, "\r"=>1, "\n"=>1, "\t"=>1);
-    protected $token_attr  = array(' '=>1, '>'=>1);
     protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
     protected $block_tags = array('root'=>1, 'p'=>1, 'div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'body'=>1, 'dl'=>1, 'ul'=>1);
     protected $optional_closing_tags = array(
@@ -521,7 +527,7 @@ class simple_html_dom {
         // end tag
         if ($this->char==='/') {
             $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-            $this->skip($this->token_blank);
+            $this->skip($this->token_blank_t);
             $tag = $this->copy_until_char('>');
 
             // skip attributes in end tag
@@ -589,7 +595,7 @@ class simple_html_dom {
         }
 
         // text
-        if (!preg_match("/^[A-Za-z0-9_\\-:]+$/", $tag)) {
+        if (!preg_match("/^[\w-:]+$/", $tag)) {
             $node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
             if ($this->char==='>') $node->_[HDOM_INFO_TEXT].='>';
             $this->link_nodes($node, false);
@@ -701,29 +707,25 @@ class simple_html_dom {
     }
 
     protected function skip($chars) {
-        while ($this->char!==null) {
-            if (!isset($chars[$this->char])) return;
-            $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-        }
+        $this->pos += strspn($this->doc, $chars, $this->pos);
+        $this->char = ($this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
     }
 
     protected function copy_skip($chars) {
-        $ret = '';
-        while ($this->char!==null) {
-            if (!isset($chars[$this->char])) return $ret;
-            $ret .= $this->char;
-            $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-        }
-        return $ret;
+        $pos = $this->pos;
+        $len = strspn($this->doc, $chars, $pos);
+        $this->pos += $len;
+        $this->char = ($this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
+        if ($len===0) return '';
+        return substr($this->doc, $pos, $len);
     }
 
     protected function copy_until($chars) {
         $pos = $this->pos;
-        while ($this->char!==null) {
-            if (isset($chars[$this->char])) break;
-            $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-        }
-        return substr($this->doc, $pos, $this->pos-$pos);
+        $len = strcspn($this->doc, $chars, $pos);
+        $this->pos += $len;
+        $this->char = ($this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
+        return substr($this->doc, $pos, $len);
     }
 
     protected function copy_until_char($char) {
@@ -737,11 +739,10 @@ class simple_html_dom {
         }
 
         if ($pos===$this->pos) return '';
-
-        $ret = substr($this->doc, $this->pos, $pos-$this->pos);
+        $pos_old = $this->pos;
         $this->char = $this->doc[$pos];
         $this->pos = $pos;
-        return $ret;
+        return substr($this->doc, $pos_old, $pos-$pos_old);
     }
 
     protected function copy_until_char_escape($char) {
@@ -763,10 +764,10 @@ class simple_html_dom {
                 continue;
             }
 
-            $ret = substr($this->doc, $this->pos, $pos-$this->pos);
+            $pos_old = $this->pos;
             $this->char = $this->doc[$pos];
             $this->pos = $pos;
-            return $ret;
+            return substr($this->doc, $pos_old, $pos-$pos_old);
         }
     }
 

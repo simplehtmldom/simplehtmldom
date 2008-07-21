@@ -3,11 +3,10 @@
 [On going]
 1. Performance turning (boost 10%).
 2. Memory requirement reduce 25%.
-3. New file "simple_html_dom_native.php", based on native DOMDocument.
-4. Fixed bug #2011286 (Error with unclosed html tags).
-5. Fixed bug #2012551 (Error parsing divs).
-6. Fixed bug #2020924 (Error for missed tag.).
-7. Fixed bug (problem with <body> tag's innertext).
+3. Fixed bug #2011286 (Error with unclosed html tags).
+4. Fixed bug #2012551 (Error parsing divs).
+5. Fixed bug #2020924 (Error for missed tag.).
+6. Fixed bug (problem with <body> tag's innertext).
 
 
 [PHP Simple HTML DOM Parser v0.98 is released]

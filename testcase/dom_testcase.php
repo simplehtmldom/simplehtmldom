@@ -17,6 +17,7 @@ assert($e->prev_sibling()==null);
 // -----------------------------------------------
 $str = '<div id="div1"></div>';
 $dom->load($str);
+
 $e = $dom->root;
 assert($e->first_child()->id=='div1');
 assert($e->last_child()->id=='div1');
