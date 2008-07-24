@@ -37,13 +37,9 @@ assert($dom->save()==$str);
 // -----------------------------------------------------------------------------
 // test error tag
 $str = <<<HTML
-    <img class="class0" id="id0" src="src0">
-    <p>p1</p>
-    <img class="class1" id="id1" src="src1">
-    <p>
-    <img class="class2" id="id2" src="src2">
-    </a>
-</div>
+<img class="class0" id="id0" src="src0"><p>p1</p>
+<img class="class1" id="id1" src="src1"><p>
+<img class="class2" id="id2" src="src2"></a></div>
 HTML;
 
 $dom = str_get_dom($str);

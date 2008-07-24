@@ -8,7 +8,6 @@ $dom = new simple_html_dom;
 
 // -----------------------------------------------------------------------------
 // "\t" or "\n" in tag test
-// std selector test 1
 $str = <<<HTML
 <img 
 class="class0" id="id0" src="src0">
@@ -144,6 +143,7 @@ $dom->load($str);
 $es = $dom->find('div_test');
 assert(count($es)==1);
 assert($es[0]->id=='1');
+
 // -----------------------------------------------
 $str = <<<HTML
 <div-test id="1">text</div-test>
@@ -152,6 +152,7 @@ $dom->load($str);
 $es = $dom->find('div-test');
 assert(count($es)==1);
 assert($es[0]->id=='1');
+
 // -----------------------------------------------
 $str = <<<HTML
 <div::test id="1">text</div::test>
@@ -196,8 +197,47 @@ $es = $dom->find('div div div');
 assert(count($es)==1);
 assert($es[0]->id=='id2');
 
-// -----------------------------------------------------------------------------
-// multiple selector test 2
+$es = $dom->find('.class0 .class1 .class2');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find('#id0 #id1 #id2');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find('div[id=id0] div[id=id1] div[id=id2]');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find('div[id="id0"] div[id="id1"] div[id="id2"]');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find('div[id=id0] div[id="id1"] div[id="id2"]');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find('div[id="id0"] div[id=id1] div[id="id2"]');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find('div[id="id0"] div[id="id1"] div[id=id2]');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find("div[id='id0'] div[id='id1'] div[id='id2']");
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find('[id=id0] [id=id1] [id=id2]');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+$es = $dom->find('[id] [id] [id]');
+assert(count($es)==1);
+assert($es[0]->id=='id2');
+
+// -----------------------------------------------
 $str = <<<HTML
 <table>
     <tr>
@@ -519,8 +559,7 @@ assert($es[1]->class=='foo hello bar');
 assert($es[2]->class=='foo bar hello');
 assert($es[3]->class=='hello foo bar');
 
-// -----------------------------------------------------------------------------
-// multiple class test 2
+// -----------------------------------------------
 $str = <<<HTML
 <div class="aa bb"></div>
 HTML;
@@ -581,8 +620,7 @@ assert($es[0]->tag=='p');
 assert($es[1]->tag=='b');
 assert($es[2]->tag=='i');
 
-// -----------------------------------------------------------------------------
-// multiple selector test 2
+// -----------------------------------------------
 $str = <<<HTML
 <img title="aa" src="src">
 <a href="href" title="aa"></a>

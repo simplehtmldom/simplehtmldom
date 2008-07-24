@@ -217,7 +217,7 @@ class simple_html_dom_node {
         for ($c=0; $c<$count; ++$c) {
             if (($levle=count($selectors[0]))===0) return array();
             if (!isset($this->_[HDOM_INFO_BEGIN])) return array();
-            
+
             $head = array($this->_[HDOM_INFO_BEGIN]=>1);
 
             // handle descendant selectors, no recursive!
@@ -373,6 +373,11 @@ class simple_html_dom_node {
         //no value attr: nowrap, checked selected...
         return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
     }
+    
+    function __unset($name) {
+        if (isset($this->attr[$name]))
+            unset($this->attr[$name]);
+    }
 
     // camel naming conventions
     function getAttribute($name) {return $this->__get($name);}
@@ -396,6 +401,7 @@ class simple_html_dom_node {
 class simple_html_dom {
     public $root = null;
     public $nodes = array();
+    public $callback = null;
     public $lowercase = false;
     protected $doc = '';
     protected $parent = null;
@@ -403,7 +409,6 @@ class simple_html_dom {
     protected $char;
     protected $size;
     protected $index;
-    public $callback = null;
     protected $noise = array();
     protected $token_blank = " \t\r\n";
     protected $token_equal = ' =/><';
@@ -411,7 +416,7 @@ class simple_html_dom {
     protected $token_attr = ' >';
     // use isset instead of in_array, performance boost about 30%...
     protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
-    protected $block_tags = array('root'=>1, 'p'=>1, 'div'=>1, 'span'=>1, 'table'=>1, 'form'=>1, 'body'=>1, 'dl'=>1, 'ul'=>1);
+    protected $block_tags = array('root'=>1, 'body'=>1, 'form'=>1, 'div'=>1, 'span'=>1, 'table'=>1);
     protected $optional_closing_tags = array(
         'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
         'th'=>array('th'=>1),
@@ -432,20 +437,20 @@ class simple_html_dom {
     function load($str, $lowercase=true) {
         // prepare
         $this->prepare($str, $lowercase);
+
         // strip out comments
-        $this->remove_noise("'<!--(.*?)-->'is", false, false);
+        $this->remove_noise("'<!--(.*?)-->'is");
         // strip out <style> tags
-        $this->remove_noise("'<\s*style[^>]*[^/]>(.*?)<\s*/\s*style\s*>'is", false, false);
-        $this->remove_noise("'<\s*style\s*>(.*?)<\s*/\s*style\s*>'is", false, false);
+        $this->remove_noise("'<\s*style[^>]*[^/]>(.*?)<\s*/\s*style\s*>'is");
+        $this->remove_noise("'<\s*style\s*>(.*?)<\s*/\s*style\s*>'is");
         // strip out <script> tags
-        $this->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is", false, false);
-        $this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is", false, false);
-        // strip out <pre> tags
-        $this->remove_noise("'<\s*pre[^>]*>(.*?)<\s*/\s*pre\s*>'is", false, false);
-        // strip out <code> tags
-        $this->remove_noise("'<\s*code[^>]*>(.*?)<\s*/\s*code\s*>'is", false, false);
+        $this->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is");
+        $this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is");
+        // strip out preformatted tags
+        $this->remove_noise("'<\s*(?:pre|code)[^>]*>(.*?)<\s*/\s*(?:pre|code)\s*>'is");
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
+
         // parsing
         while ($this->parse());
         // end
@@ -538,30 +543,22 @@ class simple_html_dom {
             $tag_lower = strtolower($tag);
 
             if ($parent_lower!==$tag_lower) {
-                // handle mismatch end tags
-                if (isset($this->optional_closing_tags[$parent_lower][$tag_lower])) {
-                    $node = new simple_html_dom_node($this);
-                    ++$this->index;
-                    $node->_[HDOM_INFO_TEXT] = '</' . $tag . '>';   // as text
-                    $this->link_nodes($node, false);
-                    $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-                    return true;
-                }
-
-                // mapping parent node
-                if (isset($this->block_tags[$tag_lower]) && !isset($this->block_tags[$parent_lower])) {
+                if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) {                    
                     $this->parent->_[HDOM_INFO_END] = 0;
                     while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
                         $this->parent = $this->parent->parent;
+
+                    if (strtolower($this->parent->tag)!==$tag_lower) {
+                        $this->as_text_node($tag);
+                        $this->char = (--$this->pos>-1) ? $this->doc[$this->pos] : null; // back
+                    }
                 }
-                else {
-                    $node = new simple_html_dom_node($this);
-                    ++$this->index;
-                    $node->_[HDOM_INFO_TEXT] = '</' . $tag . '>';   // as text
-                    $this->link_nodes($node, false);
-                    $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-                    return true;
+                else if (($this->parent->parent) && strtolower($this->parent->parent->tag)===$tag_lower) {
+                    $this->parent->_[HDOM_INFO_END] = 0;
+                    $this->parent = $this->parent->parent;
                 }
+                else
+                    return $this->as_text_node($tag);
             }
 
             $this->parent->_[HDOM_INFO_END] = $this->index;
@@ -621,7 +618,7 @@ class simple_html_dom {
         $guard = 0; // prevent infinity loop
         $space = array($this->copy_skip($this->token_blank), '', '');
 
-        // handle attributes
+        // attributes
         do {
             if ($this->char!==null && $space[0]==='') break;
             $name = $this->copy_until($this->token_equal);
@@ -633,7 +630,7 @@ class simple_html_dom {
             $guard = $this->pos;
 
             // handle endless '<'
-            if($this->pos>=$this->size-1 && $this->char!='>') {
+            if($this->pos>=$this->size-1 && $this->char!=='>') {
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->_[HDOM_INFO_END] = 0;
                 $node->_[HDOM_INFO_TEXT] = '<'.$tag . $space[0] . $name;
@@ -706,6 +703,16 @@ class simple_html_dom {
             $this->parent->children[] = &$node;
     }
 
+    // as a text node
+    protected function as_text_node($tag) {
+        $node = new simple_html_dom_node($this);
+        ++$this->index;
+        $node->_[HDOM_INFO_TEXT] = '</' . $tag . '>';
+        $this->link_nodes($node, false);
+        $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
+        return true;
+    }
+
     protected function skip($chars) {
         $this->pos += strspn($this->doc, $chars, $this->pos);
         $this->char = ($this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
@@ -772,14 +779,13 @@ class simple_html_dom {
     }
 
     // remove noise from html content
-    function remove_noise($pattern, $remove_tag=true, $remove_contents=true) {
+    protected function remove_noise($pattern) {
         $count = preg_match_all($pattern, $this->doc, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
 
         for ($i=$count-1; $i>-1; --$i) {
             $key = '___noise___'.sprintf('% 3d', count($this->noise));
-            $idx = ($remove_tag) ? 0 : 1;
-            $this->noise[$key] = ($remove_contents) ? '' : $matches[$i][$idx][0];
-            $this->doc = substr_replace($this->doc, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
+            $this->noise[$key] = $matches[$i][1][0];
+            $this->doc = substr_replace($this->doc, $key, $matches[$i][1][1], strlen($matches[$i][1][0]));
         }
 
         // reset the length of content

@@ -93,7 +93,6 @@ $dom = str_get_dom($str);
 assert($dom->find('body', 0)->outertext==$str);
 
 // -----------------------------------------------
-// optional closing tags test
 $str = <<<HTML
 <body>
 <div>
@@ -104,7 +103,6 @@ assert($dom==$str);
 assert($dom->find('body', 0)->outertext==$str);
 
 // -----------------------------------------------
-// optional closing tags test
 $str = <<<HTML
 <body>
 <div> </a> </div>
@@ -113,6 +111,19 @@ HTML;
 $dom = str_get_dom($str);
 
 assert($dom->find('body', 0)->outertext==$str);
+
+// -----------------------------------------------
+$str = <<<HTML
+<table>
+    <tr>
+        <td><b>aa</b>
+    <tr>
+        <td><b>bb</b>
+</table>
+HTML;
+$dom = str_get_dom($str);
+
+assert($dom==$str);
 
 // -----------------------------------------------
 $str = <<<HTML
@@ -203,8 +214,9 @@ $str = <<<HTML
 HTML;
 $dom = str_get_dom($str);
 assert(count($dom->find('ul[id=ul1] li'))==2);
+
 // -----------------------------------------------------------------------------
-// invalid test 1
+// invalid test
 $str = <<<HTML
 <div>
     <div class="class0" id="id0" >
@@ -219,8 +231,7 @@ assert(count($dom->find('img'))==2);
 assert(count($dom->find('img'))==2);
 assert($dom==$str);
 
-// -----------------------------------------------------------------------------
-// nvalid test 2
+// -----------------------------------------------
 $str = <<<HTML
 <div>
     <div class="class0" id="id0" >
@@ -230,13 +241,13 @@ $str = <<<HTML
     </div>
 </div>
 HTML;
+
 $dom->load($str);
 assert(count($dom->find('span'))==2);
 assert(count($dom->find('div'))==2);
 assert($dom==$str);
 
-// -----------------------------------------------------------------------------
-// invalid test 3
+// -----------------------------------------------
 $str = <<<HTML
 <div>
     <div class="class0" id="id0" >
@@ -250,8 +261,8 @@ $dom->load($str);
 assert(count($dom->find('span'))==3);
 assert(count($dom->find('div'))==2);
 assert($dom==$str);
-// -----------------------------------------------------------------------------
-// invalid test 4
+
+// -----------------------------------------------
 $str = <<<HTML
 <ul class="menublock">
     </li>
@@ -264,6 +275,51 @@ $str = <<<HTML
 </ul>
 HTML;
 $dom->load($str);
+assert(count($dom->find('ul'))==2);
+assert(count($dom->find('ul ul'))==1);
+assert(count($dom->find('li'))==1);
+assert(count($dom->find('a'))==1);
+assert($dom==$str);
+
+// -----------------------------------------------
+$str = <<<HTML
+<td>
+    <div>
+        </span>
+    </div>
+</td>
+HTML;
+$dom->load($str);
+assert(count($dom->find('td'))==1);
+assert(count($dom->find('div'))==1);
+assert(count($dom->find('td div'))==1);
+assert($dom==$str);
+
+// -----------------------------------------------
+$str = <<<HTML
+<td>
+    <div>
+        </b>
+    </div>
+</td>
+HTML;
+$dom->load($str);
+assert(count($dom->find('td'))==1);
+assert(count($dom->find('div'))==1);
+assert(count($dom->find('td div'))==1);
+assert($dom==$str);
+
+// -----------------------------------------------
+$str = <<<HTML
+<td>
+    <div></div>
+    </div>
+</td>
+HTML;
+$dom->load($str);
+assert(count($dom->find('td'))==1);
+assert(count($dom->find('div'))==1);
+assert(count($dom->find('td div'))==1);
 assert($dom==$str);
 
 // -----------------------------------------------------------------------------
@@ -272,27 +328,16 @@ $str = <<<HTML
 <strong class="see <a href="http://www.oeb.harvard.edu/faculty/girguis/">http://www.oeb.harvard.edu/faculty/girguis/</a>">.</strong></p> 
 HTML;
 $dom->load($str);
-// foreach ($dom->nodes as $n) 
-// echo $n->tag.'<br>';
-// print_r($dom->find('strong', 0)->attr);
-// echo '<br>'.htmlspecialchars($str);
-// echo '<br>'.htmlspecialchars($dom->save());
 // -----------------------------------------------
 $str = <<<HTML
 <a href="http://www.oeb.harvard.edu/faculty/girguis\">http://www.oeb.harvard.edu/faculty/girguis/</a>">
 HTML;
 $dom->load($str);
-// echo '<br>'.htmlspecialchars($str);
-// echo '<br>'.htmlspecialchars($dom->save());
 // -----------------------------------------------
 $str = <<<HTML
 <strong class="''""";;''""";;\"\''''\"""''''""''>""'''"'" '
 HTML;
 $dom->load($str);
-// echo '<br>'.htmlspecialchars($str);
-// echo '<br>'.htmlspecialchars($dom->save());
-//die;
-
 // -----------------------------------------------------------------------------
 // tear down
 $dom->clear();

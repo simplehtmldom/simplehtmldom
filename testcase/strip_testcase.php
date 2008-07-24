@@ -6,6 +6,71 @@ error_reporting(E_ALL);
 require_once('../simple_html_dom.php');
 $dom = new simple_html_dom;
 
+// -----------------------------------------------------------------------------
+// comments test
+$str = <<<HTML
+<div class="class0" id="id0" >
+    <!--
+        <input type=submit name="btnG" value="go" onclick='goto("url0")'>
+    -->
+</div>
+HTML;
+$dom->load($str);
+assert(count($dom->find('input'))==0);
+
+// -----------------------------------------------------------------------------
+// <pre> test
+$str = <<<HTML
+<div class="class0" id="id0" >
+    <pre>
+        <input type=submit name="btnG" value="go" onclick='goto("url0")'>
+    </pre>
+</div>
+HTML;
+$dom->load($str);
+assert(count($dom->find('input'))==0);
+
+// -----------------------------------------------------------------------------
+// <code> test
+$str = <<<HTML
+<div class="class0" id="id0" >
+    <CODE>
+        <input type=submit name="btnG" value="go" onclick='goto("url0")'>
+    </CODE>
+</div>
+HTML;
+$dom->load($str);
+assert(count($dom->find('code'))==1);
+assert(count($dom->find('input'))==0);
+
+// -----------------------------------------------------------------------------
+// <pre> & <code> test
+$str = <<<HTML
+<PRE><CODE CLASS=Java>
+    <input type=submit name="btnG" value="go" onclick='goto("url0")'>
+</CODE></PRE>
+HTML;
+$dom->load($str);
+assert(count($dom->find('pre'))==1);
+assert(count($dom->find('input'))==0);
+
+// -----------------------------------------------------------------------------
+// <script> & <style> test
+$str = <<<HTML
+<script type="text/javascript" src="test.js"></script>
+<script type="text/javascript" src="test.js"/>
+
+<style type="text/css">
+@import url("style.css");
+</style>
+
+<script type="text/javascript">
+var foo = "bar";
+</script>
+HTML;
+$dom->load($str);
+assert(count($dom->find('style'))==1);
+assert(count($dom->find('script'))==3);
 
 // -----------------------------------------------------------------------------
 // noise stripping test
@@ -66,18 +131,6 @@ assert(count($dom->find('script'))==8);
 assert(count($dom->find('style'))==3);
 //echo "\n\n\n\n".$dom->save();
 assert($dom==$str);
-
-// -----------------------------------------------------------------------------
-// test comments
-$str = <<<HTML
-<div class="class0" id="id0" >
-    <!--
-        <input type=submit name="btnG" value="go" onclick='goto("url0")'>
-    -->
-</div>
-HTML;
-$dom->load($str);
-assert(count($dom->find('input'))==0);
 
 // -----------------------------------------------------------------------------
 // tear down
