@@ -10,23 +10,26 @@ $max = 0;
 $count = 20;
 
 $str = file_get_contents('./html/google.htm');
-$dom = new simple_html_dom;
+$html = new simple_html_dom;
 
 for ($i=0; $i<$count; ++$i) {
     $start = microtime();
-    $dom->load($str, false);
+
+    $html->load($str, false);
+
     list($eu, $es) = explode(' ', microtime());
     list($bu, $bs) = explode(' ', $start);
 
-    if (((float)$eu+(float)$es-(float)$bu-(float)$bs)*1000 > $max)
-        $max = ((float)$eu+(float)$es-(float)$bu-(float)$bs)*1000;
+    $diff = ((float)$eu+(float)$es-(float)$bu-(float)$bs)*1000;
 
-    if (((float)$eu+(float)$es-(float)$bu-(float)$bs)*1000 < $min)
-        $min = ((float)$eu+(float)$es-(float)$bu-(float)$bs)*1000;
-    
-    $all += ((float)$eu+(float)$es-(float)$bu-(float)$bs)*1000;
-    echo sprintf('(%.1f)', ((float)$eu+(float)$es-(float)$bu-(float)$bs)*1000).'<br>';
-    $dom->clear();
+    if ($diff>$max)
+        $max = $diff;
+
+    if ($diff<$min)
+        $min = $diff;
+
+    $all += $diff;
+    echo sprintf('(%.1f)', $diff).'<br>';
 }
 
 echo '<br>-------------------------<br>';

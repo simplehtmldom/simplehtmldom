@@ -4,32 +4,27 @@ include_once('../simple_html_dom.php');
 // -----------------------------------------------------------------------------
 // remove HTML comments
 function html_no_comment($url) {
-    // create DOM
-    $dom = file_get_dom($url);
+    // create HTML DOM
+    $html = file_get_html($url);
 
     // remove all comment elements
-    foreach($dom->find('comment') as $e)
+    foreach($html->find('comment') as $e)
         $e->outertext = '';
 
-    $ret = $dom->save();
+    $ret = $html->save();
 
     // clean up memory
-    $dom->clear();
-    unset($dom);
+    $html->clear();
+    unset($html);
 
     return $ret;
 }
 
 // -----------------------------------------------------------------------------
-// test it!
-echo html_no_comment('http://www.google.com/');
-
-
-// -----------------------------------------------------------------------------
 // search elements that contains an specific text
-function find_contains($dom, $selector, $keyword, $index=-1) {
+function find_contains($html, $selector, $keyword, $index=-1) {
     $ret = array();
-    foreach ($dom->find($selector) as $e) {
+    foreach ($html->find($selector) as $e) {
         if (strpos($e->innertext, $keyword)!==false)
             $ret[] = $e;
     }
@@ -37,10 +32,4 @@ function find_contains($dom, $selector, $keyword, $index=-1) {
     if ($index<0) return $ret;
     return (isset($ret[$index])) ? $ret[$index] : null;
 }
-
-// -----------------------------------------------------------------------------
-// test it!
-$dom = file_get_dom('http://www.google.com/');
-foreach(find_contains($dom, "a", "Google") as $e)
-    echo $e->outertext."<BR>";
 ?>

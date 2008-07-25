@@ -7,16 +7,13 @@ include('../simple_html_dom.php');
 $str = <<<HTML
 <div>
     <div>
-        <div>ok</div>
+        <div class="foo bar">ok</div>
     </div>
 </div>
 HTML;
 
-
-$dom = str_get_dom($str);
-foreach($dom->find('div div div') as $node)
-    echo $node->innertext . '<br>'; // result: "ok"
-
+$html = str_get_html($str);
+echo $html->find('div div div', 0)->innertext . '<br>'; // result: "ok"
 
 // -----------------------------------------------------------------------------
 // nested selector
@@ -31,14 +28,14 @@ $str = <<<HTML
 </ul>
 HTML;
 
-$dom = str_get_dom($str);
-foreach($dom->find('ul') as $ul) {
+$html = str_get_html($str);
+foreach($html->find('ul') as $ul) {
     foreach($ul->find('li') as $li)
         echo $li->innertext . '<br>';
 }
 
 // -----------------------------------------------------------------------------
-// parsing <form> elements
+// parsing checkbox
 $str = <<<HTML
 <form name="form1" method="post" action="">
     <input type="checkbox" name="checkbox1" value="checkbox1" checked>item1<br>
@@ -47,8 +44,8 @@ $str = <<<HTML
 </form>
 HTML;
 
-$dom = str_get_dom($str);
-foreach($dom->find('input[type=checkbox]') as $checkbox) {
+$html = str_get_html($str);
+foreach($html->find('input[type=checkbox]') as $checkbox) {
     if ($checkbox->checked)
         echo $checkbox->name . ' is checked<br>';
     else

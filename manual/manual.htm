@@ -49,43 +49,44 @@
     <div id="fragment-11">
       <div class="code">
         <span class="comment">// Create DOM from URL or file</span><br>
-        $dom = <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>);<br>
+        $html = <strong>file_get_html</strong>(<span class="var">'http://www.google.com/'</span>);<br>
         <br>
         <span class="comment">// Find all images </span><br>
-        foreach($dom-&gt;<strong>find</strong>(<span class="var">'img'</span>) as $element) <br>
+        foreach($html-&gt;<strong>find</strong>(<span class="var">'img'</span>) as $element) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo $element-&gt;<strong>src</strong> . <span class="var">'&lt;br&gt;'</span>;<br>
 <br>
 <span class="comment">// Find all links </span><br>
-foreach($dom-&gt;<strong>find</strong>(<span class="var">'a'</span>) as $element) <br>
+foreach($html-&gt;<strong>find</strong>(<span class="var">'a'</span>) as $element) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; echo $element-&gt;<strong>href</strong> . <span class="var">'&lt;br&gt;'</span>;      </div>
     </div>
     <div id="fragment-12">
       <div class="code">
         <span class="comment">// Create DOM from string</span><br>
-        $dom = <strong>str_get_dom</strong>(<span class="var">'&lt;div id=&quot;hello&quot;&gt;Hello&lt;/div&gt;&lt;div id=&quot;world&quot;&gt;World&lt;/div&gt;'</span>);<span class="comment"><br>
+        $html = <strong>str_get_html</strong>(<span class="var">'&lt;div id=&quot;hello&quot;&gt;Hello&lt;/div&gt;&lt;div id=&quot;world&quot;&gt;World&lt;/div&gt;'</span>);<span class="comment"><br>
         <br>
         </span>
         
-$dom-&gt;<strong>find</strong>(<span class="var">'div', 1</span>)-&gt;<strong>class</strong> = <span class="var">'bar'</span>;<br>
+$html-&gt;<strong>find</strong>(<span class="var">'div', 1</span>)-&gt;<strong>class</strong> = <span class="var">'bar'</span>;<br>
 <br>
-$dom-&gt;<strong>find</strong>(<span class="var">'div[id=hello]', 0</span>)-&gt;<strong>innertext</strong> = <span class="var">'foo'</span>;<br>
+$html-&gt;<strong>find</strong>(<span class="var">'div[id=hello]', 0</span>)-&gt;<strong>innertext</strong> = <span class="var">'foo'</span>;<br>
         <br>
-        echo $dom; <span class="comment">// Output: &lt;div id=&quot;hello&quot;&gt;<strong>foo</strong>&lt;/div&gt;&lt;div id=&quot;world&quot; <strong>class=&quot;bar&quot;</strong>&gt;World&lt;/div&gt;</span> </div>
+        echo $html; <span class="comment">// Output: &lt;div id=&quot;hello&quot;&gt;<strong>foo</strong>&lt;/div&gt;&lt;div id=&quot;world&quot; <strong>class=&quot;bar&quot;</strong>&gt;World&lt;/div&gt;</span> </div>
     </div>
     <div id="fragment-13">
       <div class="code"><br>
         <span class="comment">// Dump contents (without tags) from HTML</span><br>
-        echo <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>)-&gt;<strong>plaintext</strong>;
-				<br><br>
+        echo <strong>file_get_html</strong>(<span class="var">'http://www.google.com/'</span>)-&gt;<strong>plaintext</strong>;
+				<br>
+				<br>
       </div>
     </div>
     <div id="fragment-14">
       <div class="code">
         <span class="comment">// Create DOM from URL</span><br>
-        $dom = <strong>file_get_dom</strong>(<span class="var">'http://slashdot.org/'</span>);<br>
+        $html = <strong>file_get_html</strong>(<span class="var">'http://slashdot.org/'</span>);<br>
         <br>
         <span class="comment">// Find all article blocks</span><br>
-        foreach($dom-&gt;<strong>find</strong>(<span class="var">'div.article'</span>) as $article) {<br>
+        foreach($html-&gt;<strong>find</strong>(<span class="var">'div.article'</span>) as $article) {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;$item[<span class="var">'title'</span>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= $article-&gt;<strong>find</strong>(<span class="var">'div.title'</span>, <span class="var">0</span>)-&gt;<strong>plaintext</strong>;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;$item[<span class="var">'intro'</span>]&nbsp;&nbsp;&nbsp;&nbsp;= $article-&gt;<strong>find</strong>(<span class="var">'div.intro'</span>, <span class="var">0</span>)-&gt;<strong>plaintext</strong>;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;$item[<span class="var">'details'</span>]&nbsp;= $article-&gt;<strong>find</strong>(<span class="var">'div.details'</span>, <span class="var">0</span>)-&gt;<strong>plaintext</strong>;<br>
@@ -107,27 +108,27 @@ $dom-&gt;<strong>find</strong>(<span class="var">'div[id=hello]', 0</span>)-&gt;
     </ul>
     <div id="frag_create_quick">
       <div class="code"><span class="comment">// Create a DOM object from a string</span><br>
-        $dom = <strong>str_get_dom</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
+        $html = <strong>str_get_html</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
         <br>
         <span class="comment">// Create a DOM object from a URL</span><br>
-        $dom = <strong>file_get_dom</strong>(<span class="var">'http://www.google.com/'</span>);<br>
+        $html = <strong>file_get_html</strong>(<span class="var">'http://www.google.com/'</span>);<br>
         <br>
         <span class="comment">// Create a DOM object from a HTML file</span><br>
-        $dom = <strong>file_get_dom</strong>(<span class="var">'test.htm'</span>);<span class="comment"><br>
+        $html = <strong>file_get_html</strong>(<span class="var">'test.htm'</span>);<span class="comment"><br>
         </span></div>
     </div>
     <div id="frag_create_oo">
       <div class="code"><span class="comment">// Create a DOM object</span><br>
-        $dom = new <strong>simple_html_dom</strong>();<br>
+        $html = new <strong>simple_html_dom</strong>();<br>
         <br>
         <span class="comment">// Load HTML from a string</span><br>
-        $dom-&gt;<strong>load</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
+        $html-&gt;<strong>load</strong>(<span class="var">'&lt;html&gt;&lt;body&gt;Hello!&lt;/body&gt;&lt;/html&gt;'</span>);<br>
         <br>
         <span class="comment">// Load HTML from a URL </span> <br>
-        $dom-&gt;<strong>load_file</strong>(<span class="var">'http://www.google.com/'</span>);<br>
+        $html-&gt;<strong>load_file</strong>(<span class="var">'http://www.google.com/'</span>);<br>
         <br>
         <span class="comment">// Load HTML from a HTML file</span> <br>
-        $dom-&gt;<strong>load_file</strong>(<span class="var">'test.htm'</span>);</div>
+        $html-&gt;<strong>load_file</strong>(<span class="var">'test.htm'</span>);</div>
     </div>
   </div>
   <a name="section_find"></a>
@@ -144,33 +145,33 @@ $dom-&gt;<strong>find</strong>(<span class="var">'div[id=hello]', 0</span>)-&gt;
     </ul>
     <div id="frag_find_basic">
       <div class="code"> <span class="comment">// Find all <strong>anchors</strong>, returns a <strong>array</strong> of element objects</span><br>
-        $ret = $dom-&gt;find(<span class="var">'<strong>a</strong>'</span>);<br>
+        $ret = $html-&gt;find(<span class="var">'<strong>a</strong>'</span>);<br>
         <br>
         <span class="comment">// Find <strong>(N)th</strong>  <strong>anchor</strong>, returns element object or <strong>null</strong> if not found</span> <span class="comment">(zero based)</span><br>
-        $ret = $dom-&gt;find(<span class="var">'<strong>a</strong>', <strong>0</strong></span>);<br>
+        $ret = $html-&gt;find(<span class="var">'<strong>a</strong>', <strong>0</strong></span>);<br>
         <br>
         <span class="comment">// Find all <strong>&lt;div&gt;</strong> which attribute <strong>id=foo</strong></span><br>
-$ret = $dom-&gt;find(<span class="var">'<strong>div[id=foo]</strong>'</span>);        <br>
+$ret = $html-&gt;find(<span class="var">'<strong>div[id=foo]</strong>'</span>);        <br>
         <br>
         <span class="comment">// Find all <strong>&lt;div&gt;</strong> with the <strong>id</strong> attribute</span><br>
-$ret = $dom-&gt;find(<span class="var">'<strong>div[id]</strong>'</span>);<br>
+$ret = $html-&gt;find(<span class="var">'<strong>div[id]</strong>'</span>);<br>
 <br>
 <span class="comment">// Find all element has attribute<strong> id</strong></span><br>
-$ret = $dom-&gt;find(<span class="var">'<strong>[id]</strong>'</span>);<br>
+$ret = $html-&gt;find(<span class="var">'<strong>[id]</strong>'</span>);<br>
       </div>
     </div>
     <div id="frag_find_advanced">
       <div class="code"><span class="comment">// Find all element which <strong>id</strong>=foo</span><br>
-        $ret = $dom-&gt;find(<span class="var">'<strong>#foo</strong>'</span>);<br>
+        $ret = $html-&gt;find(<span class="var">'<strong>#foo</strong>'</span>);<br>
         <br>
         <span class=comment>// Find all element which <strong>class</strong>=foo</span><br>
-        $ret = $dom-&gt;find(<span class=var>'<strong>.foo</strong>'</span>);<br>
+        $ret = $html-&gt;find(<span class=var>'<strong>.foo</strong>'</span>);<br>
         <br>
         <span class="comment">// Find all <strong>anchors</strong> and <strong>images</strong> </span><br>
-$ret = $dom-&gt;find(<span class="var">'<strong>a, img</strong>'</span>);        <br>
+$ret = $html-&gt;find(<span class="var">'<strong>a, img</strong>'</span>);        <br>
         <br>
         <span class="comment">// Find all <strong>anchors</strong> and <strong>images</strong> with the "title" attribute</span><br>
-				$ret = $dom-&gt;find(<span class="var">'<strong>a[title], img[title]</strong>'</span>);<br>
+				$ret = $html-&gt;find(<span class="var">'<strong>a[title], img[title]</strong>'</span>);<br>
       </div>
     </div>
     <div id="frag_find_attr">
@@ -210,29 +211,29 @@ $ret = $dom-&gt;find(<span class="var">'<strong>a, img</strong>'</span>);       
     </div>
     <div id="frag_find_chain">
       <div class="code"><span class="comment">// Find all &lt;li&gt; in &lt;ul&gt; </span><br>
-        $es = $dom-&gt;find(<span class="var">'<strong>ul li</strong>'</span>);<br>
+        $es = $html-&gt;find(<span class="var">'<strong>ul li</strong>'</span>);<br>
         <br>
         <span class="comment">// Find Nested &lt;div&gt; </span><span class="comment">tags</span><br>
-        $es = $dom-&gt;find(<span class="var">'<strong>div div div</strong>'</span>); <br>
+        $es = $html-&gt;find(<span class="var">'<strong>div div div</strong>'</span>); <br>
         <br>
         <span class="comment">// Find all &lt;td&gt; in &lt;table&gt; which class=hello </span><br>
-        $es = $dom-&gt;find(<span class="var">'<strong>table.hello td</strong>'</span>);<br>
+        $es = $html-&gt;find(<span class="var">'<strong>table.hello td</strong>'</span>);<br>
         <br>
         <span class="comment">// Find all td tags with attribite align=center in table tags </span><br>
-        $es = $dom-&gt;find(<span class="var">''<strong>table</strong><strong> td[align=center]</strong>'</span>);<br>
+        $es = $html-&gt;find(<span class="var">''<strong>table</strong><strong> td[align=center]</strong>'</span>);<br>
       </div>
     </div>
     <div id="frag_find_textcomment">
       <div class="code"><span class="comment"> // Find all text blocks </span><br>
-        $es = $dom-&gt;find(<span class="var">'<strong>text</strong>'</span>);<br>
+        $es = $html-&gt;find(<span class="var">'<strong>text</strong>'</span>);<br>
         <br>
         <span class="comment">// Find all comment (&lt;!--...--&gt;) blocks </span><br>
-        $es = $dom-&gt;find(<span class="var">'<strong>comment</strong>'</span>);<br>
+        $es = $html-&gt;find(<span class="var">'<strong>comment</strong>'</span>);<br>
       </div>
     </div>
     <div id="frag_find_nested">
       <div class="code"> <span class="comment">// Find all &lt;li&gt; in &lt;ul&gt; </span><br>
-        foreach($dom-&gt;find(<span class="var">'<strong>ul</strong>'</span>) as $ul) <br>
+        foreach($html-&gt;find(<span class="var">'<strong>ul</strong>'</span>) as $ul) <br>
         {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foreach($ul-&gt;find(<span class="var">'<strong>li</strong>'</span>) as $li) <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
@@ -241,7 +242,7 @@ $ret = $dom-&gt;find(<span class="var">'<strong>a, img</strong>'</span>);       
         }<br>
         <br>
         <span class="comment">// Find first &lt;li&gt; in first &lt;ul&gt;</span> <br>
-        $e = $dom-&gt;find(<span class="var">'<strong>ul</strong>', <strong>0</strong></span>)-&gt;find(<span class="var">'<strong>li</strong>', <strong>0</strong></span>);<br>
+        $e = $html-&gt;find(<span class="var">'<strong>ul</strong>', <strong>0</strong></span>)-&gt;find(<span class="var">'<strong>li</strong>', <strong>0</strong></span>);<br>
       </div>
     </div>
   </div>
@@ -272,8 +273,8 @@ if(isset($e-&gt;<strong>href</strong>)) <br>
     </div>
     <div id="frag_access_special">
       <div class="code"> <span class="comment">// Example</span><br>
-        <span class="hl-var">$dom</span><span class="hl-code"> = </span>str_get_dom<span class="hl-brackets">(</span><span class="var">&quot;&lt;div&gt;foo &lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;</span> <br>
-        $e = $dom-&gt;find(<span class="var">&quot;div&quot;</span>, <span class="var">0</span>);<br>
+        <span class="hl-var">$</span><span class="hl-code">html = </span>str_get_html<span class="hl-brackets">(</span><span class="var">&quot;&lt;div&gt;foo &lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;</span> <br>
+        $e = $html-&gt;find(<span class="var">&quot;div&quot;</span>, <span class="var">0</span>);<br>
         <br>
         echo $e-&gt;<strong>tag</strong>; <span class="comment">// Returns: &quot; <strong>div</strong>&quot;</span><br>
         echo $e-&gt;<strong>outertext</strong>; <span class="comment">// Returns: &quot; <strong>&lt;div&gt;foo &lt;b&gt;bar&lt;/b&gt;&lt;/div&gt;</strong>&quot;</span><br>
@@ -307,20 +308,20 @@ if(isset($e-&gt;<strong>href</strong>)) <br>
     </div>
     <div id="frag_access_tips">
       <div class="code"><span class="comment">// Extract contents from HTML </span><br>
-echo <strong>$dom</strong>-&gt;<strong>plaintext</strong>;<br>
+echo <strong>$html</strong>-&gt;<strong>plaintext</strong>;<br>
 <br> 
 <span class="comment">
         // <strong>Wrap</strong> a element</span><br>
-        $element-&gt;<strong>outertext</strong> = <span class="var">'&lt;div class=&quot;wrap&quot;&gt;'</span> . $element-&gt;<strong>outertext</strong> . <span class="var">'&lt;div&gt;</span>';<br>
+        $e-&gt;<strong>outertext</strong> = <span class="var">'&lt;div class=&quot;wrap&quot;&gt;'</span> . $e-&gt;<strong>outertext</strong> . <span class="var">'&lt;div&gt;</span>';<br>
         <br>
         <span class="comment">// <strong>Remove</strong> a element, set it's outertext as empty string </span><br>
-        $element-&gt;<strong>outertext</strong> = <span class="var">''</span>;<br>
+        $e-&gt;<strong>outertext</strong> = <span class="var">''</span>;<br>
         <br>
         <span class="comment">// <strong>Append</strong> a element</span><br>
-$element-&gt;<strong>outertext</strong> = $element-&gt;<strong>outertext</strong> . <span class="var">'&lt;div&gt;foo</span><span class="var">&lt;div&gt;</span>';<br>
+$e-&gt;<strong>outertext</strong> = $e-&gt;<strong>outertext</strong> . <span class="var">'&lt;div&gt;foo</span><span class="var">&lt;div&gt;</span>';<br>
 <br>
 <span class="comment">// <strong>Insert</strong> a element</span><br>
-$element-&gt;<strong>outertext</strong> = <span class="var">'&lt;div&gt;foo</span><span class="var">&lt;div&gt;</span>' . $element-&gt;<strong>outertext</strong>;<br>
+$e-&gt;<strong>outertext</strong> = <span class="var">'&lt;div&gt;foo</span><span class="var">&lt;div&gt;</span>' . $e-&gt;<strong>outertext</strong>;<br>
       </div>
     </div>
   </div>
@@ -336,9 +337,9 @@ $element-&gt;<strong>outertext</strong> = <span class="var">'&lt;div&gt;foo</spa
       <div class="code"> <span class="comment">// If you are not so familiar with HTML DOM, check this <a href="http://php.net/manual/en/book.dom.php" target="_blank"><span class="var">link</span></a> to learn more... </span><br>
         <br>
         <span class="comment">// Example</span><br>
-        echo $dom-&gt;<strong>find</strong>(<span class="var">&quot;#div1&quot;, 0</span>)-&gt;<strong>children</strong>(<span class="var">1</span>)-&gt;<strong>children</strong>(<span class="var">1</span>)-&gt;<strong>children</strong>(<span class="var">2</span>)-&gt;<span class="var">id</span>;<br>
+        echo $html-&gt;<strong>find</strong>(<span class="var">&quot;#div1&quot;, 0</span>)-&gt;<strong>children</strong>(<span class="var">1</span>)-&gt;<strong>children</strong>(<span class="var">1</span>)-&gt;<strong>children</strong>(<span class="var">2</span>)-&gt;<span class="var">id</span>;<br>
         <span class="comment">// or</span> <br>
-        echo $dom-&gt;<strong>getElementById</strong>(<span class="var">&quot;div1&quot;</span>)-&gt;<strong>childNodes</strong>(<span class="var">1</span>)-&gt;<strong>childNodes</strong>(<span class="var">1</span>)-&gt;<strong>childNodes</strong>(<span class="var">2</span>)-&gt;<strong>getAttribute</strong>(<span class="var">'id'</span>); </div>
+        echo $html-&gt;<strong>getElementById</strong>(<span class="var">&quot;div1&quot;</span>)-&gt;<strong>childNodes</strong>(<span class="var">1</span>)-&gt;<strong>childNodes</strong>(<span class="var">1</span>)-&gt;<strong>childNodes</strong>(<span class="var">2</span>)-&gt;<strong>getAttribute</strong>(<span class="var">'id'</span>); </div>
     </div>
     <div id="frag_traverse_traverse">
       <div class="code">You can also call methods with <a href="manual_api.htm#camel"><span class="var">Camel naming convertions</span></a>.<br>
@@ -392,17 +393,17 @@ $element-&gt;<strong>outertext</strong> = <span class="var">'&lt;div&gt;foo</spa
     </ul>
     <div id="frag_dump_oo">
       <div class="code"><span class="comment">// </span><span class="comment">Dumps the internal DOM tree back into string </span><br>
-        $str = $dom-&gt;<strong>save</strong>();<br>
+        $str = $html-&gt;<strong>save</strong>();<br>
         <br>
         <span class="comment">// Dumps the internal DOM tree back into a file</span> <br>
-        $dom-&gt;<strong>save</strong>(<span class="var">'result.htm'</span>);</div>
+        $html-&gt;<strong>save</strong>(<span class="var">'result.htm'</span>);</div>
     </div>
     <div id="frag_dump_quick">
       <div class="code"><span class="comment">// </span><span class="comment">Dumps the internal DOM tree back into string </span><br>
-        $str = $dom;<br>
+        $str = $html;<br>
         <br>
         <span class="comment">// Print it!</span><br>
-        echo $dom; <br>
+        echo $html; <br>
       </div>
     </div>
   </div>
@@ -422,10 +423,10 @@ $element-&gt;<strong>outertext</strong> = <span class="var">'&lt;div&gt;foo</spa
         } <br>
         <br>
         <span class="comment">// Register the  callback function with it's <strong>function name</strong></span><br>
-        $dom-&gt;<strong>set_callback</strong>(<span class="var">my_callback'</span>);<br>
+        $html-&gt;<strong>set_callback</strong>(<span class="var">'my_callback'</span>);<br>
         <br>
         <span class="comment">// Callback function will be invoked while dumping</span><br>
-        echo $dom;
+        echo $html;
       </div>
     </div>
   </div>

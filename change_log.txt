@@ -1,12 +1,14 @@
 #$Rev$
 
 [On going]
-1. Performance turning (boost 10%).
-2. Memory requirement reduce 25%.
-3. Fixed bug #2011286 (Error with unclosed html tags).
-4. Fixed bug #2012551 (Error parsing divs).
-5. Fixed bug #2020924 (Error for missed tag.).
-6. Fixed bug (problem with <body> tag's innertext).
+1. Change function name from "file_get_dom()" to "file_get_html()".
+2. Change function name from "str_get_dom()" to "str_get_html()".
+3. Performance turning (boost 10%).
+4. Memory requirement reduce 25%.
+5. Fixed bug #2011286 (Error with unclosed html tags).
+6. Fixed bug #2012551 (Error parsing divs).
+7. Fixed bug #2020924 (Error for missed tag.).
+8. Fixed bug (problem with <body> tag's innertext).
 
 
 [PHP Simple HTML DOM Parser v0.98 is released]
@@ -22,6 +24,7 @@
 10. Fix the bug of decendent selector with optional tags.
 11. Change simple_html_dom_node method name from "text()" to "makeup()". 
 
+
 [PHP Simple HTML DOM Parser v0.97 is released]
 1. Important!! file and class name changed (html_dom_parser->simple_html_dom)!
 2. Important!! ($dom->save_file) will not support anymore.
@@ -32,6 +35,7 @@
 7. Fix the bug while line-breaker and "\t" in tags.
 8. Remove example "example_customize_parser.php".
 9. New example "simple_html_dom_utility.php".
+
 
 [PHP Simple HTML DOM Parser v0.96 is released]
 1. (Request #1936000) New DOM operations(first_child, last_child, next_sibling, previous_sibling).
@@ -44,12 +48,14 @@
 8. Add Reference section in manual.
 #. Fix some typo of testcase.
 
+
 [PHP Simple HTML DOM Parser v0.95 is released]
 1. New attribute filters (Thanks to Yousuke Kumakura).
 2. Fix the bug of optional-closing tags.
 3. Fix the bug of parsing the line break next to the tag's name.
 4. Supports tag name with namespace.
 #. Refine structure of testcase.
+
 
 [PHP Simple HTML DOM Parser v0.94 is released]
 1. Stop infinity loop while tthe source content is BAD HTML.

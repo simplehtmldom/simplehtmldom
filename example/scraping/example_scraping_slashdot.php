@@ -2,11 +2,11 @@
 include_once('../../simple_html_dom.php');
 
 function scraping_slashdot() {
-    // create DOM
-    $dom = file_get_dom('http://slashdot.org/');
+    // create HTML DOM
+    $html = file_get_html('http://slashdot.org/');
 
     // get article block
-    foreach($dom->find('div.article') as $article) {
+    foreach($html->find('div.article') as $article) {
         // get title
         $item['title'] = trim($article->find('div.title', 0)->plaintext);
         // get details
@@ -18,8 +18,8 @@ function scraping_slashdot() {
     }
     
     // clean up memory
-    $dom->clear();
-    unset($dom);
+    $html->clear();
+    unset($html);
 
     return $ret;
 }

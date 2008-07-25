@@ -282,7 +282,7 @@ $str = <<<HTML
     </tr>
 </table>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 $es = $dom->find('table.hello td');
 assert(count($es)==4);
 assert($es[0]->innertext=='0');
@@ -302,7 +302,7 @@ $str = <<<HTML
     <li>3</li>
 </ul>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 $es= $dom->find('ul');
 assert(count($es)==2);
 foreach($es as $n) {

@@ -89,7 +89,7 @@ $str = <<<HTML
 </b><.b></a>
 </body>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert($dom->find('body', 0)->outertext==$str);
 
 // -----------------------------------------------
@@ -98,7 +98,7 @@ $str = <<<HTML
 <div>
 </body>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert($dom==$str);
 assert($dom->find('body', 0)->outertext==$str);
 
@@ -108,7 +108,7 @@ $str = <<<HTML
 <div> </a> </div>
 </body>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 
 assert($dom->find('body', 0)->outertext==$str);
 
@@ -121,7 +121,7 @@ $str = <<<HTML
         <td><b>bb</b>
 </table>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 
 assert($dom==$str);
 
@@ -131,7 +131,7 @@ $str = <<<HTML
 <tr><td>1<td>2<td>3
 </table>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert(count($dom->find('td'))==3);
 assert($dom->find('td', 0)->innertext=='1');
 assert($dom->find('td', 0)->outertext=='<td>1');
@@ -149,7 +149,7 @@ $str = <<<HTML
     <td><b>3</b></td>
 </table>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert(count($dom->find('tr td'))==3);
 
 // -----------------------------------------------
@@ -159,7 +159,7 @@ $str = <<<HTML
 <tr><td><b>21</b></td><td><b>32</b></td><td><b>43</b></td>
 </table>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert(count($dom->find('tr'))==2);
 assert(count($dom->find('tr td'))==6);
 assert($dom->find('tr', 1)->outertext=="<tr><td><b>21</b></td><td><b>32</b></td><td><b>43</b></td>\r\n");
@@ -172,7 +172,7 @@ $str = <<<HTML
 <p>2</p>
 <p>3
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert(count($dom->find('p'))==3);
 assert($dom->find('p', 0)->innertext=="1\r\n");
 assert($dom->find('p', 0)->outertext=="<p>1\r\n");
@@ -184,7 +184,7 @@ assert($dom->find('p', 2)->outertext=="<p>3");
 $str = <<<HTML
 <dl><dt>1<dd>2<dt>3<dd>4</dl>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert(count($dom->find('dt'))==2);
 assert(count($dom->find('dd'))==2);
 assert($dom->find('dt', 0)->innertext=="1");
@@ -201,7 +201,7 @@ $str = <<<HTML
 <dl id="dl1"><dt>11<dd>12<dt>13<dd>14</dl>
 <dl id="dl2"><dt>21<dd>22<dt>23<dd>24</dl>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert(count($dom->find('#dl1 dt'))==2);
 assert(count($dom->find('#dl2  dd'))==2);
 assert($dom->find('dl', 0)->innertext=="<dt>11<dd>12<dt>13<dd>14");
@@ -212,7 +212,7 @@ $str = <<<HTML
 <ul id="ul1"><li><b>1</b><li><b>2</b></ul>
 <ul id="ul2"><li><b>3</b><li><b>4</b></ul>
 HTML;
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 assert(count($dom->find('ul[id=ul1] li'))==2);
 
 // -----------------------------------------------------------------------------

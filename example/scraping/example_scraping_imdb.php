@@ -2,17 +2,17 @@
 include_once('../../simple_html_dom.php');
 
 function scraping_IMDB($url) {
-    // create DOM
-    $dom = file_get_dom($url);
+    // create HTML DOM
+    $html = file_get_html($url);
 
     // get title
-    $ret['Title'] = $dom->find('title', 0)->innertext;
+    $ret['Title'] = $html->find('title', 0)->innertext;
 
     // get rating
-    $ret['Rating'] = $dom->find('div[class="general rating"] b', 0)->innertext;
+    $ret['Rating'] = $html->find('div[class="general rating"] b', 0)->innertext;
 
     // get overview
-    foreach($dom->find('div[class="info"]') as $div) {
+    foreach($html->find('div[class="info"]') as $div) {
         // skip user comments
         if($div->find('h5', 0)->innertext=='User Comments:')
             return $ret;
@@ -35,8 +35,8 @@ function scraping_IMDB($url) {
     }
     
     // clean up memory
-    $dom->clear();
-    unset($dom);
+    $html->clear();
+    unset($html);
 
     return $ret;
 }

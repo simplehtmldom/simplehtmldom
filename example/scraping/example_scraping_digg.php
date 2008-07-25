@@ -1,12 +1,12 @@
 <?php
-include_once('../../simple_html_dom_reader.php');
+include_once('../../simple_html_dom.php');
 
 function scraping_digg() {
-    // create DOM
-    $dom = file_get_dom('http://digg.com/');
+    // create HTML DOM
+    $html = file_get_html('http://digg.com/');
 
     // get news block
-    foreach($dom->find('div.news-summary') as $article) {
+    foreach($html->find('div.news-summary') as $article) {
         // get title
         $item['title'] = trim($article->find('h3', 0)->plaintext);
         // get details
@@ -18,8 +18,8 @@ function scraping_digg() {
     }
     
     // clean up memory
-    $dom->clear();
-    unset($dom);
+    $html->clear();
+    unset($html);
 
     return $ret;
 }

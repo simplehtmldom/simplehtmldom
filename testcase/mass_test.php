@@ -8,10 +8,8 @@ $dir = './html/';
 $files = array(
     array('name'=>'empty.htm',          'url'=>''),
     array('name'=>'google.htm',         'url'=>'http://www.google.com/'),
-    
     array('name'=>'senate.htm',         'url'=>'http://www.senate.gov/legislative/LIS/roll_call_lists/roll_call_vote_cfm.cfm?congress=101&session=2&vote=00317'),
-    
-    array('name'=>'cyberciti.htm',         'url'=>'http://www.cyberciti.biz/tips/configure-ubuntu-grub-to-load-freebsd.html'),
+    array('name'=>'cyberciti.htm',      'url'=>'http://www.cyberciti.biz/tips/configure-ubuntu-grub-to-load-freebsd.html'),
     array('name'=>'myspace.htm',        'url'=>'http://www.myspace.com/'),
     array('name'=>'mootools.htm',       'url'=>'http://www.mootools.net/'),
     array('name'=>'jquery.htm',         'url'=>'http://jquery.com/'),

@@ -42,7 +42,7 @@ $str = <<<HTML
 <img class="class2" id="id2" src="src2"></a></div>
 HTML;
 
-$dom = str_get_dom($str);
+$dom = str_get_html($str);
 $es = $dom->find('img');
 assert(count($es)==3);
 assert($es[0]->src=='src0');

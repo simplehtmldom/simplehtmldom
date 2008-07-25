@@ -22,15 +22,10 @@
     <h2>Problem with finding</h2>
     <a class="top" href="#top">Top</a>
 	  <div class="code"> <span class="var">Q:</span> Element not found in such case:<br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="var"></span>&lt;div style=&quot;padding: 0px 2px;&quot;&gt;&lt;span class=&quot;rf&quot;&gt;...&lt;/span&gt;&lt;/div&gt;<br>
-	    <br>
-	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="var"></span>$dom-&gt;find('div[style*=padding: 0px 2px;] span[class=rf]');<br>
+	    $html-&gt;find('div[style=<span class="var">padding: 0px 2px;</span>] span[class=rf]');<br>
       <br>
-      <span class="var">A:</span> If there is blank in selectors, quote it! <br>
-      <br>
-      Example: <br>
-       <br>
-      $dom-&gt;find('div[style*=<strong>&quot;padding: 0px 2px;&quot;</strong>] span[class=rf]')</div>
+      <span class="var">A:</span> If there is blank in selectors, quote it!  <br>
+      $html-&gt;find('div[style=<strong class="var">&quot;padding: 0px 2px;&quot;</strong>] span[class=rf]');</div>
 		<a name="hosting"></a>
     <h2>Problem with hosting</h2>
     <a class="top" href="#top">Top</a>
@@ -47,7 +42,7 @@
       $str = curl_exec(<span class="var">$curl</span>);  <br>
       curl_close($curl);  <br>
        <br>
-      $dom= <strong>str_get_dom</strong>($str); <br>
+      $html= <strong>str_get_html</strong>($str); <br>
       ...  </div>
     <a name="proxy"></a>
     <div>
@@ -55,9 +50,7 @@
       <a class="top" href="#top">Top</a>
       <div class="code"> <span class="var">Q:</span> My server is behind a Proxy and i can't use file_get_contents b/c it returns a unauthorized error.<br>
         <br>
-        <span class="var">A:</span> Thanks for Shaggy to provide the solution. <br>
-         <br>
-        Example: <br>
+        <span class="var">A:</span> Thanks for Shaggy to provide the solution: <br>
          <br>
         <span class="comment">// Define a context for HTTP. </span><br>
         $context = array<br>
@@ -71,7 +64,7 @@
         <br>
         $context = <strong>stream_context_create</strong>($context); <br>
          <br>
-        $dom= <strong>file_get_dom</strong>(<span class="var">'http://www.php.net'</span>, <span class="var">false</span>, <span class="var">$context</span>); <br>
+        $html= <strong>file_get_html</strong>(<span class="var">'http://www.php.net'</span>, <span class="var">false</span>, <span class="var">$context</span>); <br>
         ...<br>
       </div>
     </div>
@@ -84,10 +77,10 @@
       <br>
       Example: <br>
       <br>
-      $dom = file_get_dom(...); <br>
+      $html = file_get_html(...); <br>
       <span class="comment">// do something... </span><br>
-      $dom-&gt;clear(); <br>
-      unset($dom);</div>
+      $html-&gt;clear(); <br>
+      unset($html);</div>
     <br>
     Author: S.C. Chen (me578022@gmail.com)<br>
 Original idea is from Jose Solorzano's <a href="http://php-html.sourceforge.net/">HTML Parser for PHP 4</a>. <br>

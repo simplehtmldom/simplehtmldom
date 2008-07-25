@@ -29,7 +29,22 @@ define('HDOM_INFO_ENDSPACE',7);
 
 // helper functions
 // -----------------------------------------------------------------------------
-// get dom form file
+// get html dom form file
+function file_get_html() {
+    $dom = new simple_html_dom;
+    $args = func_get_args();
+    $dom->load(call_user_func_array('file_get_contents', $args), true);
+    return $dom;
+}
+
+// get html dom form string
+function str_get_html($str, $lowercase=true) {
+    $dom = new simple_html_dom;
+    $dom->load($str, $lowercase);
+    return $dom;
+}
+
+// get dom form file (deprecation)
 function file_get_dom() {
     $dom = new simple_html_dom;
     $args = func_get_args();
@@ -37,7 +52,7 @@ function file_get_dom() {
     return $dom;
 }
 
-// get dom form string
+// get dom form string (deprecation)
 function str_get_dom($str, $lowercase=true) {
     $dom = new simple_html_dom;
     $dom->load($str, $lowercase);
@@ -53,8 +68,8 @@ class simple_html_dom_node {
     public $children = array();
     public $nodes = array();
     public $parent = null;
-    private $dom = null;
     public $_ = array();
+    private $dom = null;
 
     function __construct($dom) {
         $this->dom = $dom;
@@ -403,12 +418,12 @@ class simple_html_dom {
     public $nodes = array();
     public $callback = null;
     public $lowercase = false;
-    protected $doc = '';
-    protected $parent = null;
     protected $pos;
+    protected $doc;
     protected $char;
     protected $size;
-    protected $index;
+    protected $cursor;
+    protected $parent;
     protected $noise = array();
     protected $token_blank = " \t\r\n";
     protected $token_equal = ' =/><';
@@ -437,7 +452,6 @@ class simple_html_dom {
     function load($str, $lowercase=true) {
         // prepare
         $this->prepare($str, $lowercase);
-
         // strip out comments
         $this->remove_noise("'<!--(.*?)-->'is");
         // strip out <style> tags
@@ -450,11 +464,10 @@ class simple_html_dom {
         $this->remove_noise("'<\s*(?:pre|code)[^>]*>(.*?)<\s*/\s*(?:pre|code)\s*>'is");
         // strip out server side scripts
         $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
-
         // parsing
         while ($this->parse());
         // end
-        $this->root->_[HDOM_INFO_END] = $this->index;
+        $this->root->_[HDOM_INFO_END] = $this->cursor;
     }
 
     // load html from file
@@ -466,6 +479,11 @@ class simple_html_dom {
     // set callback function
     function set_callback($function_name) {
         $this->callback = $function_name;
+    }
+
+    // remove callback function
+    function remove_callback() {
+        $this->callback = null;
     }
 
     // save dom as string
@@ -494,7 +512,7 @@ class simple_html_dom {
         $this->clear();
         $this->doc = $str;
         $this->pos = 0;
-        $this->index = 1;
+        $this->cursor = 1;
         $this->noise = array();
         $this->nodes = array();
         $this->lowercase = $lowercase;
@@ -515,7 +533,7 @@ class simple_html_dom {
 
         // text
         $node = new simple_html_dom_node($this);
-        ++$this->index;
+        ++$this->cursor;
         $node->_[HDOM_INFO_TEXT] = $s;
         $this->link_nodes($node, false);
         return true;
@@ -524,7 +542,7 @@ class simple_html_dom {
     // read tag info
     protected function read_tag() {
         if ($this->char!=='<') {
-            $this->root->_[HDOM_INFO_END] = $this->index;
+            $this->root->_[HDOM_INFO_END] = $this->cursor;
             return false;
         }
         $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
@@ -561,7 +579,7 @@ class simple_html_dom {
                     return $this->as_text_node($tag);
             }
 
-            $this->parent->_[HDOM_INFO_END] = $this->index;
+            $this->parent->_[HDOM_INFO_END] = $this->cursor;
             if ($this->parent->parent) $this->parent = $this->parent->parent;
 
             $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
@@ -569,8 +587,8 @@ class simple_html_dom {
         }
 
         $node = new simple_html_dom_node($this);
-        $node->_[HDOM_INFO_BEGIN] = $this->index;
-        ++$this->index;
+        $node->_[HDOM_INFO_BEGIN] = $this->cursor;
+        ++$this->cursor;
         $tag = $this->copy_until($this->token_slash);
 
         // doctype, cdata & comments...
@@ -706,7 +724,7 @@ class simple_html_dom {
     // as a text node
     protected function as_text_node($tag) {
         $node = new simple_html_dom_node($this);
-        ++$this->index;
+        ++$this->cursor;
         $node->_[HDOM_INFO_TEXT] = '</' . $tag . '>';
         $this->link_nodes($node, false);
         $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
