@@ -79,6 +79,10 @@ class simple_html_dom_node {
     function __destruct() {
         $this->clear();
     }
+    
+    function __toString() {
+        return $this->outertext();
+    }
 
     // clean up memory due to php5 circular references memory leak...
     function clear() {
@@ -349,10 +353,6 @@ class simple_html_dom_node {
             $selectors[] = $result;
         }
         return $selectors;
-    }
-
-    function __toString() {
-        return $this->outertext();
     }
 
     function __get($name) {
