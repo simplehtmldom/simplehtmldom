@@ -1,10 +1,12 @@
 #$Rev$
 
 [On going]
-1. Change function name from "file_get_dom()" to "file_get_html()".
-2. Change function name from "str_get_dom()" to "str_get_html()".
-3. Performance turning (boost 10%).
-4. Memory requirement reduce 25%.
+
+[PHP Simple HTML DOM Parser v0.99 is released]
+1. Performance turning (boost 10%).
+2. Memory requirement reduce 25%.
+3. Change function name from "file_get_dom()" to "file_get_html()".
+4. Change function name from "str_get_dom()" to "str_get_html()".
 5. Fixed bug #2011286 (Error with unclosed html tags).
 6. Fixed bug #2012551 (Error parsing divs).
 7. Fixed bug #2020924 (Error for missed tag.).
