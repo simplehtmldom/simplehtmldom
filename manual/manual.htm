@@ -263,7 +263,7 @@ $ret = $html-&gt;find(<span class="var">'<strong>a, img</strong>'</span>);      
         $e-&gt;<strong>href</strong> = <span class="var">'my link'</span>;<br>
         <br>
         <span class="comment">// <strong>Remove</strong> a attribute, set it's value as null! </span><br>
-        $element-&gt;<strong>href</strong> = <strong><span class="var">null</span></strong>;<br>
+        $e-&gt;<strong>href</strong> = <strong><span class="var">null</span></strong>;<br>
         <br>
         <span class="comment">// <strong>Determine</strong> whether a attribute exist?</span> <br>
 if(isset($e-&gt;<strong>href</strong>)) <br>
@@ -306,14 +306,14 @@ if(isset($e-&gt;<strong>href</strong>)) <br>
       </div>
     </div>
     <div id="frag_access_tips">
-      <div class="code"><span class="comment">// Extract contents from HTML </span><br>
+      <div class="code"><span class="comment">// <strong>Extract</strong> contents from HTML </span><br>
 echo <strong>$html</strong>-&gt;<strong>plaintext</strong>;<br>
 <br> 
 <span class="comment">
         // <strong>Wrap</strong> a element</span><br>
         $e-&gt;<strong>outertext</strong> = <span class="var">'&lt;div class=&quot;wrap&quot;&gt;'</span> . $e-&gt;<strong>outertext</strong> . <span class="var">'&lt;div&gt;</span>';<br>
         <br>
-        <span class="comment">// <strong>Remove</strong> a element, set it's outertext as empty string </span><br>
+        <span class="comment">// <strong>Remove</strong> a element, set it's outertext as an empty string </span><br>
         $e-&gt;<strong>outertext</strong> = <span class="var">''</span>;<br>
         <br>
         <span class="comment">// <strong>Append</strong> a element</span><br>

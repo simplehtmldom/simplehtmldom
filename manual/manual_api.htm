@@ -18,23 +18,23 @@
   <h2>API Reference</h2>
   <a class="top" href="#top">Top</a>
   <div class="code"> <strong>Helper</strong> functions
-    <table cellspacing="1" cellpadding="1">
+    <table width="100%" cellpadding="1" cellspacing="1">
       <tr>
         <th width="320">Name</th>
         <th>Description</th>
       </tr>
       <tr>
         <td><span class="returns">object</span> str_get_html ( <span class="var">string $content</span> )</td>
-        <td class="description">Creates a DOM object from a <strong>string</strong>.</td>
+        <td class="description">Creates a DOM object from a string.</td>
       </tr>
       <tr>
         <td><span class="returns">object</span> file_get_html ( <span class="var">string $filename</span> )</td>
-        <td class="description">Creates a DOM object from a <strong>file</strong> or a <strong>URL</strong>.</td>
+        <td class="description">Creates a DOM object from a file or a URL.</td>
       </tr>
     </table>
     <br>
     <strong>DOM</strong> methods &amp; properties <br>
-    <table cellspacing="1" cellpadding="1">
+    <table width="100%" cellpadding="1" cellspacing="1">
       <tr>
         <th width="320"> Name</th>
         <th> Description</th>
@@ -61,13 +61,13 @@
         <td>
           <div class="returns">string</div>
           save ( <span class="var">[string $filename]</span> )</td>
-        <td class="description">Dumps the internal DOM tree back into a <strong>string</strong>. If the <strong>$filename</strong> is set, result string will save to file. </td>
+        <td class="description">Dumps the internal DOM tree back into a <strong>string</strong>. If the $filename is set, result string will save to file. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">void</div>
           load_file (<span class="var"> string $filename</span> )</td>
-        <td class="description"> Load contents from a from a <strong>file</strong> or a <strong>URL</strong>.</td>
+        <td class="description"> Load contents from a from a file or a URL.</td>
       </tr>
       <tr>
         <td>
@@ -79,12 +79,12 @@
         <td>
           <div class="returns">mixed</div>
           find (<span class="var"> string $selector [, int $index] </span>)</td>
-        <td class="description">Find elements by the <strong>CSS selector</strong>. Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise return an <strong>array of object</strong>. </td>
+        <td class="description">Find elements by the CSS selector. Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise return an <strong>array</strong> of object. </td>
       </tr>
     </table>
     <br>
     <strong>Element</strong> methods &amp; properties <br>
-    <table cellspacing="1" cellpadding="1">
+    <table width="100%" cellpadding="1" cellspacing="1">
       <tr>
         <th width="320">Name</th>
         <th>Description</th>
@@ -93,42 +93,42 @@
         <td>
           <div class="returns">string</div>
           <span class="var">[attribute]</span></td>
-        <td class="description">Read or write element's <strong>attribure value</strong>. </td>
+        <td class="description">Read or write element's attribure value. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">string</div>
           tag</td>
-        <td class="description">Read or write the <strong>tag name</strong> of element.</td>
+        <td class="description">Read or write the tag name of element.</td>
       </tr>
       <tr>
         <td>
           <div class="returns">string</div>
           outertext</td>
-        <td class="description">Read or write the <strong>outer HTML text </strong> of element.</td>
+        <td class="description">Read or write the outer HTML text of element.</td>
       </tr>
       <tr>
         <td>
           <div class="returns">string</div>
           innertext</td>
-        <td class="description">Read or write the <strong>inner HTML text </strong> of element.</td>
+        <td class="description">Read or write the inner HTML text of element.</td>
       </tr>
       <tr>
         <td>
           <div class="returns">string</div>
           plaintext</td>
-        <td class="description">Read or write the <strong>plain text </strong> of element.</td>
+        <td class="description">Read or write the plain text of element.</td>
       </tr>
       <tr>
         <td>
           <div class="returns">mixed</div>
           find (<span class="var"> string $selector [, int $index] </span>)</td>
-        <td class="description">Find children by the <strong>CSS selector</strong>. Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise, return an <strong>array</strong> of object. </td>
+        <td class="description">Find children by the CSS selector. Returns the Nth element <strong>object</strong> if <strong>index</strong> is set, otherwise, return an <strong>array</strong> of object. </td>
       </tr>
     </table>
     <strong><br>
     DOM</strong> traversing<br>
-    <table cellspacing="1" cellpadding="1">
+    <table width="100%" cellpadding="1" cellspacing="1">
       <tr>
         <th width="320">Name</th>
         <th>Description</th>
@@ -137,37 +137,37 @@
         <td>
           <div class="returns">mixed</div>
           $e-&gt;children ( <span class="var">[int $index]</span> ) </td>
-        <td class="description">Returns the Nth <strong>child object</strong> if <strong>index</strong> is set, otherwise return an <strong>array of children</strong>. </td>
+        <td class="description">Returns the Nth child <strong>object</strong> if <strong>index</strong> is set, otherwise return an <strong>array</strong> of children. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
           $e-&gt;parent () </td>
-        <td class="description">Returns the <strong>parent</strong> of element. </td>
+        <td class="description">Returns the parent of element. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
           $e-&gt;first_child () </td>
-        <td class="description">Returns the <strong>first child</strong> of element, or <strong>null</strong> if not found. </td>
+        <td class="description">Returns the first child of element, or <strong>null</strong> if not found. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
           $e-&gt;last_child () </td>
-        <td class="description">Returns the <strong>last child</strong> of element, or <strong>null</strong> if not found. </td>
+        <td class="description">Returns the last child of element, or <strong>null</strong> if not found. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
           $e-&gt;next_sibling () </td>
-        <td class="description">Returns the <strong>next sibling</strong> of element, or<strong> null</strong> if not found. </td>
+        <td class="description">Returns the next sibling of element, or<strong> null</strong> if not found. </td>
       </tr>
       <tr>
         <td>
           <div class="returns">element</div>
           $e-&gt;prev_sibling () </td>
-        <td class="description">Returns the <strong>previous sibling</strong> of element, or <strong>null</strong> if not found. </td>
+        <td class="description">Returns the previous sibling of element, or <strong>null</strong> if not found. </td>
       </tr>
     </table>
   </div>
@@ -176,7 +176,7 @@
   <a class="top" href="#top">Top</a>
   <div class="code">You can also call methods with W3C STANDARD camel naming convertions.<br>
     <br>
-    <table cellspacing="1" cellpadding="1">
+    <table width="100%" cellpadding="1" cellspacing="1">
       <tr>
         <th width="50%">Method</th>
         <th>Mapping</th>
