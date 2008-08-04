@@ -274,7 +274,10 @@ class simple_html_dom_node {
         if (!isset($this->_[HDOM_INFO_END])) return;
 
         $end = $this->_[HDOM_INFO_END];
-        if ($end===0) $end = $this->parent->_[HDOM_INFO_END]-1;
+        if ($end===0) {
+            if(isset($this->parent->_[HDOM_INFO_END]))
+                $end = $this->parent->_[HDOM_INFO_END]-1;
+        }
 
         for($i=$this->_[HDOM_INFO_BEGIN]+1; $i<$end; ++$i) {
             $node = $this->dom->nodes[$i];

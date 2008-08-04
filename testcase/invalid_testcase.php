@@ -322,6 +322,19 @@ assert(count($dom->find('div'))==1);
 assert(count($dom->find('td div'))==1);
 assert($dom==$str);
 
+// -----------------------------------------------
+$str = <<<HTML
+<td>
+    <div>
+        <font>
+            <b>foo</b>
+    </div>
+</td>
+HTML;
+$dom->load($str);
+assert(count($dom->find('td div font b'))==1);
+assert($dom==$str);
+
 // -----------------------------------------------------------------------------
 // BAD HTML test
 $str = <<<HTML
