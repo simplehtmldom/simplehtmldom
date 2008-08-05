@@ -274,7 +274,7 @@ class simple_html_dom_node {
         $end = (!empty($this->_[HDOM_INFO_END])) ? $this->_[HDOM_INFO_END] : 0;
         if ($end==0) {
             $parent = $this->parent;
-            while (!isset($parent->_[HDOM_INFO_END])) {
+            while (!isset($parent->_[HDOM_INFO_END]) && $parent!==null) {
                 $end -= 1;
                 $parent = $parent->parent;
             }

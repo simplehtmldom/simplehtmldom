@@ -113,6 +113,14 @@ assert($dom->find('html body a', 1)->innertext=='foo2');
 
 // -----------------------------------------------
 $str = <<<HTML
+HTML;
+$dom = str_get_html($str);
+assert($dom==$str);
+assert($dom->find('html a', 1)===null);
+//assert($dom->find('html a', 1)->innertext=='foo2');
+
+// -----------------------------------------------
+$str = <<<HTML
 <body>
 <div>
 </body>
