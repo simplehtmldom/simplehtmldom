@@ -178,23 +178,23 @@ assert($es[1]->tag=='div');
 // -----------------------------------------------------------------------------
 // multiple selector test
 $str = <<<HTML
-<div class="class0" id="id0" ><div class="class1" id="id1"><div class="class2" id="id2">ok</div></div></div>
+<div class="class0" id="id0" ><div class="class1" id="id1"><div class="class2" id="id2">ok</div><div style="st1 st2" id="id3"><span class="id4">ok</span></div></div></div>
 HTML;
 $dom->load($str);
 
 $es = $dom->find('div');
-assert(count($es)==3);
+assert(count($es)==4);
 assert($es[0]->id=='id0');
 assert($es[1]->id=='id1');
 assert($es[2]->id=='id2');
 
 $es = $dom->find('div div');
-assert(count($es)==2);
+assert(count($es)==3);
 assert($es[0]->id=='id1');
 assert($es[1]->id=='id2');
 
 $es = $dom->find('div div div');
-assert(count($es)==1);
+assert(count($es)==2);
 assert($es[0]->id=='id2');
 
 $es = $dom->find('.class0 .class1 .class2');
@@ -234,8 +234,29 @@ assert(count($es)==1);
 assert($es[0]->id=='id2');
 
 $es = $dom->find('[id] [id] [id]');
-assert(count($es)==1);
+assert(count($es)==2);
 assert($es[0]->id=='id2');
+assert($es[1]->id=='id3');
+
+$es = $dom->find('[id=id0] [id=id1] [id=id3]');
+assert(count($es)==1);
+assert($es[0]->id=='id3');
+
+$es = $dom->find('[id=id0] [id=id1] [style="st1 st2"]');
+assert(count($es)==1);
+assert($es[0]->id=='id3');
+
+$es = $dom->find('[id=id0] [id=id1] [style=st1 st2]');
+assert(count($es)==1);
+assert($es[0]->id=='id3');
+
+$es = $dom->find('[id=id0] [id=id1] [style=st1 st2] span[class=id4]');
+assert(count($es)==1);
+assert($es[0]->innertext=='ok');
+
+$es = $dom->find('[id=id0] [id=id1] [style="st1 st2"] span[class="id4"]');
+assert(count($es)==1);
+assert($es[0]->innertext=='ok');
 
 // -----------------------------------------------
 $str = <<<HTML
@@ -627,6 +648,15 @@ $str = <<<HTML
 HTML;
 $dom->load($str);
 assert(count($dom->find('a[title], img[title]'))==2);
+
+// -----------------------------------------------------------------------------
+//js test
+$str = <<<HTML
+<a onMouseover="dropdownmenu(this, event, 'messagesmenu')" class="n" href="messagecenter.cfm?key=972489434">foo</a>
+HTML;
+$dom->load($str);
+assert($dom->find('a[onMouseover="dropdownmenu(this, event, \'messagesmenu\')"]',0)->innertext=='foo');
+assert($dom->find("a[onMouseover=dropdownmenu(this, event, 'messagesmenu')]",0)->innertext=='foo');
 
 // -----------------------------------------------------------------------------
 // tear down

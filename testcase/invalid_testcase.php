@@ -82,6 +82,14 @@ $e = $dom->find('hr', 0);
 $e->class = 'bar';
 assert($e->outertext=='<hr id="foo" kk=ll class="bar" />');
 
+// -----------------------------------------------
+$str = <<<HTML
+<div><nobr></div>
+HTML;
+$dom->load($str);
+$e = $dom->find('nobr', 0);
+assert($e->outertext=='<nobr>');
+
 // -----------------------------------------------------------------------------
 // optional closing tags test
 $str = <<<HTML

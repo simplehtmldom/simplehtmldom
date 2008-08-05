@@ -329,32 +329,37 @@ class simple_html_dom_node {
 
     protected function parse_selector($selector_string) {
         // pattern of CSS selectors, modified from mootools
-        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?([^\"']*)[\"']?)?\])? /U";
-
-        // handle multiple selectors
-        $selector_list = split(',', $selector_string);
+        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([, ]+)/is";
+        
+        preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER);
+        //print_r($matches);
+        
         $selectors = array();
+        $result = array();
+        
+        foreach ($matches as $m) {
+            if (trim($m[0])==='') continue;
+            
+            list($tag, $key, $val, $exp) = array($m[1], null, null, '=');
+            if(!empty($m[2])) {$key='id'; $val=$m[2];}
+            if(!empty($m[3])) {$key='class'; $val=$m[3];}
+            if(!empty($m[4])) {$key=$m[4];}
+            if(!empty($m[5])) {$exp=$m[5];}
+            if(!empty($m[6])) {$val=$m[6];}
 
-        foreach($selector_list as $selector) {
-            $result = array();
-            preg_match_all($pattern, trim($selector).' ', $matches, PREG_SET_ORDER);
-
-            foreach ($matches as $m) {
-                list($tag, $key, $val, $exp) = array($m[1], null, null, '=');
-                if ($m[0]==='') continue;
-                if(!empty($m[2])) {$key='id'; $val=$m[2];}
-                if(!empty($m[3])) {$key='class'; $val=$m[3];}
-                if(!empty($m[4])) {$key=$m[4];}
-                if(!empty($m[5])) {$exp=$m[5];}
-                if(!empty($m[6])) {$val=$m[6];}
-
-                // convert to lowercase
-                if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
-
-                $result[] = array($tag, $key, $val, $exp);
+            // convert to lowercase
+            if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
+            
+            $result[] = array($tag, $key, $val, $exp);
+            if (trim($m[7])===',') {
+                $selectors[] = $result;
+                $result = array();
             }
-            $selectors[] = $result;
         }
+        if (count($result)>0) $selectors[] = $result;
+        
+        //print_r($selectors);
+        
         return $selectors;
     }
 
@@ -433,7 +438,7 @@ class simple_html_dom {
     protected $token_slash = " />\r\n\t";
     protected $token_attr = ' >';
     // use isset instead of in_array, performance boost about 30%...
-    protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
+    protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1, 'nobr'=>1);
     protected $block_tags = array('root'=>1, 'body'=>1, 'form'=>1, 'div'=>1, 'span'=>1, 'table'=>1);
     protected $optional_closing_tags = array(
         'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
