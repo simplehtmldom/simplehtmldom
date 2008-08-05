@@ -271,12 +271,14 @@ class simple_html_dom_node {
     protected function seek($selector, &$ret) {
         list($tag, $key, $val, $exp) = $selector;
 
-        if (!isset($this->_[HDOM_INFO_END])) return;
-
-        $end = $this->_[HDOM_INFO_END];
-        if ($end===0) {
-            if(isset($this->parent->_[HDOM_INFO_END]))
-                $end = $this->parent->_[HDOM_INFO_END]-1;
+        $end = (!empty($this->_[HDOM_INFO_END])) ? $this->_[HDOM_INFO_END] : 0;
+        if ($end==0) {
+            $parent = $this->parent;
+            while (!isset($parent->_[HDOM_INFO_END])) {
+                $end -= 1;
+                $parent = $parent->parent;
+            }
+            $end += $parent->_[HDOM_INFO_END];
         }
 
         for($i=$this->_[HDOM_INFO_BEGIN]+1; $i<$end; ++$i) {
