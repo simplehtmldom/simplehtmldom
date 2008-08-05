@@ -330,10 +330,7 @@ class simple_html_dom_node {
     protected function parse_selector($selector_string) {
         // pattern of CSS selectors, modified from mootools
         $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(\w+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([, ]+)/is";
-        
         preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER);
-        //print_r($matches);
-        
         $selectors = array();
         $result = array();
         
@@ -349,17 +346,16 @@ class simple_html_dom_node {
 
             // convert to lowercase
             if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
-            
+
             $result[] = array($tag, $key, $val, $exp);
             if (trim($m[7])===',') {
                 $selectors[] = $result;
                 $result = array();
             }
         }
-        if (count($result)>0) $selectors[] = $result;
-        
-        //print_r($selectors);
-        
+        if (count($result)>0)
+            $selectors[] = $result;
+
         return $selectors;
     }
 
