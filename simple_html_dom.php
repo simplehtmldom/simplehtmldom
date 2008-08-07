@@ -92,11 +92,6 @@ class simple_html_dom_node {
         $this->children = null;
     }
 
-    // get all attributes
-    function getAllAttributes() {
-        return $this->attr;
-    }
-
     // returns the parent of node
     function parent() {
         return $this->parent;
@@ -406,6 +401,7 @@ class simple_html_dom_node {
     }
 
     // camel naming conventions
+    function getAllAttributes() {return $this->attr;}
     function getAttribute($name) {return $this->__get($name);}
     function setAttribute($name, $value) {$this->__set($name, $value);}
     function hasAttribute($name) {return $this->__isset($name);}
