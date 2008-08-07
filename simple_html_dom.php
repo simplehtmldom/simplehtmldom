@@ -1,6 +1,6 @@
 <?php
 /*******************************************************************************
-Version: 0.99 ($Rev$)
+Version: 1.0 ($Rev$)
 Website: http://sourceforge.net/projects/simplehtmldom/
 Author: S.C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
@@ -90,6 +90,11 @@ class simple_html_dom_node {
         $this->nodes = null;
         $this->parent = null;
         $this->children = null;
+    }
+
+    // get all attributes
+    function getAllAttributes() {
+        return $this->attr;
     }
 
     // returns the parent of node
