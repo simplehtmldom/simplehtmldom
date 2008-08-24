@@ -325,7 +325,7 @@ class simple_html_dom_node {
             case '$=':
                 $check = (preg_match("/".preg_quote($pattern,'/')."$/", $value)) ? true : false; break;
             case '*=':
-                $check = (preg_match("/".preg_quote($pattern,'/')."/", $value)) ? true : false; break;
+                $check = (preg_match("/".preg_quote($pattern,'/')."/i", $value)) ? true : false; break;
         }
         return $check;
     }
