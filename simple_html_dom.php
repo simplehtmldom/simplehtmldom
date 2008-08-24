@@ -471,7 +471,8 @@ class simple_html_dom {
         // strip out preformatted tags
         $this->remove_noise("'<\s*(?:pre|code)[^>]*>(.*?)<\s*/\s*(?:pre|code)\s*>'is");
         // strip out server side scripts
-        $this->remove_noise("'(<\?)(.*?)(\?>)'is", false, false);
+        $this->remove_noise("'<\?(.*?)\?>'is");
+
         // parsing
         while ($this->parse());
         // end
@@ -569,7 +570,7 @@ class simple_html_dom {
             $tag_lower = strtolower($tag);
 
             if ($parent_lower!==$tag_lower) {
-                if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) {                    
+                if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) {
                     $this->parent->_[HDOM_INFO_END] = 0;
                     while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
                         $this->parent = $this->parent->parent;
