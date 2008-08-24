@@ -4,7 +4,8 @@
 1. New method "getAllAttributes" of "simple_html_dom_node".
 2. Fix the bug of selector in some critical condition.
 3. Fix the bug of striping php tags.
-4. Supports full javascript string in selector: $e->find("a[onclick=alert('hello')]").
+4. Fix the bug of remove_noise().
+5. Supports full javascript string in selector: $e->find("a[onclick=alert('hello')]").
 
 
 [PHP Simple HTML DOM Parser v0.99 is released]

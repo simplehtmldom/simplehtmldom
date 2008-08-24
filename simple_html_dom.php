@@ -471,7 +471,10 @@ class simple_html_dom {
         // strip out preformatted tags
         $this->remove_noise("'<\s*(?:pre|code)[^>]*>(.*?)<\s*/\s*(?:pre|code)\s*>'is");
         // strip out server side scripts
-        $this->remove_noise("'<\?(.*?)\?>'is");
+        $this->remove_noise("'(<\?)(.*?)(\?>)'is", true);
+        
+        //echo $this->doc;
+        //die;
 
         // parsing
         while ($this->parse());
@@ -806,19 +809,19 @@ class simple_html_dom {
     }
 
     // remove noise from html content
-    protected function remove_noise($pattern) {
+    protected function remove_noise($pattern, $remove_tag=false) {
         $count = preg_match_all($pattern, $this->doc, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
 
         for ($i=$count-1; $i>-1; --$i) {
-            $key = '___noise___'.sprintf('% 3d', count($this->noise));
-            $this->noise[$key] = $matches[$i][1][0];
-            $this->doc = substr_replace($this->doc, $key, $matches[$i][1][1], strlen($matches[$i][1][0]));
+            $key = '___noise___'.sprintf('% 3d', count($this->noise)+100);
+            $idx = ($remove_tag) ? 0 : 1;
+            $this->noise[$key] = $matches[$i][$idx][0];
+            $this->doc = substr_replace($this->doc, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
         }
 
         // reset the length of content
         $this->size = strlen($this->doc);
-        if ($this->size>0)
-            $this->char = $this->doc[0];
+        if ($this->size>0) $this->char = $this->doc[0];
     }
 
     // restore noise to html content
