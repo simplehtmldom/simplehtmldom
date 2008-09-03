@@ -710,18 +710,18 @@ class simple_html_dom {
             case '"':
                 $node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
                 $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-                $node->attr[$name] = $this->copy_until_char_escape('"');
+                $node->attr[$name] = $this->restore_noise($this->copy_until_char_escape('"'));
                 $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
                 break;
             case '\'':
                 $node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_SINGLE;
                 $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-                $node->attr[$name] = $this->copy_until_char_escape('\'');
+                $node->attr[$name] = $this->restore_noise($this->copy_until_char_escape('\''));
                 $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
                 break;
             default:
                 $node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
-                $node->attr[$name] = $this->copy_until($this->token_attr);
+                $node->attr[$name] = $this->restore_noise($this->copy_until($this->token_attr));
         }
     }
 
