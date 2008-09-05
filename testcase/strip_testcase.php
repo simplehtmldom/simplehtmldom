@@ -73,6 +73,16 @@ assert(count($dom->find('style'))==1);
 assert(count($dom->find('script'))==3);
 
 // -----------------------------------------------------------------------------
+// php short tag test
+$str = <<<HTML
+<a href="<?=h('ok')?>">hello</a>
+<input type=submit name="btnG" value="<?php echoh('ok')?>">
+HTML;
+$dom->load($str);
+assert($dom->find('a', 0)->href==="<?=h('ok')?>");
+assert($dom->find('input', 0)->value==="<?php echoh('ok')?>");
+
+// -----------------------------------------------------------------------------
 // noise stripping test
 $str = <<<HTML
 <!--

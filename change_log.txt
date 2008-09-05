@@ -2,7 +2,7 @@
 
 [On going]
 1. New method "getAllAttributes" of "simple_html_dom_node".
-2. Fix the bug of selector in some critical condition.
+2. Fix the bug of selector in some critical conditions.
 3. Fix the bug of striping php tags.
 4. Fix the bug of remove_noise().
 5. Fix the bug of noise in attributes.
