@@ -2,11 +2,11 @@
 /*******************************************************************************
 Version: 1.01 ($Rev$)
 Website: http://sourceforge.net/projects/simplehtmldom/
-Author: S.C. Chen (me578022@gmail.com)
+Author: S.C. Chen <me578022@gmail.com>
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
 Contributions by:
     Yousuke Kumakura (Attribute filters)
-    Vadim Voituk (Negative indexes support to find method)
+    Vadim Voituk (Negative indexes supports of "find" method)
 Licensed under The MIT License
 Redistributions of files must retain the above copyright notice.
 *******************************************************************************/

@@ -1,7 +1,7 @@
 #$Rev$
 
 [On going]
-1. negative indexes support to find (and similar) methods, thanks for Vadim Voituk.
+1. Negative indexes supports of "find" method, thanks for Vadim Voituk.
 
 
 [PHP Simple HTML DOM Parser v1.00 is released]
