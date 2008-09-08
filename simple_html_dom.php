@@ -1,10 +1,12 @@
 <?php
 /*******************************************************************************
-Version: 1.0 ($Rev$)
+Version: 1.01 ($Rev$)
 Website: http://sourceforge.net/projects/simplehtmldom/
 Author: S.C. Chen (me578022@gmail.com)
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
-Contributions by: Yousuke Kumakura (Attribute filters)
+Contributions by:
+    Yousuke Kumakura (Attribute filters)
+    Vadim Voituk (Negative indexes support to find method)
 Licensed under The MIT License
 Redistributions of files must retain the above copyright notice.
 *******************************************************************************/
@@ -227,7 +229,7 @@ class simple_html_dom_node {
     }
 
     // find elements by css selector
-    function find($selector, $idx=-1) {
+    function find($selector, $idx=null) {
         $selectors = $this->parse_selector($selector);
 
         if (($count=count($selectors))===0) return array();
@@ -264,7 +266,8 @@ class simple_html_dom_node {
             $found[] = $this->dom->nodes[$k];
 
         // return nth-element or array
-        if ($idx<0) return $found;
+        if (is_null($idx)) return $found;
+		else if ($idx<0) $idx = count($found) + $idx;
         return (isset($found[$idx])) ? $found[$idx] : null;
     }
 
@@ -408,9 +411,9 @@ class simple_html_dom_node {
     function hasAttribute($name) {return $this->__isset($name);}
     function removeAttribute($name) {$this->__set($name, null);}
     function getElementById($id) {return $this->find("#$id", 0);}
-    function getElementsById($id, $idx=-1) {return $this->find("#$id", $idx);}
+    function getElementsById($id, $idx=null) {return $this->find("#$id", $idx);}
     function getElementByTagName($name) {return $this->find($name, 0);}
-    function getElementsByTagName($name, $idx=-1) {return $this->find($name, $idx);}
+    function getElementsByTagName($name, $idx=null) {return $this->find($name, $idx);}
     function parentNode() {return $this->parent();}
     function childNodes($idx=-1) {return $this->children($idx);}
     function firstChild() {return $this->first_child();}
@@ -506,7 +509,7 @@ class simple_html_dom {
     }
 
     // find dom node by css selector
-    function find($selector, $idx=-1) {
+    function find($selector, $idx=null) {
         return $this->root->find($selector, $idx);
     }
 
@@ -851,7 +854,7 @@ class simple_html_dom {
     function firstChild() {return $this->root->first_child();}
     function lastChild() {return $this->root->last_child();}
     function getElementById($id) {return $this->find("#$id", 0);}
-    function getElementsById($id, $idx=-1) {return $this->find("#$id", $idx);}
+    function getElementsById($id, $idx=null) {return $this->find("#$id", $idx);}
     function getElementByTagName($name) {return $this->find($name, 0);}
     function getElementsByTagName($name, $idx=-1) {return $this->find($name, $idx);}
     function loadFile() {$args = func_get_args();$this->load(call_user_func_array('file_get_contents', $args), true);}
