@@ -624,9 +624,14 @@ class simple_html_dom {
             return true;
         }
 
-        // text
+       // text
         if (!preg_match("/^[\w-:]+$/", $tag)) {
-            $node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
+            $node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until('<>');
+            if ($this->char==='<') {
+                $this->link_nodes($node, false);
+                return true;
+            }
+
             if ($this->char==='>') $node->_[HDOM_INFO_TEXT].='>';
             $this->link_nodes($node, false);
             $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
