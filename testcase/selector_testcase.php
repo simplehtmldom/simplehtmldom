@@ -668,6 +668,13 @@ assert($dom->find('a[onMouseover="dropdownmenu(this, event, \'messagesmenu\')"]'
 assert($dom->find("a[onMouseover=dropdownmenu(this, event, 'messagesmenu')]",0)->innertext=='foo');
 
 // -----------------------------------------------------------------------------
+//dash test
+$str = '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
+
+$dom->load($str);
+assert($dom->find('meta[http-equiv=content-type]', 0)->content==='text/html; charset=utf-8');
+
+// -----------------------------------------------------------------------------
 // tear down
 $dom->clear();
 unset($dom);
