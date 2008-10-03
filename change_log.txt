@@ -2,6 +2,9 @@
 
 [On going]
 1. Negative indexes supports of "find" method, thanks for Vadim Voituk.
+2. Fixed bug of confusing by the < symbol inside the text.
+3. Fixed bug of dash in selectors.
+4. Fixed bug of <nobr>.
 
 
 [PHP Simple HTML DOM Parser v1.00 is released]

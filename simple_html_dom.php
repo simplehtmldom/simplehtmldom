@@ -441,7 +441,7 @@ class simple_html_dom {
     protected $token_slash = " />\r\n\t";
     protected $token_attr = ' >';
     // use isset instead of in_array, performance boost about 30%...
-    protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1, 'nobr'=>1);
+    protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
     protected $block_tags = array('root'=>1, 'body'=>1, 'form'=>1, 'div'=>1, 'span'=>1, 'table'=>1);
     protected $optional_closing_tags = array(
         'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
@@ -453,6 +453,7 @@ class simple_html_dom {
         'dd'=>array('dd'=>1, 'dt'=>1),
         'dl'=>array('dd'=>1, 'dt'=>1),
         'p'=>array('p'=>1),
+        'nobr'=>array('nobr'=>1),
     );
 
     function __destruct() {

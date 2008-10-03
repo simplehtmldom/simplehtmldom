@@ -207,6 +207,22 @@ assert($dom->find('p', 1)->innertext=="2");
 assert($dom->find('p', 1)->outertext=="<p>2</p>");
 assert($dom->find('p', 2)->innertext=="3");
 assert($dom->find('p', 2)->outertext=="<p>3");
+
+// -----------------------------------------------
+$str = <<<HTML
+<nobr>1
+<nobr>2</nobr>
+<nobr>3
+HTML;
+$dom = str_get_html($str);
+assert(count($dom->find('nobr'))==3);
+assert($dom->find('nobr', 0)->innertext=="1\r\n");
+assert($dom->find('nobr', 0)->outertext=="<nobr>1\r\n");
+assert($dom->find('nobr', 1)->innertext=="2");
+assert($dom->find('nobr', 1)->outertext=="<nobr>2</nobr>");
+assert($dom->find('nobr', 2)->innertext=="3");
+assert($dom->find('nobr', 2)->outertext=="<nobr>3");
+
 // -----------------------------------------------
 $str = <<<HTML
 <dl><dt>1<dd>2<dt>3<dd>4</dl>
