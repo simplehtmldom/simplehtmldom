@@ -447,7 +447,7 @@ class simple_html_dom {
         'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
         'th'=>array('th'=>1),
         'td'=>array('td'=>1),
-        'ul'=>array('li'=>1),
+        //'ul'=>array('li'=>1),
         'li'=>array('li'=>1),
         'dt'=>array('dt'=>1, 'dd'=>1),
         'dd'=>array('dd'=>1, 'dt'=>1),
@@ -588,12 +588,16 @@ class simple_html_dom {
             if ($parent_lower!==$tag_lower) {
                 if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) {
                     $this->parent->_[HDOM_INFO_END] = 0;
+                    $org_parent = $this->parent;
+
                     while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
                         $this->parent = $this->parent->parent;
 
                     if (strtolower($this->parent->tag)!==$tag_lower) {
-                        $this->as_text_node($tag);
-                        $this->char = (--$this->pos>-1) ? $this->doc[$this->pos] : null; // back
+                        $this->parent = $org_parent; // restore origonal parent
+                        if ($this->parent->parent) $this->parent = $this->parent->parent;
+                        $this->parent->_[HDOM_INFO_END] = $this->cursor;
+                        return $this->as_text_node($tag);
                     }
                 }
                 else if (($this->parent->parent) && strtolower($this->parent->parent->tag)===$tag_lower) {

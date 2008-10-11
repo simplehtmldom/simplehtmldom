@@ -6,6 +6,8 @@
 3. Fixed bug of confusing by the < symbol inside the text.
 4. Fixed bug of dash in selectors.
 5. Fixed bug of <nobr>.
+6. Fixed bug #2155883 (Nested List Parses Incorrectly).
+7. Fixed bug #2155113 (error with unclosed html tags).
 
 
 [PHP Simple HTML DOM Parser v1.00 is released]

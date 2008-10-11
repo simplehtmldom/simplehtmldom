@@ -367,6 +367,25 @@ assert($dom==$str);
 
 // -----------------------------------------------
 $str = <<<HTML
+<html>
+    <body>
+        <table>
+            <tr>
+                foo</span>
+                <span>bar</span>
+                </span>important
+            </tr>
+        </table>
+    </bod>
+</html>
+HTML;
+$dom->load($str);
+assert(count($dom->find('table span'))===1);
+assert($dom->find('table span', 0)->innertext==='bar');
+assert($dom==$str);
+
+// -----------------------------------------------
+$str = <<<HTML
 <td>
     <div>
         <font>
