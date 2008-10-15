@@ -31,10 +31,15 @@ HTML;
 $dom->load($str);
 
 // -----------------------------------------------
-// all
+// wildcard
 assert(count($dom->find('*'))==1);
 assert(count($dom->find('div *'))==3);
 assert(count($dom->find('div img *'))==0);
+
+
+assert(count($dom->find(' * '))==1);
+assert(count($dom->find(' div  * '))==3);
+assert(count($dom->find(' div  img  *'))==0);
 
 // -----------------------------------------------
 // tag
@@ -92,6 +97,29 @@ assert($es[0]->src=='src0');
 assert($es[0]->innertext=='');
 assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
 
+// -----------------------------------------------------------------------------
+// wildcard
+$es = $dom->find('*[src]');
+assert(count($es)==3);
+
+$es = $dom->find('*[src=*]');
+assert(count($es)==3);
+
+$es = $dom->find('*[alt=*]');
+assert(count($es)==0);
+
+$es = $dom->find('*[src="src0"]');
+assert(count($es)==1);
+assert($es[0]->src=='src0');
+assert($es[0]->innertext=='');
+assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
+
+$es = $dom->find('*[src=src0]');
+assert(count($es)==1);
+assert($es[0]->src=='src0');
+assert($es[0]->innertext=='');
+assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
+
 $es = $dom->find('[src=src0]');
 assert(count($es)==1);
 assert($es[0]->src=='src0');
@@ -104,7 +132,20 @@ assert($es[0]->src=='src0');
 assert($es[0]->innertext=='');
 assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
 
-// -----------------------------------------------
+$es = $dom->find('*#id1');
+assert(count($es)==1);
+assert($es[0]->src=='src1');
+assert($es[0]->innertext=='');
+assert($es[0]->outertext=='<img class="class1" id="id1" src="src1">');
+
+$es = $dom->find('*.class0');
+assert(count($es)==1);
+assert($es[0]->src=='src0');
+assert($es[0]->innertext=='');
+assert($es[0]->outertext=='<img class="class0" id="id0" src="src0">');
+
+
+// -----------------------------------------------------------------------------
 // text
 $str = <<<HTML
 <b>text1</b><b>text2</b>
@@ -133,7 +174,7 @@ assert($es[1]->outertext=='text2');
 assert($es[1]->plaintext=='text2');
 
 
-// -----------------------------------------------
+// -----------------------------------------------------------------------------
 // xml namespace test
 $str = <<<HTML
 <bw:bizy id="date">text</bw:bizy>
@@ -143,7 +184,7 @@ $es = $dom->find('bw:bizy');
 assert(count($es)==1);
 assert($es[0]->id=='date');
 
-// -----------------------------------------------
+// -----------------------------------------------------------------------------
 // user defined tag name test
 $str = <<<HTML
 <div_test id="1">text</div_test>
@@ -657,6 +698,15 @@ $str = <<<HTML
 HTML;
 $dom->load($str);
 assert(count($dom->find('a[title], img[title]'))==2);
+
+// -----------------------------------------------------------------------------
+// elements that do NOT have the specified attribute
+$str = <<<HTML
+<img id="aa" src="src">
+<img src="src">
+HTML;
+$dom->load($str);
+assert(count($dom->find('img[!id]'))==1);
 
 // -----------------------------------------------------------------------------
 //js test

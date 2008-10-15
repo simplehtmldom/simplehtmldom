@@ -3,11 +3,12 @@
 [On going]
 1. Negative indexes supports of "find" method, thanks for Vadim Voituk.
 2. Constructor with automatically load either text or file/url, thanks for Antcs.
-3. Fixed bug of confusing by the < symbol inside the text.
-4. Fixed bug of dash in selectors.
-5. Fixed bug of <nobr>.
-6. Fixed bug #2155883 (Nested List Parses Incorrectly).
-7. Fixed bug #2155113 (error with unclosed html tags).
+3. Fully supports wildcard in selectors.
+4. Fixed bug of confusing by the < symbol inside the text.
+5. Fixed bug of dash in selectors.
+6. Fixed bug of <nobr>.
+7. Fixed bug #2155883 (Nested List Parses Incorrectly).
+8. Fixed bug #2155113 (error with unclosed html tags).
 
 
 [PHP Simple HTML DOM Parser v1.00 is released]

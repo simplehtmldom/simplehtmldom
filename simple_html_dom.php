@@ -273,7 +273,7 @@ class simple_html_dom_node {
 
     // seek for given conditions
     protected function seek($selector, &$ret) {
-        list($tag, $key, $val, $exp) = $selector;
+        list($tag, $key, $val, $exp, $no_key) = $selector;
 
         $end = (!empty($this->_[HDOM_INFO_END])) ? $this->_[HDOM_INFO_END] : 0;
         if ($end==0) {
@@ -289,18 +289,23 @@ class simple_html_dom_node {
             $node = $this->dom->nodes[$i];
             $pass = true;
 
-            if ($tag==='*') {
+            if ($tag==='*' && !$key) {
                 if (in_array($node, $this->children, true))
                     $ret[$i] = 1;
                 continue;
             }
 
             // compare tag
-            if ($tag && $tag!=$node->tag) {$pass=false;}
+            if ($tag && $tag!=$node->tag && $tag!=='*') {$pass=false;}
             // compare key
-            if ($pass && $key && !(isset($node->attr[$key]))) {$pass=false;}
+            if ($pass && $key) {
+                if ($no_key) {
+                    if (isset($node->attr[$key])) $pass=false;
+                }
+                else if (!isset($node->attr[$key])) $pass=false;
+            }
             // compare value
-            if ($pass && $key && $val) {
+            if ($pass && $key && $val  && $val!=='*') {
                 $check = $this->match($exp, $val, $node->attr[$key]);
                 // handle multiple class
                 if (!$check && strcasecmp($key, 'class')===0) {
@@ -335,15 +340,15 @@ class simple_html_dom_node {
 
     protected function parse_selector($selector_string) {
         // pattern of CSS selectors, modified from mootools
-        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[([\w-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([, ]+)/is";
+        $pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[(!?[\w-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([, ]+)/is";
         preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER);
         $selectors = array();
         $result = array();
-        
+
         foreach ($matches as $m) {
             if (trim($m[0])==='') continue;
             
-            list($tag, $key, $val, $exp) = array($m[1], null, null, '=');
+            list($tag, $key, $val, $exp, $no_key) = array($m[1], null, null, '=', false);
             if(!empty($m[2])) {$key='id'; $val=$m[2];}
             if(!empty($m[3])) {$key='class'; $val=$m[3];}
             if(!empty($m[4])) {$key=$m[4];}
@@ -352,8 +357,10 @@ class simple_html_dom_node {
 
             // convert to lowercase
             if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
+            //elements that do NOT have the specified attribute
+            if (isset($key[0]) && $key[0]==='!') {$key=substr($key, 1); $no_key=true;}
 
-            $result[] = array($tag, $key, $val, $exp);
+            $result[] = array($tag, $key, $val, $exp, $no_key);
             if (trim($m[7])===',') {
                 $selectors[] = $result;
                 $result = array();
@@ -398,7 +405,7 @@ class simple_html_dom_node {
         //no value attr: nowrap, checked selected...
         return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
     }
-    
+
     function __unset($name) {
         if (isset($this->attr[$name]))
             unset($this->attr[$name]);
