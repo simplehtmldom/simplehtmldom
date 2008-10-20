@@ -7,6 +7,7 @@ Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
 Contributions by:
     Yousuke Kumakura (Attribute filters)
     Vadim Voituk (Negative indexes supports of "find" method)
+    Antcs (Constructor with automatically load contents either text or file/url)
 Licensed under The MIT License
 Redistributions of files must retain the above copyright notice.
 *******************************************************************************/

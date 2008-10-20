@@ -2,7 +2,7 @@
 
 [On going]
 1. Negative indexes supports of "find" method, thanks for Vadim Voituk.
-2. Constructor with automatically load either text or file/url, thanks for Antcs.
+2. Constructor with automatically load contents either text or file/url, thanks for Antcs.
 3. Fully supports wildcard in selectors.
 4. Fixed bug of confusing by the < symbol inside the text.
 5. Fixed bug of dash in selectors.
