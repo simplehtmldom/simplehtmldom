@@ -1,6 +1,8 @@
 #$Rev$
 
 [On going]
+
+[PHP Simple HTML DOM Parser v1.10 is released]
 1. Negative indexes supports of "find" method, thanks for Vadim Voituk.
 2. Constructor with automatically load contents either text or file/url, thanks for Antcs.
 3. Fully supports wildcard in selectors.
