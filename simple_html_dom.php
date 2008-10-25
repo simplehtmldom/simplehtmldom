@@ -1,6 +1,6 @@
 <?php
 /*******************************************************************************
-Version: 1.01 ($Rev$)
+Version: 1.10 ($Rev$)
 Website: http://sourceforge.net/projects/simplehtmldom/
 Author: S.C. Chen <me578022@gmail.com>
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
@@ -82,7 +82,7 @@ class simple_html_dom_node {
     function __destruct() {
         $this->clear();
     }
-    
+
     function __toString() {
         return $this->outertext();
     }
@@ -455,7 +455,6 @@ class simple_html_dom {
         'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
         'th'=>array('th'=>1),
         'td'=>array('td'=>1),
-        //'ul'=>array('li'=>1),
         'li'=>array('li'=>1),
         'dt'=>array('dt'=>1, 'dd'=>1),
         'dd'=>array('dd'=>1, 'dt'=>1),
