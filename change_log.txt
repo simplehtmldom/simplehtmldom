@@ -1,6 +1,10 @@
 #$Rev$
 
 [On going]
+1. Fixed bug #2207477 (does not load some pages properly).
+2. Fixed the problem with <pre>.
+3. Fixed issue with unclosed Tags, again...
+
 
 [PHP Simple HTML DOM Parser v1.10 is released]
 1. Negative indexes supports of "find" method, thanks for Vadim Voituk.

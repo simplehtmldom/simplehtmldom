@@ -397,6 +397,46 @@ $dom->load($str);
 assert(count($dom->find('td div font b'))==1);
 assert($dom==$str);
 
+// -----------------------------------------------
+$str = <<<HTML
+<span style="okokok">
+... then slow into 287 
+    <i> 
+        <b> 
+            <font color="#0000CC">(hanover0...more volume between 202 & 53 
+            <i> 
+                <b> 
+                    <font color="#0000CC">(parsippany)</font> 
+                </b>
+            </i>
+            ...then sluggish in spots out to dover chester road 
+            <i> 
+                <b> 
+                    <font color="#0000CC">(randolph)</font> 
+                </b> 
+            </i>..then traffic light delays out to route 46 
+            <i> 
+                <b> 
+                    <font color="#0000CC">(roxbury)</font> 
+                </b> 
+            </i>/eb slow into 202 
+            <i> 
+                <b> 
+                    <font color="#0000CC">(morris plains)</font> 
+                </b> 
+            </i> & again into 287 
+            <i> 
+                <b> 
+                    <font color="#0000CC">(hanover)</font>
+                </b> 
+            </i> 
+</span>. 
+<td class="d N4 c">52</td> 
+HTML;
+$dom->load($str);
+assert(count($dom->find('span td'))==0);
+assert($dom==$str);
+
 // -----------------------------------------------------------------------------
 // BAD HTML test
 $str = <<<HTML

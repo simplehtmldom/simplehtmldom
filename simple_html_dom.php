@@ -1,6 +1,6 @@
 <?php
 /*******************************************************************************
-Version: 1.10 ($Rev$)
+Version: 1.11 ($Rev$)
 Website: http://sourceforge.net/projects/simplehtmldom/
 Author: S.C. Chen <me578022@gmail.com>
 Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
@@ -603,6 +603,19 @@ class simple_html_dom {
                     if (strtolower($this->parent->tag)!==$tag_lower) {
                         $this->parent = $org_parent; // restore origonal parent
                         if ($this->parent->parent) $this->parent = $this->parent->parent;
+                        $this->parent->_[HDOM_INFO_END] = $this->cursor;
+                        return $this->as_text_node($tag);
+                    }
+                }
+                else if (($this->parent->parent) && isset($this->block_tags[$tag_lower])) {
+                    $this->parent->_[HDOM_INFO_END] = 0;
+                    $org_parent = $this->parent;
+
+                    while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
+                        $this->parent = $this->parent->parent;
+
+                    if (strtolower($this->parent->tag)!==$tag_lower) {
+                        $this->parent = $org_parent; // restore origonal parent
                         $this->parent->_[HDOM_INFO_END] = $this->cursor;
                         return $this->as_text_node($tag);
                     }
