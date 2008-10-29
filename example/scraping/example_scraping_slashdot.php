@@ -6,13 +6,11 @@ function scraping_slashdot() {
     $html = file_get_html('http://slashdot.org/');
 
     // get article block
-    foreach($html->find('div.article') as $article) {
+    foreach($html->find('div[id^=firehose-]') as $article) {
         // get title
-        $item['title'] = trim($article->find('div.title', 0)->plaintext);
-        // get details
-        $item['details'] = trim($article->find('div.details', 0)->plaintext);
-        // get intro
-        $item['intro'] = trim($article->find('div.intro', 0)->plaintext);
+        $item['title'] = trim($article->find('a.datitle', 0)->plaintext);
+        // get body
+        $item['body'] = trim($article->find('div.body', 0)->plaintext);
 
         $ret[] = $item;
     }
@@ -31,8 +29,7 @@ $ret = scraping_slashdot();
 foreach($ret as $v) {
     echo $v['title'].'<br>';
     echo '<ul>';
-    echo '<li>'.$v['details'].'</li>';
-    echo '<li>'.$v['intro'].'</li>';
+    echo '<li>'.$v['body'].'</li>';
     echo '</ul>';
 }
 ?>

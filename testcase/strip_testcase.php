@@ -19,18 +19,6 @@ $dom->load($str);
 assert(count($dom->find('input'))==0);
 
 // -----------------------------------------------------------------------------
-// <pre> test
-$str = <<<HTML
-<div class="class0" id="id0" >
-    <pre>
-        <input type=submit name="btnG" value="go" onclick='goto("url0")'>
-    </pre>
-</div>
-HTML;
-$dom->load($str);
-assert(count($dom->find('input'))==0);
-
-// -----------------------------------------------------------------------------
 // <code> test
 $str = <<<HTML
 <div class="class0" id="id0" >
