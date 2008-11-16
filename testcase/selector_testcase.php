@@ -612,7 +612,7 @@ $str = <<<HTML
 HTML;
 $dom->load($str);
 assert(count($dom->find('div[id*=news-id-[0-9]+]'))==1);
-
+assert(count($dom->find('div[id*=/news-id-[0-9]+/i]'))==1);
 
 // -----------------------------------------------------------------------------
 // multiple class test

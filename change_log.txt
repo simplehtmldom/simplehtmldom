@@ -4,6 +4,7 @@
 1. Fixed bug #2207477 (does not load some pages properly).
 2. Fixed the problem with <pre>.
 3. Fixed issue with unclosed Tags, again...
+4. remove preg_quote on selector match function: [attribute*=value];
 
 
 [PHP Simple HTML DOM Parser v1.10 is released]
