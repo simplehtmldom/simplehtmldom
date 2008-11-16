@@ -591,7 +591,7 @@ assert(count($es)==1);
 assert($es[0]->value=='foo');
 
 // -----------------------------------------------------------------------------
-// regular expression syntax escaping
+// regular expression
 $str = <<<HTML
 <div>
 <a href="image/one.png">one</a>
@@ -602,6 +602,17 @@ HTML;
 $dom->load($str);
 assert(count($dom->find('a[href^="image/"]'))==2);
 assert(count($dom->find('a[href*="/favorites/"]'))==1);
+
+$str = <<<HTML
+<html>
+    <body>
+        <div id="news-id-123">okok</div>
+    </bod>
+</html>
+HTML;
+$dom->load($str);
+assert(count($dom->find('div[id*=news-id-[0-9]+]'))==1);
+
 
 // -----------------------------------------------------------------------------
 // multiple class test

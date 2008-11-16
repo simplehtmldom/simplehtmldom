@@ -323,20 +323,21 @@ class simple_html_dom_node {
     }
 
     protected function match($exp, $pattern, $value) {
-        $check = true;
         switch ($exp) {
             case '=':
-                $check = ($value===$pattern) ? true : false; break;
+                return ($value===$pattern);
             case '!=':
-                $check = ($value!==$pattern) ? true : false; break;
+                return ($value!==$pattern);
             case '^=':
-                $check = (preg_match("/^".preg_quote($pattern,'/')."/", $value)) ? true : false; break;
+                return preg_match("/^".preg_quote($pattern,'/')."/", $value);
             case '$=':
-                $check = (preg_match("/".preg_quote($pattern,'/')."$/", $value)) ? true : false; break;
+                return preg_match("/".preg_quote($pattern,'/')."$/", $value);
             case '*=':
-                $check = (preg_match("/".preg_quote($pattern,'/')."/i", $value)) ? true : false; break;
+                if ($pattern[0]=='/')
+                    return preg_match($pattern, $value);
+                return preg_match("/".$pattern."/i", $value);
         }
-        return $check;
+        return false;
     }
 
     protected function parse_selector($selector_string) {
