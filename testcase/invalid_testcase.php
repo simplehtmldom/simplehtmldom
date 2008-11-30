@@ -438,6 +438,43 @@ assert(count($dom->find('span td'))==0);
 assert($dom==$str);
 
 // -----------------------------------------------------------------------------
+// invalid '<'
+$str = <<<HTML
+<td><b>Description :</b> TRAFFICKING (1 gram but <5 grams) (Vicinity of School or Juvenile)</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but <5 grams) (Vicinity of School or Juvenile)');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>Description :</b> TRAFFICKING (1 gram but < 5 grams) (Vicinity of School or Juvenile)</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but < 5 grams) (Vicinity of School or Juvenile)');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>Description :</b> TRAFFICKING (1 gram but<5 grams) (Vicinity of School or Juvenile)</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but<5 grams) (Vicinity of School or Juvenile)');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>Description :</b> TRAFFICKING (1 gram but< 5 grams) (Vicinity of School or Juvenile)</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but< 5 grams) (Vicinity of School or Juvenile)');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>Description :</b> TRAFFICKING (1 gram but<<5 grams) (Vicinity of School or Juvenile)</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but<<5 grams) (Vicinity of School or Juvenile)');
+assert($dom==$str);
+
+// -----------------------------------------------------------------------------
 // BAD HTML test
 $str = <<<HTML
 <strong class="see <a href="http://www.oeb.harvard.edu/faculty/girguis/">http://www.oeb.harvard.edu/faculty/girguis/</a>">.</strong></p> 

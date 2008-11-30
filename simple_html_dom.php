@@ -76,7 +76,7 @@ class simple_html_dom_node {
 
     function __construct($dom) {
         $this->dom = $dom;
-        $dom->nodes[] = &$this;
+        $dom->nodes[] = $this;
     }
 
     function __destruct() {
@@ -446,7 +446,7 @@ class simple_html_dom {
     protected $parent;
     protected $noise = array();
     protected $token_blank = " \t\r\n";
-    protected $token_equal = ' =/><';
+    protected $token_equal = ' =/>';
     protected $token_slash = " />\r\n\t";
     protected $token_attr = ' >';
     // use isset instead of in_array, performance boost about 30%...
@@ -492,10 +492,9 @@ class simple_html_dom {
         // strip out preformatted tags
         $this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
         // strip out server side scripts
-        $this->remove_noise("'(<\?)(.*?)(\?>)'is", true);
-        
-        //echo $this->doc;
-        //die;
+        $this->remove_noise("'(<\?)(.*?)(\?>)'s", true);
+        // strip smarty scripts
+        $this->remove_noise("'(\{\w)(.*?)(\})'s", true);
 
         // parsing
         while ($this->parse());
@@ -578,6 +577,7 @@ class simple_html_dom {
             $this->root->_[HDOM_INFO_END] = $this->cursor;
             return false;
         }
+        $begin_tag_pos = $this->pos;
         $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
 
         // end tag
@@ -686,7 +686,6 @@ class simple_html_dom {
             }
             $node->parent = $this->parent;
         }
-        $this->link_nodes($node, true);
 
         $guard = 0; // prevent infinity loop
         $space = array($this->copy_skip($this->token_blank), '', '');
@@ -701,13 +700,27 @@ class simple_html_dom {
                 continue;
             }
             $guard = $this->pos;
-
+            
             // handle endless '<'
             if($this->pos>=$this->size-1 && $this->char!=='>') {
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->_[HDOM_INFO_END] = 0;
                 $node->_[HDOM_INFO_TEXT] = '<'.$tag . $space[0] . $name;
                 $node->tag = 'text';
+                $this->link_nodes($node, false);
+                return true;
+            }
+
+            // handle mismatch '<'
+            if($this->doc[$this->pos-1]=='<') {
+                $node->nodetype = HDOM_TYPE_TEXT;
+                $node->tag = 'text';
+                $node->attr = array();
+                $node->_[HDOM_INFO_END] = 0;
+                $node->_[HDOM_INFO_TEXT] = substr($this->doc, $begin_tag_pos, $this->pos-$begin_tag_pos-1);
+                $this->pos -= 2;
+                $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
+                $this->link_nodes($node, false);
                 return true;
             }
 
@@ -731,6 +744,7 @@ class simple_html_dom {
                 break;
         } while($this->char!=='>' && $this->char!=='/');
 
+        $this->link_nodes($node, true);
         $node->_[HDOM_INFO_ENDSPACE] = $space[0];
 
         // check self closing
@@ -771,9 +785,9 @@ class simple_html_dom {
     // link node's parent
     protected function link_nodes(&$node, $is_child) {
         $node->parent = $this->parent;
-        $this->parent->nodes[] = &$node;
+        $this->parent->nodes[] = $node;
         if ($is_child)
-            $this->parent->children[] = &$node;
+            $this->parent->children[] = $node;
     }
 
     // as a text node
