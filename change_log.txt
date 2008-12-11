@@ -6,6 +6,7 @@
 3. Fixed issue with unclosed Tags, again...
 4. remove preg_quote on selector match function: [attribute*=value];
 5. Fixed the bug of smarty tags.
+6. Add new method "dump".
 
 
 [PHP Simple HTML DOM Parser v1.10 is released]
