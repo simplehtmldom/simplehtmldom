@@ -439,46 +439,200 @@ assert($dom==$str);
 
 // -----------------------------------------------------------------------------
 // invalid '<'
+// -----------------------------------------------
 $str = <<<HTML
-<td><b>Description :</b> TRAFFICKING (1 gram but <5 grams) (Vicinity of School or Juvenile)</td>
+<td><b>test :</b>1 gram but <5 grams</td>
 HTML;
 $dom->load($str);
-assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but <5 grams) (Vicinity of School or Juvenile)');
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but <5 grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but <5 grams');
 assert($dom==$str);
 
 $str = <<<HTML
-<td><b>Description :</b> TRAFFICKING (1 gram but < 5 grams) (Vicinity of School or Juvenile)</td>
+<td><b>test :</b>1 gram but<5 grams</td>
 HTML;
 $dom->load($str);
-assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but < 5 grams) (Vicinity of School or Juvenile)');
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but<5 grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but<5 grams');
 assert($dom==$str);
 
 $str = <<<HTML
-<td><b>Description :</b> TRAFFICKING (1 gram but<5 grams) (Vicinity of School or Juvenile)</td>
+<td><b>test :</b>1 gram but< 5 grams</td>
 HTML;
 $dom->load($str);
-assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but<5 grams) (Vicinity of School or Juvenile)');
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but< 5 grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but< 5 grams');
 assert($dom==$str);
 
 $str = <<<HTML
-<td><b>Description :</b> TRAFFICKING (1 gram but< 5 grams) (Vicinity of School or Juvenile)</td>
+<td><b>test :</b>1 gram but < 5 grams</td>
 HTML;
 $dom->load($str);
-assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but< 5 grams) (Vicinity of School or Juvenile)');
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but < 5 grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but < 5 grams');
 assert($dom==$str);
 
 $str = <<<HTML
-<td><b>Description :</b> TRAFFICKING (1 gram but<<5 grams) (Vicinity of School or Juvenile)</td>
+<td><b>test :</b>1 gram but 5< grams</td>
 HTML;
 $dom->load($str);
-assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but<<5 grams) (Vicinity of School or Juvenile)');
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5< grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5< grams');
 assert($dom==$str);
 
 $str = <<<HTML
-<td><b>Description :</b> TRAFFICKING (1 gram but>5 grams) (Vicinity of School or Juvenile)</td>
+<td><b>test :</b>1 gram but 5 < grams</td>
 HTML;
 $dom->load($str);
-assert($dom->find('td', 0)->innertext==='<b>Description :</b> TRAFFICKING (1 gram but>5 grams) (Vicinity of School or Juvenile)');
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5 < grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5 < grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5 <grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5 <grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5 <grams');
+assert($dom==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5< grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5< grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5< grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but5< grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but5< grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but5< grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5 <grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5 <grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5 <grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5<grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5<grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5<grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5 <grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5 <grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5 <grams');
+assert($dom==$str);
+
+// -----------------------------------------------------------------------------
+// invalid '>'
+// -----------------------------------------------
+$str = <<<HTML
+<td><b>test :</b>1 gram but >5 grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but >5 grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but >5 grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but>5 grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but>5 grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but>5 grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but> 5 grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but> 5 grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but> 5 grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but > 5 grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but > 5 grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but > 5 grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5> grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5> grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5> grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5 > grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5 > grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5 > grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5 >grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5 >grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5 >grams');
+assert($dom==$str);
+// -----------------------------------------------
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5> grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5> grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5> grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but5> grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but5> grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but5> grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5 >grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5 >grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5 >grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5>grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5>grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5>grams');
+assert($dom==$str);
+
+$str = <<<HTML
+<td><b>test :</b>1 gram but 5 >grams</td>
+HTML;
+$dom->load($str);
+assert($dom->find('td', 0)->innertext==='<b>test :</b>1 gram but 5 >grams');
+assert($dom->find('td', 0)->plaintext==='test :1 gram but 5 >grams');
 assert($dom==$str);
 
 // -----------------------------------------------------------------------------

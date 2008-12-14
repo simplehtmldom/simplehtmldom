@@ -59,7 +59,7 @@ function dump_html_tree($node, $show_attr=true, $deep=0) {
     }
     echo "\n";
 
-    foreach($node->children as $c)
+    foreach($node->nodes as $c)
         dump_html_tree($c, $show_attr, $deep+1);
 }
 
@@ -705,12 +705,20 @@ class simple_html_dom {
             }
 
             if ($this->char==='>') $node->_[HDOM_INFO_TEXT].='>';
-            $this->link_nodes($node, false);
+            $this->link_nodes($node, true);
             $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
             return true;
         }
 
-       // text
+        // text
+        if ($pos=strpos($tag, '<')!==false) {
+            $tag = '<' . substr($tag, 0, -1);
+            $node->_[HDOM_INFO_TEXT] = $tag;
+            $this->link_nodes($node, false);
+            $this->char = $this->doc[--$this->pos]; // prev
+            return true;
+        }
+
         if (!preg_match("/^[\w-:]+$/", $tag)) {
             $node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until('<>');
             if ($this->char==='<') {
@@ -745,7 +753,6 @@ class simple_html_dom {
         do {
             if ($this->char!==null && $space[0]==='') break;
             $name = $this->copy_until($this->token_equal);
-
             if($guard===$this->pos) {
                 $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
                 continue;
