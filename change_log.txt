@@ -1,12 +1,14 @@
 #$Rev$
 
 [On going]
-1. Fixed bug #2207477 (does not load some pages properly).
-2. Fixed the problem with <pre>.
-3. Fixed issue with unclosed Tags, again...
+1. Supports xpath generated from Firebug.
+2. New method "dump" of "simple_html_dom_node".
+3. New attribute "xmltext" of "simple_html_dom_node".
 4. remove preg_quote on selector match function: [attribute*=value];
-5. Fixed the bug of smarty tags.
-6. Add new method "dump".
+5. Element "Comment" will treat as children.
+6. Fixed the problem with <pre>.
+7. Fixed bug #2207477 (does not load some pages properly).
+8. Fixed bug #2315853 (Error with character after < sign).
 
 
 [PHP Simple HTML DOM Parser v1.10 is released]
