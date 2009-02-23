@@ -55,7 +55,7 @@ assert($dom=='<img src="foo" id="foo"><p>foo</p><img src="foo" id="foo">');
 // attributes test2
 //$dom = str_get_dom($str);
 $dom->load($str);
-$dom->callback = null;
+$dom->remove_callback();
 $dom->find('img', 0)->id = "foo";
 assert($dom=='<img src="src0" id="foo"><p>foo</p><img src="src2">');
 

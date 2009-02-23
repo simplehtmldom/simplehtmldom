@@ -9,7 +9,7 @@ $html = new simple_html_dom;
 // -----------------------------------------------------------------------------
 // DOM tree test
 $html->load('');
-$e = $html->root;
+$e = $html->get_root();
 assert($e->first_child()==null);
 assert($e->last_child()==null);
 assert($e->next_sibling()==null);
@@ -18,7 +18,7 @@ assert($e->prev_sibling()==null);
 $str = '<div id="div1"></div>';
 $html->load($str);
 
-$e = $html->root;
+$e = $html->get_root();
 assert($e->first_child()->id=='div1');
 assert($e->last_child()->id=='div1');
 assert($e->next_sibling()==null);
@@ -101,10 +101,6 @@ assert($html->find("#div1", 0)->id=='div1');
 assert($html->find("#div1", 0)->children(0)->id=='div10');
 assert($html->find("#div1", 0)->children(1)->children(1)->id=='div111');
 assert($html->find("#div1", 0)->children(1)->children(1)->children(2)->id=='div1112');
-
-assert($html->find("#div1", 0)->children[1]->id=='div11');
-assert($html->find("#div1", 0)->children[1]->children[1]->id=='div111');
-assert($html->find("#div1", 0)->children[1]->children[1]->children[1]->id=='div1111');
 
 // -----------------------------------------------------------------------------
 // no value attr test
