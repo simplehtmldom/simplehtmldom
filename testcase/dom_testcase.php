@@ -9,7 +9,7 @@ $html = new simple_html_dom;
 // -----------------------------------------------------------------------------
 // DOM tree test
 $html->load('');
-$e = $html->get_root();
+$e = $html->root;
 assert($e->first_child()==null);
 assert($e->last_child()==null);
 assert($e->next_sibling()==null);
@@ -18,7 +18,7 @@ assert($e->prev_sibling()==null);
 $str = '<div id="div1"></div>';
 $html->load($str);
 
-$e = $html->get_root();
+$e = $html->root;
 assert($e->first_child()->id=='div1');
 assert($e->last_child()->id=='div1');
 assert($e->next_sibling()==null);

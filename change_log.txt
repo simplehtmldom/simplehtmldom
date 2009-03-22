@@ -1,6 +1,11 @@
 #$Rev$
 
 [On going]
+1. Error of "file_get_contents()" will be thrown as an exception.
+2. Add flag: LOCK_EX while calling "file_put_contents()". 
+
+
+[PHP Simple HTML DOM Parser v1.11 is released]
 1. Supports xpath generated from Firebug.
 2. New method "dump" of "simple_html_dom_node".
 3. New attribute "xmltext" of "simple_html_dom_node".
