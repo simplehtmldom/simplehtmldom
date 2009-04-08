@@ -3,6 +3,7 @@
 [On going]
 1. Error of "file_get_contents()" will be thrown as an exception.
 2. Add flag: LOCK_EX while calling "file_put_contents()". 
+3. Fix the typo of "token_blank_t".
 
 
 [PHP Simple HTML DOM Parser v1.11 is released]
