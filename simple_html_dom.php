@@ -640,7 +640,7 @@ class simple_html_dom {
         // end tag
         if ($this->char==='/') {
             $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-            $this->skip($this->token_blank_t);
+            $this->skip($this->token_blank);
             $tag = $this->copy_until_char('>');
 
             // skip attributes in end tag
