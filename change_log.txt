@@ -1,5 +1,10 @@
 #$Rev$
 
+[PHP Simple HTML Dom version 1.5 released.]
+1: Memory leak fixed!
+2: Added support for detecting the source html character set.  This is used to convert characters when plaintext is requested.
+3: Other little fixes and features, too numerous to categorize.
+
 [On going]
 1. Error of "file_get_contents()" will be thrown as an exception.
 2. Add flag: LOCK_EX while calling "file_put_contents()". 
