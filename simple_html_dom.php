@@ -962,7 +962,7 @@ class simple_html_dom {
             if (!empty($el))
             {
                 $fullvalue = $el->content;
-                if (is_object($debugObject)) {$debugObject->debugLog(2, 'meta content-type tag found' . $fullValue);}
+                if (is_object($debugObject)) {$debugObject->debugLog(2, 'meta content-type tag found' . $fullvalue);}
 
                 if (!empty($fullvalue))
                 {
