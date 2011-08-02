@@ -1339,7 +1339,7 @@ class simple_html_dom {
         $count = preg_match_all($pattern, $this->doc, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
 
         for ($i=$count-1; $i>-1; --$i) {
-            $key = '___noise___'.sprintf('% 3d', count($this->noise)+100);
+            $key = '___noise___'.sprintf('% 5d', count($this->noise)+1000);
             $idx = ($remove_tag) ? 0 : 1;
             $this->noise[$key] = $matches[$i][$idx][0];
             $this->doc = substr_replace($this->doc, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
@@ -1353,9 +1353,9 @@ class simple_html_dom {
     // restore noise to html content
     function restore_noise($text) {
         while (($pos=strpos($text, '___noise___'))!==false) {
-            $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13];
+            $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13].$text[$pos+14].$text[$pos+15];
             if (isset($this->noise[$key]))
-                $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
+                $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+16);
         }
         return $text;
     }
