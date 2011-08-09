@@ -58,18 +58,19 @@ define('HDOM_INFO_OUTER',   6);
 define('HDOM_INFO_ENDSPACE',7);
 define('DEFAULT_TARGET_CHARSET', 'UTF-8');
 define('DEFAULT_BR_TEXT', "\r\n");
+define('DEFAULT_SPAN_TEXT', " ");
 // helper functions
 // -----------------------------------------------------------------------------
 // get html dom from file
 // $maxlen is defined in the code as PHP_STREAM_COPY_ALL which is defined as -1.
-function file_get_html($url, $use_include_path = false, $context=null, $offset = -1, $maxLen=-1, $lowercase = true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT)
+function file_get_html($url, $use_include_path = false, $context=null, $offset = -1, $maxLen=-1, $lowercase = true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
 {
     // We DO force the tags to be terminated.
-    $dom = new simple_html_dom(null, $lowercase, $forceTagsClosed, $target_charset, $defaultBRText);
+    $dom = new simple_html_dom(null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
     // For sourceforge users: uncomment the next line and comment the retreive_url_contents line 2 lines down if it is not already done.
     $contents = file_get_contents($url, $use_include_path, $context, $offset);
     // Paperg - use our own mechanism for getting the contents as we want to control the timeout.
-//    $contents = retrieve_url_contents($url);
+    //$contents = retrieve_url_contents($url);
     if (empty($contents))
     {
         return false;
@@ -80,9 +81,9 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
 }
 
 // get html dom from string
-function str_get_html($str, $lowercase=true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT)
+function str_get_html($str, $lowercase=true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
 {
-    $dom = new simple_html_dom(null, $lowercase, $forceTagsClosed, $target_charset, $defaultBRText);
+    $dom = new simple_html_dom(null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
     if (empty($str))
     {
         $dom->clear();
@@ -162,48 +163,68 @@ class simple_html_dom_node {
 
 
     // Debugging function to dump a single dom node with a bunch of information about it.
-    function dump_node()
+    function dump_node($echo=true)
     {
-        echo $this->tag;
+        
+        $string = $this->tag;
         if (count($this->attr)>0)
         {
-            echo '(';
+            $string .= '(';
             foreach ($this->attr as $k=>$v)
             {
-                echo "[$k]=>\"".$this->$k.'", ';
+                $string .= "[$k]=>\"".$this->$k.'", ';
             }
-            echo ')';
+            $string .= ')';
         }
         if (count($this->attr)>0)
         {
-            echo ' $_ (';
+            $string .= ' $_ (';
             foreach ($this->_ as $k=>$v)
             {
                 if (is_array($v))
                 {
-                    echo "[$k]=>(";
+                    $string .= "[$k]=>(";
                     foreach ($v as $k2=>$v2)
                     {
-                        echo "[$k2]=>\"".$v2.'", ';
+                        $string .= "[$k2]=>\"".$v2.'", ';
                     }
-                    echo ")";
+                    $string .= ")";
                 } else {
-                    echo "[$k]=>\"".$v.'", ';
+                    $string .= "[$k]=>\"".$v.'", ';
                 }
             }
-            echo ")";
+            $string .= ")";
         }
 
         if (isset($this->text))
         {
-            echo " text: (" . $this->text . ")";
+            $string .= " text: (" . $this->text . ")";
         }
 
-        echo " children: " . count($this->children);
-        echo " nodes: " . count($this->nodes);
-        echo " tag_start: " . $this->tag_start;
-        echo "\n";
+        $string .= " HDOM_INNER_INFO: '";
+        if (isset($node->_[HDOM_INFO_INNER]))
+        {
+            $string .= $node->_[HDOM_INFO_INNER] . "'";
+        }
+        else
+        {
+            $string .= ' NULL ';
+        }
 
+        $string .= " children: " . count($this->children);
+        $string .= " nodes: " . count($this->nodes);
+        $string .= " tag_start: " . $this->tag_start;
+        $string .= "\n";
+
+        if ($echo)
+        {
+            echo $string;
+            return;
+        }
+        else
+        {
+            return $string;
+        }
     }
 
     // returns the parent of node
@@ -381,6 +402,14 @@ class simple_html_dom_node {
             {
                 $ret .= $this->convert_text($n->text());
             }
+
+            // If this node is a span... add a space at the end of it so multiple spans don't run into each other.  This is plaintext after all.
+            if ($this->tag == "span")
+            {
+                $ret .= $this->dom->default_span_text;
+            }
+
+
         }
         return $ret;
     }
@@ -775,6 +804,8 @@ class simple_html_dom {
     protected $_charset = '';
     protected $_target_charset = '';
     protected $default_br_text = "";
+    // Note that this is referenced by a child node, and so it needs to be public for that node to see this information.
+    public $default_span_text = "";
 
     // use isset instead of in_array, performance boost about 30%...
     protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
@@ -794,12 +825,12 @@ class simple_html_dom {
         'b'=>array('b'=>1),
     );
 
-    function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT) {
+    function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT) {
         if ($str) {
             if (preg_match("/^http:\/\//i",$str) || is_file($str))
                 $this->load_file($str);
             else
-                $this->load($str, $lowercase, $stripRN, $defaultBRText);
+                $this->load($str, $lowercase, $stripRN, $defaultBRText, $defaultSpanText);
         }
         // Forcing tags to be closed implies that we don't trust the html, but it can lead to parsing errors if we SHOULD trust the html.
         if (!$forceTagsClosed) {
@@ -813,11 +844,11 @@ class simple_html_dom {
     }
 
     // load html from string
-    function load($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT) {
+    function load($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT) {
         global $debugObject;
 
         // prepare
-        $this->prepare($str, $lowercase, $stripRN, $defaultBRText);
+        $this->prepare($str, $lowercase, $stripRN, $defaultBRText, $defaultSpanText);
         // strip out comments
         $this->remove_noise("'<!--(.*?)-->'is");
         // strip out cdata
@@ -848,7 +879,6 @@ class simple_html_dom {
     function load_file() {
         $args = func_get_args();
         $this->load(call_user_func_array('file_get_contents', $args), true);
-        // Per the simple_html_dom repositiry this is a planned upgrade to the codebase.
         // Throw an error if we can't properly load the dom.
         if (($error=error_get_last())!==null) {
             $this->clear();
@@ -895,7 +925,7 @@ class simple_html_dom {
     }
 
     // prepare HTML data and init everything
-    protected function prepare($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT) {
+    protected function prepare($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT) {
         $this->clear();
 
         // set the length of content before we do anything to it.
@@ -914,6 +944,7 @@ class simple_html_dom {
         $this->nodes = array();
         $this->lowercase = $lowercase;
         $this->default_br_text = $defaultBRText;
+        $this->default_span_text = $defaultSpanText;
         $this->root = new simple_html_dom_node($this);
         $this->root->tag = 'root';
         $this->root->_[HDOM_INFO_BEGIN] = -1;
@@ -1208,6 +1239,7 @@ class simple_html_dom {
 
         // If it's a BR tag, we need to set it's text to the default text.
         // This way when we see it in plaintext, we can generate formatting that the user wants.
+        // since a br tag never has sub nodes, this works well.
         if ($node->tag == "br") {
             $node->_[HDOM_INFO_INNER] = $this->default_br_text;
         }
