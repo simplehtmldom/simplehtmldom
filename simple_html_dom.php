@@ -24,6 +24,8 @@
  *  NOTE:  If the user's system has a routine called get_last_retrieve_url_contents_content_type availalbe, we will assume it's returning the content-type header from the
  *  last transfer or curl_exec, and we will parse that and use it in preference to any other method of charset detection.
  *
+ * Found infinite loop in teh case of broken html in restore_noise.  Rewrote to protect from that.
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
@@ -283,20 +285,14 @@ class simple_html_dom_node {
     function find_ancestor_tag($tag)
     {
         global $debugObject;
-        if (is_object($debugObject))
-        {
-            $debugObject->debugLogEntry(1);
-        }
+        if (is_object($debugObject)) { $debugObject->debugLogEntry(1); }
 
         // Start by including ourselves in the comparison.
         $returnDom = $this;
 
         while (!is_null($returnDom))
         {
-            if (is_object($debugObject))
-            {
-                $debugObject->debugLog(2, "Current tag is: " . $returnDom->tag);
-            }
+            if (is_object($debugObject)) { $debugObject->debugLog(2, "Current tag is: " . $returnDom->tag); }
 
             if ($returnDom->tag == $tag)
             {
@@ -513,10 +509,7 @@ class simple_html_dom_node {
     protected function seek($selector, &$ret, $lowercase=false)
     {
         global $debugObject;
-        if (is_object($debugObject))
-        {
-            $debugObject->debugLogEntry(1);
-        }
+        if (is_object($debugObject)) { $debugObject->debugLogEntry(1); }
 
         list($tag, $key, $val, $exp, $no_key) = $selector;
 
@@ -785,11 +778,14 @@ class simple_html_dom_node {
  *
  * @package PlaceLocalInclude
  */
-class simple_html_dom {
+class simple_html_dom
+{
     public $root = null;
     public $nodes = array();
     public $callback = null;
     public $lowercase = false;
+    // Used to keep track of how large the text was when we started.
+    public $original_size;
     public $size;
     protected $pos;
     protected $doc;
@@ -825,12 +821,18 @@ class simple_html_dom {
         'b'=>array('b'=>1),
     );
 
-    function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT) {
-        if ($str) {
+    function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
+    {
+        if ($str)
+        {
             if (preg_match("/^http:\/\//i",$str) || is_file($str))
+            {
                 $this->load_file($str);
+            }
             else
+            {
                 $this->load($str, $lowercase, $stripRN, $defaultBRText, $defaultSpanText);
+            }
         }
         // Forcing tags to be closed implies that we don't trust the html, but it can lead to parsing errors if we SHOULD trust the html.
         if (!$forceTagsClosed) {
@@ -839,12 +841,14 @@ class simple_html_dom {
         $this->_target_charset = $target_charset;
     }
 
-    function __destruct() {
+    function __destruct()
+    {
         $this->clear();
     }
 
     // load html from string
-    function load($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT) {
+    function load($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
+    {
         global $debugObject;
 
         // prepare
@@ -876,7 +880,8 @@ class simple_html_dom {
     }
 
     // load html from file
-    function load_file() {
+    function load_file()
+    {
         $args = func_get_args();
         $this->load(call_user_func_array('file_get_contents', $args), true);
         // Throw an error if we can't properly load the dom.
@@ -887,17 +892,20 @@ class simple_html_dom {
     }
 
     // set callback function
-    function set_callback($function_name) {
+    function set_callback($function_name)
+    {
         $this->callback = $function_name;
     }
 
     // remove callback function
-    function remove_callback() {
+    function remove_callback()
+    {
         $this->callback = null;
     }
 
     // save dom as string
-    function save($filepath='') {
+    function save($filepath='')
+    {
         $ret = $this->root->innertext();
         if ($filepath!=='') file_put_contents($filepath, $ret, LOCK_EX);
         return $ret;
@@ -905,12 +913,14 @@ class simple_html_dom {
 
     // find dom node by css selector
     // Paperg - allow us to specify that we want case insensitive testing of the value of the selector.
-    function find($selector, $idx=null, $lowercase=false) {
+    function find($selector, $idx=null, $lowercase=false)
+    {
         return $this->root->find($selector, $idx, $lowercase);
     }
 
     // clean up memory due to php5 circular references memory leak...
-    function clear() {
+    function clear()
+    {
         foreach ($this->nodes as $n) {$n->clear(); $n = null;}
         // This add next line is documented in the sourceforge repository. 2977248 as a fix for ongoing memory leaks that occur even with the use of clear.
         if (isset($this->children)) foreach ($this->children as $n) {$n->clear(); $n = null;}
@@ -920,21 +930,28 @@ class simple_html_dom {
         unset($this->noise);
     }
 
-    function dump($show_attr=true) {
+    function dump($show_attr=true)
+    {
         $this->root->dump($show_attr);
     }
 
     // prepare HTML data and init everything
-    protected function prepare($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT) {
+    protected function prepare($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
+    {
         $this->clear();
 
         // set the length of content before we do anything to it.
         $this->size = strlen($str);
+        // Save the original size of the html that we got in.  It might be useful to someone.
+        $this->original_size = $this->size;
 
         //before we save the string as the doc...  strip out the \r \n's if we are told to.
         if ($stripRN) {
             $str = str_replace("\r", " ", $str);
             $str = str_replace("\n", " ", $str);
+
+            // set the length of content since we have changed it.
+            $this->size = strlen($str);
         }
 
         $this->doc = $str;
@@ -954,7 +971,8 @@ class simple_html_dom {
     }
 
     // parse html content
-    protected function parse() {
+    protected function parse()
+    {
         if (($s = $this->copy_until_char('<'))==='')
             return $this->read_tag();
 
@@ -1040,7 +1058,8 @@ class simple_html_dom {
     }
 
     // read tag info
-    protected function read_tag() {
+    protected function read_tag()
+    {
         if ($this->char!=='<') {
             $this->root->_[HDOM_INFO_END] = $this->cursor;
             return false;
@@ -1248,7 +1267,8 @@ class simple_html_dom {
     }
 
     // parse attributes
-    protected function parse_attr($node, $name, &$space) {
+    protected function parse_attr($node, $name, &$space)
+    {
         // Per sourceforge: http://sourceforge.net/tracker/?func=detail&aid=3061408&group_id=218559&atid=1044037
         // If the attribute is already defined inside a tag, only pay atetntion to the first one as opposed to the last one.
         if (isset($node->attr[$name]))
@@ -1284,7 +1304,8 @@ class simple_html_dom {
     }
 
     // link node's parent
-    protected function link_nodes(&$node, $is_child) {
+    protected function link_nodes(&$node, $is_child)
+    {
         $node->parent = $this->parent;
         $this->parent->nodes[] = $node;
         if ($is_child)
@@ -1292,7 +1313,8 @@ class simple_html_dom {
     }
 
     // as a text node
-    protected function as_text_node($tag) {
+    protected function as_text_node($tag)
+    {
         $node = new simple_html_dom_node($this);
         ++$this->cursor;
         $node->_[HDOM_INFO_TEXT] = '</' . $tag . '>';
@@ -1301,12 +1323,14 @@ class simple_html_dom {
         return true;
     }
 
-    protected function skip($chars) {
+    protected function skip($chars)
+    {
         $this->pos += strspn($this->doc, $chars, $this->pos);
         $this->char = ($this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
     }
 
-    protected function copy_skip($chars) {
+    protected function copy_skip($chars)
+    {
         $pos = $this->pos;
         $len = strspn($this->doc, $chars, $pos);
         $this->pos += $len;
@@ -1315,7 +1339,8 @@ class simple_html_dom {
         return substr($this->doc, $pos, $len);
     }
 
-    protected function copy_until($chars) {
+    protected function copy_until($chars)
+    {
         $pos = $this->pos;
         $len = strcspn($this->doc, $chars, $pos);
         $this->pos += $len;
@@ -1323,7 +1348,8 @@ class simple_html_dom {
         return substr($this->doc, $pos, $len);
     }
 
-    protected function copy_until_char($char) {
+    protected function copy_until_char($char)
+    {
         if ($this->char===null) return '';
 
         if (($pos = strpos($this->doc, $char, $this->pos))===false) {
@@ -1340,12 +1366,15 @@ class simple_html_dom {
         return substr($this->doc, $pos_old, $pos-$pos_old);
     }
 
-    protected function copy_until_char_escape($char) {
+    protected function copy_until_char_escape($char)
+    {
         if ($this->char===null) return '';
 
         $start = $this->pos;
-        while (1) {
-            if (($pos = strpos($this->doc, $char, $start))===false) {
+        while (1)
+        {
+            if (($pos = strpos($this->doc, $char, $start))===false)
+            {
                 $ret = substr($this->doc, $this->pos, $this->size-$this->pos);
                 $this->char = null;
                 $this->pos = $this->size;
@@ -1367,11 +1396,18 @@ class simple_html_dom {
     }
 
     // remove noise from html content
-    protected function remove_noise($pattern, $remove_tag=false) {
+    // save the noise in the $this->noise array.
+    protected function remove_noise($pattern, $remove_tag=false)
+    {
+        global $debugObject;
+        if (is_object($debugObject)) { $debugObject->debugLogEntry(1); }
+
         $count = preg_match_all($pattern, $this->doc, $matches, PREG_SET_ORDER|PREG_OFFSET_CAPTURE);
 
-        for ($i=$count-1; $i>-1; --$i) {
+        for ($i=$count-1; $i>-1; --$i)
+        {
             $key = '___noise___'.sprintf('% 5d', count($this->noise)+1000);
+            if (is_object($debugObject)) { $debugObject->debugLog(2, 'key is: ' . $key); }
             $idx = ($remove_tag) ? 0 : 1;
             $this->noise[$key] = $matches[$i][$idx][0];
             $this->doc = substr_replace($this->doc, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
@@ -1379,25 +1415,54 @@ class simple_html_dom {
 
         // reset the length of content
         $this->size = strlen($this->doc);
-        if ($this->size>0) $this->char = $this->doc[0];
+        if ($this->size>0)
+        {
+            $this->char = $this->doc[0];
+        }
     }
 
     // restore noise to html content
-    function restore_noise($text) {
-        while (($pos=strpos($text, '___noise___'))!==false) {
-            $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13].$text[$pos+14].$text[$pos+15];
-            if (isset($this->noise[$key]))
-                $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+16);
+    function restore_noise($text)
+    {
+        global $debugObject;
+        if (is_object($debugObject)) { $debugObject->debugLogEntry(1); }
+
+        while (($pos=strpos($text, '___noise___'))!==false)
+        {
+            // Sometimes there is a broken piece of markup, and we don't GET the pos+11 etc... token which indicates a problem outside of us...
+            if (strlen($text) > $pos+15)
+            {
+                $key = '___noise___'.$text[$pos+11].$text[$pos+12].$text[$pos+13].$text[$pos+14].$text[$pos+15];
+                if (is_object($debugObject)) { $debugObject->debugLog(2, 'located key of: ' . $key); }
+
+                if (isset($this->noise[$key]))
+                {
+                    $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+16);
+                }
+                else
+                {
+                    // do this to prevent an infinite loop.
+                    $text = substr($text, 0, $pos).'UNDEFINED NOISE FOR KEY: '.$key . substr($text, $pos+16);
+                }
+            }
+            else
+            {
+                // There is no valid key being given back to us... We must get rid of the ___noise___ or we will have a problem.
+                $text = substr($text, 0, $pos).'NO NUMERIC NOISE KEY' . substr($text, $pos+11);
+            }
         }
         return $text;
     }
 
-    function __toString() {
+    function __toString()
+    {
         return $this->root->innertext();
     }
 
-    function __get($name) {
-        switch ($name) {
+    function __get($name)
+    {
+        switch ($name)
+        {
             case 'outertext':
                 return $this->root->innertext();
             case 'innertext':
