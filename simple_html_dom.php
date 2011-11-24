@@ -711,13 +711,15 @@ class simple_html_dom_node {
         return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
     }
 
-    function __unset($name) {
+    function __unset($name)
+    {
         if (isset($this->attr[$name]))
             unset($this->attr[$name]);
     }
 
     // PaperG - Function to convert the text from one character set to another if the two sets are not the same.
-    function convert_text($text) {
+    function convert_text($text)
+    {
         global $debugObject;
         if (is_object($debugObject)) {$debugObject->debugLogEntry(1);}
 
@@ -725,7 +727,8 @@ class simple_html_dom_node {
 
         $sourceCharset = "";
         $targetCharset = "";
-        if ($this->dom) {
+        if ($this->dom)
+        {
             $sourceCharset = strtoupper($this->dom->_charset);
             $targetCharset = strtoupper($this->dom->_target_charset);
         }
@@ -741,6 +744,19 @@ class simple_html_dom_node {
             else
             {
                 $converted_text = iconv($sourceCharset, $targetCharset, $text);
+            }
+        }
+
+        // Lets make sure that we don't have that silly BOM issue with any of the utf-8 text we output.
+        if ($targetCharset == 'UTF-8')
+        {
+            if (substr($converted_text, 0, 3) == "\xef\xbb\xbf")
+            {
+                $converted_text = substr($converted_text, 3);
+            }
+            if (substr($converted_text, -3) == "\xef\xbb\xbf")
+            {
+                $converted_text = substr($converted_text, 0, -3);
             }
         }
 
