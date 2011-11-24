@@ -797,10 +797,10 @@ class simple_html_dom
     protected $token_equal = ' =/>';
     protected $token_slash = " />\r\n\t";
     protected $token_attr = ' >';
-    protected $_charset = '';
-    protected $_target_charset = '';
-    protected $default_br_text = "";
     // Note that this is referenced by a child node, and so it needs to be public for that node to see this information.
+    public $_charset = '';
+    public $_target_charset = '';
+    protected $default_br_text = "";
     public $default_span_text = "";
 
     // use isset instead of in_array, performance boost about 30%...
