@@ -61,6 +61,7 @@ define('HDOM_INFO_ENDSPACE',7);
 define('DEFAULT_TARGET_CHARSET', 'UTF-8');
 define('DEFAULT_BR_TEXT', "\r\n");
 define('DEFAULT_SPAN_TEXT', " ");
+define('MAX_FILE_SIZE', 500000);
 // helper functions
 // -----------------------------------------------------------------------------
 // get html dom from file
@@ -73,7 +74,7 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
     $contents = file_get_contents($url, $use_include_path, $context, $offset);
     // Paperg - use our own mechanism for getting the contents as we want to control the timeout.
     //$contents = retrieve_url_contents($url);
-    if (empty($contents))
+    if (empty($contents) || strlen($contents) > MAX_FILE_SIZE)
     {
         return false;
     }
@@ -86,7 +87,7 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
 function str_get_html($str, $lowercase=true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
 {
     $dom = new simple_html_dom(null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
-    if (empty($str))
+    if (empty($str) || strlen($str) > MAX_FILE_SIZE)
     {
         $dom->clear();
         return false;
@@ -101,6 +102,7 @@ function dump_html_tree($node, $show_attr=true, $deep=0)
     $node->dump($node);
 }
 
+
 /**
  * simple html dom node
  * PaperG - added ability for "find" routine to lowercase the value of the selector.
@@ -108,13 +110,15 @@ function dump_html_tree($node, $show_attr=true, $deep=0)
  *
  * @package PlaceLocalInclude
  */
-class simple_html_dom_node {
+class simple_html_dom_node
+{
     public $nodetype = HDOM_TYPE_TEXT;
     public $tag = 'text';
     public $attr = array();
     public $children = array();
     public $nodes = array();
     public $parent = null;
+    // The "info" array - see HDOM_INFO_... for what each element contains.
     public $_ = array();
     public $tag_start = 0;
     private $dom = null;
@@ -159,8 +163,13 @@ class simple_html_dom_node {
         }
         echo "\n";
 
-        foreach ($this->nodes as $c)
-            $c->dump($show_attr, $deep+1);
+        if ($this->nodes)
+        {
+            foreach ($this->nodes as $c)
+            {
+                $c->dump($show_attr, $deep+1);
+            }
+        }
     }
 
 
@@ -178,7 +187,7 @@ class simple_html_dom_node {
             }
             $string .= ')';
         }
-        if (count($this->attr)>0)
+        if (count($this->_)>0)
         {
             $string .= ' $_ (';
             foreach ($this->_ as $k=>$v)
@@ -238,7 +247,10 @@ class simple_html_dom_node {
     // returns children of node
     function children($idx=-1)
     {
-        if ($idx===-1) return $this->children;
+        if ($idx===-1)
+        {
+            return $this->children;
+        }
         if (isset($this->children[$idx])) return $this->children[$idx];
         return null;
     }
@@ -246,26 +258,41 @@ class simple_html_dom_node {
     // returns the first child of node
     function first_child()
     {
-        if (count($this->children)>0) return $this->children[0];
+        if (count($this->children)>0)
+        {
+            return $this->children[0];
+        }
         return null;
     }
 
     // returns the last child of node
     function last_child()
     {
-        if (($count=count($this->children))>0) return $this->children[$count-1];
+        if (($count=count($this->children))>0)
+        {
+            return $this->children[$count-1];
+        }
         return null;
     }
 
     // returns the next sibling of node
     function next_sibling()
     {
-        if ($this->parent===null) return null;
+        if ($this->parent===null)
+        {
+            return null;
+        }
+
         $idx = 0;
         $count = count($this->parent->children);
         while ($idx<$count && $this!==$this->parent->children[$idx])
+        {
             ++$idx;
-        if (++$idx>=$count) return null;
+        }
+        if (++$idx>=$count)
+        {
+            return null;
+        }
         return $this->parent->children[$idx];
     }
 
@@ -711,8 +738,7 @@ class simple_html_dom_node {
         return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
     }
 
-    function __unset($name)
-    {
+    function __unset($name) {
         if (isset($this->attr[$name]))
             unset($this->attr[$name]);
     }
@@ -727,6 +753,7 @@ class simple_html_dom_node {
 
         $sourceCharset = "";
         $targetCharset = "";
+
         if ($this->dom)
         {
             $sourceCharset = strtoupper($this->dom->_charset);
@@ -763,10 +790,48 @@ class simple_html_dom_node {
         return $converted_text;
     }
 
+    /**
+    * Returns true if $string is valid UTF-8 and false otherwise.
+    *
+    * @param mixed $str String to be tested
+    * @return boolean
+    */
+    static function is_utf8($str) 
+    {
+        $c=0; $b=0;
+        $bits=0;
+        $len=strlen($str);
+        for($i=0; $i<$len; $i++)
+        {
+            $c=ord($str[$i]);
+            if($c > 128)
+            {
+                if(($c >= 254)) return false;
+                elseif($c >= 252) $bits=6;
+                elseif($c >= 248) $bits=5;
+                elseif($c >= 240) $bits=4;
+                elseif($c >= 224) $bits=3;
+                elseif($c >= 192) $bits=2;
+                else return false;
+                if(($i+$bits) > $len) return false;
+                while($bits > 1)
+                {
+                    $i++;
+                    $b=ord($str[$i]);
+                    if($b < 128 || $b > 191) return false;
+                    $bits--;
+                }
+            }
+        }
+        return true;
+    }
+    /*
     function is_utf8($string)
     {
+        //this is buggy
         return (utf8_encode(utf8_decode($string)) == $string);
     }
+    */
 
     // camel naming conventions
     function getAllAttributes() {return $this->attr;}
@@ -990,7 +1055,9 @@ class simple_html_dom
     protected function parse()
     {
         if (($s = $this->copy_until_char('<'))==='')
+        {
             return $this->read_tag();
+        }
 
         // text
         $node = new simple_html_dom_node($this);
@@ -1076,7 +1143,8 @@ class simple_html_dom
     // read tag info
     protected function read_tag()
     {
-        if ($this->char!=='<') {
+        if ($this->char!=='<')
+        {
             $this->root->_[HDOM_INFO_END] = $this->cursor;
             return false;
         }
@@ -1084,9 +1152,10 @@ class simple_html_dom
         $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
 
         // end tag
-        if ($this->char==='/') {
+        if ($this->char==='/')
+        {
             $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-            // This represetns the change in the simple_html_dom trunk from revision 180 to 181.
+            // This represents the change in the simple_html_dom trunk from revision 180 to 181.
             // $this->skip($this->token_blank_t);
             $this->skip($this->token_blank);
             $tag = $this->copy_until_char('>');
@@ -1098,8 +1167,10 @@ class simple_html_dom
             $parent_lower = strtolower($this->parent->tag);
             $tag_lower = strtolower($tag);
 
-            if ($parent_lower!==$tag_lower) {
-                if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) {
+            if ($parent_lower!==$tag_lower)
+            {
+                if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower]))
+                {
                     $this->parent->_[HDOM_INFO_END] = 0;
                     $org_parent = $this->parent;
 
@@ -1113,20 +1184,23 @@ class simple_html_dom
                         return $this->as_text_node($tag);
                     }
                 }
-                else if (($this->parent->parent) && isset($this->block_tags[$tag_lower])) {
+                else if (($this->parent->parent) && isset($this->block_tags[$tag_lower]))
+                {
                     $this->parent->_[HDOM_INFO_END] = 0;
                     $org_parent = $this->parent;
 
                     while (($this->parent->parent) && strtolower($this->parent->tag)!==$tag_lower)
                         $this->parent = $this->parent->parent;
 
-                    if (strtolower($this->parent->tag)!==$tag_lower) {
+                    if (strtolower($this->parent->tag)!==$tag_lower)
+                    {
                         $this->parent = $org_parent; // restore origonal parent
                         $this->parent->_[HDOM_INFO_END] = $this->cursor;
                         return $this->as_text_node($tag);
                     }
                 }
-                else if (($this->parent->parent) && strtolower($this->parent->parent->tag)===$tag_lower) {
+                else if (($this->parent->parent) && strtolower($this->parent->parent->tag)===$tag_lower)
+                {
                     $this->parent->_[HDOM_INFO_END] = 0;
                     $this->parent = $this->parent->parent;
                 }
@@ -1192,8 +1266,10 @@ class simple_html_dom
         $node->tag = ($this->lowercase) ? $tag_lower : $tag;
 
         // handle optional closing tags
-        if (isset($this->optional_closing_tags[$tag_lower]) ) {
-            while (isset($this->optional_closing_tags[$tag_lower][strtolower($this->parent->tag)])) {
+        if (isset($this->optional_closing_tags[$tag_lower]) )
+        {
+            while (isset($this->optional_closing_tags[$tag_lower][strtolower($this->parent->tag)]))
+            {
                 $this->parent->_[HDOM_INFO_END] = 0;
                 $this->parent = $this->parent->parent;
             }
@@ -1206,9 +1282,13 @@ class simple_html_dom
         // attributes
         do
         {
-            if ($this->char!==null && $space[0]==='') break;
+            if ($this->char!==null && $space[0]==='')
+            {
+                break;
+            }
             $name = $this->copy_until($this->token_equal);
-            if ($guard===$this->pos) {
+            if ($guard===$this->pos)
+            {
                 $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
                 continue;
             }
@@ -1262,11 +1342,13 @@ class simple_html_dom
         $node->_[HDOM_INFO_ENDSPACE] = $space[0];
 
         // check self closing
-        if ($this->copy_until_char_escape('>')==='/') {
+        if ($this->copy_until_char_escape('>')==='/')
+        {
             $node->_[HDOM_INFO_ENDSPACE] .= '/';
             $node->_[HDOM_INFO_END] = 0;
         }
-        else {
+        else
+        {
             // reset parent
             if (!isset($this->self_closing_tags[strtolower($node->tag)])) $this->parent = $node;
         }
@@ -1275,7 +1357,8 @@ class simple_html_dom
         // If it's a BR tag, we need to set it's text to the default text.
         // This way when we see it in plaintext, we can generate formatting that the user wants.
         // since a br tag never has sub nodes, this works well.
-        if ($node->tag == "br") {
+        if ($node->tag == "br")
+        {
             $node->_[HDOM_INFO_INNER] = $this->default_br_text;
         }
 
@@ -1325,7 +1408,9 @@ class simple_html_dom
         $node->parent = $this->parent;
         $this->parent->nodes[] = $node;
         if ($is_child)
+        {
             $this->parent->children[] = $node;
+        }
     }
 
     // as a text node
