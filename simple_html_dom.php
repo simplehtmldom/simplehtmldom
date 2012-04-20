@@ -24,7 +24,8 @@
  *  NOTE:  If the user's system has a routine called get_last_retrieve_url_contents_content_type availalbe, we will assume it's returning the content-type header from the
  *  last transfer or curl_exec, and we will parse that and use it in preference to any other method of charset detection.
  *
- * Found infinite loop in teh case of broken html in restore_noise.  Rewrote to protect from that.
+ * Found infinite loop in the case of broken html in restore_noise.  Rewrote to protect from that.
+ * PaperG (John Schlick) Added get_display_size for "IMG" tags.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -61,7 +62,7 @@ define('HDOM_INFO_ENDSPACE',7);
 define('DEFAULT_TARGET_CHARSET', 'UTF-8');
 define('DEFAULT_BR_TEXT', "\r\n");
 define('DEFAULT_SPAN_TEXT', " ");
-define('MAX_FILE_SIZE', 500000);
+define('MAX_FILE_SIZE', 600000);
 // helper functions
 // -----------------------------------------------------------------------------
 // get html dom from file
@@ -832,6 +833,94 @@ class simple_html_dom_node
         return (utf8_encode(utf8_decode($string)) == $string);
     }
     */
+
+    /**
+     * Function to try a few tricks to determine the displayed size of an img on the page.
+     * NOTE: This will ONLY work on an IMG tag. Returns FALSE on all other tag types.
+     *
+     * @author John Schlick
+     * @version April 19 2012
+     * @return array an array containing the 'height' and 'width' of the image on the page or -1 if we can't figure it out.
+     */
+    function get_display_size()
+    {
+        global $debugObject;
+
+        $width = -1;
+        $height = -1;
+
+        if ($this->tag !== 'img')
+        {
+            return false;
+        }
+
+        // See if there is aheight or width attribute in the tag itself.
+        if (isset($this->attr['width']))
+        {
+            $width = $this->attr['width'];
+        }
+
+        if (isset($this->attr['height']))
+        {
+            $height = $this->attr['height'];
+        }
+
+        // Now look for an inline style.
+        if (isset($this->attr['style']))
+        {
+            // Thanks to user gnarf from stackoverflow for this regular expression.
+            $attributes = array();
+            preg_match_all("/([\w-]+)\s*:\s*([^;]+)\s*;?/", $this->attr['style'], $matches, PREG_SET_ORDER);
+            foreach ($matches as $match) {
+              $attributes[$match[1]] = $match[2];
+            }
+
+            // If there is a width in the style attributes:
+            if (isset($attributes['width']) && $width == -1)
+            {
+                // check that the last two characters are px (pixels)
+                if (strtolower(substr($attributes['width'], -2)) == 'px')
+                {
+                    $proposed_width = substr($attributes['width'], 0, -2);
+                    // Now make sure that it's an integer and not something stupid.
+                    if (filter_var($proposed_width, FILTER_VALIDATE_INT))
+                    {
+                        $width = $proposed_width;
+                    }
+                }
+            }
+
+            // If there is a width in the style attributes:
+            if (isset($attributes['height']) && $height == -1)
+            {
+                // check that the last two characters are px (pixels)
+                if (strtolower(substr($attributes['height'], -2)) == 'px')
+                {
+                    $proposed_height = substr($attributes['height'], 0, -2);
+                    // Now make sure that it's an integer and not something stupid.
+                    if (filter_var($proposed_height, FILTER_VALIDATE_INT))
+                    {
+                        $height = $proposed_height;
+                    }
+                }
+            }
+
+        }
+
+        // Future enhancement:
+        // Look in the tag to see if there is a class or id specified that has a height or width attribute to it.
+
+        // Far future enhancement
+        // Look at all the parent tags of this image to see if they specify a class or id that has an img selector that specifies a height or width
+        // Note that in this case, the class or id will have the img subselector for it to apply to the image.
+
+        // ridiculously far future development
+        // If the class or id is specified in a SEPARATE css file thats not on the page, go get it and do what we were just doing for the ones on the page.
+
+        $result = array('height' => $height,
+                        'width' => $width);
+        return $result;
+    }
 
     // camel naming conventions
     function getAllAttributes() {return $this->attr;}
