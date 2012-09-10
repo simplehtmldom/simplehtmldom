@@ -177,7 +177,7 @@ class simple_html_dom_node
     // Debugging function to dump a single dom node with a bunch of information about it.
     function dump_node($echo=true)
     {
-        
+
         $string = $this->tag;
         if (count($this->attr)>0)
         {
@@ -813,7 +813,7 @@ class simple_html_dom_node
     * @param mixed $str String to be tested
     * @return boolean
     */
-    static function is_utf8($str) 
+    static function is_utf8($str)
     {
         $c=0; $b=0;
         $bits=0;
@@ -1009,6 +1009,7 @@ class simple_html_dom
         'p'=>array('p'=>1),
         'nobr'=>array('nobr'=>1),
         'b'=>array('b'=>1),
+		'option'=>array('option'=>1),
     );
 
     function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
@@ -1181,8 +1182,8 @@ class simple_html_dom
     }
 
     // PAPERG - dkchou - added this to try to identify the character set of the page we have just parsed so we know better how to spit it out later.
-    // NOTE:  IF you provide a routine called get_last_retrieve_url_contents_content_type which returns the CURLINFO_CONTENT_TYPE fromt he last curl_exec
-    // (or the content_type header fromt eh last transfer), we will parse THAT, and if a charset is specified, we will use it over any other mechanism.
+    // NOTE:  IF you provide a routine called get_last_retrieve_url_contents_content_type which returns the CURLINFO_CONTENT_TYPE from the last curl_exec
+    // (or the content_type header from the last transfer), we will parse THAT, and if a charset is specified, we will use it over any other mechanism.
     protected function parse_charset()
     {
         global $debugObject;
@@ -1668,6 +1669,20 @@ class simple_html_dom
         return $text;
     }
 
+    // Sometimes we NEED one of the noise elements.
+    function search_noise($text)
+    {
+        global $debugObject;
+        if (is_object($debugObject)) { $debugObject->debugLogEntry(1); }
+
+        foreach($this->noise as $noiseElement)
+        {
+            if (strpos($noiseElement, $text)!==false)
+            {
+                return $noiseElement;
+            }
+        }
+    }
     function __toString()
     {
         return $this->root->innertext();
