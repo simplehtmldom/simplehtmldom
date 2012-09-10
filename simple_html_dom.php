@@ -240,9 +240,25 @@ class simple_html_dom_node
     }
 
     // returns the parent of node
-    function parent()
+    // If a node is passed in, it will reset the parent of the current node to that one.
+    function parent($parent=null)
     {
+        // I am SURE that this doesn't work properly.
+        // It fails to unset the current node from it's current parents nodes or children list first.
+        if ($parent !== null)
+        {
+            $this->parent = $parent;
+            $this->parent->nodes[] = $this;
+            $this->parent->children[] = $this;
+        }
+
         return $this->parent;
+    }
+
+    // verify that node has children
+    function has_child()
+    {
+        return !empty($this->children);
     }
 
     // returns children of node
@@ -938,6 +954,10 @@ class simple_html_dom_node
     function lastChild() {return $this->last_child();}
     function nextSibling() {return $this->next_sibling();}
     function previousSibling() {return $this->prev_sibling();}
+    function hasChildNodes() {return $this->has_child();}
+    function nodeName() {return $this->tag;}
+    function appendChild($node) {$node->parent($this); return $node;}
+
 }
 
 /**
@@ -1047,6 +1067,10 @@ class simple_html_dom
         // end
         $this->root->_[HDOM_INFO_END] = $this->cursor;
         $this->parse_charset();
+
+        // make load function chainable
+        return $this;
+
     }
 
     // load html from file
@@ -1670,6 +1694,8 @@ class simple_html_dom
     function childNodes($idx=-1) {return $this->root->childNodes($idx);}
     function firstChild() {return $this->root->first_child();}
     function lastChild() {return $this->root->last_child();}
+    function createElement($name, $value=null) {return @str_get_html("<$name>$value</$name>")->first_child();}
+    function createTextNode($value) {return @end(str_get_html($value)->nodes);}
     function getElementById($id) {return $this->find("#$id", 0);}
     function getElementsById($id, $idx=null) {return $this->find("#$id", $idx);}
     function getElementByTagName($name) {return $this->find($name, 0);}
