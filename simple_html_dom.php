@@ -269,7 +269,10 @@ class simple_html_dom_node
 		{
 			return $this->children;
 		}
-		if (isset($this->children[$idx])) return $this->children[$idx];
+		if (isset($this->children[$idx]))
+		{
+			return $this->children[$idx];
+		}
 		return null;
 	}
 
@@ -532,7 +535,9 @@ class simple_html_dom_node
 			foreach ($head as $k=>$v)
 			{
 				if (!isset($found_keys[$k]))
+				{
 					$found_keys[$k] = 1;
+				}
 			}
 		}
 
