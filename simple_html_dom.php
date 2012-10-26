@@ -723,12 +723,14 @@ class simple_html_dom_node
 		return $selectors;
 	}
 
-	function __get($name) {
+	function __get($name)
+	{
 		if (isset($this->attr[$name]))
 		{
 			return $this->convert_text($this->attr[$name]);
 		}
-		switch ($name) {
+		switch ($name)
+		{
 			case 'outertext': return $this->outertext();
 			case 'innertext': return $this->innertext();
 			case 'plaintext': return $this->text();
@@ -737,22 +739,30 @@ class simple_html_dom_node
 		}
 	}
 
-	function __set($name, $value) {
-		switch ($name) {
+	function __set($name, $value)
+	{
+		global $debug_object;
+		if (is_object($debug_object)) {$debug_object->debugLogEntry(1);}
+
+		switch ($name)
+		{
 			case 'outertext': return $this->_[HDOM_INFO_OUTER] = $value;
 			case 'innertext':
 				if (isset($this->_[HDOM_INFO_TEXT])) return $this->_[HDOM_INFO_TEXT] = $value;
 				return $this->_[HDOM_INFO_INNER] = $value;
 		}
-		if (!isset($this->attr[$name])) {
+		if (!isset($this->attr[$name]))
+		{
 			$this->_[HDOM_INFO_SPACE][] = array(' ', '', '');
 			$this->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
 		}
 		$this->attr[$name] = $value;
 	}
 
-	function __isset($name) {
-		switch ($name) {
+	function __isset($name)
+	{
+		switch ($name)
+		{
 			case 'outertext': return true;
 			case 'innertext': return true;
 			case 'plaintext': return true;
