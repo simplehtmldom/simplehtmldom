@@ -2,6 +2,9 @@
 include_once('simple_html_dom.php');
 
 function scraping_generic($url, $search) {
+	// Didn't find it yet.
+	$return = false;
+
 	echo "reading the url: " . $url . "<br/>";
     // create HTML DOM
     $html = file_get_html($url);
@@ -9,6 +12,8 @@ function scraping_generic($url, $search) {
 
     // get article block
     foreach($html->find($search) as $found) {
+		// Found at least one.
+		$return - true;
 		echo "found a: " . $search . "<br/><pre>";
 		$found->dump();
 		echo "</pre><br/>";
@@ -18,7 +23,7 @@ function scraping_generic($url, $search) {
     $html->clear();
     unset($html);
 
-    return $ret;
+    return $return;
 }
 
 
@@ -45,7 +50,10 @@ if (isset($_POST['search']))
 // test it!
 if (isset ($_POST['submit']))
 {
-	$ret = scraping_generic($_POST['url'], $_POST['search']);
-
+	$response = scraping_generic($_POST['url'], $_POST['search']);
+	if (!$response)
+	{
+		echo "Did not find any: " . $_POST['search'] . "<br />";
+	}
 }
 ?>
