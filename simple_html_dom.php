@@ -1228,7 +1228,7 @@ class simple_html_dom
 
 				if (!empty($fullvalue))
 				{
-					$success = preg_match('/charset=(.+)/', $fullvalue, $matches);
+					$success = preg_match('/charset=(.+)/i', $fullvalue, $matches);
 					if ($success)
 					{
 						$charset = $matches[1];
