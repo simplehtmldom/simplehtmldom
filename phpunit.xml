@@ -1,0 +1,23 @@
+<!--
+PHPUnit is a programmer-oriented testing framework for PHP.
+https://phpunit.de/
+
+Unit tests are based on PHPUnit 6
+https://phpunit.de/announcements/phpunit-6.html
+-->
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.5/phpunit.xsd"
+	colors="true"
+	processIsolation="false"
+	timeoutForSmallTests="1"
+	timeoutForMediumTests="1"
+	timeoutForLargeTests="6" >
+
+	<testsuites>
+		<testsuite name="Standard test suite">
+			<directory suffix='_test.php'>tests</directory>
+		</testsuite>
+	</testsuites>
+
+</phpunit>
