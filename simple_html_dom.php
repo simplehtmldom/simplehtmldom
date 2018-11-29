@@ -1022,15 +1022,20 @@ class simple_html_dom
 	 * @link https://www.w3.org/TR/html/syntax.html#void-elements Void elements
 	 */
 	protected $self_closing_tags = array(
+		'area'=>1,
 		'base'=>1,
 		'br'=>1,
+		'col'=>1,
 		'embed'=>1,
 		'hr'=>1,
 		'img'=>1,
 		'input'=>1,
 		'link'=>1,
 		'meta'=>1,
-		'spacer'=>1
+		'param'=>1,
+		'source'=>1,
+		'track'=>1,
+		'wbr'=>1
 	);
 
 	protected $block_tags = array('root'=>1, 'body'=>1, 'form'=>1, 'div'=>1, 'span'=>1, 'table'=>1);
