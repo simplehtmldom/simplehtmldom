@@ -1179,6 +1179,12 @@ class simple_html_dom
 	protected $char;
 
 	protected $cursor;
+
+	/**
+	 * Parent node of the next node detected by the parser
+	 *
+	 * @var object
+	 */
 	protected $parent;
 	protected $noise = array();
 
