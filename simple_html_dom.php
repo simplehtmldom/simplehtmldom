@@ -1260,7 +1260,26 @@ class simple_html_dom
 		'wbr'=>1
 	);
 
-	protected $block_tags = array('root'=>1, 'body'=>1, 'form'=>1, 'div'=>1, 'span'=>1, 'table'=>1);
+	/**
+	 * Defines a list of tags which - if closed - close all optional closing
+	 * elements within if they haven't been closed yet. (So, an element where
+	 * neither opening nor closing tag is omissible consistently closes every
+	 * optional closing element within)
+	 *
+	 * _Remarks_:
+	 * - Use `isset()` instead of `in_array()` on array elements to boost
+	 * performance about 30%
+	 * - Sort elements by name for better readability!
+	 */
+	protected $block_tags = array(
+		'body'=>1,
+		'div'=>1,
+		'form'=>1,
+		'root'=>1,
+		'span'=>1,
+		'table'=>1
+	);
+
 	// Known sourceforge issue #2977341
 	// B tags that are not closed cause us to return everything to the end of the document.
 	protected $optional_closing_tags = array(
