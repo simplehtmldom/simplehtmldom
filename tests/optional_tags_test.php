@@ -8,6 +8,10 @@ use PHPUnit\Framework\TestCase;
  * Optional tags are tags that can be omitted in cases where the DOM structure
  * is obvious to the parser.
  *
+ * _Note_:
+ * - Elements with optional end tag (test_optional_*_end_tag) should appear in
+ * {@see simple_html_dom::$optional_closing_tags}
+ *
  * @link https://www.w3.org/TR/html52/single-page.html#optional-tags
  * Optional tags
  */
