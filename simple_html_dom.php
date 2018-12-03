@@ -1347,11 +1347,13 @@ class simple_html_dom
 		'dl'=>array('dd'=>1, 'dt'=>1), // Not optional, see https://www.w3.org/TR/html/grouping-content.html#the-dl-element
 		'dt'=>array('dd'=>1, 'dt'=>1),
 		'li'=>array('li'=>1),
-		'nobr'=>array('nobr'=>1), // Obsolete, see https://www.w3.org/TR/html/obsolete.html#non-conforming-features
-		'option'=>array('option'=>1),
+		'optgroup'=>array('optgroup'=>1, 'option'=>1),
+		'option'=>array('optgroup'=>1, 'option'=>1),
 		'p'=>array('p'=>1),
-		'td'=>array('td'=>1),
-		'th'=>array('th'=>1),
+		'rp'=>array('rp'=>1, 'rt'=>1),
+		'rt'=>array('rp'=>1, 'rt'=>1),
+		'td'=>array('td'=>1, 'th'=>1),
+		'th'=>array('td'=>1, 'th'=>1),
 		'tr'=>array('td'=>1, 'th'=>1, 'tr'=>1),
 	);
 
