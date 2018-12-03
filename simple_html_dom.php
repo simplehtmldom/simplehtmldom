@@ -1286,20 +1286,73 @@ class simple_html_dom
 		'table'=>1
 	);
 
-	// Known sourceforge issue #2977341
-	// B tags that are not closed cause us to return everything to the end of the document.
+	/**
+	 * Defines elements whose end tag is omissible.
+	 *
+	 * * key = Name of an element whose end tag is omissible.
+	 * * value = Names of elements whose end tag is omissible, that are closed
+	 * by the current element.
+	 *
+	 * _Remarks_:
+	 * - Use `isset()` instead of `in_array()` on array elements to boost
+	 * performance about 30%
+	 * - Sort elements by name for better readability!
+	 *
+	 * **Example**
+	 *
+	 * An `li` element’s end tag may be omitted if the `li` element is immediately
+	 * followed by another `li` element. To do that, add following element to the
+	 * array:
+	 *
+	 * ```php
+	 * 'li' => array('li'),
+	 * ```
+	 *
+	 * With this, the following two examples are considered equal. Note that the
+	 * second example is missing the closing tags on `li` elements.
+	 *
+	 * ```html
+	 * <ul><li>First Item</li><li>Second Item</li></ul>
+	 * ```
+	 *
+	 * <ul><li>First Item</li><li>Second Item</li></ul>
+	 *
+	 * ```html
+	 * <ul><li>First Item<li>Second Item</ul>
+	 * ```
+	 *
+	 * <ul><li>First Item<li>Second Item</ul>
+	 *
+	 * @var array A two-dimensional array where the key is the name of an
+	 * element whose end tag is omissible and the value is an array of elements
+	 * whose end tag is omissible, that are closed by the current element.
+	 *
+	 * @link https://www.w3.org/TR/html/syntax.html#optional-tags Optional tags
+	 *
+	 * @todo The implementation of optional closing tags doesn't work in all cases
+	 * because it only consideres elements who close other optional closing
+	 * tags, not taking into account that some (non-blocking) tags should close
+	 * these optional closing tags. For example, the end tag for "p" is omissible
+	 * and can be closed by an "address" element, whose end tag is NOT omissible.
+	 * Currently a "p" element without closing tag stops at the next "p" element
+	 * or blocking tag, even if it contains other elements.
+	 *
+	 * @todo Known sourceforge issue #2977341
+	 * B tags that are not closed cause us to return everything to the end of
+	 * the document.
+	 */
 	protected $optional_closing_tags = array(
-		'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
-		'th'=>array('th'=>1),
-		'td'=>array('td'=>1),
-		'li'=>array('li'=>1),
-		'dt'=>array('dt'=>1, 'dd'=>1),
+		'b'=>array('b'=>1), // Not optional, see https://www.w3.org/TR/html/textlevel-semantics.html#the-b-element
 		'dd'=>array('dd'=>1, 'dt'=>1),
-		'dl'=>array('dd'=>1, 'dt'=>1),
-		'p'=>array('p'=>1),
-		'nobr'=>array('nobr'=>1),
-		'b'=>array('b'=>1),
+		'dl'=>array('dd'=>1, 'dt'=>1), // Not optional, see https://www.w3.org/TR/html/grouping-content.html#the-dl-element
+		'dt'=>array('dd'=>1, 'dt'=>1),
+		'li'=>array('li'=>1),
+		'nobr'=>array('nobr'=>1), // Obsolete, see https://www.w3.org/TR/html/obsolete.html#non-conforming-features
 		'option'=>array('option'=>1),
+		'p'=>array('p'=>1),
+		'td'=>array('td'=>1),
+		'th'=>array('th'=>1),
+		'tr'=>array('td'=>1, 'th'=>1, 'tr'=>1),
 	);
 
 	function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
