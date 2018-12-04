@@ -1751,7 +1751,7 @@ class simple_html_dom
 		}
 
 		// Handle invalid tag names (i.e. "<html#doc>")
-		if (!preg_match("/^[\w:-]+$/", $tag)) {
+		if (!preg_match("/^\w[\w:-]*$/", $tag)) {
 			$node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until('<>');
 
 			// Next char is the beginning of a new tag, don't touch it.
