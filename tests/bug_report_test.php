@@ -53,6 +53,18 @@ HTML;
 			'{A PHP based DOM parser}',
 			$this->html->find('p', 1)->innertext
 		);
+
+		/* With Smarty as text */
+
+		$this->html->load($doc, true, true, DEFAULT_BR_TEXT, DEFAULT_SPAN_TEXT, HDOM_SMARTY_AS_TEXT);
+
+		$this->assertCount(1, $this->html->find('p'));
+
+		$this->assertEquals(
+			'{PHP Simple HTML DOM Parser</p> <p>{A PHP based DOM parser}',
+			$this->html->find('p', 0)->innertext
+		);
+
 	}
 
 	/**

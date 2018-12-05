@@ -64,6 +64,10 @@ define('DEFAULT_TARGET_CHARSET', 'UTF-8');
 define('DEFAULT_BR_TEXT', "\r\n");
 define('DEFAULT_SPAN_TEXT', " ");
 define('MAX_FILE_SIZE', 600000);
+
+/** Contents between curly braces "{" and "}" are interpreted as text */
+define('HDOM_SMARTY_AS_TEXT', 1);
+
 // helper functions
 // -----------------------------------------------------------------------------
 // get html dom from file
@@ -1357,7 +1361,7 @@ class simple_html_dom
 		'tr'=>array('td'=>1, 'th'=>1, 'tr'=>1),
 	);
 
-	function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
+	function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT, $options=0)
 	{
 		if ($str)
 		{
@@ -1367,7 +1371,7 @@ class simple_html_dom
 			}
 			else
 			{
-				$this->load($str, $lowercase, $stripRN, $defaultBRText, $defaultSpanText);
+				$this->load($str, $lowercase, $stripRN, $defaultBRText, $defaultSpanText, $options);
 			}
 		}
 		// Forcing tags to be closed implies that we don't trust the html, but it can lead to parsing errors if we SHOULD trust the html.
@@ -1383,7 +1387,7 @@ class simple_html_dom
 	}
 
 	// load html from string
-	function load($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
+	function load($str, $lowercase=true, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT, $options=0)
 	{
 		global $debug_object;
 
@@ -1405,8 +1409,10 @@ class simple_html_dom
 		$this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
 		// strip out server side scripts
 		$this->remove_noise("'(<\?)(.*?)(\?>)'s", true);
-		// strip smarty scripts
-		$this->remove_noise("'(\{\w)(.*?)(\})'s", true);
+
+		if($options & HDOM_SMARTY_AS_TEXT) { // Strip Smarty scripts
+			$this->remove_noise("'(\{\w)(.*?)(\})'s", true);
+		}
 
 		// parsing
 		while ($this->parse());
