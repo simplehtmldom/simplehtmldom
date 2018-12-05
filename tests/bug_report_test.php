@@ -16,6 +16,37 @@ class bug_report_test extends TestCase {
 	}
 
 	/**
+	 * Bug #121 (//Comment\n != //Comment\s)
+	 *
+	 * Replacing newlines results in scripts changing behavior if comments are
+	 * placed before functions.
+	 *
+	 * **Expected Behavior**:
+	 *
+	 * Script tags should be returned exactly as provided to the parser with all
+	 * newlines kept intact.
+	 *
+	 * **Workaround**:
+	 *
+	 * Set `$stripRN = false` when loading contents. This will prevent newlines
+	 * being replaced by spaces.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/121/ Bug #121
+	 */
+	public function test_bug_121() {
+		$doc = <<<HTML
+<script>
+// alert("PHP Simple HTML DOM Parser");
+alert("A PHP based DOM parser");
+</script>
+HTML;
+
+		$dom = $this->html->load($doc);
+
+		$this->assertEquals($doc, (string)$this->html);
+	}
+
+	/**
 	 * Bug #154 (Fatal error: Call to a member function find() on null)
 	 *
 	 * The parser incorrectly removes everything between `{` and `}` attempting
