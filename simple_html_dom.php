@@ -1405,6 +1405,8 @@ class simple_html_dom
 		$this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
 		// strip out server side scripts
 		$this->remove_noise("'(<\?)(.*?)(\?>)'s", true);
+		// strip smarty scripts
+		$this->remove_noise("'(\{\w)(.*?)(\})'s", true);
 
 		// parsing
 		while ($this->parse());
