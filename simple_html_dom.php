@@ -1795,13 +1795,14 @@ class simple_html_dom
 		// attributes
 		do
 		{
-			if ($this->char!==null && $space[0]==='')
+			// Everything until the first equal sign should be the attribute name
+			$name = $this->copy_until($this->token_equal);
+
+			if ($name==='' && $this->char!==null && $space[0]==='')
 			{
 				break;
 			}
 
-			// Everything until the first equal sign should be the attribute name
-			$name = $this->copy_until($this->token_equal);
 			if ($guard===$this->pos) // Escape infinite loop
 			{
 				$this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
