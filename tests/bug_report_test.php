@@ -16,6 +16,30 @@ class bug_report_test extends TestCase {
 	}
 
 	/**
+	 * Bug #116 (problem getting tag attributes)
+	 *
+	 * Parsing fails on attributes that are not separated by whitespace.
+	 *
+	 * **Note**:
+	 *
+	 * The [Markup Validation Service](https://validator.w3.org/#validate_by_input)
+	 * reports: No space between attributes.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/116/ Bug #116
+	 */
+	public function test_bug_116() {
+		$doc = <<<HTML
+<a href="#"title="PHP Simple HTML DOM Parser"></a>
+HTML;
+
+		$anchor = $this->html->load($doc)->find('a', 0);
+
+		$this->assertCount(2, $anchor->getAllAttributes());
+		$this->assertEquals('#', $anchor->href);
+		$this->assertEquals('PHP Simple HTML DOM Parser', $anchor->title);
+	}
+
+	/**
 	 * Bug #121 (//Comment\n != //Comment\s)
 	 *
 	 * Replacing newlines results in scripts changing behavior if comments are
