@@ -47,6 +47,29 @@ HTML;
 	}
 
 	/**
+	 * Bug #127 (Incorrect attribute value gives unexpected results)
+	 *
+	 * Attributes ending on "\" cause the parser to continue parsing the
+	 * remaining document as the attribute value.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/127/ Bug #127
+	 */
+	public function test_bug_127() {
+		$doc = <<<HTML
+<div id="before"></div>
+<a href="#" alt="PHP Simple HTML DOM Parser\">
+<div id="after"></div>
+HTML;
+
+		$this->html->load($doc);
+
+		$this->assertEquals(
+			'PHP Simple HTML DOM Parser\\',
+			$this->html->find('a', 0)->alt
+		);
+	}
+
+	/**
 	 * Bug #154 (Fatal error: Call to a member function find() on null)
 	 *
 	 * The parser incorrectly removes everything between `{` and `}` attempting
