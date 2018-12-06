@@ -1857,7 +1857,7 @@ class simple_html_dom
 		$node->_[HDOM_INFO_ENDSPACE] = $space[0];
 
 		// handle empty tags (i.e. "<div/>")
-		if ($this->copy_until_char_escape('>')==='/')
+		if ($this->copy_until_char('>')==='/')
 		{
 			$node->_[HDOM_INFO_ENDSPACE] .= '/';
 			$node->_[HDOM_INFO_END] = 0;
@@ -1903,13 +1903,13 @@ class simple_html_dom
 			case '"': // value is anything between double quotes
 				$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
 				$this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-				$node->attr[$name] = $this->restore_noise($this->copy_until_char_escape('"'));
+				$node->attr[$name] = $this->restore_noise($this->copy_until_char('"'));
 				$this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
 				break;
 			case '\'': // value is anything between single quotes
 				$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_SINGLE;
 				$this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
-				$node->attr[$name] = $this->restore_noise($this->copy_until_char_escape('\''));
+				$node->attr[$name] = $this->restore_noise($this->copy_until_char('\''));
 				$this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
 				break;
 			default: // value is anything until the first space or end tag
@@ -2032,43 +2032,6 @@ class simple_html_dom
 		$this->char = $this->doc[$pos];
 		$this->pos = $pos;
 		return substr($this->doc, $pos_old, $pos-$pos_old);
-	}
-
-	/**
-	 * Copy substring from the current document position to the first occurrence
-	 * of the provided string, ignoring escaped characters (i.e. `\>`).
-	 *
-	 * @param string $char The string to stop at.
-	 * @return string Substring from the current document position to the first
-	 * occurrence of the provided string.
-	 */
-	protected function copy_until_char_escape($char)
-	{
-		if ($this->char===null) return '';
-
-		$start = $this->pos;
-		while (1)
-		{
-			if (($pos = strpos($this->doc, $char, $start))===false)
-			{
-				$ret = substr($this->doc, $this->pos, $this->size-$this->pos);
-				$this->char = null;
-				$this->pos = $this->size;
-				return $ret;
-			}
-
-			if ($pos===$this->pos) return '';
-
-			if ($this->doc[$pos-1]==='\\') {
-				$start = $pos+1;
-				continue;
-			}
-
-			$pos_old = $this->pos;
-			$this->char = $this->doc[$pos];
-			$this->pos = $pos;
-			return substr($this->doc, $pos_old, $pos-$pos_old);
-		}
 	}
 
 	/**
