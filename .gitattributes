@@ -1,1 +1,8 @@
 *               text=auto
+
+# Ignored files during git-archive
+.gitattributes  export-ignore
+phpunit.xml     export-ignore
+testcase/       export-ignore
+tests/          export-ignore
+app/            export-ignore
