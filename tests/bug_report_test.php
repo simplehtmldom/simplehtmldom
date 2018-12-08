@@ -16,6 +16,26 @@ class bug_report_test extends TestCase {
 	}
 
 	/**
+	 * Bug #56 (Attribute values overwritten,behaviour differs from browsers)
+	 *
+	 * If a HTML-tag defines an attribute twice (or more times) the parser only
+	 * considers the last appearance / the last value within the HTML-tag.
+	 * Browsers like IE and Firefox, however, only consider the first appearance
+	 * / the first value.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/56/ Bug #56
+	 */
+	public function test_bug_56() {
+		$doc = <<<HTML
+<a href="http://simplehtmldom.sourceforge.net/" target="_self" target="_blank"></a>
+HTML;
+
+		$anchor = $this->html->load($doc)->find('a', 0);
+
+		$this->assertEquals('_self', $anchor->target);
+	}
+
+	/**
 	 * Bug #97 (plaintext returning conjoined elements)
 	 *
 	 * Paragraphs ("p" elements) should start on a new line when returned as
