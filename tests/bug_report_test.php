@@ -16,6 +16,31 @@ class bug_report_test extends TestCase {
 	}
 
 	/**
+	 * Bug #97 (plaintext returning conjoined elements)
+	 *
+	 * Paragraphs ("p" elements) should start on a new line when returned as
+	 * plain text.
+	 *
+	 * **Note**:
+	 *
+	 * Browsers typically separate multiple paragraphs by blank lines.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/97/ Bug #97
+	 */
+	public function test_bug_97() {
+		$doc = <<<HTML
+<div><p>PHP Simple HTML DOM Parser</p><p>A PHP based DOM parser</p></div>
+HTML;
+
+		$text = $this->html->load($doc)->find('div', 0)->plaintext;
+
+		$this->assertEquals(
+			"PHP Simple HTML DOM Parser\n\nA PHP based DOM parser",
+			$text
+		);
+	}
+
+	/**
 	 * Bug #116 (problem getting tag attributes)
 	 *
 	 * Parsing fails on attributes that are not separated by whitespace.
