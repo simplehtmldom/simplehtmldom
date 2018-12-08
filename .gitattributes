@@ -3,6 +3,7 @@
 # Ignored files during git-archive
 .gitattributes  export-ignore
 phpunit.xml     export-ignore
+release.sh      export-ignore
 testcase/       export-ignore
 tests/          export-ignore
 app/            export-ignore
