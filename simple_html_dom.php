@@ -1447,10 +1447,10 @@ class simple_html_dom
 	function load_file()
 	{
 		$args = func_get_args();
-		$this->load(call_user_func_array('file_get_contents', $args), true);
-		// Throw an error if we can't properly load the dom.
-		if (($error=error_get_last())!==null) {
-			$this->clear();
+
+		if($doc = call_user_func_array('file_get_contents', $args) !== false) {
+			$this->load($doc, true);
+		} else {
 			return false;
 		}
 	}
