@@ -562,6 +562,12 @@ class simple_html_dom_node
 		{
 			foreach ($this->nodes as $n)
 			{
+				// Start paragraph after a blank line
+				if ($n->tag == 'p')
+				{
+					$ret .= "\n\n";
+				}
+
 				$ret .= $this->convert_text($n->text());
 
 				// If this node is a span... add a space at the end of it so multiple spans don't run into each other.  This is plaintext after all.
@@ -571,7 +577,7 @@ class simple_html_dom_node
 				}
 			}
 		}
-		return $ret;
+		return trim($ret);
 	}
 
 	/**
