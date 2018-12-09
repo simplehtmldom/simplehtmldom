@@ -1433,7 +1433,7 @@ class simple_html_dom
 		}
 
 		// parsing
-		while ($this->parse());
+		$this->parse();
 		// end
 		$this->root->_[HDOM_INFO_END] = $this->cursor;
 		$this->parse_charset();
@@ -1539,19 +1539,24 @@ class simple_html_dom
 	 */
 	protected function parse()
 	{
-		// Read next tag if there is no text between current position and the
-		// next opening tag.
-		if (($s = $this->copy_until_char('<'))==='')
-		{
-			return $this->read_tag();
-		}
+		while (true) {
+			// Read next tag if there is no text between current position and the
+			// next opening tag.
+			if (($s = $this->copy_until_char('<'))==='')
+			{
+				if($this->read_tag()) {
+					continue;
+				} else {
+					return true;
+				}
+			}
 
-		// Add a text node for text between tags
-		$node = new simple_html_dom_node($this);
-		++$this->cursor;
-		$node->_[HDOM_INFO_TEXT] = $s;
-		$this->link_nodes($node, false);
-		return true;
+			// Add a text node for text between tags
+			$node = new simple_html_dom_node($this);
+			++$this->cursor;
+			$node->_[HDOM_INFO_TEXT] = $s;
+			$this->link_nodes($node, false);
+		}
 	}
 
 	// PAPERG - dkchou - added this to try to identify the character set of the page we have just parsed so we know better how to spit it out later.
