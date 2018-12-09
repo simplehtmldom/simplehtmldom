@@ -1608,7 +1608,7 @@ class simple_html_dom
 			if (function_exists('mb_detect_encoding'))
 			{
 				// Have php try to detect the encoding from the text given to us.
-				$charset = mb_detect_encoding($this->root->plaintext . "ascii", $encoding_list = array( "UTF-8", "CP1252" ) );
+				$charset = mb_detect_encoding($this->doc . "ascii", $encoding_list = array( "UTF-8", "CP1252" ) );
 				if (is_object($debug_object)) {$debug_object->debug_log(2, 'mb_detect found: ' . $charset);}
 			}
 
