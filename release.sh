@@ -16,7 +16,7 @@ version=$(echo "$tag" | tr . _)
 
 # Keyword substitution in files
 marker="\\\$Rev\\\$"
-replacement="Rev. $tag ($(git rev-list --count --all))"
+replacement="Rev. $tag ($(git rev-list --count HEAD))"
 
 # Build archive
 if [ "$version" ]; then
