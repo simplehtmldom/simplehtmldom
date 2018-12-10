@@ -1,2 +1,6 @@
 # Build files
 simplehtmldom_*.zip
+
+# Unit test data files
+tests/data/*
+!tests/data/.gitkeep

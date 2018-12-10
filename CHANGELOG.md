@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added test for bug [#127](https://sourceforge.net/p/simplehtmldom/bugs/127/)
   - Added test for bug [#154](https://sourceforge.net/p/simplehtmldom/bugs/154/)
   - Added test for bug [#160](https://sourceforge.net/p/simplehtmldom/bugs/160/)
+- Added unit tests for memory management of the parser
 - Added bit flags to `simple_html_dom::load()`
   - Added bit flag `HDOM_SMARTY_AS_TEXT` to optionally filter Smarty scripts (#154)\
   **Note**: Smarty scripts are no longer filtered by default!\
