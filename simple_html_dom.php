@@ -628,8 +628,18 @@ class simple_html_dom_node
 		return $ret . $this->_[HDOM_INFO_ENDSPACE] . '>';
 	}
 
-	// find elements by css selector
-	//PaperG - added ability for find to lowercase the value of the selector.
+	/**
+	 * Find elements by CSS selector
+	 *
+	 * @param string $selector The CSS selector
+	 * @param int|null $idx Index of element to return form the list of matching
+	 * elements (default: `null` = disabled).
+	 * @param bool $lowercase Matches tag names case insensitive (lowercase) if
+	 * enabled (default: `false`)
+	 * @return array|object|null A list of elements matching the specified CSS
+	 * selector or a single element if $idx is specified or null if no element
+	 * was found.
+	 */
 	function find($selector, $idx=null, $lowercase=false)
 	{
 		$selectors = $this->parse_selector($selector);

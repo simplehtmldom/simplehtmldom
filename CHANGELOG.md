@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+### Added
+- Added documentation for `simple_html_dom_node::find`
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
 ## [1.7] - 2018-12-10
 ### Added
 - Added code documentation to improve readability
