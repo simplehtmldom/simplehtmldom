@@ -691,8 +691,19 @@ class simple_html_dom_node
 		return (isset($found[$idx])) ? $found[$idx] : null;
 	}
 
-	// seek for given conditions
-	// PaperG - added parameter to allow for case insensitive testing of the value of a selector.
+	/**
+	 * Seek DOM elements by selector
+	 *
+	 * **Note**
+	 * The selector element must be compatible to a selector from
+	 * {@see simple_html_dom_node::parse_selector()}
+	 *
+	 * @param array $selector A selector element
+	 * @param array $ret An array of matches
+	 * @param bool $lowercase Matches tag names case insensitive (lowercase) if
+	 * enabled (default: `false`)
+	 * @return void
+	 */
 	protected function seek($selector, &$ret, $lowercase=false)
 	{
 		global $debug_object;
@@ -700,7 +711,8 @@ class simple_html_dom_node
 
 		list($tag, $key, $val, $exp, $no_key) = $selector;
 
-		// xpath index
+		// Find descendent element opening tag at specific index
+		// todo $key will never be numeric if $tag is set to "*" (i.e. CSS "*[2]" doesn't work)
 		if ($tag && $key && is_numeric($key))
 		{
 			$count = 0;
@@ -716,6 +728,8 @@ class simple_html_dom_node
 			return;
 		}
 
+		// Find parent closing tag if the current element doesn't have a closing
+		// tag (i.e. void element)
 		$end = (!empty($this->_[HDOM_INFO_END])) ? $this->_[HDOM_INFO_END] : 0;
 		if ($end==0) {
 			$parent = $this->parent;
@@ -726,30 +740,42 @@ class simple_html_dom_node
 			$end += $parent->_[HDOM_INFO_END];
 		}
 
+		// Go throgh each element starting at this element until the end tag
+		// Note: If this element is a void tag, any previous void element is
+		// skipped.
 		for ($i=$this->_[HDOM_INFO_BEGIN]+1; $i<$end; ++$i) {
 			$node = $this->dom->nodes[$i];
 
 			$pass = true;
 
+			// Find elements matching wildcard "*"
+			// todo This only matches children of the current element, not their childs (as one would expect)!
+			// todo Node is not cleared (unset()) in this case!
 			if ($tag==='*' && !$key) {
 				if (in_array($node, $this->children, true))
 					$ret[$i] = 1;
 				continue;
 			}
 
-			// compare tag
+			// Skip if tags don't match
 			if ($tag && $tag!=$node->tag && $tag!=='*') {$pass=false;}
-			// compare key
+
+			// Check attribute key (attribute mode)
+			// todo This doesn't work correctly if multiple attribute keys are specified (i.e. 'a[href][hreflang]')
+			// todo Since $key has multiple purposes in $selector, this breaks multiple classes (i.e. 'a.c1.c2')
 			if ($pass && $key) {
-				if ($no_key) {
+				if ($no_key) { // Attribute should NOT be set
 					if (isset($node->attr[$key])) $pass=false;
-				} else {
+				} else { // Attribute should be set
+					// todo: "plaintext" is not a valid CSS selector!
 					if (($key != "plaintext") && !isset($node->attr[$key])) $pass=false;
 				}
 			}
-			// compare value
+
+			// Check attribute value
 			if ($pass && $key && $val  && $val!=='*') {
 				// If they have told us that this is a "plaintext" search then we want the plaintext of the node - right?
+				// todo "plaintext" is not a valid CSS selector!
 				if ($key == "plaintext") {
 					// $node->plaintext actually returns $node->text();
 					$nodeKeyValue = $node->text();
@@ -768,6 +794,7 @@ class simple_html_dom_node
 				if (is_object($debug_object)) {$debug_object->debug_log(2, "after match: " . ($check ? "true" : "false"));}
 
 				// handle multiple class
+				// todo Why do strcasecmp here? $key should exactly match 'class' according to parse_selector()
 				if (!$check && strcasecmp($key, 'class')===0) {
 					foreach (explode(' ',$node->attr[$key]) as $k) {
 						// Without this, there were cases where leading, trailing, or double spaces lead to our comparing blanks - bad form.
@@ -783,6 +810,8 @@ class simple_html_dom_node
 				}
 				if (!$check) $pass = false;
 			}
+
+			// Found a match. Add to list and clear node
 			if ($pass) $ret[$i] = 1;
 			unset($node);
 		}
