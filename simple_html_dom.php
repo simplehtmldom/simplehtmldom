@@ -812,24 +812,69 @@ class simple_html_dom_node
 		return false;
 	}
 
+	/**
+	 * Parse CSS selector
+	 *
+	 * @param string $selector_string CSS selector string
+	 * @return array List of CSS selectors. The format depends on the type of
+	 * selector:
+	 *
+	 * ```php
+	 * // Note: The selector element has no key names!
+	 * // Those were added to make this example easier to understand.
+	 *
+	 * array( // list of selectors (each separated by a comma), i.e. 'img, p, div'
+	 *   array( // list of combinator selectors, i.e. 'img > p > div'
+	 *     array( // selector element
+	 *       'tag', // (string) The element tag
+	 *       'key', // (string) The element key (ID | CLASS | ATTRIBUTE | 'id' | 'class')
+	 *       'val', // (string) The element value (TAG | CLASS | VALUE | '')
+	 *       'exp', // (string) The attribute expression ('=' | !=' | '*=' | '^=' | '$=')
+	 *       'inv' // (boolean) True if the key is matched inverted
+	 *     )
+	 *   )
+	 * )
+	 * ```
+	 *
+	 * @link https://www.w3.org/TR/selectors/#compound Compound selector
+	 */
 	protected function parse_selector($selector_string) {
 		global $debug_object;
 		if (is_object($debug_object)) {$debug_object->debug_log_entry(1);}
 
-		// pattern of CSS selectors, modified from mootools
-		// Paperg: Add the colon to the attrbute, so that it properly finds <tag attr:ibute="something" > like google does.
-		// Note: if you try to look at this attribute, yo MUST use getAttribute since $dom->x:y will fail the php syntax check.
-// Notice the \[ starting the attbute?  and the @? following?  This implies that an attribute can begin with an @ sign that is not captured.
-// This implies that an html attribute specifier may start with an @ sign that is NOT captured by the expression.
-// farther study is required to determine of this should be documented or removed.
-//		$pattern = "/([\w-:\*]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
+		/**
+		 * Pattern of CSS selectors, modified from mootools (https://mootools.net/)
+		 *
+		 * Paperg: Add the colon to the attribute, so that it properly finds <tag attr:ibute="something" > like google does.
+		 * Note: if you try to look at this attribute, you MUST use getAttribute since $dom->x:y will fail the php syntax check.
+		 * Notice the \[ starting the attbute? and the @? following? This implies that an attribute can begin with an @ sign that is not captured.
+		 * This implies that an html attribute specifier may start with an @ sign that is NOT captured by the expression.
+		 * farther study is required to determine of this should be documented or removed.
+		 * Matches selectors in this order:
+		 *
+		 * [0] ([\w:\*-]*)
+		 *     Matches the tag name consisting of zero or more words, colons,
+		 *     asterisks and hyphens.
+		 *
+		 * [1] (?:\#([\w-]+)|\.([\w-]+))?
+		 *     Optionally matches the class or id name, consisting of an "#"
+		 *     followed by the id name (one or more words and hyphens) or an "."
+		 *     followed by the class name (one or more words and hyphens)
+		 *
+		 * [2] (?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?
+		 *     Optionally matches the attributes list
+		 *
+		 * [3] ([\/, ]+)
+		 *     Matches the selector list separator
+		 *
+		 * # todo: Update regex to match CSS specification
+		 */
 		$pattern = "/([\w:\*-]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
-		preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER);
+		preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER); // Add final ' ' as pseudo separator
 		if (is_object($debug_object)) {$debug_object->debug_log(2, "Matches Array: ", $matches);}
 
 		$selectors = array();
 		$result = array();
-		//print_r($matches);
 
 		foreach ($matches as $m) {
 			$m[0] = trim($m[0]);

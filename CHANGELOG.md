@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - Added documentation for `simple_html_dom_node::find`
+- Added documentation for `simple_html_dom_node::parse_selector`
 ### Changed
 ### Deprecated
 ### Removed
