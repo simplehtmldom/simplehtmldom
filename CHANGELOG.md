@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added documentation for `simple_html_dom_node::match`
 - Added unit tests for bug reports
   - Added test for bug [#62](https://sourceforge.net/p/simplehtmldom/bugs/62/)
+  - Added test for bug [#79](https://sourceforge.net/p/simplehtmldom/bugs/79/)
 - Added unit tests for CSS selectors
 ### Changed
 ### Deprecated

@@ -58,6 +58,29 @@ HTML;
 	}
 
 	/**
+	 * Bug 79 (tbody doesn't work in find())
+	 *
+	 * Specifying 'tbody' as CSS selector will not return the body of a table as
+	 * expected, but the table instead.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/79/ Bug #79
+	 */
+	public function test_bug_79() {
+		$doc = <<<HTML
+<table>
+	<thead><tr><th>PHP Simple HTML DOM Parser</th></tr></thead>
+	<tbody><tr><td>A PHP based DOM parser</td></tr></tbody>
+</table>
+HTML;
+
+		$this->html->load($doc);
+
+		$this->assertCount(2, $this->html->find('table tr'));
+		$this->assertCount(1, $this->html->find('table thead tr'));
+		$this->assertCount(1, $this->html->find('table tbody tr'));
+	}
+
+	/**
 	 * Bug #97 (plaintext returning conjoined elements)
 	 *
 	 * Paragraphs ("p" elements) should start on a new line when returned as
