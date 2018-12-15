@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added test for bug [#79](https://sourceforge.net/p/simplehtmldom/bugs/79/)
 - Added unit tests for CSS selectors
 ### Changed
+- Removed automatic filtering of 'tbody' selectors (#79)
+  > Remove 'tbody' from all selectors to maintain the previous state!
 ### Deprecated
 ### Removed
 ### Fixed

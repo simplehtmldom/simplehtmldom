@@ -926,8 +926,6 @@ class simple_html_dom_node
 		foreach ($matches as $m) {
 			$m[0] = trim($m[0]);
 			if ($m[0]==='' || $m[0]==='/' || $m[0]==='//') continue;
-			// for browser generated xpath
-			if ($m[1]==='tbody') continue;
 
 			list($tag, $key, $val, $exp, $no_key) = array($m[1], '', '', '=', false);
 			if ($m[2] !== '') {$key='id'; $val=$m[2];}
