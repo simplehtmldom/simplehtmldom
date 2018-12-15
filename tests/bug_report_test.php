@@ -184,6 +184,27 @@ HTML;
 	}
 
 	/**
+	 * Bug #144 (Forward slashes in pattern break wildcard Find)
+	 *
+	 * The wildcard find method "*=" uses preg_match, delimited by forward
+	 * slashes. Therefore, if you have any forward slashes in your pattern,
+	 * you need to manually escape them, otherwise the find won't work. This
+	 * comes up frequently when searching for URL's in href attributes.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/144/ Bug #144
+	 */
+	public function test_bug_144() {
+		$doc = <<<HTML
+<a href="http://simplehtmldom.sourceforge.net">Home</a>
+<a href="http://simplehtmldom.sourceforge.net/manual.htm">Manual</a>
+HTML;
+
+		$this->html->load($doc);
+
+		$this->assertCount(1, $this->html->find('a[href*="/manual.htm"]'));
+	}
+
+	/**
 	 * Bug #154 (Fatal error: Call to a member function find() on null)
 	 *
 	 * The parser incorrectly removes everything between `{` and `}` attempting

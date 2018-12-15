@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added unit tests for bug reports
   - Added test for bug [#62](https://sourceforge.net/p/simplehtmldom/bugs/62/)
   - Added test for bug [#79](https://sourceforge.net/p/simplehtmldom/bugs/79/)
+  - Added test for bug [#144](https://sourceforge.net/p/simplehtmldom/bugs/144/)
 - Added unit tests for CSS selectors
 - Added ability to define constants before simple_html_dom does
   - 'DEFAULT_TARGET_CHARSET'
