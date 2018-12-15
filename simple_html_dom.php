@@ -859,10 +859,7 @@ class simple_html_dom_node
 			case '$=':
 				return preg_match("/".preg_quote($pattern,'/')."$/", $value);
 			case '*=':
-				if ($pattern[0]=='/') {
-					return preg_match($pattern, $value);
-				}
-				return preg_match("/".$pattern."/i", $value);
+				return preg_match("/".preg_quote($pattern,'/')."/i", $value);
 		}
 		return false;
 	}
