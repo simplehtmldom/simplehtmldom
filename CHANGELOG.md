@@ -13,6 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added test for bug [#62](https://sourceforge.net/p/simplehtmldom/bugs/62/)
   - Added test for bug [#79](https://sourceforge.net/p/simplehtmldom/bugs/79/)
 - Added unit tests for CSS selectors
+- Added ability to define constants before simple_html_dom does
+  - 'DEFAULT_TARGET_CHARSET'
+  - 'DEFAULT_BR_TEXT'
+  - 'DEFAULT_SPAN_TEXT'
+  - 'MAX_FILE_SIZE'
 ### Changed
 - Removed automatic filtering of 'tbody' selectors (#79)
   > Remove 'tbody' from all selectors to maintain the previous state!

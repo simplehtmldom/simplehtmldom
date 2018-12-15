@@ -60,10 +60,18 @@ define('HDOM_INFO_TEXT',	4);
 define('HDOM_INFO_INNER',   5);
 define('HDOM_INFO_OUTER',   6);
 define('HDOM_INFO_ENDSPACE',7);
-define('DEFAULT_TARGET_CHARSET', 'UTF-8');
-define('DEFAULT_BR_TEXT', "\r\n");
-define('DEFAULT_SPAN_TEXT', " ");
-define('MAX_FILE_SIZE', 600000);
+
+/** The default target charset */
+defined('DEFAULT_TARGET_CHARSET') || define('DEFAULT_TARGET_CHARSET', 'UTF-8');
+
+/** The default <br> text used instead of <br> tags when returning text */
+defined('DEFAULT_BR_TEXT') || define('DEFAULT_BR_TEXT', "\r\n");
+
+/** The default <span> text used instead of <span> tags when returning text */
+defined('DEFAULT_SPAN_TEXT') || define('DEFAULT_SPAN_TEXT', " ");
+
+/** The maximum file size the parser should load */
+defined('MAX_FILE_SIZE') || define('MAX_FILE_SIZE', 600000);
 
 /** Contents between curly braces "{" and "}" are interpreted as text */
 define('HDOM_SMARTY_AS_TEXT', 1);
