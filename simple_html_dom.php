@@ -713,7 +713,7 @@ class simple_html_dom_node
 
 		// Find descendent element opening tag at specific index
 		// todo $key will never be numeric if $tag is set to "*" (i.e. CSS "*[2]" doesn't work)
-		if ($tag && $key && is_numeric($key))
+		if ($tag !== '' && $key !== '' && is_numeric($key))
 		{
 			$count = 0;
 			foreach ($this->children as $c)
@@ -751,19 +751,19 @@ class simple_html_dom_node
 			// Find elements matching wildcard "*"
 			// todo This only matches children of the current element, not their childs (as one would expect)!
 			// todo Node is not cleared (unset()) in this case!
-			if ($tag==='*' && !$key) {
+			if ($tag==='*' && $key === '') {
 				if (in_array($node, $this->children, true))
 					$ret[$i] = 1;
 				continue;
 			}
 
 			// Skip if tags don't match
-			if ($tag && $tag!=$node->tag && $tag!=='*') {$pass=false;}
+			if ($tag !== '' && $tag!=$node->tag && $tag!=='*') {$pass=false;}
 
 			// Check attribute key (attribute mode)
 			// todo This doesn't work correctly if multiple attribute keys are specified (i.e. 'a[href][hreflang]')
 			// todo Since $key has multiple purposes in $selector, this breaks multiple classes (i.e. 'a.c1.c2')
-			if ($pass && $key) {
+			if ($pass && $key !== '') {
 				if ($no_key) { // Attribute should NOT be set
 					if (isset($node->attr[$key])) $pass=false;
 				} else { // Attribute should be set
@@ -773,7 +773,7 @@ class simple_html_dom_node
 			}
 
 			// Check attribute value
-			if ($pass && $key && $val  && $val!=='*') {
+			if ($pass && $key !== '' && $val!=='*') {
 				// If they have told us that this is a "plaintext" search then we want the plaintext of the node - right?
 				// todo "plaintext" is not a valid CSS selector!
 				if ($key == "plaintext") {
@@ -798,7 +798,7 @@ class simple_html_dom_node
 				if (!$check && strcasecmp($key, 'class')===0) {
 					foreach (explode(' ',$node->attr[$key]) as $k) {
 						// Without this, there were cases where leading, trailing, or double spaces lead to our comparing blanks - bad form.
-						if (!empty($k)) {
+						if ($k !== '') {
 							if ($lowercase) {
 								$check = $this->match($exp, strtolower($val), strtolower($k));
 							} else {
@@ -929,12 +929,12 @@ class simple_html_dom_node
 			// for browser generated xpath
 			if ($m[1]==='tbody') continue;
 
-			list($tag, $key, $val, $exp, $no_key) = array($m[1], null, null, '=', false);
-			if (!empty($m[2])) {$key='id'; $val=$m[2];}
-			if (!empty($m[3])) {$key='class'; $val=$m[3];}
-			if (!empty($m[4])) {$key=$m[4];}
-			if (!empty($m[5])) {$exp=$m[5];}
-			if (!empty($m[6])) {$val=$m[6];}
+			list($tag, $key, $val, $exp, $no_key) = array($m[1], '', '', '=', false);
+			if ($m[2] !== '') {$key='id'; $val=$m[2];}
+			if ($m[3] !== '') {$key='class'; $val=$m[3];}
+			if ($m[4] !== '') {$key=$m[4];}
+			if ($m[5] !== '') {$exp=$m[5];}
+			if ($m[6] !== '') {$val=$m[6];}
 
 			// convert to lowercase
 			if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
