@@ -773,7 +773,7 @@ class simple_html_dom_node
 			}
 
 			// Check attribute value
-			if ($pass && $key !== '' && $val!=='*') {
+			if ($pass && $key !== '' && $val != '' && $val!=='*') {
 				// If they have told us that this is a "plaintext" search then we want the plaintext of the node - right?
 				// todo "plaintext" is not a valid CSS selector!
 				if ($key == "plaintext") {
