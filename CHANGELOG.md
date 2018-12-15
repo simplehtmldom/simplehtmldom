@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added documentation for `simple_html_dom_node::parse_selector`
 - Added documentation for `simple_html_dom_node::seek`
 - Added documentation for `simple_html_dom_node::match`
+- Added unit tests for bug reports
+  - Added test for bug [#62](https://sourceforge.net/p/simplehtmldom/bugs/62/)
 ### Changed
 ### Deprecated
 ### Removed

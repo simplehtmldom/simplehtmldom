@@ -36,6 +36,28 @@ HTML;
 	}
 
 	/**
+	 * Bug #62 (foreach($html->find(a[id=0]) as $e))
+	 *
+	 * `find` should be able to distinguish attributes with value "0" from other
+	 * attributes when doing `find('[id="0"]')`.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/62/ Bug #62
+	 */
+	public function test_bug_62() {
+		$doc = <<<HTML
+<body>
+	<a href="#" id="0">PHP Simple HTML DOM Parser</a>
+	<a href="#" id="1">A PHP based DOM parser</a>
+</body>
+HTML;
+
+		$this->html->load($doc);
+
+		$this->assertCount(1, $this->html->find('[id=0]'));
+		$this->assertCount(1, $this->html->find('#0'));
+	}
+
+	/**
 	 * Bug #97 (plaintext returning conjoined elements)
 	 *
 	 * Paragraphs ("p" elements) should start on a new line when returned as
