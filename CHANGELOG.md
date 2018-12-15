@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 ### Fixed
 - Fixed broken CSS selector attributes with value "0" (#62)
+- Fixed broken simple_html_dom::load_file
 ### Security
 
 ## [1.7] - 2018-12-10
