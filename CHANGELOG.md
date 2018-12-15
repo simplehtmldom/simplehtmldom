@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added documentation for `simple_html_dom_node::find`
 - Added documentation for `simple_html_dom_node::parse_selector`
 - Added documentation for `simple_html_dom_node::seek`
+- Added documentation for `simple_html_dom_node::match`
 ### Changed
 ### Deprecated
 ### Removed

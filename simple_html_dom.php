@@ -819,6 +819,24 @@ class simple_html_dom_node
 		if (is_object($debug_object)) {$debug_object->debug_log(1, "EXIT - ret: ", $ret);}
 	}
 
+	/**
+	 * Match value and pattern for a given CSS expression
+	 *
+	 * **Supported Expressions**
+	 *
+	 * | Expression | Description
+	 * | ---------- | -----------
+	 * | `=`        | $value and $pattern must be equal
+	 * | `!=`       | $value and $pattern must not be equal
+	 * | `^=`       | $value must start with $pattern
+	 * | `$=`       | $value must end with $pattern
+	 * | `*=`       | $value must contain $pattern
+	 *
+	 * @param string $exp The expression.
+	 * @param string $pattern The pattern
+	 * @param string $value The value
+	 * @value bool True if $value matches $pattern
+	 */
 	protected function match($exp, $pattern, $value) {
 		global $debug_object;
 		if (is_object($debug_object)) {$debug_object->debug_log_entry(1);}
