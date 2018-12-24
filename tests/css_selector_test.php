@@ -369,6 +369,9 @@ HTML;
 <body>
 	<p id="title">PHP Simple HTML DOM Parser</p>
 	<p id="subtitle">A PHP based DOM parser</p>
+	<div>
+		<p>Lorem ipsum dolor sit amet.</p>
+	</div>
 </body>
 </html>
 HTML;
