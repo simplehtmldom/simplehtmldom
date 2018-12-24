@@ -32,8 +32,6 @@ HTML;
 
 		$this->html->load($doc);
 
-		$this->markTestSkipped('Universal selectors are not supported yet!');
-
 		$this->assertCount(5, $this->html->find('*'));
 	}
 

@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed broken CSS selector attributes with value "0" (#62)
 - Fixed broken simple_html_dom::load_file
 - Fixed forward slashes in CSS selector breaks value matching using '*=' (#144)
+- Fixed Universal Selectors
 ### Security
 
 ## [1.7] - 2018-12-10

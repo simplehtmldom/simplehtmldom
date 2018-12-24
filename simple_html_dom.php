@@ -757,11 +757,12 @@ class simple_html_dom_node
 			$pass = true;
 
 			// Find elements matching wildcard "*"
-			// todo This only matches children of the current element, not their childs (as one would expect)!
-			// todo Node is not cleared (unset()) in this case!
-			if ($tag==='*' && $key === '') {
-				if (in_array($node, $this->children, true))
+			if ($tag === '*' && $key === '') {
+				if($node->parent && in_array($node, $node->parent->children, true)) {
 					$ret[$i] = 1;
+				}
+
+				unset($node);
 				continue;
 			}
 
