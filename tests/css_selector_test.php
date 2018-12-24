@@ -402,8 +402,6 @@ HTML;
 
 		$this->html->load($doc);
 
-		$this->markTestSkipped('Not supported!');
-
 		$this->assertCount(1, $this->html->find('h1 + p'));
 		$this->assertCount(1, $this->html->find('h2 + p'));
 	}
@@ -421,15 +419,13 @@ HTML;
 <body>
 	<h1>PHP Simple HTML DOM Parser</h1>
 	<p id="title">PHP Simple HTML DOM Parser</p>
-	<h2>A PHP based DOM parser</p>
+	<h2>A PHP based DOM parser</h2>
 	<p id="subtitle">A PHP based DOM parser</p>
 </body>
 </html>
 HTML;
 
 		$this->html->load($doc);
-
-		$this->markTestSkipped('Not supported!');
 
 		$this->assertCount(2, $this->html->find('h1 ~ p'));
 		$this->assertCount(1, $this->html->find('h2 ~ p'));
