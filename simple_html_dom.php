@@ -799,8 +799,25 @@ class simple_html_dom_node
 				}
 			}
 
+			// Check class(es)
+			if ($pass && $key === 'class' && is_array($val)) {
+				$node_classes = explode(' ', $node->attr[$key]);
+
+				if ($lowercase) {
+					$node_classes = array_map('strtolower', $node_classes);
+					$val = array_map('strtolower', $val);
+				}
+
+				foreach($val as $class) {
+					if(!in_array($class, $node_classes)) {
+						$pass = false;
+						break;
+					}
+				}
+			}
+
 			// Check attribute value
-			if ($pass && $key !== '' && $val != '' && $val!=='*') {
+			if ($pass && $key !== '' && $val != '' && $val!=='*' && is_string($val)) {
 				// If they have told us that this is a "plaintext" search then we want the plaintext of the node - right?
 				// todo "plaintext" is not a valid CSS selector!
 				if ($key == "plaintext") {
@@ -820,21 +837,6 @@ class simple_html_dom_node
 				}
 				if (is_object($debug_object)) {$debug_object->debug_log(2, "after match: " . ($check ? "true" : "false"));}
 
-				// handle multiple class
-				// todo Why do strcasecmp here? $key should exactly match 'class' according to parse_selector()
-				if (!$check && strcasecmp($key, 'class')===0) {
-					foreach (explode(' ',$node->attr[$key]) as $k) {
-						// Without this, there were cases where leading, trailing, or double spaces lead to our comparing blanks - bad form.
-						if ($k !== '') {
-							if ($lowercase) {
-								$check = $this->match($exp, strtolower($val), strtolower($k));
-							} else {
-								$check = $this->match($exp, $val, $k);
-							}
-							if ($check) break;
-						}
-					}
-				}
 				if (!$check) $pass = false;
 			}
 
@@ -899,7 +901,7 @@ class simple_html_dom_node
 	 *     array( // selector element
 	 *       'tag', // (string) The element tag
 	 *       'key', // (string) The element key (ID | CLASS | ATTRIBUTE | 'id' | 'class')
-	 *       'val', // (string) The element value (TAG | CLASS | VALUE | '')
+	 *       'val', // (string) The element value (TAG | CLASSES | VALUE | '')
 	 *       'exp', // (string) The attribute expression ('=' | !=' | '*=' | '^=' | '$=')
 	 *       'inv', // (boolean) True if the key is matched inverted
 	 *       'cmb' // (string) The selector combinator (' ' | '>' | '+' | '~')
@@ -928,10 +930,11 @@ class simple_html_dom_node
 		 *     Matches the tag name consisting of zero or more words, colons,
 		 *     asterisks and hyphens.
 		 *
-		 * [1] (?:\#([\w-]+)|\.([\w-]+))?
-		 *     Optionally matches the class or id name, consisting of an "#"
-		 *     followed by the id name (one or more words and hyphens) or an "."
-		 *     followed by the class name (one or more words and hyphens)
+		 * [1] (?:\#([\w-]+)|\.([\w\.-]+))?
+		 *     Optionally matches a list of classs or an id name, consisting of
+		 *     an "#" followed by the id name (one or more words and hyphens) or
+		 *     an "." followed by the class name (one or more words and hyphens)
+		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
 		 * [2] (?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?
 		 *     Optionally matches the attributes list
@@ -941,7 +944,7 @@ class simple_html_dom_node
 		 *
 		 * # todo: Update regex to match CSS specification
 		 */
-		$pattern = "/([\w:\*-]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, >+~]+)/is";
+		$pattern = "/([\w:\*-]*)(?:\#([\w-]+)|\.([\w\.-]+))?(?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, >+~]+)/is";
 		preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER); // Add final ' ' as pseudo separator
 		if (is_object($debug_object)) {$debug_object->debug_log(2, "Matches Array: ", $matches);}
 
@@ -966,7 +969,7 @@ class simple_html_dom_node
 
 			list($tag, $key, $val, $exp, $no_key, $cmb) = array($m[1], '', '', '=', false, ' ');
 			if ($m[2] !== '') {$key='id'; $val=$m[2];}
-			if ($m[3] !== '') {$key='class'; $val=$m[3];}
+			if ($m[3] !== '') {$key='class'; $val=explode('.', $m[3]);}
 			if ($m[4] !== '') {$key=$m[4];}
 			if ($m[5] !== '') {$exp=$m[5];}
 			if ($m[6] !== '') {$val=$m[6];}

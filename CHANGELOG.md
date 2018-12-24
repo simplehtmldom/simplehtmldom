@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added support for Child Combinator (`>`)
   - Added support for Next Sibling Combinator (`+`)
   - Added support for Subsequent Sibling Combinator (`~`)
+- Added support for multiclass selectors (`.class.class.class`)
 ### Changed
 - Removed automatic filtering of 'tbody' selectors (#79)
   > Remove 'tbody' from all selectors to maintain the previous state!

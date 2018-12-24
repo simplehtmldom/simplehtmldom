@@ -84,6 +84,7 @@ HTML;
 
 		$this->assertCount(1, $this->html->find('p.title'));
 		$this->assertCount(1, $this->html->find('p.subtitle'));
+		$this->assertCount(1, $this->html->find('p.title.header'));
 	 }
 
 	/**
@@ -293,6 +294,8 @@ HTML;
 <body>
 	<p id="title">PHP Simple HTML DOM Parser</p>
 	<p id="subtitle">A PHP based DOM parser</p>
+	<p class="title header">PHP Simple HTML DOM Parser</p>
+	<p class="title subtitle">A PHP based DOM parser</p>
 </body>
 </html>
 HTML;
@@ -300,6 +303,9 @@ HTML;
 		$this->html->load($doc);
 
 		$this->assertCount(2, $this->html->find('p[id*="itl"]'));
+		$this->assertCount(2, $this->html->find('p[class*="title"]'));
+		$this->assertCount(1, $this->html->find('p[class*="title header"]'));
+		$this->assertCount(1, $this->html->find('p[class*="subtitle"]'));
 	}
 
 	/**
