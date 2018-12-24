@@ -663,6 +663,7 @@ class simple_html_dom_node
 			if (!isset($this->_[HDOM_INFO_BEGIN])) return array();
 
 			$head = array($this->_[HDOM_INFO_BEGIN]=>1);
+			$cmd = ' '; // Combinator
 
 			// handle descendant selectors, no recursive!
 			for ($l=0; $l<$levle; ++$l)
@@ -672,9 +673,10 @@ class simple_html_dom_node
 				{
 					$n = ($k===-1) ? $this->dom->root : $this->dom->nodes[$k];
 					//PaperG - Pass this optional parameter on to the seek function.
-					$n->seek($selectors[$c][$l], $ret, $lowercase);
+					$n->seek($selectors[$c][$l], $ret, $cmd, $lowercase);
 				}
 				$head = $ret;
+				$cmd = $selectors[$c][$l][5]; // Next Combinator
 			}
 
 			foreach ($head as $k=>$v)
@@ -712,12 +714,13 @@ class simple_html_dom_node
 	 * enabled (default: `false`)
 	 * @return void
 	 */
-	protected function seek($selector, &$ret, $lowercase=false)
+	protected function seek($selector, &$ret, $parent_cmd, $lowercase=false)
 	{
 		global $debug_object;
 		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
 
-		list($tag, $key, $val, $exp, $no_key) = $selector;
+		list($tag, $key, $val, $exp, $no_key, $cmb) = $selector;
+		$nodes = array();
 
 		// Find descendent element opening tag at specific index
 		// todo $key will never be numeric if $tag is set to "*" (i.e. CSS "*[2]" doesn't work)
@@ -736,30 +739,45 @@ class simple_html_dom_node
 			return;
 		}
 
-		// Find parent closing tag if the current element doesn't have a closing
-		// tag (i.e. void element)
-		$end = (!empty($this->_[HDOM_INFO_END])) ? $this->_[HDOM_INFO_END] : 0;
-		if ($end==0) {
-			$parent = $this->parent;
-			while (!isset($parent->_[HDOM_INFO_END]) && $parent!==null) {
-				$end -= 1;
-				$parent = $parent->parent;
+		if ($parent_cmd === ' ') { // Descendant Combinator
+			// Find parent closing tag if the current element doesn't have a closing
+			// tag (i.e. void element)
+			$end = (!empty($this->_[HDOM_INFO_END])) ? $this->_[HDOM_INFO_END] : 0;
+			if ($end==0) {
+				$parent = $this->parent;
+				while (!isset($parent->_[HDOM_INFO_END]) && $parent!==null) {
+					$end -= 1;
+					$parent = $parent->parent;
+				}
+				$end += $parent->_[HDOM_INFO_END];
 			}
-			$end += $parent->_[HDOM_INFO_END];
+
+			// Get list of target nodes
+			$nodes_start = $this->_[HDOM_INFO_BEGIN] + 1;
+			$nodes_count = $end - $nodes_start;
+			$nodes = array_slice($this->dom->nodes, $nodes_start, $nodes_count, true);
+		} elseif ($parent_cmd === '>') { // Child Combinator
+			$nodes = $this->children;
+		} elseif ($parent_cmd === '+'
+			&& $this->parent
+			&& in_array($this, $this->parent->children)) { // Next-Sibling Combinator
+			$nodes[] = $this->parent->children[array_search($this, $this->parent->children, true) + 1];
+		} elseif ($parent_cmd === '~'
+			&& $this->parent
+			&& in_array($this, $this->parent->children)) { // Subsequent Sibling Combinator
+			$nodes = array_slice($this->parent->children, array_search($this, $this->parent->children, true));
 		}
 
 		// Go throgh each element starting at this element until the end tag
 		// Note: If this element is a void tag, any previous void element is
 		// skipped.
-		for ($i=$this->_[HDOM_INFO_BEGIN]+1; $i<$end; ++$i) {
-			$node = $this->dom->nodes[$i];
-
+		foreach($nodes as $node) {
 			$pass = true;
 
 			// Find elements matching wildcard "*"
 			if ($tag === '*' && $key === '') {
 				if($node->parent && in_array($node, $node->parent->children, true)) {
-					$ret[$i] = 1;
+					$ret[$node->_[HDOM_INFO_BEGIN]] = 1;
 				}
 
 				unset($node);
@@ -821,7 +839,7 @@ class simple_html_dom_node
 			}
 
 			// Found a match. Add to list and clear node
-			if ($pass) $ret[$i] = 1;
+			if ($pass) $ret[$node->_[HDOM_INFO_BEGIN]] = 1;
 			unset($node);
 		}
 		// It's passed by reference so this is actually what this function returns.
@@ -883,7 +901,8 @@ class simple_html_dom_node
 	 *       'key', // (string) The element key (ID | CLASS | ATTRIBUTE | 'id' | 'class')
 	 *       'val', // (string) The element value (TAG | CLASS | VALUE | '')
 	 *       'exp', // (string) The attribute expression ('=' | !=' | '*=' | '^=' | '$=')
-	 *       'inv' // (boolean) True if the key is matched inverted
+	 *       'inv', // (boolean) True if the key is matched inverted
+	 *       'cmb' // (string) The selector combinator (' ' | '>' | '+' | '~')
 	 *     )
 	 *   )
 	 * )
@@ -917,12 +936,12 @@ class simple_html_dom_node
 		 * [2] (?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?
 		 *     Optionally matches the attributes list
 		 *
-		 * [3] ([\/, ]+)
+		 * [3] ([\/, >+~]+)
 		 *     Matches the selector list separator
 		 *
 		 * # todo: Update regex to match CSS specification
 		 */
-		$pattern = "/([\w:\*-]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, ]+)/is";
+		$pattern = "/([\w:\*-]*)(?:\#([\w-]+)|\.([\w-]+))?(?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, >+~]+)/is";
 		preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER); // Add final ' ' as pseudo separator
 		if (is_object($debug_object)) {$debug_object->debug_log(2, "Matches Array: ", $matches);}
 
@@ -933,20 +952,34 @@ class simple_html_dom_node
 			$m[0] = trim($m[0]);
 			if ($m[0]==='' || $m[0]==='/' || $m[0]==='//') continue;
 
-			list($tag, $key, $val, $exp, $no_key) = array($m[1], '', '', '=', false);
+			// Sanitize Separator
+			if ($m[7] !== '' && trim($m[7]) === '') { // Descendant Separator
+				$m[7] = ' ';
+			} else { // Other Separator
+				$m[7] = trim($m[7]);
+			}
+
+			// Clear Separator if it's a Selector List
+			if($is_list = ($m[7] === ',')) {
+				$m[7] = '';
+			}
+
+			list($tag, $key, $val, $exp, $no_key, $cmb) = array($m[1], '', '', '=', false, ' ');
 			if ($m[2] !== '') {$key='id'; $val=$m[2];}
 			if ($m[3] !== '') {$key='class'; $val=$m[3];}
 			if ($m[4] !== '') {$key=$m[4];}
 			if ($m[5] !== '') {$exp=$m[5];}
 			if ($m[6] !== '') {$val=$m[6];}
+			if ($m[7] !== '') {$cmb=$m[7];}
 
 			// convert to lowercase
 			if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
 			//elements that do NOT have the specified attribute
 			if (isset($key[0]) && $key[0]==='!') {$key=substr($key, 1); $no_key=true;}
 
-			$result[] = array($tag, $key, $val, $exp, $no_key);
-			if (trim($m[7])===',') {
+			$result[] = array($tag, $key, $val, $exp, $no_key, $cmb);
+
+			if ($is_list) { // Selector List
 				$selectors[] = $result;
 				$result = array();
 			}
