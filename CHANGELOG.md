@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added support for Next Sibling Combinator (`+`)
   - Added support for Subsequent Sibling Combinator (`~`)
 - Added support for multiclass selectors (`.class.class.class`)
+- Added support for multiattribute selectors (`[attr1][attr2][attribute3]`)
 ### Changed
 - Removed automatic filtering of 'tbody' selectors (#79)
   > Remove 'tbody' from all selectors to maintain the previous state!

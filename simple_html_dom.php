@@ -676,7 +676,7 @@ class simple_html_dom_node
 					$n->seek($selectors[$c][$l], $ret, $cmd, $lowercase);
 				}
 				$head = $ret;
-				$cmd = $selectors[$c][$l][5]; // Next Combinator
+				$cmd = $selectors[$c][$l][4]; // Next Combinator
 			}
 
 			foreach ($head as $k=>$v)
@@ -719,25 +719,8 @@ class simple_html_dom_node
 		global $debug_object;
 		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
 
-		list($tag, $key, $val, $exp, $no_key, $cmb) = $selector;
+		list($tag, $id, $class, $attributes, $cmb) = $selector;
 		$nodes = array();
-
-		// Find descendent element opening tag at specific index
-		// todo $key will never be numeric if $tag is set to "*" (i.e. CSS "*[2]" doesn't work)
-		if ($tag !== '' && $key !== '' && is_numeric($key))
-		{
-			$count = 0;
-			foreach ($this->children as $c)
-			{
-				if ($tag==='*' || $tag===$c->tag) {
-					if (++$count==$key) {
-						$ret[$c->_[HDOM_INFO_BEGIN]] = 1;
-						return;
-					}
-				}
-			}
-			return;
-		}
 
 		if ($parent_cmd === ' ') { // Descendant Combinator
 			// Find parent closing tag if the current element doesn't have a closing
@@ -774,70 +757,116 @@ class simple_html_dom_node
 		foreach($nodes as $node) {
 			$pass = true;
 
-			// Find elements matching wildcard "*"
-			if ($tag === '*' && $key === '') {
-				if($node->parent && in_array($node, $node->parent->children, true)) {
-					$ret[$node->_[HDOM_INFO_BEGIN]] = 1;
-				}
-
-				unset($node);
-				continue;
+			// Skip root nodes
+			if(!$node->parent) {
+				$pass = false;
 			}
 
-			// Skip if tags don't match
-			if ($tag !== '' && $tag!=$node->tag && $tag!=='*') {$pass=false;}
-
-			// Check attribute key (attribute mode)
-			// todo This doesn't work correctly if multiple attribute keys are specified (i.e. 'a[href][hreflang]')
-			// todo Since $key has multiple purposes in $selector, this breaks multiple classes (i.e. 'a.c1.c2')
-			if ($pass && $key !== '') {
-				if ($no_key) { // Attribute should NOT be set
-					if (isset($node->attr[$key])) $pass=false;
-				} else { // Attribute should be set
-					// todo: "plaintext" is not a valid CSS selector!
-					if (($key != "plaintext") && !isset($node->attr[$key])) $pass=false;
-				}
+			// Skip if node isn't a child node (i.e. text nodes)
+			if($pass && !in_array($node, $node->parent->children, true)) {
+				$pass = false;
 			}
 
-			// Check class(es)
-			if ($pass && $key === 'class' && is_array($val)) {
-				$node_classes = explode(' ', $node->attr[$key]);
+			// Skip if tag doesn't match
+			if ($pass && $tag !== '' && $tag !== $node->tag && $tag !== '*') {
+				$pass = false;
+			}
+
+			// Skip if ID doesn't exist
+			if ($pass && $id !== '' && !isset($node->attr['id'])) {
+				$pass = false;
+			}
+
+			// Check if ID matches
+			if ($pass && $id !== '' && isset($node->attr['id'])) {
+				// Note: Only consider the first ID (as browsers do)
+				$node_id = explode(' ', trim($node->attr['id']))[0];
+
+				if($id !== $node_id) { $pass = false; }
+			}
+
+			// Check if all class(es) exist
+			if ($pass && $class !== '' && is_array($class) && !empty($class)) {
+				$node_classes = explode(' ', $node->attr['class']);
 
 				if ($lowercase) {
 					$node_classes = array_map('strtolower', $node_classes);
-					$val = array_map('strtolower', $val);
 				}
 
-				foreach($val as $class) {
-					if(!in_array($class, $node_classes)) {
+				foreach($class as $c) {
+					if(!in_array($c, $node_classes)) {
 						$pass = false;
 						break;
 					}
 				}
 			}
 
-			// Check attribute value
-			if ($pass && $key !== '' && $val != '' && $val!=='*' && is_string($val)) {
-				// If they have told us that this is a "plaintext" search then we want the plaintext of the node - right?
-				// todo "plaintext" is not a valid CSS selector!
-				if ($key == "plaintext") {
-					// $node->plaintext actually returns $node->text();
-					$nodeKeyValue = $node->text();
-				} else {
-					// this is a normal search, we want the value of that attribute of the tag.
-					$nodeKeyValue = $node->attr[$key];
-				}
-				if (is_object($debug_object)) {$debug_object->debug_log(2, "testing node: " . $node->tag . " for attribute: " . $key . $exp . $val . " where nodes value is: " . $nodeKeyValue);}
+			// Check attributes
+			if ($pass && $attributes !== '' && is_array($attributes) && !empty($attributes)) {
+				foreach($attributes as $a) {
+					list($att_name, $att_expr, $att_val, $att_inv) = $a;
 
-				//PaperG - If lowercase is set, do a case insensitive test of the value of the selector.
-				if ($lowercase) {
-					$check = $this->match($exp, strtolower($val), strtolower($nodeKeyValue));
-				} else {
-					$check = $this->match($exp, $val, $nodeKeyValue);
-				}
-				if (is_object($debug_object)) {$debug_object->debug_log(2, "after match: " . ($check ? "true" : "false"));}
+					// Handle indexing attributes (i.e. "[2]")
+					/**
+					 * Note: This is not supported by the CSS Standard but adds
+					 * the ability to select items compatible to XPath (i.e.
+					 * the 3rd element within it's parent).
+					 *
+					 * Note: This doesn't conflict with the CSS Standard which
+					 * doesn't work on numeric attributes anyway.
+					 */
+					if (is_numeric($att_name)
+					&& $att_expr === ''
+					&& $att_val === '') {
+						$count = 0;
 
-				if (!$check) $pass = false;
+						// Find index of current element in parent
+						foreach ($node->parent->children as $c) {
+							if ($c->tag === $node->tag) ++$count;
+							if ($c === $node) break;
+						}
+
+						// If this is the correct node, continue with next attribute
+						if ($count === (int)$att_name) continue;
+					}
+
+					// Check attribute availability
+					if ($att_inv) { // Attribute should NOT be set
+						if (isset($node->attr[$att_name])) {
+							$pass = false;
+							break;
+						}
+					} else { // Attribute should be set
+						// todo: "plaintext" is not a valid CSS selector!
+						if (($att_name !== "plaintext") && !isset($node->attr[$att_name])) {
+							$pass = false;
+							break;
+						}
+					}
+
+					// Continue with next attribute if expression isn't defined
+					if ($att_expr === '') continue;
+
+					// If they have told us that this is a "plaintext" search then we want the plaintext of the node - right?
+					// todo "plaintext" is not a valid CSS selector!
+					$nodeKeyValue = ($att_name === "plaintext") ? $node->text() : $node->attr[$att_name];
+
+					if (is_object($debug_object)) {$debug_object->debug_log(2, "testing node: " . $node->tag . " for attribute: " . $att_name . $att_expr . $att_val . " where nodes value is: " . $nodeKeyValue);}
+
+					// If lowercase is set, do a case insensitive test of the value of the selector.
+					if ($lowercase) {
+						$check = $this->match($att_expr, strtolower($att_val), strtolower($nodeKeyValue));
+					} else {
+						$check = $this->match($att_expr, $att_val, $nodeKeyValue);
+					}
+
+					if (is_object($debug_object)) {$debug_object->debug_log(2, "after match: " . ($check ? "true" : "false"));}
+
+					if (!$check) {
+						$pass = false;
+						break;
+					}
+				}
 			}
 
 			// Found a match. Add to list and clear node
@@ -893,18 +922,16 @@ class simple_html_dom_node
 	 * selector:
 	 *
 	 * ```php
-	 * // Note: The selector element has no key names!
-	 * // Those were added to make this example easier to understand.
 	 *
 	 * array( // list of selectors (each separated by a comma), i.e. 'img, p, div'
 	 *   array( // list of combinator selectors, i.e. 'img > p > div'
 	 *     array( // selector element
-	 *       'tag', // (string) The element tag
-	 *       'key', // (string) The element key (ID | CLASS | ATTRIBUTE | 'id' | 'class')
-	 *       'val', // (string) The element value (TAG | CLASSES | VALUE | '')
-	 *       'exp', // (string) The attribute expression ('=' | !=' | '*=' | '^=' | '$=')
-	 *       'inv', // (boolean) True if the key is matched inverted
-	 *       'cmb' // (string) The selector combinator (' ' | '>' | '+' | '~')
+	 *       [0],   // (string) The element tag
+	 *       [1],    // (string) The element id
+	 *       [2], // (array<string>) The element classes
+	 *       [3], // (array<array<string>>) The list of attributes, each
+	 *                     // with four elements: name, expression, value, inverted
+	 *       [4]    // (string) The selector combinator (' ' | '>' | '+' | '~')
 	 *     )
 	 *   )
 	 * )
@@ -919,32 +946,49 @@ class simple_html_dom_node
 		/**
 		 * Pattern of CSS selectors, modified from mootools (https://mootools.net/)
 		 *
-		 * Paperg: Add the colon to the attribute, so that it properly finds <tag attr:ibute="something" > like google does.
-		 * Note: if you try to look at this attribute, you MUST use getAttribute since $dom->x:y will fail the php syntax check.
-		 * Notice the \[ starting the attbute? and the @? following? This implies that an attribute can begin with an @ sign that is not captured.
-		 * This implies that an html attribute specifier may start with an @ sign that is NOT captured by the expression.
-		 * farther study is required to determine of this should be documented or removed.
+		 * Paperg: Add the colon to the attribute, so that it properly finds
+		 * <tag attr:ibute="something" > like google does.
+		 *
+		 * Note: if you try to look at this attribute, you MUST use getAttribute
+		 * since $dom->x:y will fail the php syntax check.
+		 *
+		 * Notice the \[ starting the attribute? and the @? following? This
+		 * implies that an attribute can begin with an @ sign that is not
+		 * captured. This implies that an html attribute specifier may start
+		 * with an @ sign that is NOT captured by the expression. Farther study
+		 * is required to determine of this should be documented or removed.
+		 *
 		 * Matches selectors in this order:
 		 *
-		 * [0] ([\w:\*-]*)
+		 * [0] - full match
+		 *
+		 * [1] - tag name
+		 *     ([\w:\*-]*)
 		 *     Matches the tag name consisting of zero or more words, colons,
 		 *     asterisks and hyphens.
 		 *
-		 * [1] (?:\#([\w-]+)|\.([\w\.-]+))?
-		 *     Optionally matches a list of classs or an id name, consisting of
-		 *     an "#" followed by the id name (one or more words and hyphens) or
-		 *     an "." followed by the class name (one or more words and hyphens)
+		 * [2] - id name
+		 *     (?:\#([\w-]+))
+		 *     Optionally matches a id name, consisting of an "#" followed by
+		 *     the id name (one or more words and hyphens).
+		 *
+		 * [3] - class names (including dots)
+		 *     (?:\.([\w\.-]+))?
+		 *     Optionally matches a list of classs, consisting of an "."
+		 *     followed by the class name (one or more words and hyphens)
 		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
-		 * [2] (?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?
+		 * [4] - attributes
+		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$]?=)[\"']?(?:.*?)[\"']?)?\])+)?
 		 *     Optionally matches the attributes list
 		 *
-		 * [3] ([\/, >+~]+)
+		 * [5] - separator
+		 *     ([\/, >+~]+)
 		 *     Matches the selector list separator
 		 *
 		 * # todo: Update regex to match CSS specification
 		 */
-		$pattern = "/([\w:\*-]*)(?:\#([\w-]+)|\.([\w\.-]+))?(?:\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\])?([\/, >+~]+)/is";
+		$pattern = "/([\w:\*-]*)(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$]?=)[\"']?(?:.*?)[\"']?)?\])+)?([\/, >+~]+)/is";
 		preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER); // Add final ' ' as pseudo separator
 		if (is_object($debug_object)) {$debug_object->debug_log(2, "Matches Array: ", $matches);}
 
@@ -953,34 +997,67 @@ class simple_html_dom_node
 
 		foreach ($matches as $m) {
 			$m[0] = trim($m[0]);
+
+			// Skip NoOps
 			if ($m[0]==='' || $m[0]==='/' || $m[0]==='//') continue;
 
+			// Convert to lowercase
+			if ($this->dom->lowercase) {
+				$m[1] = strtolower($m[1]);
+				$m[2] = strtolower($m[2]);
+				$m[3] = strtolower($m[3]);
+			}
+
+			// Extract classes
+			if ($m[3] !== '') $m[3] = explode('.', $m[3]);
+
+			/* Extract attributes (pattern based on the pattern above!)
+
+			 * [0] - full match
+			 * [1] - attribute name
+			 * [2] - attribute expression
+			 * [3] - attribute value
+			 *
+			 * Note: Attributes can be negated with a "!" prefix to their name
+			 */
+			if($m[4] !== '') {
+				preg_match_all(
+					"/\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\]/is",
+					trim($m[4]),
+					$attributes,
+					PREG_SET_ORDER
+				);
+
+				// Replace element by array
+				$m[4] = array();
+
+				foreach($attributes as $att) {
+					// Skip empty matches
+					if(trim($att[0]) === '') continue;
+
+					$inverted = (isset($att[1][0]) && $att[1][0] === '!');
+					$m[4][] = array(
+						$inverted ? substr($att[1], 1) : $att[1], // Name
+						(isset($att[2])) ? $att[2] : '', // Expression
+						(isset($att[3])) ? $att[3] : '', // Value
+						$inverted, // Inverted Flag
+					);
+				}
+			}
+
 			// Sanitize Separator
-			if ($m[7] !== '' && trim($m[7]) === '') { // Descendant Separator
-				$m[7] = ' ';
+			if ($m[5] !== '' && trim($m[5]) === '') { // Descendant Separator
+				$m[5] = ' ';
 			} else { // Other Separator
-				$m[7] = trim($m[7]);
+				$m[5] = trim($m[5]);
 			}
 
 			// Clear Separator if it's a Selector List
-			if($is_list = ($m[7] === ',')) {
-				$m[7] = '';
-			}
+			if ($is_list = ($m[5] === ',')) $m[5] = '';
 
-			list($tag, $key, $val, $exp, $no_key, $cmb) = array($m[1], '', '', '=', false, ' ');
-			if ($m[2] !== '') {$key='id'; $val=$m[2];}
-			if ($m[3] !== '') {$key='class'; $val=explode('.', $m[3]);}
-			if ($m[4] !== '') {$key=$m[4];}
-			if ($m[5] !== '') {$exp=$m[5];}
-			if ($m[6] !== '') {$val=$m[6];}
-			if ($m[7] !== '') {$cmb=$m[7];}
-
-			// convert to lowercase
-			if ($this->dom->lowercase) {$tag=strtolower($tag); $key=strtolower($key);}
-			//elements that do NOT have the specified attribute
-			if (isset($key[0]) && $key[0]==='!') {$key=substr($key, 1); $no_key=true;}
-
-			$result[] = array($tag, $key, $val, $exp, $no_key, $cmb);
+			// Remove full match before adding to results
+			array_shift($m);
+			$result[] = $m;
 
 			if ($is_list) { // Selector List
 				$selectors[] = $result;

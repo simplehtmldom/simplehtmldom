@@ -123,8 +123,8 @@ HTML;
 		$doc = <<<HTML
 <html>
 <body>
-	<p id="title">PHP Simple HTML DOM Parser</p>
-	<p id="subtitle">A PHP based DOM parser</p>
+	<p id="title" class="h1">PHP Simple HTML DOM Parser</p>
+	<p id="subtitle" class="h2" style="color:blue;">A PHP based DOM parser</p>
 </body>
 </html>
 HTML;
@@ -132,6 +132,8 @@ HTML;
 		$this->html->load($doc);
 
 		$this->assertCount(2, $this->html->find('p[id]'));
+		$this->assertCount(2, $this->html->find('p[id][class]'));
+		$this->assertCount(1, $this->html->find('p[id][class][style]'));
 	}
 
 	/**
@@ -145,8 +147,8 @@ HTML;
 		$doc = <<<HTML
 <html>
 <body>
-	<p id="title">PHP Simple HTML DOM Parser</p>
-	<p id="subtitle">A PHP based DOM parser</p>
+	<p id="title" class="h1">PHP Simple HTML DOM Parser</p>
+	<p id="subtitle" class="h2" style="color:blue;">A PHP based DOM parser</p>
 </body>
 </html>
 HTML;
@@ -155,6 +157,8 @@ HTML;
 
 		$this->assertCount(1, $this->html->find('p[id="title"]'));
 		$this->assertCount(1, $this->html->find('p[id="subtitle"]'));
+		$this->assertCount(1, $this->html->find('p[id="title"][class="h1"]'));
+		$this->assertCount(1, $this->html->find('p[id="subtitle"][class="h2"][style="color:blue;"]'));
 	}
 
 	/**
