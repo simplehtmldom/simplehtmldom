@@ -330,8 +330,6 @@ HTML;
 
 		$this->html->load($doc);
 
-		$this->markTestSkipped('Not supported!');
-
 		$anchors = $this->html->find('a[hreflang|="en"]');
 
 		$this->assertCount(3, $anchors);

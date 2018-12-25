@@ -910,6 +910,15 @@ class simple_html_dom_node
 				return preg_match("/".preg_quote($pattern,'/')."$/", $value);
 			case '*=':
 				return preg_match("/".preg_quote($pattern,'/')."/i", $value);
+			case '|=':
+				/**
+				 * [att|=val]
+				 *
+				 * Represents an element with the att attribute, its value
+				 * either being exactly "val" or beginning with "val"
+				 * immediately followed by "-" (U+002D).
+				 */
+				return strpos($value, $pattern) === 0;
 		}
 		return false;
 	}
@@ -926,12 +935,12 @@ class simple_html_dom_node
 	 * array( // list of selectors (each separated by a comma), i.e. 'img, p, div'
 	 *   array( // list of combinator selectors, i.e. 'img > p > div'
 	 *     array( // selector element
-	 *       [0],   // (string) The element tag
-	 *       [1],    // (string) The element id
+	 *       [0], // (string) The element tag
+	 *       [1], // (string) The element id
 	 *       [2], // (array<string>) The element classes
 	 *       [3], // (array<array<string>>) The list of attributes, each
-	 *                     // with four elements: name, expression, value, inverted
-	 *       [4]    // (string) The selector combinator (' ' | '>' | '+' | '~')
+	 *            // with four elements: name, expression, value, inverted
+	 *       [4]  // (string) The selector combinator (' ' | '>' | '+' | '~')
 	 *     )
 	 *   )
 	 * )
@@ -979,7 +988,7 @@ class simple_html_dom_node
 		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
 		 * [4] - attributes
-		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$]?=)[\"']?(?:.*?)[\"']?)?\])+)?
+		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|]?=)[\"']?(?:.*?)[\"']?)?\])+)?
 		 *     Optionally matches the attributes list
 		 *
 		 * [5] - separator
@@ -988,7 +997,7 @@ class simple_html_dom_node
 		 *
 		 * # todo: Update regex to match CSS specification
 		 */
-		$pattern = "/([\w:\*-]*)(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$]?=)[\"']?(?:.*?)[\"']?)?\])+)?([\/, >+~]+)/is";
+		$pattern = "/([\w:\*-]*)(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|]?=)[\"']?(?:.*?)[\"']?)?\])+)?([\/, >+~]+)/is";
 		preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER); // Add final ' ' as pseudo separator
 		if (is_object($debug_object)) {$debug_object->debug_log(2, "Matches Array: ", $matches);}
 
@@ -1022,7 +1031,7 @@ class simple_html_dom_node
 			 */
 			if($m[4] !== '') {
 				preg_match_all(
-					"/\[@?(!?[\w:-]+)(?:([!*^$]?=)[\"']?(.*?)[\"']?)?\]/is",
+					"/\[@?(!?[\w:-]+)(?:([!*^$|]?=)[\"']?(.*?)[\"']?)?\]/is",
 					trim($m[4]),
 					$attributes,
 					PREG_SET_ORDER
