@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added support for pipe selectors (`|=`)
   - Added support for tilde selectors (`~=`)
   - Added support for case sensitivity selectors (`i` and `s`)
+- Added unit tests for PHP compatibility to PHP 5.6+
 ### Changed
 - Removed automatic filtering of 'tbody' selectors (#79)
   > Remove 'tbody' from all selectors to maintain the previous state!
