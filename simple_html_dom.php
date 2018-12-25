@@ -804,7 +804,7 @@ class simple_html_dom_node
 			// Check attributes
 			if ($pass && $attributes !== '' && is_array($attributes) && !empty($attributes)) {
 				foreach($attributes as $a) {
-					list($att_name, $att_expr, $att_val, $att_inv) = $a;
+					list($att_name, $att_expr, $att_val, $att_inv, $att_case_sensitivity) = $a;
 
 					// Handle indexing attributes (i.e. "[2]")
 					/**
@@ -855,9 +855,9 @@ class simple_html_dom_node
 
 					// If lowercase is set, do a case insensitive test of the value of the selector.
 					if ($lowercase) {
-						$check = $this->match($att_expr, strtolower($att_val), strtolower($nodeKeyValue));
+						$check = $this->match($att_expr, strtolower($att_val), strtolower($nodeKeyValue), $att_case_sensitivity);
 					} else {
-						$check = $this->match($att_expr, $att_val, $nodeKeyValue);
+						$check = $this->match($att_expr, $att_val, $nodeKeyValue, $att_case_sensitivity);
 					}
 
 					if (is_object($debug_object)) {$debug_object->debug_log(2, "after match: " . ($check ? "true" : "false"));}
@@ -895,21 +895,26 @@ class simple_html_dom_node
 	 * @param string $value The value
 	 * @value bool True if $value matches $pattern
 	 */
-	protected function match($exp, $pattern, $value) {
+	protected function match($exp, $pattern, $value, $case_sensitivity) {
 		global $debug_object;
 		if (is_object($debug_object)) {$debug_object->debug_log_entry(1);}
 
+		if ($case_sensitivity === 'i') {
+			$pattern = strtolower($pattern);
+			$value = strtolower($value);
+		}
+
 		switch ($exp) {
 			case '=':
-				return ($value===$pattern);
+				return ($value === $pattern);
 			case '!=':
-				return ($value!==$pattern);
+				return ($value !== $pattern);
 			case '^=':
 				return preg_match("/^".preg_quote($pattern,'/')."/", $value);
 			case '$=':
 				return preg_match("/".preg_quote($pattern,'/')."$/", $value);
 			case '*=':
-				return preg_match("/".preg_quote($pattern,'/')."/i", $value);
+				return preg_match("/".preg_quote($pattern,'/')."/", $value);
 			case '|=':
 				/**
 				 * [att|=val]
@@ -999,14 +1004,14 @@ class simple_html_dom_node
 		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
 		 * [4] - attributes
-		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?\])+)?
+		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?
 		 *     Optionally matches the attributes list
 		 *
 		 * [5] - separator
 		 *     ([\/, >+~]+)
 		 *     Matches the selector list separator
 		 */
-		$pattern = "/([\w:\*-]*)(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?\])+)?([\/, >+~]+)/is";
+		$pattern = "/([\w:\*-]*)(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?([\/, >+~]+)/is";
 		preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER); // Add final ' ' as pseudo separator
 		if (is_object($debug_object)) {$debug_object->debug_log(2, "Matches Array: ", $matches);}
 
@@ -1035,12 +1040,13 @@ class simple_html_dom_node
 			 * [1] - attribute name
 			 * [2] - attribute expression
 			 * [3] - attribute value
+			 * [4] - case sensitivity
 			 *
 			 * Note: Attributes can be negated with a "!" prefix to their name
 			 */
 			if($m[4] !== '') {
 				preg_match_all(
-					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?\]/is",
+					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?(?:\s*?([iIsS])?)?\]/is",
 					trim($m[4]),
 					$attributes,
 					PREG_SET_ORDER
@@ -1059,6 +1065,7 @@ class simple_html_dom_node
 						(isset($att[2])) ? $att[2] : '', // Expression
 						(isset($att[3])) ? $att[3] : '', // Value
 						$inverted, // Inverted Flag
+						(isset($att[4])) ? strtolower($att[4]) : '', // Case-Sensitivity
 					);
 				}
 			}

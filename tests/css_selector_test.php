@@ -171,7 +171,7 @@ HTML;
 	 */
 	public function test_attribute_value_equals_case_insensitive() {
 		$doc = <<<HTML
-<html>
+<html lang="en-US">
 <body>
 	<p att="title">PHP Simple HTML DOM Parser</p>
 	<p att="tItle">A PHP based DOM parser</p>
@@ -181,10 +181,20 @@ HTML;
 
 		$this->html->load($doc);
 
-		$this->markTestSkipped('Not supported!');
-
 		$this->assertCount(1, $this->html->find('p[att="title"]'));
 		$this->assertCount(2, $this->html->find('p[att="title" i]'));
+
+		$this->assertCount(0, $this->html->find('p[att^="TITLE"]'));
+		$this->assertCount(2, $this->html->find('p[att^="TITLE" i]'));
+
+		$this->assertCount(0, $this->html->find('p[att$="LE"]'));
+		$this->assertCount(2, $this->html->find('p[att$="LE" i]'));
+
+		$this->assertCount(0, $this->html->find('p[att*="ITL"]'));
+		$this->assertCount(2, $this->html->find('p[att*="ITL" i]'));
+
+		$this->assertCount(0, $this->html->find('html[lang|="EN"]'));
+		$this->assertCount(1, $this->html->find('html[lang|="EN" i]'));
 	}
 
 	/**
@@ -197,7 +207,7 @@ HTML;
 	 */
 	public function test_attribute_value_equals_case_sensitive() {
 		$doc = <<<HTML
-<html>
+<html lang="en-US">
 <body>
 	<p att="title header">PHP Simple HTML DOM Parser</p>
 	<p att="tItle">A PHP based DOM parser</p>
@@ -206,8 +216,6 @@ HTML;
 HTML;
 
 		$this->html->load($doc);
-
-		$this->markTestSkipped('Not supported!');
 
 		$this->assertCount(0, $this->html->find('p[att="title" s]'));
 		$this->assertCount(1, $this->html->find('p[att="tItle" s]'));
