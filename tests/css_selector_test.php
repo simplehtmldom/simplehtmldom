@@ -233,9 +233,11 @@ HTML;
 
 		$this->html->load($doc);
 
-		$this->markTestSkipped('Not supported!');
-
-		$this->assertCount(1, $this->html->find('p[att~="title"]'));
+		$this->assertCount(2, $this->html->find('p[att~="title"]'));
+		$this->assertCount(1, $this->html->find('p[att~="header"]'));
+		$this->assertCount(1, $this->html->find('p[att~="subtitle"]'));
+		$this->assertCount(0, $this->html->find('p[att~=" title"'));
+		$this->assertCount(0, $this->html->find('p[att~=" "'));
 	}
 
 	/**

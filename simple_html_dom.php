@@ -919,6 +919,17 @@ class simple_html_dom_node
 				 * immediately followed by "-" (U+002D).
 				 */
 				return strpos($value, $pattern) === 0;
+			case '~=':
+				/**
+				 * [att~=val]
+				 *
+				 * Represents an element with the att attribute whose value is a
+				 * whitespace-separated list of words, one of which is exactly
+				 * "val". If "val" contains whitespace, it will never represent
+				 * anything (since the words are separated by spaces). Also if
+				 * "val" is the empty string, it will never represent anything.
+				 */
+				return in_array($pattern, explode(' ', trim($value)), true);
 		}
 		return false;
 	}
@@ -988,16 +999,14 @@ class simple_html_dom_node
 		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
 		 * [4] - attributes
-		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|]?=)[\"']?(?:.*?)[\"']?)?\])+)?
+		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?\])+)?
 		 *     Optionally matches the attributes list
 		 *
 		 * [5] - separator
 		 *     ([\/, >+~]+)
 		 *     Matches the selector list separator
-		 *
-		 * # todo: Update regex to match CSS specification
 		 */
-		$pattern = "/([\w:\*-]*)(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|]?=)[\"']?(?:.*?)[\"']?)?\])+)?([\/, >+~]+)/is";
+		$pattern = "/([\w:\*-]*)(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?\])+)?([\/, >+~]+)/is";
 		preg_match_all($pattern, trim($selector_string).' ', $matches, PREG_SET_ORDER); // Add final ' ' as pseudo separator
 		if (is_object($debug_object)) {$debug_object->debug_log(2, "Matches Array: ", $matches);}
 
@@ -1031,7 +1040,7 @@ class simple_html_dom_node
 			 */
 			if($m[4] !== '') {
 				preg_match_all(
-					"/\[@?(!?[\w:-]+)(?:([!*^$|]?=)[\"']?(.*?)[\"']?)?\]/is",
+					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?\]/is",
 					trim($m[4]),
 					$attributes,
 					PREG_SET_ORDER
