@@ -11,7 +11,8 @@ use PHPUnit\Framework\TestCase;
 class bug_report_test extends TestCase {
 	private $html;
 
-	protected function setUp() {
+	protected function setUp()
+	{
 		$this->html = new simple_html_dom;
 	}
 
@@ -25,7 +26,8 @@ class bug_report_test extends TestCase {
 	 *
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/56/ Bug #56
 	 */
-	public function test_bug_56() {
+	public function test_bug_56()
+	{
 		$doc = <<<HTML
 <a href="http://simplehtmldom.sourceforge.net/" target="_self" target="_blank"></a>
 HTML;
@@ -43,7 +45,8 @@ HTML;
 	 *
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/62/ Bug #62
 	 */
-	public function test_bug_62() {
+	public function test_bug_62()
+	{
 		$doc = <<<HTML
 <body>
 	<a href="#" id="0">PHP Simple HTML DOM Parser</a>
@@ -65,7 +68,8 @@ HTML;
 	 *
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/79/ Bug #79
 	 */
-	public function test_bug_79() {
+	public function test_bug_79()
+	{
 		$doc = <<<HTML
 <table>
 	<thead><tr><th>PHP Simple HTML DOM Parser</th></tr></thead>
@@ -92,7 +96,8 @@ HTML;
 	 *
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/97/ Bug #97
 	 */
-	public function test_bug_97() {
+	public function test_bug_97()
+	{
 		$doc = <<<HTML
 <div><p>PHP Simple HTML DOM Parser</p><p>A PHP based DOM parser</p></div>
 HTML;
@@ -117,7 +122,8 @@ HTML;
 	 *
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/116/ Bug #116
 	 */
-	public function test_bug_116() {
+	public function test_bug_116()
+	{
 		$doc = <<<HTML
 <a href="#"title="PHP Simple HTML DOM Parser"></a>
 HTML;
@@ -147,7 +153,8 @@ HTML;
 	 *
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/121/ Bug #121
 	 */
-	public function test_bug_121() {
+	public function test_bug_121()
+	{
 		$doc = <<<HTML
 <script>
 // alert("PHP Simple HTML DOM Parser");
@@ -168,7 +175,8 @@ HTML;
 	 *
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/127/ Bug #127
 	 */
-	public function test_bug_127() {
+	public function test_bug_127()
+	{
 		$doc = <<<HTML
 <div id="before"></div>
 <a href="#" alt="PHP Simple HTML DOM Parser\">
@@ -193,7 +201,8 @@ HTML;
 	 *
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/144/ Bug #144
 	 */
-	public function test_bug_144() {
+	public function test_bug_144()
+	{
 		$doc = <<<HTML
 <a href="http://simplehtmldom.sourceforge.net">Home</a>
 <a href="http://simplehtmldom.sourceforge.net/manual.htm">Manual</a>
@@ -223,7 +232,8 @@ HTML;
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/154/ Bug #154
 	 * @link https://www.smarty.net Smarty
 	 */
-	public function test_bug_154() {
+	public function test_bug_154()
+	{
 		$doc = <<<HTML
 <p>{PHP Simple HTML DOM Parser</p>
 <p>{A PHP based DOM parser}</p>
@@ -276,7 +286,8 @@ HTML;
 	 * @link https://sourceforge.net/p/simplehtmldom/bugs/160/ Bug #160
 	 * @link https://validator.w3.org/#validate_by_input Markup Validation Service
 	 */
-	public function test_bug_160() {
+	public function test_bug_160()
+	{
 		$doc = <<<HTML
 <div id="before"></div>
 	<span>---> PHP Simple HTML DOM Parser <--- A /PHP based DOM parser</span>

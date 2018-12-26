@@ -11,7 +11,8 @@ class css_selector_test extends TestCase {
 
 	private $html;
 
-	protected function setUp() {
+	protected function setUp()
+	{
 		$this->html = new simple_html_dom;
 	}
 
@@ -22,7 +23,8 @@ class css_selector_test extends TestCase {
 	 * @link https://www.w3.org/TR/selectors/#the-universal-selector
 	 * Universal Selector
 	 */
-	public function test_universal() {
+	public function test_universal()
+	{
 		$doc = <<<HTML
 <html>
 <head><title>PHP Simple HTML DOM Parser</title></head>
@@ -42,7 +44,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#type-selectors
 	 * Type Selector
 	 */
-	public function test_type() {
+	public function test_type()
+	{
 		$doc = <<<HTML
 <html>
 <head><title>PHP Simple HTML DOM Parser</title></head>
@@ -60,7 +63,7 @@ HTML;
 
 		// This should not exist
 		$this->assertCount(0, $this->html->find('div'));
-	 }
+	}
 
 	/**
 	 * pattern: "E.warning"
@@ -70,7 +73,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#class-html
 	 * Class selectors
 	 */
-	public function test_class() {
+	public function test_class()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -85,7 +89,7 @@ HTML;
 		$this->assertCount(1, $this->html->find('p.title'));
 		$this->assertCount(1, $this->html->find('p.subtitle'));
 		$this->assertCount(1, $this->html->find('p.title.header'));
-	 }
+	}
 
 	/**
 	 * pattern: "E#myid"
@@ -94,7 +98,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#id-selectors
 	 * ID selectors
 	 */
-	public function test_id() {
+	public function test_id()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -119,7 +124,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-selectors
 	 * Attribute selectors
 	 */
-	public function test_attribute_exists() {
+	public function test_attribute_exists()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -143,7 +149,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-selectors
 	 * Attribute selectors
 	 */
-	public function test_attribute_value_equals() {
+	public function test_attribute_value_equals()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -169,7 +176,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-case
 	 * Attribute case
 	 */
-	public function test_attribute_value_equals_case_insensitive() {
+	public function test_attribute_value_equals_case_insensitive()
+	{
 		$doc = <<<HTML
 <html lang="en-US">
 <body>
@@ -205,7 +213,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-case
 	 * Attribute case
 	 */
-	public function test_attribute_value_equals_case_sensitive() {
+	public function test_attribute_value_equals_case_sensitive()
+	{
 		$doc = <<<HTML
 <html lang="en-US">
 <body>
@@ -229,7 +238,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-selectors
 	 * Attribute selectors
 	 */
-	public function test_attribute_value_list_contains() {
+	public function test_attribute_value_list_contains()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -256,7 +266,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-substrings
 	 * Attribute selectors
 	 */
-	public function test_attribute_value_begins() {
+	public function test_attribute_value_begins()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -279,7 +290,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-substrings
 	 * Attribute substrings
 	 */
-	public function test_attribute_value_ends() {
+	public function test_attribute_value_ends()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -302,7 +314,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-substrings
 	 * Attribute substrings
 	 */
-	public function test_attribute_value_contains() {
+	public function test_attribute_value_contains()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -330,7 +343,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#attribute-selectors
 	 * Attribute selectors
 	 */
-	public function test_attribute_value_list_begins() {
+	public function test_attribute_value_list_begins()
+	{
 		$doc = <<<HTML
 <a href="#" hreflang="en-US">en-US</a>
 <a href="#" hreflang="en-UK">en-UK</a>
@@ -359,7 +373,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#descendant-combinators
 	 * Descendant combinators
 	 */
-	public function test_descendant_combinators() {
+	public function test_descendant_combinators()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -381,7 +396,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#child-combinators
 	 * Child combinators
 	 */
-	public function test_child_combinators() {
+	public function test_child_combinators()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -406,7 +422,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#adjacent-sibling-combinators
 	 * Next sibling combinators
 	 */
-	public function test_next_sibling_combinators() {
+	public function test_next_sibling_combinators()
+	{
 		$doc = <<<HTML
 <html>
 <body>
@@ -431,7 +448,8 @@ HTML;
 	 * @link https://www.w3.org/TR/selectors/#general-sibling-combinators
 	 * General sibling combinators
 	 */
-	public function test_general_sibling_combinators() {
+	public function test_general_sibling_combinators()
+	{
 		$doc = <<<HTML
 <html>
 <body>

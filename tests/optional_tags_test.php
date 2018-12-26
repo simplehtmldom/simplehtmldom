@@ -18,7 +18,8 @@ use PHPUnit\Framework\TestCase;
 class optional_tags_test extends TestCase {
 	private $html;
 
-	protected function setUp() {
+	protected function setUp()
+	{
 		$this->html = new simple_html_dom;
 	}
 
@@ -26,7 +27,8 @@ class optional_tags_test extends TestCase {
 	 * An html element’s start tag may be omitted if the first thing inside the
 	 * html element is not a comment.
 	 */
-	public function test_optional_html_start_tag() {
+	public function test_optional_html_start_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 
@@ -46,7 +48,8 @@ HTML;
 	 * An html element’s end tag may be omitted if the html element is not
 	 * immediately followed by a comment.
 	 */
-	public function test_optional_html_end_tag() {
+	public function test_optional_html_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -62,7 +65,8 @@ HTML;
 	 * A head element’s start tag may be omitted if the element is empty, or if
 	 * the first thing inside the head element is an element.
 	 */
-	public function test_optional_head_start_tag() {
+	public function test_optional_head_start_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -82,7 +86,8 @@ HTML;
 	 * A head element’s end tag may be omitted if the head element is not
 	 * immediately followed by a space character or a comment.
 	 */
-	public function test_optional_head_end_tag() {
+	public function test_optional_head_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -100,7 +105,8 @@ HTML;
 	 * comment, except if the first thing inside the body element is a meta,
 	 * link, script, style, or template element.
 	 */
-	public function test_optional_body_start_tag() {
+	public function test_optional_body_start_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -120,7 +126,8 @@ HTML;
 	 * A body element’s end tag may be omitted if the body element is not
 	 * immediately followed by a comment.
 	 */
-	public function test_optional_body_end_tag() {
+	public function test_optional_body_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -135,10 +142,13 @@ HTML;
 	/**
 	 * With all optional tags taken into account, the DOM can be simplified
 	 */
-	public function test_optional_html_head_body_tags() {
+	public function test_optional_html_head_body_tags()
+	{
+		// phpcs:disable Generic.Files.LineLength
 		$doc1 = <<<HTML
 <!DOCTYPE HTML><html><head><title>PHP Simple HTML DOM Parser</title></head><body><p>A PHP based DOM parser</p></body></html>
 HTML;
+		// phpcs:enable
 
 		$doc2 = <<<HTML
 <!DOCTYPE HTML><title>PHP Simple HTML DOM Parser</title><p>A PHP based DOM parser</p>
@@ -165,7 +175,8 @@ HTML;
 	 * followed by another li element or if there is no more content in the
 	 * parent element.
 	 */
-	public function test_optional_li_end_tag() {
+	public function test_optional_li_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -187,7 +198,8 @@ HTML;
 	 * A dt element’s end tag may be omitted if the dt element is immediately
 	 * followed by another dt element or a dd element.
 	 */
-	public function test_optional_dt_end_tag() {
+	public function test_optional_dt_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -210,7 +222,8 @@ HTML;
 	 * followed by another dd element or a dt element, or if there is no more
 	 * content in the parent element.
 	 */
-	public function test_optional_dd_end_tag() {
+	public function test_optional_dd_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -237,7 +250,8 @@ HTML;
 	 * an HTML element that is not an a, audio, del, ins, map, noscript, or
 	 * video element, or an autonomous custom element.
 	 */
-	public function test_optional_p_end_tag() {
+	public function test_optional_p_end_tag()
+	{
 		$token = array(
 			'address', 'article', 'aside', 'blockquote', 'details', 'div', 'dl',
 			'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2',
@@ -245,7 +259,7 @@ HTML;
 			'pre', 'section', 'table', 'ul'
 		);
 
-		foreach($token as $t) {
+		foreach ($token as $t) {
 			$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -273,7 +287,8 @@ HTML;
 	 * followed by an rt or rp element, or if there is no more content in the
 	 * parent element.
 	 */
-	public function test_optional_rt_end_tag() {
+	public function test_optional_rt_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -298,7 +313,8 @@ HTML;
 	 * followed by an rt or rp element, or if there is no more content in the
 	 * parent element.
 	 */
-	public function test_optional_rp_end_tag() {
+	public function test_optional_rp_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -323,7 +339,8 @@ HTML;
 	 * immediately followed by another optgroup element, or if there is no more
 	 * content in the parent element.
 	 */
-	public function test_optional_optgroup_end_tag() {
+	public function test_optional_optgroup_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -345,7 +362,8 @@ HTML;
 	 * followed by an optgroup element, or if there is no more content in the
 	 * parent element.
 	 */
-	public function test_optional_option_end_tag() {
+	public function test_optional_option_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -371,7 +389,8 @@ HTML;
 	 * immediately preceded by another colgroup element whose end tag has been
 	 * omitted. (It can’t be omitted if the element is empty.)
 	 */
-	public function test_optional_colgroup_start_tag() {
+	public function test_optional_colgroup_start_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -397,7 +416,8 @@ HTML;
 	 * A colgroup element’s end tag may be omitted if the colgroup element is
 	 * not immediately followed by a space character or a comment.
 	 */
-	public function test_optional_colgroup_end_tag() {
+	public function test_optional_colgroup_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -416,7 +436,8 @@ HTML;
 	 * A caption element’s end tag may be omitted if the caption element is not
 	 * immediately followed by a space character or a comment.
 	 */
-	public function test_optional_caption_end_tag() {
+	public function test_optional_caption_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -435,10 +456,11 @@ HTML;
 	 * A thead element’s end tag may be omitted if the thead element is
 	 * immediately followed by a tbody or tfoot element.
 	 */
-	public function test_optional_thead_end_tag() {
+	public function test_optional_thead_end_tag()
+	{
 		$token = array('tbody', 'tfoot');
 
-		foreach($token as $t) {
+		foreach ($token as $t) {
 			$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -461,7 +483,8 @@ HTML;
 	 * preceded by a tbody, thead, or tfoot element whose end tag has been
 	 * omitted. (It can’t be omitted if the element is empty.)
 	 */
-	public function test_optional_tbody_start_tag() {
+	public function test_optional_tbody_start_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -485,7 +508,8 @@ HTML;
 	 * immediately followed by a tbody or tfoot element, or if there is no more
 	 * content in the parent element.
 	 */
-	public function test_optional_tbody_end_tag() {
+	public function test_optional_tbody_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -509,7 +533,8 @@ HTML;
 	 * A tfoot element’s end tag may be omitted if there is no more content in
 	 * the parent element.
 	 */
-	public function test_optional_tfoot_end_tag() {
+	public function test_optional_tfoot_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -529,7 +554,8 @@ HTML;
 	 * followed by another tr element, or if there is no more content in the
 	 * parent element.
 	 */
-	public function test_optional_tr_end_tag() {
+	public function test_optional_tr_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -550,7 +576,8 @@ HTML;
 	 * followed by a td or th element, or if there is no more content in the
 	 * parent element.
 	 */
-	public function test_optional_td_end_tag() {
+	public function test_optional_td_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>
@@ -575,7 +602,8 @@ HTML;
 	 * followed by a td or th element, or if there is no more content in the
 	 * parent element.
 	 */
-	public function test_optional_th_end_tag() {
+	public function test_optional_th_end_tag()
+	{
 		$doc = <<<HTML
 <!DOCTYPE HTML>
 <html>

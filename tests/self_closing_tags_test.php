@@ -47,7 +47,8 @@ class self_closing_tags_test extends TestCase {
 
 	private $html;
 
-	protected function setUp() {
+	protected function setUp()
+	{
 		$this->html = new simple_html_dom;
 	}
 
@@ -55,7 +56,8 @@ class self_closing_tags_test extends TestCase {
 	 * @link https://www.w3.org/TR/html52/semantics-embedded-content.html#the-area-element
 	 * The area element
 	 */
-	public function test_area() {
+	public function test_area()
+	{
 		$src = <<<HTML
 <map name="shapes">
 	<div id="before"></div>
@@ -75,7 +77,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/document-metadata.html#the-base-element
 	 * The base element
 	 */
-	public function test_base() {
+	public function test_base()
+	{
 		$src = <<<HTML
 <head>
 	<div id="before"></div>
@@ -95,7 +98,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/textlevel-semantics.html#the-br-element
 	 * The br element
 	 */
-	public function test_br() {
+	public function test_br()
+	{
 		$src = <<<HTML
 <body>
 	<div id="before"></div>
@@ -136,7 +140,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/tabular-data.html#the-col-element
 	 * The col element
 	 */
-	public function test_col() {
+	public function test_col()
+	{
 		$src = <<<HTML
 <table>
 	<div id="before"></div>
@@ -156,7 +161,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/semantics-embedded-content.html#the-embed-element
 	 * The embed element
 	 */
-	public function test_embed() {
+	public function test_embed()
+	{
 		$src = <<<HTML
 <body>
 	<div id="before"></div>
@@ -176,7 +182,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/grouping-content.html#the-hr-element
 	 * The hr element
 	 */
-	public function test_hr() {
+	public function test_hr()
+	{
 		$src = <<<HTML
 <p>PHP Simple HTML DOM Parser</p>
 <div id="before"></div>
@@ -196,7 +203,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/semantics-embedded-content.html#the-img-element
 	 * The img element
 	 */
-	public function test_img() {
+	public function test_img()
+	{
 		$src = <<<HTML
 <a href="http://simplehtmldom.sourceforge.net">
 <div id="before"></div>
@@ -218,7 +226,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/sec-forms.html#the-input-element
 	 * The input element
 	 */
-	public function test_input() {
+	public function test_input()
+	{
 		$src = <<<HTML
 <body>
 	<div id="before"></div>
@@ -246,7 +255,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/document-metadata.html#the-link-element
 	 * The link element
 	 */
-	public function test_link() {
+	public function test_link()
+	{
 		$src = <<<HTML
 <title>
 	<div id="before"></div>
@@ -266,7 +276,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/document-metadata.html#the-meta-element
 	 * The meta element
 	 */
-	public function test_meta() {
+	public function test_meta()
+	{
 		$src = <<<HTML
 <title>
 	<div id="before"></div>
@@ -286,7 +297,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/semantics-embedded-content.html#the-param-element
 	 * The param element
 	 */
-	public function test_param() {
+	public function test_param()
+	{
 		$src = <<<HTML
 <object type="application/simple_html_dom">
 	<div id="before"></div>
@@ -306,7 +318,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/semantics-embedded-content.html#the-source-element
 	 * The source element
 	 */
-	public function test_source() {
+	public function test_source()
+	{
 		$src = <<<HTML
 <video controls autoplay>
 	<div id="before"></div>
@@ -332,7 +345,8 @@ HTML;
 	 * @link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/spacer
 	 * <spacer>
 	 */
-	public function test_spacer_not() {
+	public function test_spacer_not()
+	{
 		$src = <<<HTML
 <div id="before"></div>
 <spacer type="horizontal" size="10"></spacer>
@@ -350,7 +364,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/semantics-embedded-content.html#the-track-element
 	 * The track element
 	 */
-	public function test_track() {
+	public function test_track()
+	{
 		$src = <<<HTML
 <video src="simple_html_dom.webm">
 	<div id="before"></div>
@@ -365,7 +380,12 @@ HTML;
 		$track = $this->html->load($src)->find('track', 0);
 
 		$this->assertEquals('before', $track->previousSibling()->id);
-		$this->assertEquals('<track kind=subtitles src=simple_html_dom.en.vtt srclang=en label="English">', $track->outertext);
+
+		$this->assertEquals(
+			'<track kind=subtitles src=simple_html_dom.en.vtt srclang=en label="English">',
+			$track->outertext
+		);
+
 		$this->assertEquals('after', $track->nextSibling()->id);
 	}
 
@@ -373,7 +393,8 @@ HTML;
 	 * @link https://www.w3.org/TR/html52/textlevel-semantics.html#the-wbr-element
 	 * The wbr element
 	 */
-	public function test_wbr() {
+	public function test_wbr()
+	{
 		$src = <<<HTML
 <div id="before"></div>
 <p>https://sourceforge.net/<wbr>projects/<wbr>simplehtmldom/</p>

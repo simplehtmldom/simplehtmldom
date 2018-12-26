@@ -14,7 +14,8 @@ class memory_parsing_test extends TestCase {
 	/** File for memory tests */
 	private $file = __DIR__ . '/../manual/index.htm';
 
-	public function setUp() {
+	public function setUp()
+	{
 		/**
 		 * The first time we access a file, PHP acquires additional memory that
 		 * breaks some assertions. For some reason, loading the contents once
@@ -34,10 +35,11 @@ class memory_parsing_test extends TestCase {
 	 *
 	 * Memory usage should stay stable when using the parser in a loop.
 	 */
-	public function test_simple_html_dom() {
+	public function test_simple_html_dom()
+	{
 		$contents = file_get_contents($this->file, false, null, 0, filesize($this->file));
 
-		if(is_file($this->file)) {
+		if (is_file($this->file)) {
 			// Cleanup before doing anything
 			gc_enable();
 			gc_collect_cycles();
@@ -64,9 +66,10 @@ class memory_parsing_test extends TestCase {
 	 * Memory usage should stay stable or slightly decrease (out of our control)
 	 * when using the parser in a loop.
 	 */
-	public function test_file_get_html() {
+	public function test_file_get_html()
+	{
 
-		if(is_file($this->file)) {
+		if (is_file($this->file)) {
 			// Cleanup before doing anything
 			gc_enable();
 			gc_collect_cycles();
@@ -95,12 +98,13 @@ class memory_parsing_test extends TestCase {
 	 *
 	 * @link https://www.w3.org/TR/html/single-page.html HTML Specification (single page)
 	 */
-	public function test_large_file() {
+	public function test_large_file()
+	{
 		// Note: The HTML Specification is VERY large (> 10 MB) and takes a very
 		// long time to download. Thus, it should be placed in a local directory
 		$file = __DIR__ . '/data/HTML 5.2.html';
 
-		if(!is_file($file)) {
+		if (!is_file($file)) {
 			$this->markTestSkipped(
 				'Download the HTML Specification as single page to "' . $file . '"'
 			);
