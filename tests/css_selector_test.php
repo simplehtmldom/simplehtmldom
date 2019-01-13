@@ -130,6 +130,21 @@ HTML;
 		$this->assertCount(1, $this->html->find('p#subtitle'));
 	}
 
+	public function test_id_selector_should_find_camelcase()
+	{
+		$doc = <<<HTML
+<html>
+<body>
+	<p id="myMessage">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+</body>
+</html>
+HTML;
+
+		$this->html->load($doc);
+
+		$this->assertCount(1, $this->html->find('p#myMessage'));
+	}
+
 	#region Attribute
 
 	/**
