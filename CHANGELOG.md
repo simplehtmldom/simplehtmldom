@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [1.8] - 2019-01-13
 ### Added
 - Added documentation for `simple_html_dom_node::find`
 - Added documentation for `simple_html_dom_node::parse_selector`
@@ -35,14 +35,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Removed automatic filtering of 'tbody' selectors (#79)
   > Remove 'tbody' from all selectors to maintain the previous state!
 - Coding standard using PHP_CodeSniffer
-### Deprecated
-### Removed
 ### Fixed
 - Fixed broken CSS selector attributes with value "0" (#62)
 - Fixed broken simple_html_dom::load_file
 - Fixed forward slashes in CSS selector breaks value matching using '*=' (#144)
 - Fixed Universal Selectors
-### Security
 
 ## [1.7] - 2018-12-10
 ### Added
