@@ -1025,7 +1025,7 @@ class simple_html_dom_node
 	 * @value bool True if $value matches $pattern
 	 */
 	protected function match($exp, $pattern, $value, $case_sensitivity)
- {
+	{
 		global $debug_object;
 		if (is_object($debug_object)) {$debug_object->debug_log_entry(1);}
 
@@ -1168,7 +1168,6 @@ class simple_html_dom_node
 			// Convert to lowercase
 			if ($this->dom->lowercase) {
 				$m[1] = strtolower($m[1]);
-				$m[3] = strtolower($m[3]);
 			}
 
 			// Extract classes

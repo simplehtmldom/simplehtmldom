@@ -106,6 +106,21 @@ HTML;
 		$this->assertCount(0, $this->html->find('p.title'));
 	}
 
+	public function test_class_should_find_camel_case()
+	{
+		$doc = <<<HTML
+<html>
+<body>
+	<p class="myClass">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+</body>
+</html>
+HTML;
+
+		$this->html->load($doc);
+
+		$this->assertCount(1, $this->html->find('p.myClass'));
+	}
+
 	/**
 	 * pattern: "E#myid"
 	 * Represents an E element with ID equal to myid.
@@ -130,7 +145,7 @@ HTML;
 		$this->assertCount(1, $this->html->find('p#subtitle'));
 	}
 
-	public function test_id_selector_should_find_camelcase()
+	public function test_id_selector_should_find_camel_case()
 	{
 		$doc = <<<HTML
 <html>
