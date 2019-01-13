@@ -1168,7 +1168,6 @@ class simple_html_dom_node
 			// Convert to lowercase
 			if ($this->dom->lowercase) {
 				$m[1] = strtolower($m[1]);
-				$m[2] = strtolower($m[2]);
 				$m[3] = strtolower($m[3]);
 			}
 
