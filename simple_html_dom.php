@@ -867,17 +867,21 @@ class simple_html_dom_node
 
 			// Check if all class(es) exist
 			if ($pass && $class !== '' && is_array($class) && !empty($class)) {
-				$node_classes = explode(' ', $node->attr['class']);
+				if (isset($node->attr['class'])) {
+					$node_classes = explode(' ', $node->attr['class']);
 
-				if ($lowercase) {
-					$node_classes = array_map('strtolower', $node_classes);
-				}
-
-				foreach($class as $c) {
-					if(!in_array($c, $node_classes)) {
-						$pass = false;
-						break;
+					if ($lowercase) {
+						$node_classes = array_map('strtolower', $node_classes);
 					}
+
+					foreach($class as $c) {
+						if(!in_array($c, $node_classes)) {
+							$pass = false;
+							break;
+						}
+					}
+				} else {
+					$pass = false;
 				}
 			}
 
