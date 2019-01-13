@@ -91,6 +91,21 @@ HTML;
 		$this->assertCount(1, $this->html->find('p.title.header'));
 	}
 
+	public function test_class_should_skip_tags_without_classes()
+	{
+		$doc = <<<HTML
+<html>
+<body>
+	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+</body>
+</html>
+HTML;
+
+		$this->html->load($doc);
+
+		$this->assertCount(0, $this->html->find('p.title'));
+	}
+
 	/**
 	 * pattern: "E#myid"
 	 * Represents an E element with ID equal to myid.
