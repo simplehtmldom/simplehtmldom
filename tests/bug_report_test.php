@@ -302,4 +302,27 @@ HTML;
 		);
 	}
 
+	/**
+	 * Bug #163 (Missing whitespace in plaintext property)
+	 *
+	 * **Example Code**:
+	 *
+	 * ```php
+	 * $file = 'Hello<a href=""> World';
+	 * $html = str_get_html($file);
+	 * echo "$html->plaintext\n";
+	 * ```
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/163/ Bug #163
+	 */
+	public function test_bug_163()
+	{
+		$doc = 'Hello<a href=""> World';
+		$expected = 'Hello World';
+
+		$this->html->load($doc);
+
+		$this->assertEquals($expected, $this->html->plaintext);
+	}
+
 }
