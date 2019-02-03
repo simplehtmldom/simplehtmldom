@@ -642,7 +642,7 @@ class simple_html_dom_node
 			foreach ($this->nodes as $n) {
 				// Start paragraph after a blank line
 				if ($n->tag === 'p') {
-					$ret .= "\n\n";
+					$ret = trim($ret) . "\n\n";
 				}
 
 				$ret .= $this->convert_text($n->text());
@@ -655,7 +655,7 @@ class simple_html_dom_node
 				}
 			}
 		}
-		return trim($ret);
+		return $ret;
 	}
 
 	/**
