@@ -7,3 +7,6 @@ tests/data/*
 
 # vscode configuration files
 .vscode/
+
+# Generated site data
+manual/site/

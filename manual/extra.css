@@ -1,0 +1,9 @@
+code {
+    white-space: nowrap;
+}
+
+.logo {
+    display: block;
+    margin: auto;
+    text-align: center;
+}

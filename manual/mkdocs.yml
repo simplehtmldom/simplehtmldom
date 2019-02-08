@@ -1,0 +1,30 @@
+site_name: Simple HTML DOM documentation
+site_url: http://simplehtmldom.sourceforge.net/
+site_description: A simple HTML DOM parser written in PHP
+
+repo_name: SourceForge
+repo_url: https://sourceforge.net/projects/simplehtmldom/
+
+theme:
+  name: readthedocs
+  custom_dir: 'custom_theme/'
+
+google_analytics: ['UA-3452027-2', 'simplehtmldom.sourceforge.net']
+
+extra_css: [extra.css]
+
+nav:
+  - 'index.md'
+  - 'quick-start.md'
+  - 'faq.md'
+  - Manual:
+    - 'manual/creating-dom-objects.md'
+    - 'manual/finding-html-elements.md'
+    - 'manual/accessing-element-attributes.md'
+    - 'manual/traversing-dom-tree.md'
+    - 'manual/saving-dom-objects.md'
+    - 'manual/customizing-parsing-behavior.md'
+  - API:
+    - 'api/api.md'
+
+docs_dir: 'docs'
