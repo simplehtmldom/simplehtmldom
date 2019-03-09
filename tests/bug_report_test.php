@@ -325,4 +325,18 @@ HTML;
 		$this->assertEquals($expected, $this->html->plaintext);
 	}
 
+	/**
+	 * Bug #166 (Duplicate attributes)
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/166/ Bug #166
+	 */
+	public function test_bug_166()
+	{
+		$doc = '<div style="display:none;" style="margin-top: 5px;"></div>';
+
+		$this->html->load($doc);
+
+		$this->assertEquals(1, count($this->html->find('div', 0)->getAllAttributes()));
+	}
+
 }
