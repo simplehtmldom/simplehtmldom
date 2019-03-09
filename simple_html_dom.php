@@ -2477,42 +2477,45 @@ class simple_html_dom
 	 */
 	protected function parse_attr($node, $name, &$space)
 	{
-		// Per sourceforge: http://sourceforge.net/tracker/?func=detail&aid=3061408&group_id=218559&atid=1044037
-		// If the attribute is already defined inside a tag, only pay attention
-		// to the first one as opposed to the last one.
-		// https://stackoverflow.com/a/26341866
-		if (isset($node->attr[$name])) {
-			return;
-		}
+		$is_duplicate = isset($node->attr[$name]);
 
-		// [2] Whitespace between "=" and the value
-		$space[2] = $this->copy_skip($this->token_blank);
+		if (!$is_duplicate) // Copy whitespace between "=" and value
+			$space[2] = $this->copy_skip($this->token_blank);
 
 		switch ($this->char) {
-			case '"': // value is anything between double quotes
-				$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
+			case '"':
+				$quote_type = HDOM_QUOTE_DOUBLE;
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-				$node->attr[$name] = $this->restore_noise($this->copy_until_char('"'));
-				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-				break;
-			case '\'': // value is anything between single quotes
-				$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_SINGLE;
-				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-				$node->attr[$name] = $this->restore_noise($this->copy_until_char('\''));
+				$value = $this->copy_until_char('"');
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				break;
-			default: // value is anything until the first space or end tag
-				$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
-				$node->attr[$name] = $this->restore_noise($this->copy_until($this->token_attr));
+			case '\'':
+				$quote_type = HDOM_QUOTE_SINGLE;
+				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+				$value = $this->copy_until_char('\'');
+				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+				break;
+			default:
+				$quote_type = HDOM_QUOTE_NO;
+				$value = $this->copy_until($this->token_attr);
 		}
+
+		$value = $this->restore_noise($value);
+
 		// PaperG: Attributes should not have \r or \n in them, that counts as
 		// html whitespace.
-		$node->attr[$name] = str_replace("\r", '', $node->attr[$name]);
-		$node->attr[$name] = str_replace("\n", '', $node->attr[$name]);
+		$value = str_replace("\r", '', $value);
+		$value = str_replace("\n", '', $value);
+
 		// PaperG: If this is a "class" selector, lets get rid of the preceeding
 		// and trailing space since some people leave it in the multi class case.
 		if ($name === 'class') {
-			$node->attr[$name] = trim($node->attr[$name]);
+			$value = trim($value);
+		}
+
+		if (!$is_duplicate) {
+			$node->_[HDOM_INFO_QUOTE][] = $quote_type;
+			$node->attr[$name] = $value;
 		}
 	}
 

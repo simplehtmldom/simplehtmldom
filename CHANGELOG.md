@@ -7,11 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added unit test for bug reports
   - Added test for bug [#163](https://sourceforge.net/p/simplehtmldom/bugs/163/)
+  - Added test for bug [#166](https://sourceforge.net/p/simplehtmldom/bugs/166/)
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 - Fixed missing whitespace when returning plaintext (#163)
+- Fixed broken detection of duplicate attributes (#166)
 ### Security
 
 ## [1.8.1] - 2019-01-13
