@@ -2,12 +2,15 @@
 title: API Reference
 ---
 
-# Creating DOM objects
+# Parsing documents
+
+The parser accepts documents in the form of URLs, files and strings. The document
+must be accessible for reading and cannot exceed [`MAX_FILE_SIZE`](constants.md#max_file_size).
 
 Name | Description
 ---- | -----------
-`str_get_html( string $content ) : object` | Creates a DOM object from string.
-`file_get_html( string $filename ) : object` | Creates a DOM object from file or URL.
+`str_get_html( string $content ) : object`      | Creates a DOM object from string.
+`file_get_html( string $filename ) : object`    | Creates a DOM object from file or URL.
 
 # DOM methods & properties
 
