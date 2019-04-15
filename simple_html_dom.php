@@ -3,20 +3,22 @@
  * Website: http://sourceforge.net/projects/simplehtmldom/
  * Additional projects: http://sourceforge.net/projects/debugobject/
  * Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
- * Contributions by:
- *	Yousuke Kumakura (Attribute filters)
- *	Vadim Voituk (Negative indexes supports of "find" method)
- *	Antcs (Constructor with automatically load contents either text or file/url)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @author S.C. Chen <me578022@gmail.com>
- * @author John Schlick
- * @author Rus Carroll
- * @version $Rev$
- * @package PlaceLocalInclude
- * @subpackage simple_html_dom
+ * Authors:
+ *   S.C. Chen
+ *   John Schlick
+ *   Rus Carroll
+ *   logmanoriginal
+ *
+ * Contributors:
+ *   Yousuke Kumakura
+ *   Vadim Voituk
+ *   Antcs
+ *
+ * Version $Rev$
  */
 
 define('HDOM_TYPE_ELEMENT', 1);
