@@ -4,47 +4,9 @@
  * Additional projects: http://sourceforge.net/projects/debugobject/
  * Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
  * Contributions by:
- *	 Yousuke Kumakura (Attribute filters)
- *	 Vadim Voituk (Negative indexes supports of "find" method)
- *	 Antcs (Constructor with automatically load contents either text or file/url)
- *
- * all affected sections have comments starting with "PaperG"
- *
- * Paperg - Added case insensitive testing of the value of the selector.
- *
- * Paperg - Added tag_start for the starting index of tags - NOTE: This works
- * but not accurately. This tag_start gets counted AFTER \r\n have been crushed
- * out, and after the remove_noice calls so it will not reflect the REAL
- * position of the tag in the source, it will almost always be smaller by some
- * amount. We use this to determine how far into the file the tag in question
- * is. This "percentage" will never be accurate as the $dom->size is the "real"
- * number of bytes the dom was created from. But for most purposes, it's a
- * really good estimation.
- *
- * Paperg - Added the forceTagsClosed to the dom constructor. Forcing tags
- * closed is great for malformed html, but it CAN lead to parsing errors.
- *
- * Allow the user to tell us how much they trust the html.
- *
- * Paperg add the text and plaintext to the selectors for the find syntax.
- * plaintext implies text in the innertext of a node.  text implies that the
- * tag is a text node. This allows for us to find tags based on the text they
- * contain.
- *
- * Create find_ancestor_tag to see if a tag is - at any level - inside of
- * another specific tag.
- *
- * Paperg: added parse_charset so that we know about the character set of
- * the source document. NOTE: If the user's system has a routine called
- * get_last_retrieve_url_contents_content_type availalbe, we will assume it's
- * returning the content-type header from the last transfer or curl_exec, and
- * we will parse that and use it in preference to any other method of charset
- * detection.
- *
- * Found infinite loop in the case of broken html in restore_noise. Rewrote to
- * protect from that.
- *
- * PaperG (John Schlick) Added get_display_size for "IMG" tags.
+ *	Yousuke Kumakura (Attribute filters)
+ *	Vadim Voituk (Negative indexes supports of "find" method)
+ *	Antcs (Constructor with automatically load contents either text or file/url)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -57,10 +19,6 @@
  * @subpackage simple_html_dom
  */
 
-/**
- * All of the Defines for the classes below.
- * @author S.C. Chen <me578022@gmail.com>
- */
 define('HDOM_TYPE_ELEMENT', 1);
 define('HDOM_TYPE_COMMENT', 2);
 define('HDOM_TYPE_TEXT', 3);
@@ -79,25 +37,12 @@ define('HDOM_INFO_INNER', 5);
 define('HDOM_INFO_OUTER', 6);
 define('HDOM_INFO_ENDSPACE', 7);
 
-/** The default target charset */
 defined('DEFAULT_TARGET_CHARSET') || define('DEFAULT_TARGET_CHARSET', 'UTF-8');
-
-/** The default <br> text used instead of <br> tags when returning text */
 defined('DEFAULT_BR_TEXT') || define('DEFAULT_BR_TEXT', "\r\n");
-
-/** The default <span> text used instead of <span> tags when returning text */
 defined('DEFAULT_SPAN_TEXT') || define('DEFAULT_SPAN_TEXT', ' ');
-
-/** The maximum file size the parser should load */
 defined('MAX_FILE_SIZE') || define('MAX_FILE_SIZE', 600000);
-
-/** Contents between curly braces "{" and "}" are interpreted as text */
 define('HDOM_SMARTY_AS_TEXT', 1);
 
-// helper functions
-// -----------------------------------------------------------------------------
-// get html dom from file
-// $maxlen is defined in the code as PHP_STREAM_COPY_ALL which is defined as -1.
 function file_get_html(
 	$url,
 	$use_include_path = false,
@@ -145,7 +90,6 @@ function file_get_html(
 	return $dom;
 }
 
-// get html dom from string
 function str_get_html(
 	$str,
 	$lowercase = true,
@@ -173,86 +117,23 @@ function str_get_html(
 	return $dom;
 }
 
-// dump html dom tree
 function dump_html_tree($node, $show_attr = true, $deep = 0)
 {
 	$node->dump($node);
 }
 
-/**
- * simple html dom node
- * PaperG - added ability for "find" routine to lowercase the value of the
- * selector.
- *
- * PaperG - added $tag_start to track the start position of the tag in the total
- * byte index
- *
- * @package PlaceLocalInclude
- */
 class simple_html_dom_node
 {
-	/**
-	 * Node type
-	 *
-	 * Default is {@see HDOM_TYPE_TEXT}
-	 *
-	 * @var int
-	 */
 	public $nodetype = HDOM_TYPE_TEXT;
-
-	/**
-	 * Tag name
-	 *
-	 * Default is 'text'
-	 *
-	 * @var string
-	 */
 	public $tag = 'text';
-
-	/**
-	 * List of attributes
-	 *
-	 * @var array
-	 */
 	public $attr = array();
-
-	/**
-	 * List of child node objects
-	 *
-	 * @var array
-	 */
 	public $children = array();
 	public $nodes = array();
-
-	/**
-	 * The parent node object
-	 *
-	 * @var object|null
-	 */
 	public $parent = null;
-
-	// The "info" array - see HDOM_INFO_... for what each element contains.
 	public $_ = array();
-
-	/**
-	 * Start position of the tag in the document
-	 *
-	 * @var int
-	 */
 	public $tag_start = 0;
-
-	/**
-	 * The DOM object
-	 *
-	 * @var object|null
-	 */
 	private $dom = null;
 
-	/**
-	 * Construct new node object
-	 *
-	 * Adds itself to the list of DOM Nodes {@see simple_html_dom::$nodes}
-	 */
 	function __construct($dom)
 	{
 		$this->dom = $dom;
@@ -269,7 +150,6 @@ class simple_html_dom_node
 		return $this->outertext();
 	}
 
-	// clean up memory due to php5 circular references memory leak...
 	function clear()
 	{
 		$this->dom = null;
@@ -278,7 +158,6 @@ class simple_html_dom_node
 		$this->children = null;
 	}
 
-	// dump node's tree
 	function dump($show_attr = true, $deep = 0)
 	{
 		$lead = str_repeat('	', $deep);
@@ -302,8 +181,6 @@ class simple_html_dom_node
 		}
 	}
 
-
-	// Debugging function to dump a single dom node with a bunch of information about it.
 	function dump_node($echo = true)
 	{
 		$string = $this->tag;
@@ -357,13 +234,6 @@ class simple_html_dom_node
 		}
 	}
 
-	/**
-	 * Return or set parent node
-	 *
-	 * @param object|null $parent (optional) The parent node, `null` to return
-	 * the current parent node.
-	 * @return object|null The parent node
-	 */
 	function parent($parent = null)
 	{
 		// I am SURE that this doesn't work properly.
@@ -378,22 +248,11 @@ class simple_html_dom_node
 		return $this->parent;
 	}
 
-	/**
-	 * @return bool True if the node has at least one child node
-	 */
 	function has_child()
 	{
 		return !empty($this->children);
 	}
 
-	/**
-	 * Get child node at specified index
-	 *
-	 * @param int $idx The index of the child node to return, `-1` to return all
-	 * child nodes.
-	 * @return object|array|null The child node at the specified index, all child
-	 * nodes or null if the index is invalid.
-	 */
 	function children($idx = -1)
 	{
 		if ($idx === -1) {
@@ -407,15 +266,6 @@ class simple_html_dom_node
 		return null;
 	}
 
-	/**
-	 * Get first child node
-	 *
-	 * @return object|null The first child node or null if the current node has
-	 * no child nodes.
-	 *
-	 * @todo Use `empty()` instead of `count()` to improve performance on large
-	 * arrays.
-	 */
 	function first_child()
 	{
 		if (count($this->children) > 0) {
@@ -424,14 +274,6 @@ class simple_html_dom_node
 		return null;
 	}
 
-	/**
-	 * Get last child node
-	 *
-	 * @return object|null The last child node or null if the current node has
-	 * no child nodes.
-	 *
-	 * @todo Use `end()` to slightly improve performance on large arrays.
-	 */
 	function last_child()
 	{
 		if (($count = count($this->children)) > 0) {
@@ -440,12 +282,6 @@ class simple_html_dom_node
 		return null;
 	}
 
-	/**
-	 * Get next sibling node
-	 *
-	 * @return object|null The sibling node or null if the current node has no
-	 * sibling nodes.
-	 */
 	function next_sibling()
 	{
 		if ($this->parent === null) {
@@ -466,12 +302,6 @@ class simple_html_dom_node
 		return $this->parent->children[$idx];
 	}
 
-	/**
-	 * Get previous sibling node
-	 *
-	 * @return object|null The sibling node or null if the current node has no
-	 * sibling nodes.
-	 */
 	function prev_sibling()
 	{
 		if ($this->parent === null) { return null; }
@@ -488,16 +318,6 @@ class simple_html_dom_node
 		return $this->parent->children[$idx];
 	}
 
-	/**
-	 * Traverse ancestors to the first matching tag.
-	 *
-	 * @param string $tag Tag to find
-	 * @return object|null First matching node in the DOM tree or null if no
-	 * match was found.
-	 *
-	 * @todo Null is returned implicitly by calling ->parent on the root node.
-	 * This behaviour could change at any time, rendering this function invalid.
-	 */
 	function find_ancestor_tag($tag)
 	{
 		global $debug_object;
@@ -521,11 +341,6 @@ class simple_html_dom_node
 		return $returnDom;
 	}
 
-	/**
-	 * Get node's inner text (everything inside the opening and closing tags)
-	 *
-	 * @return string
-	 */
 	function innertext()
 	{
 		if (isset($this->_[HDOM_INFO_INNER])) {
@@ -545,11 +360,6 @@ class simple_html_dom_node
 		return $ret;
 	}
 
-	/**
-	 * Get node's outer text (everything including the opening and closing tags)
-	 *
-	 * @return string
-	 */
 	function outertext()
 	{
 		global $debug_object;
@@ -611,11 +421,6 @@ class simple_html_dom_node
 		return $ret;
 	}
 
-	/**
-	 * Get node's plain text (everything excluding all tags)
-	 *
-	 * @return string
-	 */
 	function text()
 	{
 		if (isset($this->_[HDOM_INFO_INNER])) {
@@ -658,11 +463,6 @@ class simple_html_dom_node
 		return $ret;
 	}
 
-	/**
-	 * Get node's xml text (inner text as a CDATA section)
-	 *
-	 * @return string
-	 */
 	function xmltext()
 	{
 		$ret = $this->innertext();
@@ -671,7 +471,6 @@ class simple_html_dom_node
 		return $ret;
 	}
 
-	// build node's text with tag
 	function makeup()
 	{
 		// text, comment, unknown
@@ -715,18 +514,6 @@ class simple_html_dom_node
 		return $ret . $this->_[HDOM_INFO_ENDSPACE] . '>';
 	}
 
-	/**
-	 * Find elements by CSS selector
-	 *
-	 * @param string $selector The CSS selector
-	 * @param int|null $idx Index of element to return form the list of matching
-	 * elements (default: `null` = disabled).
-	 * @param bool $lowercase Matches tag names case insensitive (lowercase) if
-	 * enabled (default: `false`)
-	 * @return array|object|null A list of elements matching the specified CSS
-	 * selector or a single element if $idx is specified or null if no element
-	 * was found.
-	 */
 	function find($selector, $idx = null, $lowercase = false)
 	{
 		$selectors = $this->parse_selector($selector);
@@ -779,19 +566,6 @@ class simple_html_dom_node
 		return (isset($found[$idx])) ? $found[$idx] : null;
 	}
 
-	/**
-	 * Seek DOM elements by selector
-	 *
-	 * **Note**
-	 * The selector element must be compatible to a selector from
-	 * {@see simple_html_dom_node::parse_selector()}
-	 *
-	 * @param array $selector A selector element
-	 * @param array $ret An array of matches
-	 * @param bool $lowercase Matches tag names case insensitive (lowercase) if
-	 * enabled (default: `false`)
-	 * @return void
-	 */
 	protected function seek($selector, &$ret, $parent_cmd, $lowercase = false)
 	{
 		global $debug_object;
@@ -1006,24 +780,6 @@ class simple_html_dom_node
 		}
 	}
 
-	/**
-	 * Match value and pattern for a given CSS expression
-	 *
-	 * **Supported Expressions**
-	 *
-	 * | Expression | Description
-	 * | ---------- | -----------
-	 * | `=`        | $value and $pattern must be equal
-	 * | `!=`       | $value and $pattern must not be equal
-	 * | `^=`       | $value must start with $pattern
-	 * | `$=`       | $value must end with $pattern
-	 * | `*=`       | $value must contain $pattern
-	 *
-	 * @param string $exp The expression.
-	 * @param string $pattern The pattern
-	 * @param string $value The value
-	 * @value bool True if $value matches $pattern
-	 */
 	protected function match($exp, $pattern, $value, $case_sensitivity)
 	{
 		global $debug_object;
@@ -1069,31 +825,6 @@ class simple_html_dom_node
 		return false;
 	}
 
-	/**
-	 * Parse CSS selector
-	 *
-	 * @param string $selector_string CSS selector string
-	 * @return array List of CSS selectors. The format depends on the type of
-	 * selector:
-	 *
-	 * ```php
-	 *
-	 * array( // list of selectors (each separated by a comma), i.e. 'img, p, div'
-	 *   array( // list of combinator selectors, i.e. 'img > p > div'
-	 *     array( // selector element
-	 *       [0], // (string) The element tag
-	 *       [1], // (string) The element id
-	 *       [2], // (array<string>) The element classes
-	 *       [3], // (array<array<string>>) The list of attributes, each
-	 *            // with four elements: name, expression, value, inverted
-	 *       [4]  // (string) The selector combinator (' ' | '>' | '+' | '~')
-	 *     )
-	 *   )
-	 * )
-	 * ```
-	 *
-	 * @link https://www.w3.org/TR/selectors/#compound Compound selector
-	 */
 	protected function parse_selector($selector_string)
 	{
 		global $debug_object;
@@ -1285,8 +1016,6 @@ class simple_html_dom_node
 		if (isset($this->attr[$name])) { unset($this->attr[$name]); }
 	}
 
-	// PaperG - Function to convert the text from one character set to another
-	// if the two sets are not the same.
 	function convert_text($text)
 	{
 		global $debug_object;
@@ -1337,12 +1066,6 @@ class simple_html_dom_node
 		return $converted_text;
 	}
 
-	/**
-	* Returns true if $string is valid UTF-8 and false otherwise.
-	*
-	* @param mixed $str String to be tested
-	* @return boolean
-	*/
 	static function is_utf8($str)
 	{
 		$c = 0; $b = 0;
@@ -1370,16 +1093,6 @@ class simple_html_dom_node
 		return true;
 	}
 
-	/**
-	 * Function to try a few tricks to determine the displayed size of an img on
-	 * the page. NOTE: This will ONLY work on an IMG tag. Returns FALSE on all
-	 * other tag types.
-	 *
-	 * @author John Schlick
-	 * @version April 19 2012
-	 * @return array an array containing the 'height' and 'width' of the image
-	 * on the page or -1 if we can't figure it out.
-	 */
 	function get_display_size()
 	{
 		global $debug_object;
@@ -1465,7 +1178,6 @@ class simple_html_dom_node
 		return $result;
 	}
 
-	// camel naming conventions
 	function getAllAttributes()
 	{
 		return $this->attr;
@@ -1559,170 +1271,34 @@ class simple_html_dom_node
 
 }
 
-/**
- * simple html dom parser
- *
- * Paperg - in the find routine: allow us to specify that we want case
- * insensitive testing of the value of the selector.
- *
- * Paperg - change $size from protected to public so we can easily access it
- *
- * Paperg - added ForceTagsClosed in the constructor which tells us whether we
- * trust the html or not.  Default is to NOT trust it.
- *
- * @package PlaceLocalInclude
- */
 class simple_html_dom
 {
-	/**
-	 * The root node of the document
-	 *
-	 * @var object
-	 */
 	public $root = null;
-
-	/**
-	 * List of nodes in the current DOM
-	 *
-	 * @var array
-	 */
 	public $nodes = array();
-
-	/**
-	 * Callback function to run for each element in the DOM.
-	 *
-	 * @var callable|null
-	 */
 	public $callback = null;
-
-	/**
-	 * Indicates how tags and attributes are matched
-	 *
-	 * @var bool When set to **true** tags and attributes will be converted to
-	 * lowercase before matching.
-	 */
 	public $lowercase = false;
-
-	/**
-	 * Original document size
-	 *
-	 * Holds the original document size.
-	 *
-	 * @var int
-	 */
 	public $original_size;
-
-	/**
-	 * Current document size
-	 *
-	 * Holds the current document size. The document size is determined by the
-	 * string length of ({@see simple_html_dom::$doc}).
-	 *
-	 * _Note_: Using this variable is more efficient than calling `strlen($doc)`
-	 *
-	 * @var int
-	 * */
 	public $size;
 
-	/**
-	 * Current position in the document
-	 *
-	 * @var int
-	 */
 	protected $pos;
-
-	/**
-	 * The document
-	 *
-	 * @var string
-	 */
 	protected $doc;
-
-	/**
-	 * Current character
-	 *
-	 * Holds the current character at position {@see simple_html_dom::$pos} in
-	 * the document {@see simple_html_dom::$doc}
-	 *
-	 * _Note_: Using this variable is more efficient than calling
-	 * `substr($doc, $pos, 1)`
-	 *
-	 * @var string
-	 */
 	protected $char;
 
 	protected $cursor;
-
-	/**
-	 * Parent node of the next node detected by the parser
-	 *
-	 * @var object
-	 */
 	protected $parent;
 	protected $noise = array();
-
-	/**
-	 * Tokens considered blank in HTML
-	 *
-	 * @var string
-	 */
 	protected $token_blank = " \t\r\n";
-
-	/**
-	 * Tokens to identify the equal sign for attributes, stopping either at the
-	 * closing tag ("/" i.e. "<html />") or the end of an opening tag (">" i.e.
-	 * "<html>")
-	 *
-	 * @var string
-	 */
 	protected $token_equal = ' =/>';
-
-	/**
-	 * Tokens to identify the end of a tag name. A tag name either ends on the
-	 * ending slash ("/" i.e. "<html/>") or whitespace ("\s\r\n\t")
-	 *
-	 * @var string
-	 */
 	protected $token_slash = " />\r\n\t";
-
-	/**
-	 * Tokens to identify the end of an attribute
-	 *
-	 * @var string
-	 */
 	protected $token_attr = ' >';
 
-	// Note that this is referenced by a child node, and so it needs to be
-	// public for that node to see this information.
 	public $_charset = '';
 	public $_target_charset = '';
 
-	/**
-	 * Innertext for <br> elements
-	 *
-	 * @var string
-	 */
 	protected $default_br_text = '';
 
-	/**
-	 * Suffix for <span> elements
-	 *
-	 * @var string
-	 */
 	public $default_span_text = '';
 
-	/**
-	 * Defines a list of self-closing tags (Void elements) according to the HTML
-	 * Specification
-	 *
-	 * _Remarks_:
-	 * - Use `isset()` instead of `in_array()` on array elements to boost
-	 * performance about 30%
-	 * - Sort elements by name for better readability!
-	 *
-	 * @link https://www.w3.org/TR/html HTML Specification
-	 * @link https://www.w3.org/TR/html/syntax.html#void-elements Void elements
-	 */
 	protected $self_closing_tags = array(
 		'area' => 1,
 		'base' => 1,
@@ -1739,18 +1315,6 @@ class simple_html_dom
 		'track' => 1,
 		'wbr' => 1
 	);
-
-	/**
-	 * Defines a list of tags which - if closed - close all optional closing
-	 * elements within if they haven't been closed yet. (So, an element where
-	 * neither opening nor closing tag is omissible consistently closes every
-	 * optional closing element within)
-	 *
-	 * _Remarks_:
-	 * - Use `isset()` instead of `in_array()` on array elements to boost
-	 * performance about 30%
-	 * - Sort elements by name for better readability!
-	 */
 	protected $block_tags = array(
 		'body' => 1,
 		'div' => 1,
@@ -1759,62 +1323,6 @@ class simple_html_dom
 		'span' => 1,
 		'table' => 1
 	);
-
-	/**
-	 * Defines elements whose end tag is omissible.
-	 *
-	 * * key = Name of an element whose end tag is omissible.
-	 * * value = Names of elements whose end tag is omissible, that are closed
-	 * by the current element.
-	 *
-	 * _Remarks_:
-	 * - Use `isset()` instead of `in_array()` on array elements to boost
-	 * performance about 30%
-	 * - Sort elements by name for better readability!
-	 *
-	 * **Example**
-	 *
-	 * An `li` element’s end tag may be omitted if the `li` element is immediately
-	 * followed by another `li` element. To do that, add following element to the
-	 * array:
-	 *
-	 * ```php
-	 * 'li' => array('li'),
-	 * ```
-	 *
-	 * With this, the following two examples are considered equal. Note that the
-	 * second example is missing the closing tags on `li` elements.
-	 *
-	 * ```html
-	 * <ul><li>First Item</li><li>Second Item</li></ul>
-	 * ```
-	 *
-	 * <ul><li>First Item</li><li>Second Item</li></ul>
-	 *
-	 * ```html
-	 * <ul><li>First Item<li>Second Item</ul>
-	 * ```
-	 *
-	 * <ul><li>First Item<li>Second Item</ul>
-	 *
-	 * @var array A two-dimensional array where the key is the name of an
-	 * element whose end tag is omissible and the value is an array of elements
-	 * whose end tag is omissible, that are closed by the current element.
-	 *
-	 * @link https://www.w3.org/TR/html/syntax.html#optional-tags Optional tags
-	 *
-	 * @todo The implementation of optional closing tags doesn't work in all cases
-	 * because it only consideres elements who close other optional closing
-	 * tags, not taking into account that some (non-blocking) tags should close
-	 * these optional closing tags. For example, the end tag for "p" is omissible
-	 * and can be closed by an "address" element, whose end tag is NOT omissible.
-	 * Currently a "p" element without closing tag stops at the next "p" element
-	 * or blocking tag, even if it contains other elements.
-	 *
-	 * @todo Known sourceforge issue #2977341
-	 * B tags that are not closed cause us to return everything to the end of
-	 * the document.
-	 */
 	protected $optional_closing_tags = array(
 		// Not optional, see
 		// https://www.w3.org/TR/html/textlevel-semantics.html#the-b-element
@@ -1873,7 +1381,6 @@ class simple_html_dom
 		$this->clear();
 	}
 
-	// load html from string
 	function load(
 		$str,
 		$lowercase = true,
@@ -1928,7 +1435,6 @@ class simple_html_dom
 		return $this;
 	}
 
-	// load html from file
 	function load_file()
 	{
 		$args = func_get_args();
@@ -1940,29 +1446,16 @@ class simple_html_dom
 		}
 	}
 
-	/**
-	 * Set the callback function
-	 *
-	 * @param callable $function_name Callback function to run for each element
-	 * in the DOM.
-	 * @return void
-	 */
 	function set_callback($function_name)
 	{
 		$this->callback = $function_name;
 	}
 
-	/**
-	 * Remove callback function
-	 *
-	 * @return void
-	 */
 	function remove_callback()
 	{
 		$this->callback = null;
 	}
 
-	// save dom as string
 	function save($filepath = '')
 	{
 		$ret = $this->root->innertext();
@@ -1970,14 +1463,11 @@ class simple_html_dom
 		return $ret;
 	}
 
-	// find dom node by css selector
-	// Paperg - allow us to specify that we want case insensitive testing of the value of the selector.
 	function find($selector, $idx = null, $lowercase = false)
 	{
 		return $this->root->find($selector, $idx, $lowercase);
 	}
 
-	// clean up memory due to php5 circular references memory leak...
 	function clear()
 	{
 		foreach ($this->nodes as $n) {
@@ -2012,7 +1502,6 @@ class simple_html_dom
 		$this->root->dump($show_attr);
 	}
 
-	// prepare HTML data and init everything
 	protected function prepare(
 		$str, $lowercase = true,
 		$defaultBRText = DEFAULT_BR_TEXT,
@@ -2038,11 +1527,6 @@ class simple_html_dom
 		if ($this->size > 0) { $this->char = $this->doc[0]; }
 	}
 
-	/**
-	 * Parse HTML content
-	 *
-	 * @return bool True on success
-	 */
 	protected function parse()
 	{
 		while (true) {
@@ -2064,13 +1548,6 @@ class simple_html_dom
 		}
 	}
 
-	// PAPERG - dkchou - added this to try to identify the character set of the
-	// page we have just parsed so we know better how to spit it out later.
-	// NOTE:  IF you provide a routine called
-	// get_last_retrieve_url_contents_content_type which returns the
-	// CURLINFO_CONTENT_TYPE from the last curl_exec
-	// (or the content_type header from the last transfer), we will parse THAT,
-	// and if a charset is specified, we will use it over any other mechanism.
 	protected function parse_charset()
 	{
 		global $debug_object;
@@ -2184,11 +1661,6 @@ class simple_html_dom
 		return $this->_charset = $charset;
 	}
 
-	/**
-	 * Parse tag from current document position.
-	 *
-	 * @return bool True if a tag was found, false otherwise
-	 */
 	protected function read_tag()
 	{
 		// Set end position if no further tags found
@@ -2467,14 +1939,6 @@ class simple_html_dom
 		return true;
 	}
 
-	/**
-	 * Parse attribute from current document position
-	 *
-	 * @param object $node Node for the attributes
-	 * @param string $name Name of the current attribute
-	 * @param array $space Array for spacing information
-	 * @return void
-	 */
 	protected function parse_attr($node, $name, &$space)
 	{
 		$is_duplicate = isset($node->attr[$name]);
@@ -2519,14 +1983,6 @@ class simple_html_dom
 		}
 	}
 
-	/**
-	 * Link node to parent node
-	 *
-	 * @param object $node Node to link to parent
-	 * @param bool $is_child True if the node is a child of parent
-	 * @return void
-	 */
-	// link node's parent
 	protected function link_nodes(&$node, $is_child)
 	{
 		$node->parent = $this->parent;
@@ -2536,12 +1992,6 @@ class simple_html_dom
 		}
 	}
 
-	/**
-	 * Add tag as text node to current node
-	 *
-	 * @param string $tag Tag name
-	 * @return bool True on success
-	 */
 	protected function as_text_node($tag)
 	{
 		$node = new simple_html_dom_node($this);
@@ -2552,28 +2002,12 @@ class simple_html_dom
 		return true;
 	}
 
-	/**
-	 * Seek from the current document position to the first occurrence of a
-	 * character not defined by the provided string. Update the current document
-	 * position to the new position.
-	 *
-	 * @param string $chars A string containing every allowed character.
-	 * @return void
-	 */
 	protected function skip($chars)
 	{
 		$this->pos += strspn($this->doc, $chars, $this->pos);
 		$this->char = ($this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 	}
 
-	/**
-	 * Copy substring from the current document position to the first occurrence
-	 * of a character not defined by the provided string.
-	 *
-	 * @param string $chars A string containing every allowed character.
-	 * @return string Substring from the current document position to the first
-	 * occurrence of a character not defined by the provided string.
-	 */
 	protected function copy_skip($chars)
 	{
 		$pos = $this->pos;
@@ -2584,14 +2018,6 @@ class simple_html_dom
 		return substr($this->doc, $pos, $len);
 	}
 
-	/**
-	 * Copy substring from the current document position to the first occurrence
-	 * of any of the provided characters.
-	 *
-	 * @param string $chars A string containing every character to stop at.
-	 * @return string Substring from the current document position to the first
-	 * occurrence of any of the provided characters.
-	 */
 	protected function copy_until($chars)
 	{
 		$pos = $this->pos;
@@ -2601,14 +2027,6 @@ class simple_html_dom
 		return substr($this->doc, $pos, $len);
 	}
 
-	/**
-	 * Copy substring from the current document position to the first occurrence
-	 * of the provided string.
-	 *
-	 * @param string $char The string to stop at.
-	 * @return string Substring from the current document position to the first
-	 * occurrence of the provided string.
-	 */
 	protected function copy_until_char($char)
 	{
 		if ($this->char === null) { return ''; }
@@ -2628,15 +2046,6 @@ class simple_html_dom
 		return substr($this->doc, $pos_old, $pos - $pos_old);
 	}
 
-	/**
-	 * Remove noise from HTML content
-	 *
-	 * Noise is stored to {@see simple_html_dom::$noise}
-	 *
-	 * @param string $pattern The regex pattern used for finding noise
-	 * @param bool $remove_tag True to remove the entire match. Default is false
-	 * to only remove the captured data.
-	 */
 	protected function remove_noise($pattern, $remove_tag = false)
 	{
 		global $debug_object;
@@ -2669,14 +2078,6 @@ class simple_html_dom
 		}
 	}
 
-	/**
-	 * Restore noise to HTML content
-	 *
-	 * Noise is restored from {@see simple_html_dom::$noise}
-	 *
-	 * @param string $text A subset of HTML containing noise
-	 * @return string The same content with noise restored
-	 */
 	function restore_noise($text)
 	{
 		global $debug_object;
@@ -2723,7 +2124,6 @@ class simple_html_dom
 		return $text;
 	}
 
-	// Sometimes we NEED one of the noise elements.
 	function search_noise($text)
 	{
 		global $debug_object;
@@ -2757,7 +2157,6 @@ class simple_html_dom
 		}
 	}
 
-	// camel naming conventions
 	function childNodes($idx = -1)
 	{
 		return $this->root->childNodes($idx);
