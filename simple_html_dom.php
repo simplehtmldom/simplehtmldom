@@ -5,7 +5,7 @@
  * Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
  *
  * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
+ * See the LICENSE file in the project root for more information.
  *
  * Authors:
  *   S.C. Chen
