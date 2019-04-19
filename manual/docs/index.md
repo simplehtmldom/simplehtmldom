@@ -15,10 +15,6 @@ invalid by the [HTML](https://www.w3.org/TR/html/) specification.
 PHP Simple HTML DOM Parser supports CSS style selectors to navigate the DOM,
 similar to [jQuery](https://jquery.com/).
 
-# Requirements
-
-* Requires [PHP 5.6](https://secure.php.net/) or higher.
-
 # Download
 
 * Download the latest version from [SourceForge](https://sourceforge.net/projects/simplehtmldom/)

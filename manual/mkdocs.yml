@@ -15,6 +15,7 @@ extra_css: [extra.css]
 
 nav:
   - 'index.md'
+  - 'requirements.md'
   - 'quick-start.md'
   - 'faq.md'
   - Manual:
