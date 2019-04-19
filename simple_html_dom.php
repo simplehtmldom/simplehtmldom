@@ -1474,7 +1474,8 @@ class simple_html_dom
 	{
 		if (isset($this->nodes)) {
 			foreach ($this->nodes as $n) {
-				$n->clear(); $n = null;
+				$n->clear();
+				$n = null;
 			}
 		}
 
@@ -1483,7 +1484,8 @@ class simple_html_dom
 		// use of clear.
 		if (isset($this->children)) {
 			foreach ($this->children as $n) {
-				$n->clear(); $n = null;
+				$n->clear();
+				$n = null;
 			}
 		}
 
