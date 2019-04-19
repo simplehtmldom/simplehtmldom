@@ -1618,10 +1618,24 @@ class simple_html_dom
 			// this machine.
 			$charset = false;
 			if (function_exists('mb_detect_encoding')) {
-				// Have php try to detect the encoding from the text given to us.
+				/**
+				 * mb_detect_encoding() is not intended to distinguish between
+				 * charsets, especially single-byte charsets. Its primary
+				 * purpose is to detect which multibyte encoding is in use,
+				 * i.e. UTF-8, UTF-16, shift-JIS, etc.
+				 *
+				 * -- https://bugs.php.net/bug.php?id=38138
+				 *
+				 * Adding both CP1251/ISO-8859-5 and CP1252/ISO-8859-1 will
+				 * always result in CP1251/ISO-8859-5 and vice versa.
+				 *
+				 * Thus, only detect if it's either UTF-8 or CP1252/ISO-8859-1
+				 * to stay compatible. Document this behavior, so users can
+				 * change the charset manually.
+				 */
 				$charset = mb_detect_encoding(
 					$this->doc . 'ascii',
-					$encoding_list = array( 'UTF-8', 'CP1252' )
+					array( 'UTF-8', 'CP1252', 'ISO-8859-1' )
 				);
 
 				if (is_object($debug_object)) {

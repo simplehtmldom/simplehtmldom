@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed warning when trying to clear() the DOM on a null nodes list (#153)
 - Fixed missing whitespace when returning plaintext (#163)
 - Fixed broken detection of duplicate attributes (#166)
+- Fixed broken detection of CP1252 (ISO-8859-1) documents (#142)
 ### Security
 
 ## [1.8.1] - 2019-01-13
