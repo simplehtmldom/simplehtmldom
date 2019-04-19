@@ -214,6 +214,26 @@ HTML;
 	}
 
 	/**
+	 * Bug #153 (Invalid argument supplied for foreach())
+	 *
+	 * The parser incorrectly assumes that $this->nodes always exists (not null)
+	 * and tries to iterate over each element in the array when performing the
+	 * clear() operation.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/153/ Bug #153
+	 * @doesNotPerformAssertions
+	 */
+	public function test_bug_153()
+	{
+		$doc = '<p>PHP Simple HTML DOM Parser</p>';
+
+		$this->html->load($doc);
+		$this->html->nodes = null;
+
+		$this->html->clear();
+	}
+
+	/**
 	 * Bug #154 (Fatal error: Call to a member function find() on null)
 	 *
 	 * The parser incorrectly removes everything between `{` and `}` attempting

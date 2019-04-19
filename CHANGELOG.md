@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - Added unit test for bug reports
+  - Added test for bug [#153](https://sourceforge.net/p/simplehtmldom/bugs/153/)
   - Added test for bug [#163](https://sourceforge.net/p/simplehtmldom/bugs/163/)
   - Added test for bug [#166](https://sourceforge.net/p/simplehtmldom/bugs/166/)
 - Added LICENSE file (MIT) to the project root
