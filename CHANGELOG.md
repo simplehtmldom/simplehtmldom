@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 ### Removed
 ### Fixed
+- Fixed warning when trying to clear() the DOM on a null nodes list (#153)
 - Fixed missing whitespace when returning plaintext (#163)
 - Fixed broken detection of duplicate attributes (#166)
 ### Security

@@ -1472,8 +1472,10 @@ class simple_html_dom
 
 	function clear()
 	{
-		foreach ($this->nodes as $n) {
-			$n->clear(); $n = null;
+		if (isset($this->nodes)) {
+			foreach ($this->nodes as $n) {
+				$n->clear(); $n = null;
+			}
 		}
 
 		// This add next line is documented in the sourceforge repository.
