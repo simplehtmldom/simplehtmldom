@@ -1205,6 +1205,37 @@ class simple_html_dom_node
 		$this->__set($name, null);
 	}
 
+	function removeChild($node)
+	{
+		$nidx = array_search($node, $this->nodes, true);
+		$cidx = array_search($node, $this->children, true);
+		$didx = array_search($node, $this->dom->nodes, true);
+
+		if ($nidx !== false && $cidx !== false && $didx !== false) {
+
+			foreach($node->children as $child) {
+				$node->removeChild($child);
+			}
+
+			foreach($node->nodes as $entity) {
+				$enidx = array_search($entity, $node->nodes, true);
+				$edidx = array_search($entity, $node->dom->nodes, true);
+
+				if ($enidx !== false && $edidx !== false) {
+					unset($node->nodes[$enidx]);
+					unset($node->dom->nodes[$edidx]);
+				}
+			}
+
+			unset($this->nodes[$nidx]);
+			unset($this->children[$cidx]);
+			unset($this->dom->nodes[$didx]);
+
+			$node->clear();
+
+		}
+	}
+
 	function getElementById($id)
 	{
 		return $this->find("#$id", 0);

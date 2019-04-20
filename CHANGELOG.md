@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added support for meta charset to parse_charset
 - Added detection for CP1251 to parse_charset, using iconv
 - Added LICENSE file (MIT) to the project root
+- Added function 'removeChild' to simple_html_dom_node
 ### Changed
 - Changed manual from custom implementation to MkDocs (https://www.mkdocs.org/)
 ### Deprecated
