@@ -1575,6 +1575,7 @@ class simple_html_dom
 		}
 
 		if (empty($charset)) {
+			// https://www.w3.org/TR/html/document-metadata.html#statedef-http-equiv-content-type
 			$el = $this->root->find('meta[http-equiv=Content-Type]', 0, true);
 
 			if (!empty($el)) {
@@ -1607,6 +1608,16 @@ class simple_html_dom
 
 						$charset = 'ISO-8859-1';
 					}
+				}
+			}
+		}
+
+		if (empty($charset)) {
+			// https://www.w3.org/TR/html/document-metadata.html#character-encoding-declaration
+			if ($meta = $this->root->find('meta[charset]', 0)) {
+				$charset = $meta->charset;
+				if (is_object($debug_object)) {
+					$debug_object->debug_log(2, 'meta charset: ' . $charset);
 				}
 			}
 		}
