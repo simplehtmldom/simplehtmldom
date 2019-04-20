@@ -1622,12 +1622,9 @@ class simple_html_dom
 			}
 		}
 
-		// If we couldn't find a charset above, then lets try to detect one
-		// based on the text we got...
 		if (empty($charset)) {
-			// Use this in case mb_detect_charset isn't installed/loaded on
-			// this machine.
-			$charset = false;
+			// Try to guess the charset based on the content
+			// Requires Multibyte String (mbstring) support (optional)
 			if (function_exists('mb_detect_encoding')) {
 				/**
 				 * mb_detect_encoding() is not intended to distinguish between
@@ -1641,48 +1638,41 @@ class simple_html_dom
 				 * always result in CP1251/ISO-8859-5 and vice versa.
 				 *
 				 * Thus, only detect if it's either UTF-8 or CP1252/ISO-8859-1
-				 * to stay compatible. Document this behavior, so users can
-				 * change the charset manually.
+				 * to stay compatible.
 				 */
-				$charset = mb_detect_encoding(
-					$this->doc . 'ascii',
+				$encoding = mb_detect_encoding(
+					$this->doc,
 					array( 'UTF-8', 'CP1252', 'ISO-8859-1' )
 				);
 
-				if (is_object($debug_object)) {
-					$debug_object->debug_log(2, 'mb_detect found: ' . $charset);
+				if ($encoding !== false) {
+					$charset = $encoding;
+					if (is_object($debug_object)) {
+						$debug_object->debug_log(2, 'mb_detect: ' . $charset);
+					}
 				}
 			}
+		}
 
-			// and if this doesn't work...  then we need to just wrongheadedly
-			// assume it's UTF-8 so that we can move on - cause this will
-			// usually give us most of what we need...
-			if ($charset === false) {
-				if (is_object($debug_object)) {
-					$debug_object->debug_log(
-						2,
-						'since mb_detect failed - using default of utf-8'
-					);
-				}
-
-				$charset = 'UTF-8';
+		if (empty($charset)) {
+			// Assume it's UTF-8 as it is the most likely charset to be used
+			$charset = 'UTF-8';
+			if (is_object($debug_object)) {
+				$debug_object->debug_log(2, 'No match found, assume ' . $charset);
 			}
 		}
 
 		// Since CP1252 is a superset, if we get one of it's subsets, we want
 		// it instead.
-		if ((strtolower($charset) == strtolower('ISO-8859-1'))
-			|| (strtolower($charset) == strtolower('Latin1'))
-			|| (strtolower($charset) == strtolower('Latin-1'))) {
-
+		if ((strtolower($charset) == 'iso-8859-1')
+			|| (strtolower($charset) == 'latin1')
+			|| (strtolower($charset) == 'latin-1')) {
+			$charset = 'CP1252';
 			if (is_object($debug_object)) {
-				$debug_object->debug_log(
-					2,
+				$debug_object->debug_log(2,
 					'replacing ' . $charset . ' with CP1252 as its a superset'
 				);
 			}
-
-			$charset = 'CP1252';
 		}
 
 		if (is_object($debug_object)) {
