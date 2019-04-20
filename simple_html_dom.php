@@ -1645,6 +1645,16 @@ class simple_html_dom
 					array( 'UTF-8', 'CP1252', 'ISO-8859-1' )
 				);
 
+				if ($encoding === 'CP1252' || $encoding === 'ISO-8859-1') {
+					// Due to a limitation of mb_detect_encoding
+					// 'CP1251'/'ISO-8859-5' will be detected as
+					// 'CP1252'/'ISO-8859-1'. This will cause iconv to fail, in
+					// which case we can simply assume it is the other charset.
+					if (!@iconv('CP1252', 'UTF-8', $this->doc)) {
+						$encoding = 'CP1251';
+					}
+				}
+
 				if ($encoding !== false) {
 					$charset = $encoding;
 					if (is_object($debug_object)) {
