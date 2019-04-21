@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestResult;
  */
 class memory_parsing_test extends TestCase {
 	/** File for memory tests */
-	private $file = __DIR__ . '/../manual/index.htm';
+	private $file = __DIR__ . '/data/memory/index.html';
 
 	public function setUp()
 	{
