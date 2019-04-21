@@ -1180,6 +1180,17 @@ class simple_html_dom_node
 		return $result;
 	}
 
+	function save($filepath = '')
+	{
+		$ret = $this->outertext();
+
+		if ($filepath !== '') {
+			file_put_contents($filepath, $ret, LOCK_EX);
+		}
+
+		return $ret;
+	}
+
 	function addClass($class)
 	{
 		if (is_string($class)) {

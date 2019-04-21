@@ -158,4 +158,25 @@ EOD;
 		$this->assertEquals($expected, $this->html->save());
 	}
 
+	public function test_save_should_return_outerhtml()
+	{
+		$expected = '<p>Simple HTML DOM Parser</p>';
+
+		$this->html = str_get_html('<div><p>Simple HTML DOM Parser</p></div>');
+
+		$this->assertEquals($expected, $this->html->find('p', 0)->save());
+	}
+
+	public function test_save_should_create_file()
+	{
+		$expected_file = __DIR__ . '/data/simple_html_dom_node/save_file_expected.html';
+		$file = __DIR__ . '/data/simple_html_dom_node/save_file.html';
+
+		$this->html = str_get_html('<div><p>Simple HTML DOM Parser</p></div>');
+		$this->html->find('p', 0)->save($file);
+
+		$this->assertFileExists($file);
+		$this->assertFileEquals($expected_file, $file);
+	}
+
 }

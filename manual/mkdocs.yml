@@ -119,6 +119,7 @@ nav:
       - 'api/simple_html_dom_node/removeAttribute.md'
       - 'api/simple_html_dom_node/removeChild.md'
       - 'api/simple_html_dom_node/removeClass.md'
+      - 'api/simple_html_dom_node/save.md'
       - 'api/simple_html_dom_node/seek.md'
       - 'api/simple_html_dom_node/setAttribute.md'
       - 'api/simple_html_dom_node/text.md'

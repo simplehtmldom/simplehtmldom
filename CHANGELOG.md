@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `hasClass`: Checks if the current node has the specified class name
   - `addClass`: Adds one or more classes to the current node
   - `removeClass`: Removes one or more classes from the current node
+  - `save`: Saves the current node to disk
 ### Changed
 - Changed manual from custom implementation to MkDocs (https://www.mkdocs.org/)
 ### Deprecated
