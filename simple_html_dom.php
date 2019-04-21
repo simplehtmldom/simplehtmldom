@@ -1180,6 +1180,71 @@ class simple_html_dom_node
 		return $result;
 	}
 
+	function addClass($class)
+	{
+		if (is_string($class)) {
+			$class = explode(' ', $class);
+		}
+
+		if (is_array($class)) {
+			foreach($class as $c) {
+				if (isset($this->class)) {
+					if ($this->hasClass($c)) {
+						continue;
+					} else {
+						$this->class .= ' ' . $c;
+					}
+				} else {
+					$this->class = $c;
+				}
+			}
+		} else {
+			if (is_object($debug_object)) {
+				$debug_object->debug_log(2, 'Invalid type: ', gettype($class));
+			}
+		}
+	}
+
+	function hasClass($class)
+	{
+		if (is_string($class)) {
+			if (isset($this->class)) {
+				return in_array($class, explode(' ', $this->class), true);
+			}
+		} else {
+			if (is_object($debug_object)) {
+				$debug_object->debug_log(2, 'Invalid type: ', gettype($class));
+			}
+		}
+
+		return false;
+	}
+
+	function removeClass($class = null)
+	{
+		if (!isset($this->class)) {
+			return;
+		}
+
+		if (is_null($class)) {
+			$this->removeAttribute('class');
+			return;
+		}
+
+		if (is_string($class)) {
+			$class = explode(' ', $class);
+		}
+
+		if (is_array($class)) {
+			$class = array_diff(explode(' ', $this->class), $class);
+			if (empty($class)) {
+				$this->removeAttribute('class');
+			} else {
+				$this->class = implode(' ', $class);
+			}
+		}
+	}
+
 	function getAllAttributes()
 	{
 		return $this->attr;

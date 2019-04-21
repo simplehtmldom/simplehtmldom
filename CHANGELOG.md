@@ -13,7 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added support for meta charset to parse_charset
 - Added detection for CP1251 to parse_charset, using iconv
 - Added LICENSE file (MIT) to the project root
-- Added function 'removeChild' to simple_html_dom_node
+- Added functions to `simple_html_dom_node`
+  - `removeChild`: Removes a child node recursively from the DOM tree
+  - `hasClass`: Checks if the current node has the specified class name
+  - `addClass`: Adds one or more classes to the current node
+  - `removeClass`: Removes one or more classes from the current node
 ### Changed
 - Changed manual from custom implementation to MkDocs (https://www.mkdocs.org/)
 ### Deprecated
