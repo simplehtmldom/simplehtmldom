@@ -43,6 +43,7 @@ nav:
       - 'api/simple_html_dom/save.md'
       - 'api/simple_html_dom/find.md'
       - 'api/simple_html_dom/clear.md'
+      - 'api/simple_html_dom/decode.md'
       - 'api/simple_html_dom/dump.md'
       - 'api/simple_html_dom/prepare.md'
       - 'api/simple_html_dom/parse.md'
