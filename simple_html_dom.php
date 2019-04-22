@@ -1710,6 +1710,15 @@ class simple_html_dom
 					$this->_target_charset
 				);
 			}
+			if (isset($node->attr) && is_array($node->attr)) {
+				foreach($node->attr as $a => $v) {
+					$node->attr[$a] = html_entity_decode(
+						$v,
+						ENT_QUOTES | ENT_HTML5,
+						$this->_target_charset
+					);
+				}
+			}
 		}
 	}
 

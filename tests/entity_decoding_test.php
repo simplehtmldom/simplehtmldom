@@ -54,4 +54,15 @@ class entity_decoding_test extends TestCase {
 		return $vector;
 	}
 
+	public function test_decode_should_decode_attributes()
+	{
+		$expected = 'Häagen-Dazs';
+
+		$this->html = str_get_html('<meta name="description" content="H&auml;agen-Dazs">');
+
+		$description = $this->html->find('meta[name="description"]', 0);
+
+		$this->assertEquals($expected, $description->content);
+	}
+
 }
