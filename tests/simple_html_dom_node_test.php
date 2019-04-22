@@ -14,6 +14,46 @@ class simple_html_dom_node_test extends TestCase {
 		$this->html = new simple_html_dom;
 	}
 
+	public function test_remove_should_remove_node()
+	{
+		$expected = <<<EOD
+<html>
+<body>
+
+</body>
+</html>
+EOD;
+
+		$doc = <<<EOD
+<html>
+<body>
+<table>
+	<tr><th>Title</th></tr>
+	<tr><td>Row 1</td></tr>
+</table>
+</body>
+</html>
+EOD;
+
+		$this->html = str_get_html(
+			$doc,
+			true,
+			true,
+			DEFAULT_TARGET_CHARSET,
+			false,
+			DEFAULT_BR_TEXT,
+			DEFAULT_SPAN_TEXT
+		);
+
+		$table = $this->html->find('table', 0);
+
+		$this->assertEquals($doc, $this->html->save());
+
+		$table->remove();
+
+		$this->assertEquals($expected, $this->html->save());
+	}
+
 	public function test_removeChild()
 	{
 		$expected = <<<EOD

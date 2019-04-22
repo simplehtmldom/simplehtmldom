@@ -116,6 +116,7 @@ nav:
       - 'api/simple_html_dom_node/parse_selector.md'
       - 'api/simple_html_dom_node/prev_sibling.md'
       - 'api/simple_html_dom_node/prevSibling.md'
+      - 'api/simple_html_dom_node/remove.md'
       - 'api/simple_html_dom_node/removeAttribute.md'
       - 'api/simple_html_dom_node/removeChild.md'
       - 'api/simple_html_dom_node/removeClass.md'

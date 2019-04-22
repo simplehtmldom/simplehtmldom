@@ -1281,6 +1281,13 @@ class simple_html_dom_node
 		$this->__set($name, null);
 	}
 
+	function remove()
+	{
+		if ($this->parent) {
+			$this->parent->removeChild($this);
+		}
+	}
+
 	function removeChild($node)
 	{
 		$nidx = array_search($node, $this->nodes, true);
