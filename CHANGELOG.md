@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added detection for CP1251 to parse_charset, using iconv
 - Added LICENSE file (MIT) to the project root
 - Added functions to `simple_html_dom_node`
+  - `remove`: Removes the current node recursively from the DOM tree
   - `removeChild`: Removes a child node recursively from the DOM tree
   - `hasClass`: Checks if the current node has the specified class name
   - `addClass`: Adds one or more classes to the current node
