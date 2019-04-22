@@ -25,6 +25,7 @@ nav:
     - 'manual/traversing-dom-tree.md'
     - 'manual/saving-dom-objects.md'
     - 'manual/customizing-parsing-behavior.md'
+    - 'manual/adding-nodes.md'
   - API:
     - 'api/api.md'
     - 'api/constants.md'
