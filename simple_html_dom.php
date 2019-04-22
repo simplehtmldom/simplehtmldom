@@ -2319,7 +2319,7 @@ class simple_html_dom
 
 	function createElement($name, $value = null)
 	{
-		return @str_get_html("<$name>$value</$name>")->first_child();
+		return @str_get_html("<$name>$value</$name>")->firstChild();
 	}
 
 	function createTextNode($value)
