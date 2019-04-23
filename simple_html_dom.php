@@ -1507,10 +1507,12 @@ class simple_html_dom
 		$this->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is");
 		$this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is");
 
-		// strip out the \r \n's if we are told to.
 		if ($stripRN) {
-			$this->doc = str_replace("\r", ' ', $this->doc);
-			$this->doc = str_replace("\n", ' ', $this->doc);
+			// Remove whitespace and newlines between tags
+			$this->doc = preg_replace('/\>([\t\s]*[\r\n]^[\t\s]*)\</m', '><', $this->doc);
+
+			// Remove whitespace and newlines in text
+			$this->doc = preg_replace('/([\t\s]*[\r\n]^[\t\s]*)/m', ' ', $this->doc);
 
 			// set the length of content since we have changed it.
 			$this->size = strlen($this->doc);
