@@ -1535,7 +1535,7 @@ class simple_html_dom
 		}
 
 		// parsing
-		$this->parse();
+		$this->parse($stripRN);
 		// end
 		$this->root->_[HDOM_INFO_END] = $this->cursor;
 		$this->parse_charset();
@@ -1640,13 +1640,13 @@ class simple_html_dom
 		if ($this->size > 0) { $this->char = $this->doc[0]; }
 	}
 
-	protected function parse()
+	protected function parse($trim = false)
 	{
 		while (true) {
 			// Read next tag if there is no text between current position and the
 			// next opening tag.
 			if (($s = $this->copy_until_char('<')) === '') {
-				if($this->read_tag()) {
+				if($this->read_tag($trim)) {
 					continue;
 				} else {
 					return true;
@@ -1658,6 +1658,23 @@ class simple_html_dom
 			++$this->cursor;
 			$node->_[HDOM_INFO_TEXT] = $s;
 			$this->link_nodes($node, false);
+
+			// Remove whitespace between nodes if the current node and the previous
+			// node have space between them and either of the nodes is not text
+			if ($trim && count($this->nodes) >= 2) {
+				$current  = $this->nodes[count($this->nodes) - 1];
+				$previous = $this->nodes[count($this->nodes) - 2];
+
+				if ($current->tag !== 'text' xor $previous->tag !== 'text')
+				{
+					$element = ($current->tag === 'text') ? $current : $previous;
+
+					if ($element->tag === 'text' && trim($element) === '')
+					{
+						$element->remove();
+					}
+				}
+			}
 		}
 	}
 
@@ -1799,7 +1816,7 @@ class simple_html_dom
 		return $this->_charset = $charset;
 	}
 
-	protected function read_tag()
+	protected function read_tag($trim)
 	{
 		// Set end position if no further tags found
 		if ($this->char !== '<') {
@@ -1810,16 +1827,21 @@ class simple_html_dom
 		$begin_tag_pos = $this->pos;
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
+		if ($trim)
+			$this->skip($this->token_blank); // space between open tag and tag name (not allowed by specification) https://dev.w3.org/html5/pf-summary/syntax.html#start-tags
+
 		// end tag
 		if ($this->char === '/') {
 			$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
 			// Skip whitespace in end tags (i.e. in "</   html>")
-			$this->skip($this->token_blank);
+			if ($trim)
+				$this->skip($this->token_blank);
+
 			$tag = $this->copy_until_char('>');
 
 			// Skip attributes in end tags
-			if (($pos = strpos($tag, ' ')) !== false) {
+			if ($trim && ($pos = strpos($tag, ' ')) !== false) {
 				$tag = substr($tag, 0, $pos);
 			}
 
@@ -2038,7 +2060,7 @@ class simple_html_dom
 					if ($this->char != '>') { $this->char = $this->doc[--$this->pos]; } // prev
 				}
 
-				$node->_[HDOM_INFO_SPACE][] = $space;
+				$node->_[HDOM_INFO_SPACE][] = ($trim) ? array(' ', '', '') : $space; // Space before attribute and around equal sign
 
 				// prepare for next attribute
 				$space = array(
@@ -2052,11 +2074,14 @@ class simple_html_dom
 		} while ($this->char !== '>' && $this->char !== '/'); // go until the tag ended
 
 		$this->link_nodes($node, true);
-		$node->_[HDOM_INFO_ENDSPACE] = $space[0];
+		$node->_[HDOM_INFO_ENDSPACE] = ($trim) ? '' : $space[0]; // Space after last attribute before closing the tag
+
+		$rest = $this->copy_until_char('>');
+		$rest = ($trim) ? trim($rest) : $rest;
 
 		// handle empty tags (i.e. "<div/>")
-		if ($this->copy_until_char('>') === '/') {
-			$node->_[HDOM_INFO_ENDSPACE] .= '/';
+		if (trim($rest) === '/') {
+			$node->_[HDOM_INFO_ENDSPACE] .= $rest;
 			$node->_[HDOM_INFO_END] = 0;
 		} else {
 			// reset parent
