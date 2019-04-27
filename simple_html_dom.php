@@ -415,27 +415,23 @@ class simple_html_dom_node
 
 	function text()
 	{
-		if (isset($this->_[HDOM_INFO_INNER])) {
-			return $this->_[HDOM_INFO_INNER];
-		}
-
-		switch ($this->nodetype) {
-			case HDOM_TYPE_TEXT: return $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
-			case HDOM_TYPE_COMMENT: return '';
-			case HDOM_TYPE_UNKNOWN: return '';
-		}
-
-		if (strcasecmp($this->tag, 'script') === 0) { return ''; }
-		if (strcasecmp($this->tag, 'style') === 0) { return ''; }
-
 		$ret = '';
 
-		// In rare cases, (always node type 1 or HDOM_TYPE_ELEMENT - observed
-		// for some span tags, and some p tags) $this->nodes is set to NULL.
-		// NOTE: This indicates that there is a problem where it's set to NULL
-		// without a clear happening.
-		// WHY is this happening?
-		if (!is_null($this->nodes)) {
+		if (strcasecmp($this->tag, 'script') === 0) {
+			$ret = '';
+		} elseif (strcasecmp($this->tag, 'style') === 0) {
+			$ret = '';
+		} elseif (isset($this->_[HDOM_INFO_INNER])) {
+			$ret = $this->_[HDOM_INFO_INNER];
+		} elseif ($this->nodetype === HDOM_TYPE_TEXT) {
+			$ret = $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
+		} elseif ($this->nodetype === HDOM_TYPE_COMMENT) {
+			$ret = '';
+		} elseif ($this->nodetype === HDOM_TYPE_UNKNOWN) {
+			$ret = '';
+		} elseif (is_null($this->nodes)) {
+			$ret = '';
+		} else {
 			foreach ($this->nodes as $n) {
 				// Start paragraph after a blank line
 				if ($n->tag === 'p') {
@@ -452,6 +448,7 @@ class simple_html_dom_node
 				}
 			}
 		}
+
 		return $ret;
 	}
 
