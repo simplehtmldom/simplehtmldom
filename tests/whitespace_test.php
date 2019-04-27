@@ -185,4 +185,99 @@ EOD
 		$this->assertEquals($expected, $this->html->save());
 	}
 
+	public function test_text_should_trim_whitespace()
+	{
+		$expected = 'PHP Simple HTML DOM Parser';
+
+		$doc = <<<EOD
+<p>     PHP Simple HTML DOM Parser     </p>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
+	public function test_text_should_trim_nested_whitespace()
+	{
+		$expected = 'PHP Simple HTML DOM Parser';
+
+		$doc = <<<EOD
+<p>   <span>     </span>  PHP Simple HTML DOM Parser     </p>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
+	public function test_text_should_remove_newline_from_paragraph()
+	{
+		$expected = 'PHP Simple HTML DOM Parser';
+
+		$doc = <<<EOD
+<p>
+PHP Simple HTML DOM Parser
+</p>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
+	public function test_text_should_remove_nested_newline_from_paragraph()
+	{
+		$expected = 'PHP Simple HTML DOM Parser';
+
+		$doc = <<<EOD
+<p>
+<span>
+
+</span>
+PHP Simple HTML DOM Parser
+</p>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
+	public function test_text_should_add_newline_between_paragraph()
+	{
+		$expected = <<<EOD
+PHP Simple HTML DOM Parser
+
+A fast, simple and reliable HTML document parser for PHP.
+EOD;
+
+		$doc = <<<EOD
+<p>PHP Simple HTML DOM Parser</p>
+<p>A fast, simple and reliable HTML document parser for PHP.</p>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
+	public function test_text_should_add_newline_between_nested_paragraph()
+	{
+		$expected = <<<EOD
+PHP Simple HTML DOM Parser
+
+A fast, simple and reliable HTML document parser for PHP.
+EOD;
+
+		$doc = <<<EOD
+<div><p>PHP Simple HTML DOM Parser</p></div>
+<div><p>A fast, simple and reliable HTML document parser for PHP.</p></div>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
 }
