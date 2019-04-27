@@ -413,7 +413,7 @@ class simple_html_dom_node
 		return $ret;
 	}
 
-	function text()
+	function text($trim = true)
 	{
 		$ret = '';
 
@@ -438,7 +438,7 @@ class simple_html_dom_node
 					$ret = rtrim($ret) . "\n\n";
 				}
 
-				$ret .= $this->convert_text($n->text());
+				$ret .= $this->convert_text($n->text(false));
 
 				// If this node is a span... add a space at the end of it so
 				// multiple spans don't run into each other.  This is plaintext
@@ -449,7 +449,7 @@ class simple_html_dom_node
 			}
 		}
 
-		return $ret;
+		return $trim ? trim($ret) : $ret;
 	}
 
 	function xmltext()

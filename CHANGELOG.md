@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - Added unit test for whitespace handling.
+- Added optional argument `$trim = true` to `$node->text()`
 ### Changed
 ### Deprecated
 ### Removed
