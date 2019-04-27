@@ -413,7 +413,46 @@ class simple_html_dom_node
 		return $ret;
 	}
 
-	function text($trim = true)
+	/**
+	 * Returns true if the provided element is a block level element
+	 * @link https://www.w3resource.com/html/HTML-block-level-and-inline-elements.php
+	 */
+	protected function is_block_element($node)
+	{
+		// todo: When we have the utility class this should be moved there
+		return in_array(strtolower($node->tag), array(
+			'p',
+			'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+			'ol', 'ul',
+			'pre',
+			'address',
+			'blockquote',
+			'dl',
+			'div',
+			'fieldset',
+			'form',
+			'hr',
+			'noscript',
+			'table'
+		));
+	}
+
+	/**
+	 * Returns true if the provided element is an inline level element
+	 * @link https://www.w3resource.com/html/HTML-block-level-and-inline-elements.php
+	 */
+	protected function is_inline_element($node)
+	{
+		// todo: When we have the utility class this should be moved there
+		return in_array(strtolower($node->tag), array(
+			'b', 'big', 'i', 'small', 'tt',
+			'abbr', 'acronym', 'cite', 'code', 'dfn', 'em', 'kbd', 'strong', 'samp', 'var',
+			'a', 'bdo', 'br', 'img', 'map', 'object', 'q', 'script', 'span', 'sub', 'sup',
+			'button', 'input', 'label', 'select', 'textarea'
+		));
+	}
+
+	function text()
 	{
 		$ret = '';
 
@@ -433,23 +472,22 @@ class simple_html_dom_node
 			$ret = '';
 		} else {
 			foreach ($this->nodes as $n) {
-				// Start paragraph after a blank line
-				if ($n->tag === 'p') {
-					$ret = rtrim($ret) . "\n\n";
-				}
-
-				$ret .= $this->convert_text($n->text(false));
-
-				// If this node is a span... add a space at the end of it so
-				// multiple spans don't run into each other.  This is plaintext
-				// after all.
-				if ($n->tag === 'span') {
-					$ret = rtrim($ret) . $this->dom->default_span_text;
+				if ($this->is_block_element($n)) {
+					$ret = rtrim($ret) . "\n\n" . $this->convert_text($n->text()) . ' ';
+				} elseif ($this->is_inline_element($n)) {
+					// todo: <br> introduces code smell because no space but \n
+					if (strcasecmp($n->tag, 'br') === 0) {
+						$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
+					} else {
+						$ret = rtrim($ret) . ' ' . $this->convert_text($n->text()) . ' ';
+					}
+				} else {
+					$ret .= $this->convert_text($n->text());
 				}
 			}
 		}
 
-		return $trim ? trim($ret) : $ret;
+		return trim($ret);
 	}
 
 	function xmltext()
@@ -1399,8 +1437,7 @@ class simple_html_dom
 	public $_charset = '';
 	public $_target_charset = '';
 
-	protected $default_br_text = '';
-
+	public $default_br_text = '';
 	public $default_span_text = '';
 
 	protected $self_closing_tags = array(
