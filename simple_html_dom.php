@@ -435,7 +435,7 @@ class simple_html_dom_node
 			foreach ($this->nodes as $n) {
 				// Start paragraph after a blank line
 				if ($n->tag === 'p') {
-					$ret = trim($ret) . "\n\n";
+					$ret = rtrim($ret) . "\n\n";
 				}
 
 				$ret .= $this->convert_text($n->text());
@@ -444,7 +444,7 @@ class simple_html_dom_node
 				// multiple spans don't run into each other.  This is plaintext
 				// after all.
 				if ($n->tag === 'span') {
-					$ret .= $this->dom->default_span_text;
+					$ret = rtrim($ret) . $this->dom->default_span_text;
 				}
 			}
 		}
