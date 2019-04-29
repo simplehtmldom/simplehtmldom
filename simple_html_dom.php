@@ -296,23 +296,19 @@ class simple_html_dom_node
 		return null;
 	}
 
-		return $this->parent->children[$idx];
-	}
-
 	function prev_sibling()
 	{
-		if ($this->parent === null) { return null; }
-
-		$idx = 0;
-		$count = count($this->parent->children);
-
-		while ($idx < $count && $this !== $this->parent->children[$idx]) {
-			++$idx;
+		if ($this->parent === null) {
+			return null;
 		}
 
-		if (--$idx < 0) { return null; }
+		$idx = array_search($this, $this->parent->children, true);
 
-		return $this->parent->children[$idx];
+		if ($idx !== false && $idx > 0) {
+			return $this->parent->children[$idx-1];
+		}
+
+		return null;
 	}
 
 	function find_ancestor_tag($tag)
