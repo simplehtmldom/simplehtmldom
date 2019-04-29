@@ -187,7 +187,7 @@ class simple_html_dom_node
 		if (count($this->attr) > 0) {
 			$string .= '(';
 			foreach ($this->attr as $k => $v) {
-				$string .= "[$k]=>\"" . $this->$k . '", ';
+				$string .= "[$k]=>\"$v\", ";
 			}
 			$string .= ')';
 		}
@@ -198,24 +198,24 @@ class simple_html_dom_node
 				if (is_array($v)) {
 					$string .= "[$k]=>(";
 					foreach ($v as $k2 => $v2) {
-						$string .= "[$k2]=>\"" . $v2 . '", ';
+						$string .= "[$k2]=>\"$v2\", ";
 					}
 					$string .= ')';
 				} else {
-					$string .= "[$k]=>\"" . $v . '", ';
+					$string .= "[$k]=>\"$v\", ";
 				}
 			}
 			$string .= ')';
 		}
 
 		if (isset($this->text)) {
-			$string .= ' text: (' . $this->text . ')';
+			$string .= " text: ({$this->text})";
 		}
 
-		$string .= " HDOM_INNER_INFO: '";
+		$string .= " HDOM_INNER_INFO: ";
 
 		if (isset($node->_[HDOM_INFO_INNER])) {
-			$string .= $node->_[HDOM_INFO_INNER] . "'";
+			$string .= "'" . $node->_[HDOM_INFO_INNER] . "'";
 		} else {
 			$string .= ' NULL ';
 		}
