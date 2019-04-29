@@ -316,22 +316,25 @@ class simple_html_dom_node
 		global $debug_object;
 		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
 
-		// Start by including ourselves in the comparison.
-		$returnDom = $this;
+		if ($this->parent === null) {
+			return null;
+		}
 
-		while (!is_null($returnDom)) {
+		$ancestor = $this->parent;
+
+		while (!is_null($ancestor)) {
 			if (is_object($debug_object)) {
-				$debug_object->debug_log(2, 'Current tag is: ' . $returnDom->tag);
+				$debug_object->debug_log(2, 'Current tag is: ' . $ancestor->tag);
 			}
 
-			if ($returnDom->tag == $tag) {
+			if ($ancestor->tag === $tag) {
 				break;
 			}
 
-			$returnDom = $returnDom->parent;
+			$ancestor = $ancestor->parent;
 		}
 
-		return $returnDom;
+		return $ancestor;
 	}
 
 	function innertext()
