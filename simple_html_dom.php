@@ -372,9 +372,11 @@ class simple_html_dom_node
 			$debug_object->debug_log(1, 'Innertext of tag: ' . $this->tag . $text);
 		}
 
-		if ($this->tag === 'root') return $this->innertext();
+		if ($this->tag === 'root') {
+			return $this->innertext();
+		}
 
-		// trigger callback
+		// todo: What is the use of this callback? Remove?
 		if ($this->dom && $this->dom->callback !== null) {
 			call_user_func_array($this->dom->callback, array($this));
 		}
@@ -387,29 +389,23 @@ class simple_html_dom_node
 			return $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
 		}
 
-		// render begin tag
+		$ret = '';
+
 		if ($this->dom && $this->dom->nodes[$this->_[HDOM_INFO_BEGIN]]) {
 			$ret = $this->dom->nodes[$this->_[HDOM_INFO_BEGIN]]->makeup();
-		} else {
-			$ret = '';
 		}
 
-		// render inner text
 		if (isset($this->_[HDOM_INFO_INNER])) {
-			// If it's a br tag...  don't return the HDOM_INNER_INFO that we
-			// may or may not have added.
+			// todo: <br> should either never have HDOM_INFO_INNER or always
 			if ($this->tag !== 'br') {
 				$ret .= $this->_[HDOM_INFO_INNER];
 			}
-		} else {
-			if ($this->nodes) {
-				foreach ($this->nodes as $n) {
-					$ret .= $this->convert_text($n->outertext());
-				}
+		} elseif ($this->nodes) {
+			foreach ($this->nodes as $n) {
+				$ret .= $this->convert_text($n->outertext());
 			}
 		}
 
-		// render end tag
 		if (isset($this->_[HDOM_INFO_END]) && $this->_[HDOM_INFO_END] != 0) {
 			$ret .= '</' . $this->tag . '>';
 		}
