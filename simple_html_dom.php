@@ -275,8 +275,8 @@ class simple_html_dom_node
 
 	function last_child()
 	{
-		if (($count = count($this->children)) > 0) {
-			return $this->children[$count - 1];
+		if (count($this->children) > 0) {
+			return end($this->children);
 		}
 		return null;
 	}
