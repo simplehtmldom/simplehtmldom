@@ -212,7 +212,7 @@ class simple_html_dom_node
 			$string .= " text: ({$this->text})";
 		}
 
-		$string .= " HDOM_INNER_INFO: ";
+		$string .= ' HDOM_INNER_INFO: ';
 
 		if (isset($node->_[HDOM_INFO_INNER])) {
 			$string .= "'" . $node->_[HDOM_INFO_INNER] . "'";
@@ -289,8 +289,8 @@ class simple_html_dom_node
 
 		$idx = array_search($this, $this->parent->children, true);
 
-		if ($idx !== false && isset($this->parent->children[$idx+1])) {
-			return $this->parent->children[$idx+1];
+		if ($idx !== false && isset($this->parent->children[$idx + 1])) {
+			return $this->parent->children[$idx + 1];
 		}
 
 		return null;
@@ -305,7 +305,7 @@ class simple_html_dom_node
 		$idx = array_search($this, $this->parent->children, true);
 
 		if ($idx !== false && $idx > 0) {
-			return $this->parent->children[$idx-1];
+			return $this->parent->children[$idx - 1];
 		}
 
 		return null;
