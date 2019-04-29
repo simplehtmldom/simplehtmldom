@@ -159,16 +159,14 @@ class simple_html_dom_node
 		$this->children = null;
 	}
 
-	function dump($show_attr = true, $deep = 0)
+	function dump($show_attr = true, $depth = 0)
 	{
-		$lead = str_repeat('	', $deep);
-
-		echo $lead . $this->tag;
+		echo str_repeat("\t", $depth) . $this->tag;
 
 		if ($show_attr && count($this->attr) > 0) {
 			echo '(';
 			foreach ($this->attr as $k => $v) {
-				echo "[$k]=>\"" . $this->$k . '", ';
+				echo "[$k]=>\"$v\", ";
 			}
 			echo ')';
 		}
@@ -176,8 +174,8 @@ class simple_html_dom_node
 		echo "\n";
 
 		if ($this->nodes) {
-			foreach ($this->nodes as $c) {
-				$c->dump($show_attr, $deep + 1);
+			foreach ($this->nodes as $node) {
+				$node->dump($show_attr, $depth + 1);
 			}
 		}
 	}
