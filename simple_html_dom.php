@@ -107,15 +107,15 @@ function str_get_html(
 		$target_charset,
 		$stripRN,
 		$defaultBRText,
-		$defaultSpanText);
+		$defaultSpanText
+	);
 
 	if (empty($str) || strlen($str) > MAX_FILE_SIZE) {
 		$dom->clear();
 		return false;
 	}
 
-	$dom->load($str, $lowercase, $stripRN);
-	return $dom;
+	return $dom->load($str, $lowercase, $stripRN);
 }
 
 function dump_html_tree($node, $show_attr = true, $deep = 0)
