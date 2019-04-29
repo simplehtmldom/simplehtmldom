@@ -287,16 +287,14 @@ class simple_html_dom_node
 			return null;
 		}
 
-		$idx = 0;
-		$count = count($this->parent->children);
+		$idx = array_search($this, $this->parent->children, true);
 
-		while ($idx < $count && $this !== $this->parent->children[$idx]) {
-			++$idx;
+		if ($idx !== false && isset($this->parent->children[$idx+1])) {
+			return $this->parent->children[$idx+1];
 		}
 
-		if (++$idx >= $count) {
-			return null;
-		}
+		return null;
+	}
 
 		return $this->parent->children[$idx];
 	}
