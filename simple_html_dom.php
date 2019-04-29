@@ -599,7 +599,8 @@ class simple_html_dom_node
 			&& $this->parent
 			&& in_array($this, $this->parent->children)) { // Next-Sibling Combinator
 				$index = array_search($this, $this->parent->children, true) + 1;
-				$nodes[] = $this->parent->children[$index];
+				if ($index < count($this->parent->children))
+					$nodes[] = $this->parent->children[$index];
 		} elseif ($parent_cmd === '~'
 			&& $this->parent
 			&& in_array($this, $this->parent->children)) { // Subsequent Sibling Combinator

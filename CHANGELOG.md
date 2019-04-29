@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed missing whitespace when returning plaintext (#163)
 - Fixed broken detection of duplicate attributes (#166)
 - Fixed broken detection of CP1252 (ISO-8859-1) documents (#142)
+- Fixed error using next-sibling combinator ('E + F') on last child
 ### Security
 
 ## [1.8.1] - 2019-01-13
