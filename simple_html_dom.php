@@ -58,10 +58,8 @@ function file_get_html(
 	$defaultBRText = DEFAULT_BR_TEXT,
 	$defaultSpanText = DEFAULT_SPAN_TEXT)
 {
-	// Ensure maximum length is greater than zero
 	if($maxLen <= 0) { $maxLen = MAX_FILE_SIZE; }
 
-	// We DO force the tags to be terminated.
 	$dom = new simple_html_dom(
 		null,
 		$lowercase,
@@ -69,7 +67,8 @@ function file_get_html(
 		$target_charset,
 		$stripRN,
 		$defaultBRText,
-		$defaultSpanText);
+		$defaultSpanText
+	);
 
 	/**
 	 * For sourceforge users: uncomment the next line and comment the
@@ -80,16 +79,16 @@ function file_get_html(
 		$use_include_path,
 		$context,
 		$offset,
-		$maxLen);
-
-	// Paperg - use our own mechanism for getting the contents as we want to
-	// control the timeout.
+		$maxLen
+	);
 	// $contents = retrieve_url_contents($url);
-	if (empty($contents) || strlen($contents) > $maxLen) { return false; }
 
-	// The second parameter can force the selectors to all be lowercase.
-	$dom->load($contents, $lowercase, $stripRN);
-	return $dom;
+	if (empty($contents) || strlen($contents) > $maxLen) {
+		$dom->clear();
+		return false;
+	}
+
+	return $dom->load($contents, $lowercase, $stripRN);
 }
 
 function str_get_html(
