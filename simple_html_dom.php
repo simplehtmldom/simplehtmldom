@@ -670,7 +670,14 @@ class simple_html_dom_node
 			// Check if all class(es) exist
 			if ($pass && $class !== '' && is_array($class) && !empty($class)) {
 				if (isset($node->attr['class'])) {
-					$node_classes = explode(' ', $node->attr['class']);
+					// Apply the same rules for the pattern and attribute value
+					// Attribute values must not contain control characters other than space
+					// https://www.w3.org/TR/html/dom.html#text-content
+					// https://www.w3.org/TR/html/syntax.html#attribute-values
+					// https://www.w3.org/TR/xml/#AVNormalize
+					$node_classes = preg_replace("/[\r\n\t\s]+/", ' ', $node->attr['class']);
+					$node_classes = trim($node_classes);
+					$node_classes = explode(' ', $node_classes);
 
 					if ($lowercase) {
 						$node_classes = array_map('strtolower', $node_classes);
@@ -817,6 +824,17 @@ class simple_html_dom_node
 			$pattern = strtolower($pattern);
 			$value = strtolower($value);
 		}
+
+		// Apply the same rules for the pattern and attribute value
+		// Attribute values must not contain control characters other than space
+		// https://www.w3.org/TR/html/dom.html#text-content
+		// https://www.w3.org/TR/html/syntax.html#attribute-values
+		// https://www.w3.org/TR/xml/#AVNormalize
+		$pattern = preg_replace("/[\r\n\t\s]+/", ' ', $pattern);
+		$pattern = trim($pattern);
+
+		$value = preg_replace("/[\r\n\t\s]+/", ' ', $value);
+		$value = trim($value);
 
 		switch ($exp) {
 			case '=':
@@ -2086,7 +2104,7 @@ class simple_html_dom
 
 				if ($this->char === '=') { // attribute with value
 					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-					$this->parse_attr($node, $name, $space); // get attribute value
+					$this->parse_attr($node, $name, $space, $trim); // get attribute value
 				} else {
 					//no value attr: nowrap, checked selected...
 					$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
@@ -2136,7 +2154,7 @@ class simple_html_dom
 		return true;
 	}
 
-	protected function parse_attr($node, $name, &$space)
+	protected function parse_attr($node, $name, &$space, $trim)
 	{
 		$is_duplicate = isset($node->attr[$name]);
 
@@ -2163,14 +2181,12 @@ class simple_html_dom
 
 		$value = $this->restore_noise($value);
 
-		// PaperG: Attributes should not have \r or \n in them, that counts as
-		// html whitespace.
-		$value = str_replace("\r", '', $value);
-		$value = str_replace("\n", '', $value);
-
-		// PaperG: If this is a "class" selector, lets get rid of the preceeding
-		// and trailing space since some people leave it in the multi class case.
-		if ($name === 'class') {
+		if ($trim) {
+			// Attribute values must not contain control characters other than space
+			// https://www.w3.org/TR/html/dom.html#text-content
+			// https://www.w3.org/TR/html/syntax.html#attribute-values
+			// https://www.w3.org/TR/xml/#AVNormalize
+			$value = preg_replace("/[\r\n\t\s]+/", ' ', $value);
 			$value = trim($value);
 		}
 

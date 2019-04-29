@@ -112,6 +112,62 @@ EOD
 ));
 	}
 
+	public function provide_whitespace_in_class_values()
+	{
+		return array(array(<<<EOD
+<html>
+<body>
+	<div class=""/>
+	<div class=" "/>
+	<div class="     "/>
+	<div class="article"/>
+	<div class=" article"/>
+	<div class="article "/>
+	<div class=" article "/>
+	<div class="     article     "/>
+	<div class="article new"/>
+	<div class=" article new"/>
+	<div class="article new "/>
+	<div class="article     new"/>
+	<div class="     article     new     "/>
+	<div class="
+	article
+	new
+	"/>
+</body>
+</html>
+EOD
+));
+	}
+
+	public function provide_whitespace_in_attribute_values()
+	{
+		return array(array(<<<EOD
+<html>
+<body>
+	<div attribute=""/>
+	<div attribute=" "/>
+	<div attribute="     "/>
+	<div attribute="article"/>
+	<div attribute=" article"/>
+	<div attribute="article "/>
+	<div attribute=" article "/>
+	<div attribute="     article     "/>
+	<div attribute="article new"/>
+	<div attribute=" article new"/>
+	<div attribute="article new "/>
+	<div attribute="article     new"/>
+	<div attribute="     article     new     "/>
+	<div attribute="
+	article
+	new
+	"/>
+</body>
+</html>
+EOD
+));
+	}
+
 	/** @dataProvider provide_whitespace_around_attributes */
 	public function test_parse_removes_whitespace_around_attributes($doc)
 	{
@@ -162,12 +218,84 @@ EOD
 		$this->assertEquals($expected, $this->html->save());
 	}
 
+	/** @dataProvider provide_whitespace_in_class_values */
+	public function test_parse_removes_whitespace_in_class_values($doc)
+	{
+		$this->html = str_get_html($doc);
+
+		$this->assertCount(11, $this->html->find('.article'));
+		$this->assertCount(6, $this->html->find('.new'));
+		$this->assertCount(6, $this->html->find('[class="article new"]'));
+		$this->assertEquals('article', $this->html->find('.article', 0)->class);
+		$this->assertEquals('article new', $this->html->find('[class="article new"]', 0)->class);
+	}
+
+	/** @dataProvider provide_whitespace_in_class_values */
+	public function test_find_removes_whitespace_in_class_selectors($doc)
+	{
+		$this->html = str_get_html($doc);
+
+		$this->assertCount(11, $this->html->find('.article'));
+		$this->assertCount(11, $this->html->find(' .article'));
+		$this->assertCount(11, $this->html->find('.article '));
+		$this->assertCount(11, $this->html->find(' .article '));
+		$this->assertCount(11, $this->html->find('     .article     '));
+
+		$this->assertCount(6, $this->html->find('[class="article new"]' ));
+		$this->assertCount(6, $this->html->find('[class=" article new"]' ));
+		$this->assertCount(6, $this->html->find('[class="article new "]' ));
+		$this->assertCount(6, $this->html->find('[class=" article new "]' ));
+		$this->assertCount(6, $this->html->find('[class="article     new"]' ));
+		$this->assertCount(6, $this->html->find('[class="     article     new     "]' ));
+	}
+
+	/** @dataProvider provide_whitespace_in_attribute_values */
+	public function test_parse_removes_whitespace_in_attribute_values($doc)
+	{
+		$this->html = str_get_html($doc);
+
+		$this->assertCount(11, $this->html->find('[attribute*="article"]'));
+		$this->assertCount(6, $this->html->find('[attribute*="new"]'));
+		$this->assertCount(6, $this->html->find('[attribute="article new"]'));
+		$this->assertEquals('article', $this->html->find('[attribute*="article"]', 0)->attribute);
+		$this->assertEquals('article new', $this->html->find('[attribute*="article new"]', 0)->attribute);
+	}
+
+	/** @dataProvider provide_whitespace_in_class_values */
+	public function test_find_keeps_whitespace_without_trim($doc)
+	{
+		$this->html = str_get_html(
+			$doc,
+			true,
+			true,
+			DEFAULT_TARGET_CHARSET,
+			false, // No trim
+			DEFAULT_BR_TEXT,
+			DEFAULT_SPAN_TEXT
+		);
+
+		$this->assertCount(11, $this->html->find('.article'));
+		$this->assertCount(11, $this->html->find(' .article'));
+		$this->assertCount(11, $this->html->find('.article '));
+		$this->assertCount(11, $this->html->find(' .article '));
+		$this->assertCount(11, $this->html->find('     .article     '));
+
+		$this->assertCount(6, $this->html->find('[class="article new"]' ));
+		$this->assertCount(6, $this->html->find('[class=" article new"]' ));
+		$this->assertCount(6, $this->html->find('[class="article new "]' ));
+		$this->assertCount(6, $this->html->find('[class=" article new "]' ));
+		$this->assertCount(6, $this->html->find('[class="article     new"]' ));
+		$this->assertCount(6, $this->html->find('[class="     article     new     "]' ));
+	}
+
 	/**
 	 * @dataProvider provide_whitespace_around_attributes
 	 * @dataProvider provide_whitespace_around_void_tags
 	 * @dataProvider provide_whitespace_around_tags
 	 * @dataProvider provide_whitespace_around_tags_without_class
 	 * @dataProvider provide_whitespace_around_nested_tags
+	 * @dataProvider provide_whitespace_in_attribute_values
+	 * @dataProvider provide_whitespace_in_class_values
 	 */
 	public function test_parse_keeps_whitespace_without_trim($doc)
 	{
