@@ -909,7 +909,7 @@ class simple_html_dom_node
 			 */
 			if($m[4] !== '') {
 				preg_match_all(
-					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?(?:\s*?([iIsS])?)?\]/is",
+					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?(?:\s+?([iIsS])?)?\]/is",
 					trim($m[4]),
 					$attributes,
 					PREG_SET_ORDER
