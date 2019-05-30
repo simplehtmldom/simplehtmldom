@@ -103,6 +103,8 @@ nav:
       - 'api/simple_html_dom_node/hasChildNodes.md'
       - 'api/simple_html_dom_node/hasClass.md'
       - 'api/simple_html_dom_node/innertext.md'
+      - 'api/simple_html_dom_node/is_block_element.md'
+      - 'api/simple_html_dom_node/is_inline_element.md'
       - 'api/simple_html_dom_node/is_utf8.md'
       - 'api/simple_html_dom_node/last_child.md'
       - 'api/simple_html_dom_node/lastChild.md'
