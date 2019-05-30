@@ -359,4 +359,31 @@ HTML;
 		$this->assertEquals(1, count($this->html->find('div', 0)->getAllAttributes()));
 	}
 
+	/**
+	 * Bug #169 (Incorrectly parsed attribute selectors ending on "s" or "i")
+	 *
+	 * This bug happens only when using attribute selectors without quotes, so
+	 * doing [att=val] instead of [att="val"].
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/169/ Bug #169
+	 */
+	public function test_bug_169()
+	{
+		$doc = '<div class="test_s" /><div class="test_i" />';
+
+		$this->html->load($doc);
+
+		$this->assertCount(
+			1,
+			$this->html->find('div[class=test_s]'),
+			'Failed parsing attribute values ending on "s"'
+		);
+
+		$this->assertCount(
+			1,
+			$this->html->find('div[class=test_i]'),
+			'Failed parsing attribute values ending on "i"'
+		);
+	}
+
 }

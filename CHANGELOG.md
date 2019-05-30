@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added test for bug [#153](https://sourceforge.net/p/simplehtmldom/bugs/153/)
   - Added test for bug [#163](https://sourceforge.net/p/simplehtmldom/bugs/163/)
   - Added test for bug [#166](https://sourceforge.net/p/simplehtmldom/bugs/166/)
+  - Added test for bug [#169](https://sourceforge.net/p/simplehtmldom/bugs/169/)
 - Added unit test for character sets UTF-8, CP1251 and CP1252 (#142)
 - Added support for meta charset to parse_charset
 - Added detection for CP1251 to parse_charset, using iconv
