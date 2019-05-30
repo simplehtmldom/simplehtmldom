@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - Added unit test for whitespace handling.
+- Added unit test for entity decoding.
 - Added optional argument `$trim = true` to `$node->text()`
 - Added attribute value normalization
   - https://www.w3.org/TR/html/syntax.html#attribute-values
   - https://www.w3.org/TR/xml/#AVNormalize
+- Add automatic HTML entity decoding when loading documents [feature:#52]
 ### Changed
 - `$node->text()` now supports all block and inline level elements.
 ### Deprecated
