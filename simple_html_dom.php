@@ -1591,6 +1591,7 @@ class simple_html_dom
 		// end
 		$this->root->_[HDOM_INFO_END] = $this->cursor;
 		$this->parse_charset();
+		$this->decode();
 
 		// make load function chainable
 		return $this;
@@ -1690,6 +1691,35 @@ class simple_html_dom
 		$this->root->nodetype = HDOM_TYPE_ROOT;
 		$this->parent = $this->root;
 		if ($this->size > 0) { $this->char = $this->doc[0]; }
+	}
+
+	protected function decode()
+	{
+		foreach($this->nodes as $node) {
+			if (isset($node->_[HDOM_INFO_TEXT])) {
+				$node->_[HDOM_INFO_TEXT] = html_entity_decode(
+					$this->restore_noise($node->_[HDOM_INFO_TEXT]),
+					ENT_QUOTES | ENT_HTML5,
+					$this->_target_charset
+				);
+			}
+			if (isset($node->_[HDOM_INFO_INNER])) {
+				$node->_[HDOM_INFO_INNER] = html_entity_decode(
+					$this->restore_noise($node->_[HDOM_INFO_INNER]),
+					ENT_QUOTES | ENT_HTML5,
+					$this->_target_charset
+				);
+			}
+			if (isset($node->attr) && is_array($node->attr)) {
+				foreach($node->attr as $a => $v) {
+					$node->attr[$a] = html_entity_decode(
+						$v,
+						ENT_QUOTES | ENT_HTML5,
+						$this->_target_charset
+					);
+				}
+			}
+		}
 	}
 
 	protected function parse($trim = false)

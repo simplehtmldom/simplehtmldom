@@ -18,9 +18,13 @@ https://phpunit.de/announcements/phpunit-6.html
 		<testsuite name="standard">
 			<directory suffix='_test.php'>tests</directory>
 			<exclude>tests/memory_parsing_test.php</exclude>
+			<exclude>tests/entity_decoding_test.php</exclude>
 		</testsuite>
 		<testsuite name="memory">
 			<file>tests/memory_parsing_test.php</file>
+		</testsuite>
+		<testsuite name="entity_decoding">
+			<file>tests/entity_decoding_test.php</file>
 		</testsuite>
 	</testsuites>
 
