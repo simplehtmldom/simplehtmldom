@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [1.9] - 2019-05-30
 ### Added
 - Added unit test for bug reports
   - Added test for bug [#153](https://sourceforge.net/p/simplehtmldom/bugs/153/)
@@ -23,8 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `save`: Saves the current node to disk
 ### Changed
 - Changed manual from custom implementation to MkDocs (https://www.mkdocs.org/)
-### Deprecated
-### Removed
 ### Fixed
 - Fixed warning when trying to clear() the DOM on a null nodes list (#153)
 - Fixed missing whitespace when returning plaintext (#163)
@@ -32,7 +30,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed broken detection of CP1252 (ISO-8859-1) documents (#142)
 - Fixed error using next-sibling combinator ('E + F') on last child
 - Fixed selector parsing for attribute selectors ending on "s" or "i" (#169)
-### Security
 
 ## [1.8.1] - 2019-01-13
 ### Fixed
