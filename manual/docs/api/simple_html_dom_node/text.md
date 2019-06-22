@@ -4,6 +4,10 @@
 text ( [ bool $trim = true ] ) : string
 ```
 
+| Parameter | Description
+| --------- | -----------
+| `trim`    | Removes whitespace around the text if enabled.
+
 Returns the text representation of the current node and its decendants.
 
 **Remarks**

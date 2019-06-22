@@ -452,7 +452,7 @@ class simple_html_dom_node
 		));
 	}
 
-	function text()
+	function text($trim = true)
 	{
 		$ret = '';
 
@@ -473,21 +473,22 @@ class simple_html_dom_node
 		} else {
 			foreach ($this->nodes as $n) {
 				if ($this->is_block_element($n)) {
-					$ret = rtrim($ret) . "\n\n" . $this->convert_text($n->text()) . ' ';
+					$ret = rtrim($ret) . "\n\n" . ltrim($this->convert_text($n->text(false)));
 				} elseif ($this->is_inline_element($n)) {
 					// todo: <br> introduces code smell because no space but \n
 					if (strcasecmp($n->tag, 'br') === 0) {
 						$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
 					} else {
-						$ret = rtrim($ret) . ' ' . $this->convert_text($n->text()) . ' ';
+						// Reduce multiple whitespace into one before adding inline element
+						$ret = preg_replace('/\s+$/', ' ', $ret) . $this->convert_text($n->text(false));
 					}
 				} else {
-					$ret .= $this->convert_text($n->text());
+					$ret .= $this->convert_text($n->text(false));
 				}
 			}
 		}
 
-		return trim($ret);
+		return $trim ? trim($ret) : preg_replace('/\s+$/', ' ', $ret);
 	}
 
 	function xmltext()
