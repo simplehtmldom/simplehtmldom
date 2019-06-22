@@ -408,4 +408,19 @@ EOD;
 		$this->assertEquals($expected, $this->html->root->text());
 	}
 
+	public function test_text_should_keep_whitespace_around_inline_elements()
+	{
+		$expected = <<<EOD
+PHP Simple HTML DOM Parser. A fast, simple and reliable HTML document parser for PHP.
+EOD;
+
+		$doc = <<<EOD
+<p>PHP Simple HTML DOM Parser. <em>A fast, simple and reliable HTML document parser for PHP.</em></p>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
 }
