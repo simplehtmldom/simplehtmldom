@@ -473,7 +473,14 @@ class simple_html_dom_node
 		} else {
 			foreach ($this->nodes as $n) {
 				if ($this->is_block_element($n)) {
-					$ret = rtrim($ret) . "\n\n" . ltrim($this->convert_text($n->text(false)));
+
+					$block = ltrim($this->convert_text($n->text(false)));
+
+					if (empty($block))
+						continue;
+
+					$ret = rtrim($ret) . "\n\n" . $block;
+
 				} elseif ($this->is_inline_element($n)) {
 					// todo: <br> introduces code smell because no space but \n
 					if (strcasecmp($n->tag, 'br') === 0) {

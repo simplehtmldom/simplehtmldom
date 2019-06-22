@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add automatic HTML entity decoding when loading documents [feature:#52]
 ### Changed
 - `$node->text()` now supports all block and inline level elements.
+- `$node->text()` now skipps empty block elements.
 ### Deprecated
 ### Removed
 ### Fixed
