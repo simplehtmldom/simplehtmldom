@@ -423,4 +423,26 @@ EOD;
 		$this->assertEquals($expected, $this->html->root->text());
 	}
 
+	public function test_text_should_skip_empty_paragraphs()
+	{
+		$expected = <<<EOD
+PHP Simple HTML DOM Parser.
+
+A fast, simple and reliable HTML document parser for PHP.
+EOD;
+
+		$doc = <<<EOD
+<p>PHP Simple HTML DOM Parser.</p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p>A fast, simple and reliable HTML document parser for PHP.</p>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
 }
