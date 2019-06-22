@@ -486,8 +486,12 @@ class simple_html_dom_node
 					if (strcasecmp($n->tag, 'br') === 0) {
 						$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
 					} else {
-						// Reduce multiple whitespace into one before adding inline element
-						$ret = preg_replace('/\s+$/', ' ', $ret) . $this->convert_text($n->text(false));
+						$inline = ltrim($this->convert_text($n->text(false)));
+
+						if (empty($inline))
+							continue;
+
+						$ret = $ret . $this->convert_text($n->text(false));
 					}
 				} else {
 					$ret .= $this->convert_text($n->text(false));
@@ -495,7 +499,11 @@ class simple_html_dom_node
 			}
 		}
 
-		return $trim ? trim($ret) : preg_replace('/\s+$/', ' ', $ret);
+		// Reduce whitespace at start/end to a single (or none) space
+		$ret = preg_replace('/[ \t\n\r\0\x0B\xC2\xA0]+$/', ' ', $ret);
+		$ret = preg_replace('/^[ \t\n\r\0\x0B\xC2\xA0]+/', ' ', $ret);
+
+		return $trim ? trim($ret, " \t\n\r\0\x0B\xC2\xA0") : $ret;
 	}
 
 	function xmltext()
