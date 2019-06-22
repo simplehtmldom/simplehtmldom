@@ -445,4 +445,26 @@ EOD;
 		$this->assertEquals($expected, $this->html->root->text());
 	}
 
+	public function test_text_should_handle_nbsp_like_whitespace()
+	{
+		$expected = <<<EOD
+PHP Simple HTML DOM Parser.
+
+A fast, simple and reliable HTML document parser for PHP.
+EOD;
+
+		$doc = <<<EOD
+<p>&nbsp;PHP Simple HTML DOM Parser.&nbsp;</p>&nbsp;
+<p>&nbsp;</p>&nbsp;
+<p>&nbsp;</p>&nbsp;
+<p>&nbsp;</p>&nbsp;
+<p>&nbsp;</p>&nbsp;
+<p>&nbsp;A fast, simple and reliable HTML<span>&nbsp;&nbsp;</span>&nbsp; document parser for PHP.&nbsp;</p>
+EOD;
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
 }
