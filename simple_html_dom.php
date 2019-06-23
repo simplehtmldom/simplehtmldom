@@ -632,8 +632,12 @@ class simple_html_dom_node
 
 			// Get list of target nodes
 			$nodes_start = $this->_[HDOM_INFO_BEGIN] + 1;
-			$nodes_count = $end - $nodes_start;
-			$nodes = array_slice($this->dom->nodes, $nodes_start, $nodes_count, true);
+
+			// remove() makes $this->dom->nodes non-contiguous; use what is left.
+			$nodes = array_intersect_key(
+				$this->dom->nodes,
+				array_flip(range($nodes_start, $end))
+			);
 		} elseif ($parent_cmd === '>') { // Child Combinator
 			$nodes = $this->children;
 		} elseif ($parent_cmd === '+'

@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Deprecated
 ### Removed
 ### Fixed
+- Fixed fatal error when removing nodes from the DOM (#172)
 ### Security
 
 ## [1.9] - 2019-05-30
