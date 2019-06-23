@@ -1770,9 +1770,10 @@ class simple_html_dom
 
 			// Remove whitespace between nodes if the current node and the previous
 			// node have space between them and either of the nodes is not text
-			if ($trim && count($this->nodes) >= 2) {
-				$current  = $this->nodes[count($this->nodes) - 1];
-				$previous = $this->nodes[count($this->nodes) - 2];
+			$nodes = array_values($this->nodes);
+			if ($trim && count($nodes) >= 2) {
+				$current  = $nodes[count($nodes) - 1];
+				$previous = $nodes[count($nodes) - 2];
 
 				if ($current->tag !== 'text' xor $previous->tag !== 'text')
 				{
