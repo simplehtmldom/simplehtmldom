@@ -386,4 +386,41 @@ HTML;
 		);
 	}
 
+	/**
+	 * Bug #172 (Problem with the remove function)
+	 *
+	 * `simple_html_dom_node::remove()` throws a fatal error:
+	 *   `Uncaught Error: Call to a member function remove() on null in <file>:<line>`
+	 * when removing an element from the DOM if
+	 * - another element has previously been removed,
+	 * - the previous element was placed before the current element in the DOM and
+	 * - `simple_html_dom_node::remove()` is called on a node returned by
+	 *     `simple_html_dom_node::find()` or `simple_html_dom::find()`
+	 *
+	 * This error can also happen for `simple_html_dom_node::removeChild()`
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/172/ Bug #172
+	 */
+	public function test_bug_172()
+	{
+		$expected = '<div></div><div></div>';
+
+		$doc = '<div><img src="#"></div><div><img src="#"></div>';
+
+		$this->html->load($doc);
+
+		$this->html->find('div img', 0)->remove();
+
+		$img = $this->html->find('div', 1)->find('img', 0);
+
+		$this->assertNotNull(
+			$img,
+			'find() on node failed after using remove() on a previous node'
+		);
+
+		$img->remove();
+
+		$this->assertEquals($expected, $this->html->save());
+	}
+
 }

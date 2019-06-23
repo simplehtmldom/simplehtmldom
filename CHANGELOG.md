@@ -5,8 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
-- Added unit test for whitespace handling.
-- Added unit test for entity decoding.
+- Added unit tests
+  - Added tests for whitespace handling.
+  - Added tests for entity decoding.
+  - Added test for bug [#172](https://sourceforge.net/p/simplehtmldom/bugs/172/)
 - Added optional argument `$trim = true` to `$node->text()`
 - Added attribute value normalization
   - https://www.w3.org/TR/html/syntax.html#attribute-values
