@@ -1354,33 +1354,40 @@ class simple_html_dom_node
 
 	function removeChild($node)
 	{
+		foreach($node->children as $child) {
+			$node->removeChild($child);
+		}
+
+		foreach($node->nodes as $entity) {
+			$enidx = array_search($entity, $node->nodes, true);
+			$edidx = array_search($entity, $node->dom->nodes, true);
+
+			if ($enidx !== false) {
+				unset($node->nodes[$enidx]);
+			}
+
+			if ($edidx !== false) {
+				unset($node->dom->nodes[$edidx]);
+			}
+		}
+
 		$nidx = array_search($node, $this->nodes, true);
 		$cidx = array_search($node, $this->children, true);
 		$didx = array_search($node, $this->dom->nodes, true);
 
-		if ($nidx !== false && $cidx !== false && $didx !== false) {
-
-			foreach($node->children as $child) {
-				$node->removeChild($child);
-			}
-
-			foreach($node->nodes as $entity) {
-				$enidx = array_search($entity, $node->nodes, true);
-				$edidx = array_search($entity, $node->dom->nodes, true);
-
-				if ($enidx !== false && $edidx !== false) {
-					unset($node->nodes[$enidx]);
-					unset($node->dom->nodes[$edidx]);
-				}
-			}
-
+		if ($nidx !== false) {
 			unset($this->nodes[$nidx]);
-			unset($this->children[$cidx]);
-			unset($this->dom->nodes[$didx]);
-
-			$node->clear();
-
 		}
+
+		if ($cidx !== false) {
+			unset($this->children[$cidx]);
+		}
+
+		if ($didx !== false) {
+			unset($this->dom->nodes[$didx]);
+		}
+
+		$node->clear();
 	}
 
 	function getElementById($id)

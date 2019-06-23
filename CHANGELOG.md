@@ -15,9 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - https://www.w3.org/TR/xml/#AVNormalize
 - Add automatic HTML entity decoding when loading documents [feature:#52]
 ### Changed
-- `$node->text()` now supports all block and inline level elements.
-- `$node->text()` now skips empty block elements.
-- `$node->text()` now properly handles `&nbsp` characters.
+- `simple_html_dom_node::text()` now supports all block and inline level elements.
+- `simple_html_dom_node::text()` now skips empty block elements.
+- `simple_html_dom_node::text()` now properly handles `&nbsp` characters.
+- `simple_html_dom_node::removeChild` now removes all types of childs.
 ### Deprecated
 ### Removed
 ### Fixed
