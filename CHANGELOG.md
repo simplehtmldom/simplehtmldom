@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added unit tests
   - Added tests for whitespace handling.
   - Added tests for entity decoding.
+  - Added tests for node functions after calling remove().
   - Added test for bug [#172](https://sourceforge.net/p/simplehtmldom/bugs/172/)
 - Added optional argument `$trim = true` to `$node->text()`
 - Added attribute value normalization

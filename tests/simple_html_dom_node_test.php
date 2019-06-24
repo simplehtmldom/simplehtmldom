@@ -219,4 +219,56 @@ EOD;
 		$this->assertFileEquals($expected_file, $file);
 	}
 
+	public function test_first_child_should_work_after_remove()
+	{
+		$doc = '<div><a href="#"></a><p></p></div>';
+
+		$this->html = str_get_html($doc);
+		$this->html->find('a', 0)->remove();
+
+		$this->assertNotNull($this->html->find('div', 0)->first_child());
+	}
+
+	public function test_last_child_should_work_after_remove()
+	{
+		$doc = '<div><a href="#"></a><p></p></div>';
+
+		$this->html = str_get_html($doc);
+		$this->html->find('p', 0)->remove();
+
+		$this->assertNotNull($this->html->find('div', 0)->last_child());
+	}
+
+	public function test_next_sibling_should_work_after_remove()
+	{
+		$doc = '<div><a href="#"></a><img><p></p></div>';
+
+		$this->html = str_get_html($doc);
+		$this->html->find('img', 0)->remove();
+
+		$this->assertNotNull($this->html->find('a', 0)->next_sibling());
+	}
+
+	public function test_prev_sibling_should_work_after_remove()
+	{
+		$doc = '<div><a href="#"></a><img><p></p></div>';
+
+		$this->html = str_get_html($doc);
+		$this->html->find('img', 0)->remove();
+
+		$this->assertNotNull($this->html->find('p', 0)->prev_sibling());
+	}
+
+	public function test_children_should_work_after_remove()
+	{
+		$doc = '<div><a href="#"></a><img><p></p></div>';
+
+		$this->html = str_get_html($doc);
+		$this->html->find('img', 0)->remove();
+
+		$this->assertCount(2, $this->html->find('div', 0)->children());
+		$this->assertArrayHasKey(0, $this->html->find('div', 0)->children());
+		$this->assertArrayHasKey(1, $this->html->find('div', 0)->children());
+	}
+
 }
