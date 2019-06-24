@@ -1358,6 +1358,8 @@ class simple_html_dom_node
 			$node->removeChild($child);
 		}
 
+		// No need to re-index node->children because it is about to be removed!
+
 		foreach($node->nodes as $entity) {
 			$enidx = array_search($entity, $node->nodes, true);
 			$edidx = array_search($entity, $node->dom->nodes, true);
@@ -1371,6 +1373,8 @@ class simple_html_dom_node
 			}
 		}
 
+		// No need to re-index node->nodes because it is about to be removed!
+
 		$nidx = array_search($node, $this->nodes, true);
 		$cidx = array_search($node, $this->children, true);
 		$didx = array_search($node, $this->dom->nodes, true);
@@ -1379,13 +1383,20 @@ class simple_html_dom_node
 			unset($this->nodes[$nidx]);
 		}
 
+		$this->nodes = array_values($this->nodes);
+
 		if ($cidx !== false) {
 			unset($this->children[$cidx]);
 		}
 
+		$this->children = array_values($this->children);
+
 		if ($didx !== false) {
 			unset($this->dom->nodes[$didx]);
 		}
+
+		// Do not re-index dom->nodes because nodes point to other nodes in the
+		// array explicitly!
 
 		$node->clear();
 	}
