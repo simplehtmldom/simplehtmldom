@@ -456,9 +456,9 @@ class simple_html_dom_node
 	{
 		$ret = '';
 
-		if (strcasecmp($this->tag, 'script') === 0) {
+		if (strtolower($this->tag) === 'script') {
 			$ret = '';
-		} elseif (strcasecmp($this->tag, 'style') === 0) {
+		} elseif (strtolower($this->tag) === 'style') {
 			$ret = '';
 		} elseif (isset($this->_[HDOM_INFO_INNER])) {
 			$ret = $this->_[HDOM_INFO_INNER];
@@ -483,7 +483,7 @@ class simple_html_dom_node
 
 				} elseif ($this->is_inline_element($n)) {
 					// todo: <br> introduces code smell because no space but \n
-					if (strcasecmp($n->tag, 'br') === 0) {
+					if (strtolower($n->tag) === 'br') {
 						$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
 					} else {
 						$inline = ltrim($this->convert_text($n->text(false)));
@@ -695,7 +695,7 @@ class simple_html_dom_node
 					// https://www.w3.org/TR/html/dom.html#text-content
 					// https://www.w3.org/TR/html/syntax.html#attribute-values
 					// https://www.w3.org/TR/xml/#AVNormalize
-					$node_classes = preg_replace("/[\r\n\t\s]+/", ' ', $node->attr['class']);
+					$node_classes = preg_replace("/[\r\n\t\s]+/u", ' ', $node->attr['class']);
 					$node_classes = trim($node_classes);
 					$node_classes = explode(' ', $node_classes);
 
@@ -850,10 +850,10 @@ class simple_html_dom_node
 		// https://www.w3.org/TR/html/dom.html#text-content
 		// https://www.w3.org/TR/html/syntax.html#attribute-values
 		// https://www.w3.org/TR/xml/#AVNormalize
-		$pattern = preg_replace("/[\r\n\t\s]+/", ' ', $pattern);
+		$pattern = preg_replace("/[\r\n\t\s]+/u", ' ', $pattern);
 		$pattern = trim($pattern);
 
-		$value = preg_replace("/[\r\n\t\s]+/", ' ', $value);
+		$value = preg_replace("/[\r\n\t\s]+/u", ' ', $value);
 		$value = trim($value);
 
 		switch ($exp) {
@@ -1108,9 +1108,9 @@ class simple_html_dom_node
 
 		if (!empty($sourceCharset)
 			&& !empty($targetCharset)
-			&& (strcasecmp($sourceCharset, $targetCharset) != 0)) {
+			&& (strtoupper($sourceCharset) === strtoupper($targetCharset))) {
 			// Check if the reported encoding could have been incorrect and the text is actually already UTF-8
-			if ((strcasecmp($targetCharset, 'UTF-8') == 0)
+			if ((strtoupper($targetCharset) === 'UTF-8')
 				&& ($this->is_utf8($text))) {
 				$converted_text = $text;
 			} else {
@@ -1926,8 +1926,7 @@ class simple_html_dom
 
 	protected function read_tag($trim)
 	{
-		// Set end position if no further tags found
-		if ($this->char !== '<') {
+		if ($this->char !== '<') { // End Of File
 			$this->root->_[HDOM_INFO_END] = $this->cursor;
 			return false;
 		}
@@ -1935,20 +1934,21 @@ class simple_html_dom
 		$begin_tag_pos = $this->pos;
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
-		if ($trim)
-			$this->skip($this->token_blank); // space between open tag and tag name (not allowed by specification) https://dev.w3.org/html5/pf-summary/syntax.html#start-tags
+		if ($trim) { // "<   /html>"
+			$this->skip($this->token_blank);
+		}
 
-		// end tag
+		// End tag: https://dev.w3.org/html5/pf-summary/syntax.html#end-tags
 		if ($this->char === '/') {
 			$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
-			// Skip whitespace in end tags (i.e. in "</   html>")
-			if ($trim)
+			if ($trim) { // "</   html>"
 				$this->skip($this->token_blank);
+			}
 
 			$tag = $this->copy_until_char('>');
 
-			// Skip attributes in end tags
+			// Skip attributes and whitespace in end tags
 			if ($trim && ($pos = strpos($tag, ' ')) !== false) {
 				$tag = substr($tag, 0, $pos);
 			}
@@ -1956,28 +1956,21 @@ class simple_html_dom
 			$parent_lower = strtolower($this->parent->tag);
 			$tag_lower = strtolower($tag);
 
-			// The end tag is supposed to close the parent tag. Handle situations
-			// when it doesn't
-			if ($parent_lower !== $tag_lower) {
-				// Parent tag does not have to be closed necessarily (optional closing tag)
-				// Current tag is a block tag, so it may close an ancestor
-				if (isset($this->optional_closing_tags[$parent_lower])
-					&& isset($this->block_tags[$tag_lower])) {
+			if ($parent_lower !== $tag_lower) { // Parent is not start tag
+				if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) { // parent is optional closing + current is block tag
 
+					// Parent has no end tag (optional closing anyway)
 					$this->parent->_[HDOM_INFO_END] = 0;
 					$org_parent = $this->parent;
 
-					// Traverse ancestors to find a matching opening tag
-					// Stop at root node
-					while (($this->parent->parent)
-						&& strtolower($this->parent->tag) !== $tag_lower
-					){
+					// Find start tag
+					while (($this->parent->parent) && strtolower($this->parent->tag) !== $tag_lower){
 						$this->parent = $this->parent->parent;
 					}
 
-					// If we don't have a match add current tag as text node
+					// No start tag, close grandparent
 					if (strtolower($this->parent->tag) !== $tag_lower) {
-						$this->parent = $org_parent; // restore origonal parent
+						$this->parent = $org_parent;
 
 						if ($this->parent->parent) {
 							$this->parent = $this->parent->parent;
@@ -1986,31 +1979,24 @@ class simple_html_dom
 						$this->parent->_[HDOM_INFO_END] = $this->cursor;
 						return $this->as_text_node($tag);
 					}
-				} elseif (($this->parent->parent)
-					&& isset($this->block_tags[$tag_lower])
-				) {
-					// Grandparent exists and current tag is a block tag, so our
-					// parent doesn't have an end tag
-					$this->parent->_[HDOM_INFO_END] = 0; // No end tag
+				} elseif (($this->parent->parent) && isset($this->block_tags[$tag_lower])) { // grandparent exists + current is block tag
+
+					// Parent has no end tag
+					$this->parent->_[HDOM_INFO_END] = 0;
 					$org_parent = $this->parent;
 
-					// Traverse ancestors to find a matching opening tag
-					// Stop at root node
-					while (($this->parent->parent)
-						&& strtolower($this->parent->tag) !== $tag_lower
-					) {
+					// Find start tag
+					while (($this->parent->parent) && strtolower($this->parent->tag) !== $tag_lower) {
 						$this->parent = $this->parent->parent;
 					}
 
-					// If we don't have a match add current tag as text node
+					// No start tag, close parent
 					if (strtolower($this->parent->tag) !== $tag_lower) {
 						$this->parent = $org_parent; // restore origonal parent
 						$this->parent->_[HDOM_INFO_END] = $this->cursor;
 						return $this->as_text_node($tag);
 					}
-				} elseif (($this->parent->parent)
-					&& strtolower($this->parent->parent->tag) === $tag_lower
-				) { // Grandparent exists and current tag closes it
+				} elseif (($this->parent->parent) && strtolower($this->parent->parent->tag) === $tag_lower) { // Grandparent exists and current tag closes it
 					$this->parent->_[HDOM_INFO_END] = 0;
 					$this->parent = $this->parent->parent;
 				} else { // Random tag, add as text node
@@ -2018,7 +2004,7 @@ class simple_html_dom
 				}
 			}
 
-			// Set end position of parent tag to current cursor position
+			// Link with start tag
 			$this->parent->_[HDOM_INFO_END] = $this->cursor;
 
 			if ($this->parent->parent) {
@@ -2029,70 +2015,52 @@ class simple_html_dom
 			return true;
 		}
 
-		// start tag
+		// Start tag: https://dev.w3.org/html5/pf-summary/syntax.html#start-tags
 		$node = new simple_html_dom_node($this);
-		$node->_[HDOM_INFO_BEGIN] = $this->cursor;
-		++$this->cursor;
-		$tag = $this->copy_until($this->token_slash); // Get tag name
+		$node->_[HDOM_INFO_BEGIN] = $this->cursor++;
 		$node->tag_start = $begin_tag_pos;
 
-		// doctype, cdata & comments...
-		// <!DOCTYPE html>
-		// <![CDATA[ ... ]]>
-		// <!-- Comment -->
-		if (isset($tag[0]) && $tag[0] === '!') {
+		// Tag name
+		$tag = $this->copy_until($this->token_slash);
+
+		if (isset($tag[0]) && $tag[0] === '!') { // Doctype, CData, Comment
 			$node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
 
 			if (isset($tag[2]) && $tag[1] === '-' && $tag[2] === '-') { // Comment ("<!--")
 				$node->nodetype = HDOM_TYPE_COMMENT;
 				$node->tag = 'comment';
-			} else { // Could be doctype or CDATA but we don't care
+			} else { // Doctype or CDATA, don't care
 				$node->nodetype = HDOM_TYPE_UNKNOWN;
 				$node->tag = 'unknown';
 			}
 
-			if ($this->char === '>') { $node->_[HDOM_INFO_TEXT] .= '>'; }
+			if ($this->char === '>') {
+				$node->_[HDOM_INFO_TEXT] .= '>';
+			}
 
 			$this->link_nodes($node, true);
 			$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 			return true;
 		}
 
-		// The start tag cannot contain another start tag, if so add as text
-		// i.e. "<<html>"
-		if ($pos = strpos($tag, '<') !== false) {
-			$tag = '<' . substr($tag, 0, -1);
-			$node->_[HDOM_INFO_TEXT] = $tag;
-			$this->link_nodes($node, false);
-			$this->char = $this->doc[--$this->pos]; // prev
-			return true;
-		}
-
-		// Handle invalid tag names (i.e. "<html#doc>")
-		if (!preg_match('/^\w[\w:-]*$/', $tag)) {
+		if (!preg_match('/^\w[\w:-]*$/', $tag)) { // Invalid tag name
 			$node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until('<>');
 
-			// Next char is the beginning of a new tag, don't touch it.
-			if ($this->char === '<') {
-				$this->link_nodes($node, false);
-				return true;
+			if ($this->char === '>') { // End tag
+				$node->_[HDOM_INFO_TEXT] .= '>';
+				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 			}
 
-			// Next char closes current tag, add and be done with it.
-			if ($this->char === '>') { $node->_[HDOM_INFO_TEXT] .= '>'; }
 			$this->link_nodes($node, false);
-			$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 			return true;
 		}
 
-		// begin tag, add new node
+		// Valid tag name
 		$node->nodetype = HDOM_TYPE_ELEMENT;
 		$tag_lower = strtolower($tag);
 		$node->tag = ($this->lowercase) ? $tag_lower : $tag;
 
-		// handle optional closing tags
-		if (isset($this->optional_closing_tags[$tag_lower])) {
-			// Traverse ancestors to close all optional closing tags
+		if (isset($this->optional_closing_tags[$tag_lower])) { // Optional closing tag
 			while (isset($this->optional_closing_tags[$tag_lower][strtolower($this->parent->tag)])) {
 				$this->parent->_[HDOM_INFO_END] = 0;
 				$this->parent = $this->parent->parent;
@@ -2105,9 +2073,7 @@ class simple_html_dom
 		// [0] Space between tag and first attribute
 		$space = array($this->copy_skip($this->token_blank), '', '');
 
-		// attributes
-		do {
-			// Everything until the first equal sign should be the attribute name
+		do { // Parse attributes
 			$name = $this->copy_until($this->token_equal);
 
 			if ($name === '' && $this->char !== null && $space[0] === '') {
@@ -2121,9 +2087,7 @@ class simple_html_dom
 
 			$guard = $this->pos;
 
-			// handle endless '<'
-			// Out of bounds before the tag ended
-			if ($this->pos >= $this->size - 1 && $this->char !== '>') {
+			if ($this->pos >= $this->size - 1 && $this->char !== '>') { // End Of File
 				$node->nodetype = HDOM_TYPE_TEXT;
 				$node->_[HDOM_INFO_END] = 0;
 				$node->_[HDOM_INFO_TEXT] = '<' . $tag . $space[0] . $name;
@@ -2132,67 +2096,53 @@ class simple_html_dom
 				return true;
 			}
 
-			// handle mismatch '<'
-			// Attributes cannot start after opening tag
-			if ($this->doc[$this->pos - 1] == '<') {
-				$node->nodetype = HDOM_TYPE_TEXT;
-				$node->tag = 'text';
-				$node->attr = array();
-				$node->_[HDOM_INFO_END] = 0;
-				$node->_[HDOM_INFO_TEXT] = substr(
-					$this->doc,
-					$begin_tag_pos,
-					$this->pos - $begin_tag_pos - 1
-				);
-				$this->pos -= 2;
-				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-				$this->link_nodes($node, false);
-				return true;
-			}
-
-			if ($name !== '/' && $name !== '') { // this is a attribute name
-				// [1] Whitespace after attribute name
-				$space[1] = $this->copy_skip($this->token_blank);
-
-				$name = $this->restore_noise($name); // might be a noisy name
-
-				if ($this->lowercase) { $name = strtolower($name); }
-
-				if ($this->char === '=') { // attribute with value
-					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-					$this->parse_attr($node, $name, $space, $trim); // get attribute value
-				} else {
-					//no value attr: nowrap, checked selected...
-					$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
-					$node->attr[$name] = true;
-					if ($this->char != '>') { $this->char = $this->doc[--$this->pos]; } // prev
-				}
-
-				$node->_[HDOM_INFO_SPACE][] = ($trim) ? array(' ', '', '') : $space; // Space before attribute and around equal sign
-
-				// prepare for next attribute
-				$space = array(
-					$this->copy_skip($this->token_blank),
-					'',
-					''
-				);
-			} else { // no more attributes
+			if ($name === '/' || $name === '') { // No more attributes
 				break;
 			}
-		} while ($this->char !== '>' && $this->char !== '/'); // go until the tag ended
+
+			// [1] Whitespace after attribute name
+			$space[1] = $this->copy_skip($this->token_blank);
+
+			$name = $this->restore_noise($name); // might be a noisy name
+
+			if ($this->lowercase) {
+				$name = strtolower($name);
+			}
+
+			if ($this->char === '=') { // Attribute with value
+				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+				$this->parse_attr($node, $name, $space, $trim); // get attribute value
+			} else { // Attribute without value
+				$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
+				$node->attr[$name] = true;
+				if ($this->char !== '>') {
+					$this->char = $this->doc[--$this->pos];
+				} // prev
+			}
+
+			// Space before attribute and around equal sign
+			$node->_[HDOM_INFO_SPACE][] = ($trim) ? array(' ', '', '') : $space;
+
+			// prepare for next attribute
+			$space = array(
+				$this->copy_skip($this->token_blank),
+				'',
+				''
+			);
+		} while ($this->char !== '>' && $this->char !== '/');
 
 		$this->link_nodes($node, true);
-		$node->_[HDOM_INFO_ENDSPACE] = ($trim) ? '' : $space[0]; // Space after last attribute before closing the tag
+
+		// Space after last attribute before closing the tag
+		$node->_[HDOM_INFO_ENDSPACE] = ($trim) ? '' : $space[0];
 
 		$rest = $this->copy_until_char('>');
-		$rest = ($trim) ? trim($rest) : $rest;
+		$rest = ($trim) ? trim($rest) : $rest; // <html   /   >
 
-		// handle empty tags (i.e. "<div/>")
-		if (trim($rest) === '/') {
+		if (trim($rest) === '/') { // Void element
 			$node->_[HDOM_INFO_ENDSPACE] .= $rest;
 			$node->_[HDOM_INFO_END] = 0;
-		} else {
-			// reset parent
+		} else { // Make current node parent of next node if not yet closed
 			if (!isset($this->self_closing_tags[strtolower($node->tag)])) {
 				$this->parent = $node;
 			}
@@ -2200,9 +2150,6 @@ class simple_html_dom
 
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
-		// If it's a BR tag, we need to set it's text to the default text.
-		// This way when we see it in plaintext, we can generate formatting that the user wants.
-		// since a br tag never has sub nodes, this works well.
 		if ($node->tag === 'br') {
 			$node->_[HDOM_INFO_INNER] = $this->default_br_text;
 		}
@@ -2242,7 +2189,7 @@ class simple_html_dom
 			// https://www.w3.org/TR/html/dom.html#text-content
 			// https://www.w3.org/TR/html/syntax.html#attribute-values
 			// https://www.w3.org/TR/xml/#AVNormalize
-			$value = preg_replace("/[\r\n\t\s]+/", ' ', $value);
+			$value = preg_replace("/[\r\n\t\s]+/u", ' ', $value);
 			$value = trim($value);
 		}
 
