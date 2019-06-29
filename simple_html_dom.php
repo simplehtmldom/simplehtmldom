@@ -1763,38 +1763,25 @@ class simple_html_dom
 	protected function parse($trim = false)
 	{
 		while (true) {
-			// Read next tag if there is no text between current position and the
-			// next opening tag.
-			if (($s = $this->copy_until_char('<')) === '') {
-				if($this->read_tag($trim)) {
+
+			$content = $this->copy_until_char('<');
+
+			if ($content !== '') {
+
+				// Skip whitespace between tags? (</a> <b>)
+				if ($trim && trim($content) === '') {
 					continue;
-				} else {
-					return true;
 				}
+
+				$node = new simple_html_dom_node($this);
+				++$this->cursor;
+				$node->_[HDOM_INFO_TEXT] = $content;
+				$this->link_nodes($node, false);
+
 			}
 
-			// Add a text node for text between tags
-			$node = new simple_html_dom_node($this);
-			++$this->cursor;
-			$node->_[HDOM_INFO_TEXT] = $s;
-			$this->link_nodes($node, false);
-
-			// Remove whitespace between nodes if the current node and the previous
-			// node have space between them and either of the nodes is not text
-			$nodes = array_values($this->nodes);
-			if ($trim && count($nodes) >= 2) {
-				$current  = $nodes[count($nodes) - 1];
-				$previous = $nodes[count($nodes) - 2];
-
-				if ($current->tag !== 'text' xor $previous->tag !== 'text')
-				{
-					$element = ($current->tag === 'text') ? $current : $previous;
-
-					if ($element->tag === 'text' && trim($element) === '')
-					{
-						$element->remove();
-					}
-				}
+			if($this->read_tag($trim) === false) {
+				break;
 			}
 		}
 	}
