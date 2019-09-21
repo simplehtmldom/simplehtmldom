@@ -37,7 +37,7 @@ class entity_decoding_test extends TestCase {
 			$char = $tr->find('td.character', 0)->innertext;
 			$char = substr($char, 1); /* first character is always space */
 
-			$name = $tr->find('td.named > code', 0)->plaintext;
+			$name = $tr->find('td.hex > code', 0)->plaintext;
 			$name = explode(' ', $name)[0]; /* may contain multiple representations */
 
 			$expected = array_search($name, $table, true);
