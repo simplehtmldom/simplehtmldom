@@ -467,4 +467,27 @@ EOD;
 		$this->assertEquals($expected, $this->html->root->text());
 	}
 
+	/**
+	 * The library uses UTF-8 internally. All operations in the text() function
+	 * should therefore handle UTF-8 characters accordingly. If UTF-8 characters
+	 * are handled like ASCII, the resulting output could be incorrect or cause
+	 * errors.
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/feature-requests/62/ Feature #62
+	 */
+	public function test_text_should_handle_utf8_characters()
+	{
+		$expected = '«Hello, World»';
+
+		$doc = '&#xAB;Hello, World&#xBB;&nbsp;';
+
+		$this->html = str_get_html($doc);
+
+		$this->assertEquals(
+			$expected,
+			$this->html->root->text(),
+			'UTF-8 characters should not be handled like ASCII characters!'
+		);
+	}
+
 }
