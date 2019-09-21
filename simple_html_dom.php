@@ -585,7 +585,7 @@ class simple_html_dom_node
 				}
 
 				$head = $ret;
-				$cmd = $selectors[$c][$l][4]; // Next Combinator
+				$cmd = $selectors[$c][$l][6]; // Next Combinator
 			}
 
 			foreach ($head as $k => $v) {
@@ -614,7 +614,7 @@ class simple_html_dom_node
 		global $debug_object;
 		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
 
-		list($tag, $id, $class, $attributes, $cmb) = $selector;
+		list($ps_selector, $tag, $ps_element, $id, $class, $attributes, $cmb) = $selector;
 		$nodes = array();
 
 		if ($parent_cmd === ' ') { // Descendant Combinator
@@ -661,12 +661,14 @@ class simple_html_dom_node
 
 			// Skip root nodes
 			if(!$node->parent) {
-				$pass = false;
+				unset($node);
+				continue;
 			}
 
 			// Skip if node isn't a child node (i.e. text nodes)
 			if($pass && !in_array($node, $node->parent->children, true)) {
-				$pass = false;
+				unset($node);
+				continue;
 			}
 
 			// Skip if tag doesn't match
@@ -818,6 +820,8 @@ class simple_html_dom_node
 							);
 						}
 
+						$check = $ps_element === 'not' ? !$check : $check;
+
 						if (!$check) {
 							$pass = false;
 							break;
@@ -826,6 +830,7 @@ class simple_html_dom_node
 			}
 
 			// Found a match. Add to list and clear node
+			$pass = $ps_selector === 'not' ? !$pass : $pass;
 			if ($pass) $ret[$node->_[HDOM_INFO_BEGIN]] = 1;
 			unset($node);
 		}
@@ -915,32 +920,40 @@ class simple_html_dom_node
 		 *
 		 * [0] - full match
 		 *
-		 * [1] - tag name
+		 * [1] - pseudo selector
+		 *     (?:\:(\w+)\()?
+		 *     Matches the pseudo selector (optional)
+		 *
+		 * [2] - tag name
 		 *     ([\w:\*-]*)
 		 *     Matches the tag name consisting of zero or more words, colons,
 		 *     asterisks and hyphens.
 		 *
-		 * [2] - id name
+		 * [3] - pseudo selector
+		 *     (?:\:(\w+)\()?
+		 *     Matches the pseudo selector (optional)
+		 *
+		 * [4] - id name
 		 *     (?:\#([\w-]+))
 		 *     Optionally matches a id name, consisting of an "#" followed by
 		 *     the id name (one or more words and hyphens).
 		 *
-		 * [3] - class names (including dots)
+		 * [5] - class names (including dots)
 		 *     (?:\.([\w\.-]+))?
 		 *     Optionally matches a list of classs, consisting of an "."
 		 *     followed by the class name (one or more words and hyphens)
 		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
-		 * [4] - attributes
+		 * [6] - attributes
 		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?
 		 *     Optionally matches the attributes list
 		 *
-		 * [5] - separator
+		 * [7] - separator
 		 *     ([\/, >+~]+)
 		 *     Matches the selector list separator
 		 */
 		// phpcs:ignore Generic.Files.LineLength
-		$pattern = "/([\w:\*-]*)(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?([\/, >+~]+)/is";
+		$pattern = "/(?:\:(\w+)\()?([\w:\*-]*)(?:\:(\w+)\()?(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?(?:\))?(?:\))?([\/, >+~]+)/is";
 
 		preg_match_all(
 			$pattern,
@@ -964,11 +977,11 @@ class simple_html_dom_node
 
 			// Convert to lowercase
 			if ($this->dom->lowercase) {
-				$m[1] = strtolower($m[1]);
+				$m[2] = strtolower($m[2]);
 			}
 
 			// Extract classes
-			if ($m[3] !== '') { $m[3] = explode('.', $m[3]); }
+			if ($m[5] !== '') { $m[5] = explode('.', $m[5]); }
 
 			/* Extract attributes (pattern based on the pattern above!)
 
@@ -980,23 +993,23 @@ class simple_html_dom_node
 			 *
 			 * Note: Attributes can be negated with a "!" prefix to their name
 			 */
-			if($m[4] !== '') {
+			if($m[6] !== '') {
 				preg_match_all(
 					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?(?:\s+?([iIsS])?)?\]/is",
-					trim($m[4]),
+					trim($m[6]),
 					$attributes,
 					PREG_SET_ORDER
 				);
 
 				// Replace element by array
-				$m[4] = array();
+				$m[6] = array();
 
 				foreach($attributes as $att) {
 					// Skip empty matches
 					if(trim($att[0]) === '') { continue; }
 
 					$inverted = (isset($att[1][0]) && $att[1][0] === '!');
-					$m[4][] = array(
+					$m[6][] = array(
 						$inverted ? substr($att[1], 1) : $att[1], // Name
 						(isset($att[2])) ? $att[2] : '', // Expression
 						(isset($att[3])) ? $att[3] : '', // Value
@@ -1007,14 +1020,14 @@ class simple_html_dom_node
 			}
 
 			// Sanitize Separator
-			if ($m[5] !== '' && trim($m[5]) === '') { // Descendant Separator
-				$m[5] = ' ';
+			if ($m[7] !== '' && trim($m[7]) === '') { // Descendant Separator
+				$m[7] = ' ';
 			} else { // Other Separator
-				$m[5] = trim($m[5]);
+				$m[7] = trim($m[7]);
 			}
 
 			// Clear Separator if it's a Selector List
-			if ($is_list = ($m[5] === ',')) { $m[5] = ''; }
+			if ($is_list = ($m[7] === ',')) { $m[7] = ''; }
 
 			// Remove full match before adding to results
 			array_shift($m);

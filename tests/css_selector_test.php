@@ -514,4 +514,34 @@ HTML;
 
 	#endregion Combinator
 
+	#region Pseudo Classes
+
+	/**
+	 * pattern: "E:not(s)"
+	 * Represents an E element that does not match simple selector s
+	 *
+	 * @link https://www.w3.org/TR/selectors-3/#negation
+	 * Negation pseudo class
+	 */
+	public function test_negation_pseudo_class()
+	{
+		$doc = <<<HTML
+<html>
+<body>
+	<h1>PHP Simple HTML DOM Parser</h1>
+	<p id="title">PHP Simple HTML DOM Parser</p>
+	<h2>A PHP based DOM parser</h2>
+	<p id="subtitle">A PHP based DOM parser</p>
+</body>
+</html>
+HTML;
+
+		$this->html->load($doc);
+
+		$this->assertCount(1, $this->html->find('p:not([id="title"])'));
+		$this->assertCount(5, $this->html->find(':not(p[id="subtitle"])'));
+		$this->assertCount(3, $this->html->find('body :not(p[id="title"])'));
+	}
+
+	#endregion Pseudo Classes
 }

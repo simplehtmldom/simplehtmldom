@@ -42,3 +42,4 @@ Finds one or more nodes in the current document, using CSS selectors.
 | `E + F`               | [Next-sibling combinator](https://www.w3.org/TR/selectors/#adjacent-sibling-combinators)
 | `E ~ F`               | [Subsequent-sibling combinator](https://www.w3.org/TR/selectors/#general-sibling-combinators)
 | `E, F`                | [Selector list](https://www.w3.org/TR/selectors/#selector-list)
+| `E:not(s)`            | [Negation pseudo-class](https://www.w3.org/TR/selectors-3/#negation)

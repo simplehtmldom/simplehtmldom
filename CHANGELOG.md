@@ -14,7 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added attribute value normalization
   - https://www.w3.org/TR/html/syntax.html#attribute-values
   - https://www.w3.org/TR/xml/#AVNormalize
-- Add automatic HTML entity decoding when loading documents [feature:#52]
+- Added automatic HTML entity decoding when loading documents [feature:#52]
+- Added [the negation pseudo-class](https://www.w3.org/TR/selectors-3/#negation)
 ### Changed
 - `simple_html_dom_node::text()` now supports all block and inline level elements.
 - `simple_html_dom_node::text()` now skips empty block elements.
