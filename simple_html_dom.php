@@ -500,10 +500,10 @@ class simple_html_dom_node
 		}
 
 		// Reduce whitespace at start/end to a single (or none) space
-		$ret = preg_replace('/[ \t\n\r\0\x0B\xC2\xA0]+$/', ' ', $ret);
-		$ret = preg_replace('/^[ \t\n\r\0\x0B\xC2\xA0]+/', ' ', $ret);
+		$ret = preg_replace('/[ \t\n\r\0\x0B\xC2\xA0]+$/u', ' ', $ret);
+		$ret = preg_replace('/^[ \t\n\r\0\x0B\xC2\xA0]+/u', ' ', $ret);
 
-		return $trim ? trim($ret, " \t\n\r\0\x0B\xC2\xA0") : $ret;
+		return $trim ? trim($ret) : $ret;
 	}
 
 	function xmltext()
