@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `simple_html_dom_node::text()` now skips empty block elements.
 - `simple_html_dom_node::text()` now properly handles `&nbsp` characters.
 - `simple_html_dom_node::removeChild` now removes all types of childs.
+- Increased `MAX_FILE_SIZE` from 0.6 MB (600000 Bytes) to 2.5 MiB (2621440 Bytes)
 ### Deprecated
 ### Removed
 ### Fixed
