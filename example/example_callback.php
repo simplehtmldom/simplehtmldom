@@ -1,28 +1,19 @@
 <?php
-include_once('../simple_html_dom.php');
+// This file illustrates how to utilize the callback feature to manipulate the DOM
+include_once '../simple_html_dom.php';
 
-
-// 1. Write a function with parameter "$element"
+// Write a callback function with one parameter for the element
 function my_callback($element) {
-    if ($element->tag=='input')
-        $element->outertext = 'input';
-
-    if ($element->tag=='img')
-        $element->outertext = 'img';
-
-    if ($element->tag=='a')
-        $element->outertext = 'a';
+	if ($element->tag === 'a') { // Invalidate all anchors
+		$element->href = '#';
+	}
 }
 
+// Load the document
+$html = file_get_html('https://www.google.com/');
 
-// 2. create HTML Dom
-$html = file_get_html('http://www.google.com/');
-
-
-// 3. Register the callback function with it's function name
+// Register the callback function
 $html->set_callback('my_callback');
 
-
-// 4. Callback function will be invoked while dumping
+// The callback function is invoked automatically when accessing the contents.
 echo $html;
-?>

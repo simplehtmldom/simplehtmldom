@@ -1,44 +1,56 @@
 <?php
-include_once('../../simple_html_dom.php');
+/**
+ * This example loads the main page from https://digg.com/, extracts news items
+ * and returns the details in a custom format.
+ */
+include_once '../../simple_html_dom.php';
 
-function scraping_digg() {
-    // create HTML DOM
-    $html = file_get_html('http://digg.com/');
+// (optional) Use a custom user agent for your application
+ini_set('user_agent', 'simplehtmldom_examples/1.0');
 
-    // get news block
-    foreach($html->find('div.news-summary') as $article) {
-        // get title
-        $item['title'] = trim($article->find('h3', 0)->plaintext);
-        // get details
-        $item['details'] = trim($article->find('p', 0)->plaintext);
-        // get intro
-        $item['diggs'] = trim($article->find('li a strong', 0)->plaintext);
+// Download a page
+$html = file_get_html('https://digg.com/');
 
-        $ret[] = $item;
-    }
-    
-    // clean up memory
-    $html->clear();
-    unset($html);
+// Loop through all articles in the page
+foreach($html->find('article') as $article) {
 
-    return $ret;
+	// Find the title of the current article
+	if($title = $article->find('h2', 0)) {
+		$item['title'] = trim($title->plaintext);
+	} else {
+		$item['title'] = 'Unknown title';
+	}
+
+	// Find the description of the current article
+	if($details = $article->find('div.description', 0)) {
+		$item['details'] = trim($details->plaintext);
+	} else {
+		$item['details'] = '...';
+	}
+
+	// Find the tags for the current article
+	if($diggs = $article->find('a[rel="tag"]', 0)) {
+		$item['diggs'] = trim($diggs->plaintext);
+	} else {
+		$item['diggs'] = '';
+	}
+
+	$data[] = $item;
 }
 
+// (optional) Release memory
+$html->clear();
+unset($html);
 
-// -----------------------------------------------------------------------------
-// test it!
+// Display your own page to the user
+foreach($data as $item) {
+	echo <<<EOD
 
-// "http://digg.com" will check user_agent header...
-ini_set('user_agent', 'My-Application/2.5');
+<h2>{$item['title']}</h2>
+<ul>
+<li>{$item['details']}</li>
+<li>{$item['diggs']}</li>
+</ul>
 
-$ret = scraping_digg();
-
-foreach($ret as $v) {
-    echo $v['title'].'<br>';
-    echo '<ul>';
-    echo '<li>'.$v['details'].'</li>';
-    echo '<li>Diggs: '.$v['diggs'].'</li>';
-    echo '</ul>';
+EOD;
 }
-
-?>
