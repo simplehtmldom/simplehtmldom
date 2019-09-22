@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - Removed `/example/scraping/example_scraping_general.php`.
 - Removed `/example/simple_html_dom_utility.php`.
+- Removed `/app`.
 ### Fixed
 - Fixed fatal error when removing nodes from the DOM (#172)
 - Fixed `simple_html_dom::parse()` to work after removing elements from the DOM.
