@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Increased `MAX_FILE_SIZE` from 0.6 MB (600000 Bytes) to 2.5 MiB (2621440 Bytes)
 ### Deprecated
 ### Removed
+- Removed example script `example_scraping_general.php`.
 ### Fixed
 - Fixed fatal error when removing nodes from the DOM (#172)
 - Fixed `simple_html_dom::parse()` to work after removing elements from the DOM.
