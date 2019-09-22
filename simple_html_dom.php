@@ -975,13 +975,15 @@ class simple_html_dom_node
 			// Skip NoOps
 			if ($m[0] === '' || $m[0] === '/' || $m[0] === '//') { continue; }
 
+			array_shift($m);
+
 			// Convert to lowercase
 			if ($this->dom->lowercase) {
-				$m[2] = strtolower($m[2]);
+				$m[1] = strtolower($m[1]);
 			}
 
 			// Extract classes
-			if ($m[5] !== '') { $m[5] = explode('.', $m[5]); }
+			if ($m[4] !== '') { $m[4] = explode('.', $m[4]); }
 
 			/* Extract attributes (pattern based on the pattern above!)
 
@@ -993,23 +995,23 @@ class simple_html_dom_node
 			 *
 			 * Note: Attributes can be negated with a "!" prefix to their name
 			 */
-			if($m[6] !== '') {
+			if($m[5] !== '') {
 				preg_match_all(
 					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?(?:\s+?([iIsS])?)?\]/is",
-					trim($m[6]),
+					trim($m[5]),
 					$attributes,
 					PREG_SET_ORDER
 				);
 
 				// Replace element by array
-				$m[6] = array();
+				$m[5] = array();
 
 				foreach($attributes as $att) {
 					// Skip empty matches
 					if(trim($att[0]) === '') { continue; }
 
 					$inverted = (isset($att[1][0]) && $att[1][0] === '!');
-					$m[6][] = array(
+					$m[5][] = array(
 						$inverted ? substr($att[1], 1) : $att[1], // Name
 						(isset($att[2])) ? $att[2] : '', // Expression
 						(isset($att[3])) ? $att[3] : '', // Value
@@ -1020,17 +1022,15 @@ class simple_html_dom_node
 			}
 
 			// Sanitize Separator
-			if ($m[7] !== '' && trim($m[7]) === '') { // Descendant Separator
-				$m[7] = ' ';
+			if ($m[6] !== '' && trim($m[6]) === '') { // Descendant Separator
+				$m[6] = ' ';
 			} else { // Other Separator
-				$m[7] = trim($m[7]);
+				$m[6] = trim($m[6]);
 			}
 
 			// Clear Separator if it's a Selector List
-			if ($is_list = ($m[7] === ',')) { $m[7] = ''; }
+			if ($is_list = ($m[6] === ',')) { $m[6] = ''; }
 
-			// Remove full match before adding to results
-			array_shift($m);
 			$result[] = $m;
 
 			if ($is_list) { // Selector List
