@@ -75,7 +75,7 @@ function file_get_html(
 		$use_include_path,
 		$context,
 		$offset,
-		$maxLen
+		$maxLen + 1 // Load extra byte for limit check
 	);
 
 	if (empty($contents) || strlen($contents) > $maxLen) {
