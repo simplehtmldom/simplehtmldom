@@ -604,6 +604,11 @@ class simple_html_dom_node
 		return (isset($found[$idx])) ? $found[$idx] : null;
 	}
 
+	function expect($selector, $idx = null, $lowercase = false)
+	{
+		return $this->find($selector, $idx, $lowercase) ?: null;
+	}
+
 	protected function seek($selector, &$ret, $parent_cmd, $lowercase = false)
 	{
 		global $debug_object;
@@ -1674,6 +1679,11 @@ class simple_html_dom
 	function find($selector, $idx = null, $lowercase = false)
 	{
 		return $this->root->find($selector, $idx, $lowercase);
+	}
+
+	function expect($selector, $idx = null, $lowercase = false)
+	{
+		return $this->root->expect($selector, $idx, $lowercase);
 	}
 
 	function clear()

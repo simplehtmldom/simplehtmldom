@@ -271,4 +271,15 @@ EOD;
 		$this->assertArrayHasKey(1, $this->html->find('div', 0)->children());
 	}
 
+	public function test_expect_should_return_null_for_no_match()
+	{
+		$doc = '<div><a href="#"></a><img><p></p></div>';
+
+		$this->html = str_get_html($doc);
+		$this->html->find('img', 0)->remove();
+
+		$this->assertNull($this->html->expect('p.class'));
+		$this->assertNull($this->html->expect('p.class', 0));
+	}
+
 }
