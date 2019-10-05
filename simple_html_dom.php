@@ -337,7 +337,7 @@ class simple_html_dom_node
 		if (isset($this->_[HDOM_INFO_INNER])) {
 			$ret = $this->_[HDOM_INFO_INNER];
 		} elseif (isset($this->_[HDOM_INFO_TEXT])) {
-			$ret = $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
+			$ret = $this->_[HDOM_INFO_TEXT];
 		} else {
 			$ret = '';
 		}
@@ -379,7 +379,7 @@ class simple_html_dom_node
 		}
 
 		if (isset($this->_[HDOM_INFO_TEXT])) {
-			return $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
+			return $this->_[HDOM_INFO_TEXT];
 		}
 
 		$ret = '';
@@ -458,7 +458,7 @@ class simple_html_dom_node
 		} elseif (isset($this->_[HDOM_INFO_INNER])) {
 			$ret = $this->_[HDOM_INFO_INNER];
 		} elseif ($this->nodetype === HDOM_TYPE_TEXT) {
-			$ret = $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
+			$ret = $this->_[HDOM_INFO_TEXT];
 		} elseif ($this->nodetype === HDOM_TYPE_COMMENT) {
 			$ret = '';
 		} elseif ($this->nodetype === HDOM_TYPE_UNKNOWN) {
@@ -513,7 +513,7 @@ class simple_html_dom_node
 	{
 		// text, comment, unknown
 		if (isset($this->_[HDOM_INFO_TEXT])) {
-			return $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
+			return $this->_[HDOM_INFO_TEXT];
 		}
 
 		$ret = '<' . $this->tag;
@@ -548,8 +548,6 @@ class simple_html_dom_node
 				. $quote;
 			}
 		}
-
-		$ret = $this->dom->restore_noise($ret);
 
 		if(isset($this->_[HDOM_INFO_ENDSPACE])) {
 			$ret .= $this->_[HDOM_INFO_ENDSPACE];
@@ -2356,6 +2354,8 @@ class simple_html_dom
 					$text = substr($text, 0, $pos)
 					. $this->noise[$key]
 					. substr($text, $pos + 16);
+
+					unset($this->noise[$key]);
 				} else {
 					// do this to prevent an infinite loop.
 					$text = substr($text, 0, $pos)
