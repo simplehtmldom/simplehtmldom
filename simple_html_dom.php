@@ -1643,6 +1643,7 @@ class simple_html_dom
 		$this->root->_[HDOM_INFO_END] = $this->cursor;
 		$this->parse_charset();
 		$this->decode();
+		unset($this->doc);
 
 		// make load function chainable
 		return $this;
