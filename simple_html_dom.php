@@ -335,14 +335,12 @@ class simple_html_dom_node
 	function innertext()
 	{
 		if (isset($this->_[HDOM_INFO_INNER])) {
-			return $this->_[HDOM_INFO_INNER];
+			$ret = $this->_[HDOM_INFO_INNER];
+		} elseif (isset($this->_[HDOM_INFO_TEXT])) {
+			$ret = $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
+		} else {
+			$ret = '';
 		}
-
-		if (isset($this->_[HDOM_INFO_TEXT])) {
-			return $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
-		}
-
-		$ret = '';
 
 		foreach ($this->nodes as $n) {
 			$ret .= $n->outertext();
@@ -395,7 +393,9 @@ class simple_html_dom_node
 			if ($this->tag !== 'br') {
 				$ret .= $this->_[HDOM_INFO_INNER];
 			}
-		} elseif ($this->nodes) {
+		}
+
+		if ($this->nodes) {
 			foreach ($this->nodes as $n) {
 				$ret .= $this->convert_text($n->outertext());
 			}
@@ -465,32 +465,32 @@ class simple_html_dom_node
 			$ret = '';
 		} elseif (is_null($this->nodes)) {
 			$ret = '';
-		} else {
-			foreach ($this->nodes as $n) {
-				if ($this->is_block_element($n)) {
+		}
 
-					$block = ltrim($this->convert_text($n->text(false)));
+		foreach ($this->nodes as $n) {
+			if ($this->is_block_element($n)) {
 
-					if (empty($block))
+				$block = ltrim($this->convert_text($n->text(false)));
+
+				if (empty($block))
+					continue;
+
+				$ret = rtrim($ret) . "\n\n" . $block;
+
+			} elseif ($this->is_inline_element($n)) {
+				// todo: <br> introduces code smell because no space but \n
+				if (strtolower($n->tag) === 'br') {
+					$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
+				} else {
+					$inline = ltrim($this->convert_text($n->text(false)));
+
+					if (empty($inline))
 						continue;
 
-					$ret = rtrim($ret) . "\n\n" . $block;
-
-				} elseif ($this->is_inline_element($n)) {
-					// todo: <br> introduces code smell because no space but \n
-					if (strtolower($n->tag) === 'br') {
-						$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
-					} else {
-						$inline = ltrim($this->convert_text($n->text(false)));
-
-						if (empty($inline))
-							continue;
-
-						$ret = $ret . $this->convert_text($n->text(false));
-					}
-				} else {
-					$ret .= $this->convert_text($n->text(false));
+					$ret = $ret . $this->convert_text($n->text(false));
 				}
+			} else {
+				$ret .= $this->convert_text($n->text(false));
 			}
 		}
 
@@ -2163,6 +2163,8 @@ class simple_html_dom
 		$rest = $this->copy_until_char('>');
 		$rest = ($trim) ? trim($rest) : $rest; // <html   /   >
 
+		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
 		if (trim($rest) === '/') { // Void element
 			if ($rest !== '') {
 				if (isset($node->_[HDOM_INFO_ENDSPACE])) {
@@ -2172,13 +2174,13 @@ class simple_html_dom
 				}
 			}
 			$node->_[HDOM_INFO_END] = 0;
-		} else { // Make current node parent of next node if not yet closed
-			if (!isset($this->self_closing_tags[strtolower($node->tag)])) {
-				$this->parent = $node;
+		} elseif (!isset($this->self_closing_tags[strtolower($node->tag)])) {
+			$innertext = $this->copy_until_char('<');
+			if ($innertext !== '') {
+				$node->_[HDOM_INFO_INNER] = $innertext;
 			}
+			$this->parent = $node;
 		}
-
-		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
 		if ($node->tag === 'br') {
 			$node->_[HDOM_INFO_INNER] = $this->default_br_text;

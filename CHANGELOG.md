@@ -21,11 +21,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `simple_html_dom_node::expect()`.
 ### Changed
 - `simple_html_dom::doc` is now unset after loading the DOM.
-- `simple_html_dom::_[HDOM_INFO_ENDSPACE]` now only exists if needed.
-- `simple_html_dom::_[HDOM_INFO_SPACE]`
+- `simple_html_dom_node::_[HDOM_INFO_ENDSPACE]` now only exists if needed.
+- `simple_html_dom_node::_[HDOM_INFO_SPACE]`
   - Now stores elements by attribute names.
   - Now only exists if needed (defaults to `array(' ', '', '')`).
-- `simple_html_dom::_[HDOM_INFO_QUOTE]`
+- `simple_html_dom_node::_[HDOM_INFO_QUOTE]`
   - Now stores elements by attribute names.
   - Now only exists if needed (defaults to `HDOM_QUOTE_DOUBLE`).
 - `simple_html_dom_node::text()` now supports all block and inline level elements.
@@ -33,6 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `simple_html_dom_node::text()` now properly handles `&nbsp` characters.
 - `simple_html_dom_node::removeChild` now removes all types of childs.
 - Increased `MAX_FILE_SIZE` from 0.6 MB (600000 Bytes) to 2.5 MiB (2621440 Bytes)
+- `HDOM_INFO_INNER` (innertext) is now stored as part of the owning element.
 ### Deprecated
 ### Removed
 - Removed `/example/scraping/example_scraping_general.php`.
