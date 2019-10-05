@@ -517,21 +517,19 @@ class simple_html_dom_node
 		}
 
 		$ret = '<' . $this->tag;
-		$i = -1;
 
 		foreach ($this->attr as $key => $val) {
-			++$i;
 
 			// skip removed attribute
 			if ($val === null || $val === false) { continue; }
 
-			$ret .= $this->_[HDOM_INFO_SPACE][$i][0];
+			$ret .= $this->_[HDOM_INFO_SPACE][$key][0];
 
 			//no value attr: nowrap, checked selected...
 			if ($val === true) {
 				$ret .= $key;
 			} else {
-				switch ($this->_[HDOM_INFO_QUOTE][$i])
+				switch ($this->_[HDOM_INFO_QUOTE][$key])
 				{
 					case HDOM_QUOTE_DOUBLE: $quote = '"'; break;
 					case HDOM_QUOTE_SINGLE: $quote = '\''; break;
@@ -539,9 +537,9 @@ class simple_html_dom_node
 				}
 
 				$ret .= $key
-				. $this->_[HDOM_INFO_SPACE][$i][1]
+				. $this->_[HDOM_INFO_SPACE][$key][1]
 				. '='
-				. $this->_[HDOM_INFO_SPACE][$i][2]
+				. $this->_[HDOM_INFO_SPACE][$key][2]
 				. $quote
 				. $val
 				. $quote;
@@ -1077,8 +1075,8 @@ class simple_html_dom_node
 		}
 
 		if (!isset($this->attr[$name])) {
-			$this->_[HDOM_INFO_SPACE][] = array(' ', '', '');
-			$this->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
+			$this->_[HDOM_INFO_SPACE][$name] = array(' ', '', '');
+			$this->_[HDOM_INFO_QUOTE][$name] = HDOM_QUOTE_DOUBLE;
 		}
 
 		$this->attr[$name] = $value;
@@ -2137,7 +2135,7 @@ class simple_html_dom
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				$this->parse_attr($node, $name, $space, $trim); // get attribute value
 			} else { // Attribute without value
-				$node->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_NO;
+				$node->_[HDOM_INFO_QUOTE][$name] = HDOM_QUOTE_NO;
 				$node->attr[$name] = true;
 				if ($this->char !== '>') {
 					$this->char = $this->doc[--$this->pos];
@@ -2145,7 +2143,7 @@ class simple_html_dom
 			}
 
 			// Space before attribute and around equal sign
-			$node->_[HDOM_INFO_SPACE][] = ($trim) ? array(' ', '', '') : $space;
+			$node->_[HDOM_INFO_SPACE][$name] = ($trim) ? array(' ', '', '') : $space;
 
 			// prepare for next attribute
 			$space = array(
@@ -2226,7 +2224,7 @@ class simple_html_dom
 		}
 
 		if (!$is_duplicate) {
-			$node->_[HDOM_INFO_QUOTE][] = $quote_type;
+			$node->_[HDOM_INFO_QUOTE][$name] = $quote_type;
 			$node->attr[$name] = $value;
 		}
 	}
