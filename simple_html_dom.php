@@ -523,23 +523,26 @@ class simple_html_dom_node
 			// skip removed attribute
 			if ($val === null || $val === false) { continue; }
 
-			$ret .= $this->_[HDOM_INFO_SPACE][$key][0];
+			$ret .= isset($this->_[HDOM_INFO_SPACE][$key]) ? $this->_[HDOM_INFO_SPACE][$key][0] : ' ';
 
 			//no value attr: nowrap, checked selected...
 			if ($val === true) {
 				$ret .= $key;
 			} else {
-				switch ($this->_[HDOM_INFO_QUOTE][$key])
+				$quote_type = isset($this->_[HDOM_INFO_QUOTE][$key]) ? $this->_[HDOM_INFO_QUOTE][$key] : HDOM_QUOTE_DOUBLE;
+
+				switch ($quote_type)
 				{
 					case HDOM_QUOTE_DOUBLE: $quote = '"'; break;
 					case HDOM_QUOTE_SINGLE: $quote = '\''; break;
-					default: $quote = '';
+					case HDOM_QUOTE_NO: $quote = ''; break;
+					default: $quote = '"';
 				}
 
 				$ret .= $key
-				. $this->_[HDOM_INFO_SPACE][$key][1]
+				. (isset($this->_[HDOM_INFO_SPACE][$key]) ? $this->_[HDOM_INFO_SPACE][$key][1] : '')
 				. '='
-				. $this->_[HDOM_INFO_SPACE][$key][2]
+				. (isset($this->_[HDOM_INFO_SPACE][$key]) ? $this->_[HDOM_INFO_SPACE][$key][2] : '')
 				. $quote
 				. $val
 				. $quote;
@@ -1072,11 +1075,6 @@ class simple_html_dom_node
 					return $this->_[HDOM_INFO_TEXT] = $value;
 				}
 				return $this->_[HDOM_INFO_INNER] = $value;
-		}
-
-		if (!isset($this->attr[$name])) {
-			$this->_[HDOM_INFO_SPACE][$name] = array(' ', '', '');
-			$this->_[HDOM_INFO_QUOTE][$name] = HDOM_QUOTE_DOUBLE;
 		}
 
 		$this->attr[$name] = $value;
@@ -2143,7 +2141,9 @@ class simple_html_dom
 			}
 
 			// Space before attribute and around equal sign
-			$node->_[HDOM_INFO_SPACE][$name] = ($trim) ? array(' ', '', '') : $space;
+			if (!$trim && $space !== array(' ', '', '')) {
+				$node->_[HDOM_INFO_SPACE][$name] = $space;
+			}
 
 			// prepare for next attribute
 			$space = array(
@@ -2224,7 +2224,9 @@ class simple_html_dom
 		}
 
 		if (!$is_duplicate) {
-			$node->_[HDOM_INFO_QUOTE][$name] = $quote_type;
+			if ($quote_type !== HDOM_QUOTE_DOUBLE) {
+				$node->_[HDOM_INFO_QUOTE][$name] = $quote_type;
+			}
 			$node->attr[$name] = $value;
 		}
 	}
