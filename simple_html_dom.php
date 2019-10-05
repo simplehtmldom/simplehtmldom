@@ -549,7 +549,12 @@ class simple_html_dom_node
 		}
 
 		$ret = $this->dom->restore_noise($ret);
-		return $ret . $this->_[HDOM_INFO_ENDSPACE] . '>';
+
+		if(isset($this->_[HDOM_INFO_ENDSPACE])) {
+			$ret .= $this->_[HDOM_INFO_ENDSPACE];
+		}
+
+		return $ret . '>';
 	}
 
 	function find($selector, $idx = null, $lowercase = false)
@@ -2153,13 +2158,21 @@ class simple_html_dom
 		$this->link_nodes($node, true);
 
 		// Space after last attribute before closing the tag
-		$node->_[HDOM_INFO_ENDSPACE] = ($trim) ? '' : $space[0];
+		if (!$trim && $space[0] !== '') {
+			$node->_[HDOM_INFO_ENDSPACE] = $space[0];
+		}
 
 		$rest = $this->copy_until_char('>');
 		$rest = ($trim) ? trim($rest) : $rest; // <html   /   >
 
 		if (trim($rest) === '/') { // Void element
-			$node->_[HDOM_INFO_ENDSPACE] .= $rest;
+			if ($rest !== '') {
+				if (isset($node->_[HDOM_INFO_ENDSPACE])) {
+					$node->_[HDOM_INFO_ENDSPACE] .= $rest;
+				} else {
+					$node->_[HDOM_INFO_ENDSPACE] = $rest;
+				}
+			}
 			$node->_[HDOM_INFO_END] = 0;
 		} else { // Make current node parent of next node if not yet closed
 			if (!isset($this->self_closing_tags[strtolower($node->tag)])) {

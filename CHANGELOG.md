@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `simple_html_dom_node::expect()`.
 ### Changed
 - `simple_html_dom::doc` is now unset after loading the DOM.
+- `simple_html_dom::_[HDOM_INFO_ENDSPACE]` now only exists if needed.
 - `simple_html_dom_node::text()` now supports all block and inline level elements.
 - `simple_html_dom_node::text()` now skips empty block elements.
 - `simple_html_dom_node::text()` now properly handles `&nbsp` characters.
