@@ -1957,21 +1957,17 @@ class simple_html_dom
 		if ($this->char === '/') {
 			$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
-			if ($trim) { // "</   html>"
-				$this->skip($this->token_blank);
-			}
-
 			$tag = $this->copy_until_char('>');
+			$tag = $trim ? ltrim($tag, $this->token_blank) : $tag;
 
 			// Skip attributes and whitespace in end tags
 			if ($trim && ($pos = strpos($tag, ' ')) !== false) {
 				$tag = substr($tag, 0, $pos);
 			}
 
-			$parent_lower = strtolower($this->parent->tag);
-			$tag_lower = strtolower($tag);
-
-			if ($parent_lower !== $tag_lower) { // Parent is not start tag
+			if (strcasecmp($this->parent->tag, $tag)) { // Parent is not start tag
+				$parent_lower = strtolower($this->parent->tag);
+				$tag_lower = strtolower($tag);
 				if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) { // parent is optional closing + current is block tag
 
 					// Parent has no end tag (optional closing anyway)
