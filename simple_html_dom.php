@@ -127,7 +127,6 @@ class simple_html_dom_node
 	public $nodes = array();
 	public $parent = null;
 	public $_ = array();
-	public $tag_start = 0;
 	private $dom = null;
 
 	function __construct($dom)
@@ -217,7 +216,6 @@ class simple_html_dom_node
 
 		$string .= ' children: ' . count($this->children);
 		$string .= ' nodes: ' . count($this->nodes);
-		$string .= ' tag_start: ' . $this->tag_start;
 		$string .= "\n";
 
 		if ($echo) {
@@ -1949,7 +1947,6 @@ class simple_html_dom
 			return false;
 		}
 
-		$begin_tag_pos = $this->pos;
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
 		if ($trim) { // "<   /html>"
@@ -2036,7 +2033,6 @@ class simple_html_dom
 		// Start tag: https://dev.w3.org/html5/pf-summary/syntax.html#start-tags
 		$node = new simple_html_dom_node($this);
 		$node->_[HDOM_INFO_BEGIN] = $this->cursor++;
-		$node->tag_start = $begin_tag_pos;
 
 		// Tag name
 		$tag = $this->copy_until($this->token_slash);
