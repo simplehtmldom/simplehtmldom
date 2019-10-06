@@ -1614,8 +1614,6 @@ class simple_html_dom
 			$this->size = strlen($this->doc);
 		}
 
-		// strip out cdata
-		$this->remove_noise("'<!\[CDATA\[(.*?)\]\]>'is", true);
 		// strip out comments
 		$this->remove_noise("'<!--(.*?)-->'is");
 		// strip out <style> tags
@@ -2030,15 +2028,37 @@ class simple_html_dom
 		$tag = $this->copy_until($this->token_slash);
 
 		if (isset($tag[0]) && $tag[0] === '!') { // Doctype, CData, Comment
-			$node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
-
 			if (isset($tag[2]) && $tag[1] === '-' && $tag[2] === '-') { // Comment ("<!--")
 				$node->nodetype = HDOM_TYPE_COMMENT;
 				$node->tag = 'comment';
-			} else { // Doctype or CDATA, don't care
+			} elseif (substr($tag, 1, 7) === '[CDATA[') {
+				// CDATA can contain HTML stuff, need to find closing tags first
+				$node->nodetype = HDOM_TYPE_UNKNOWN; // fixme
+				$node->tag = 'cdata';
+
+				$data = '';
+
+				while (($part = $this->copy_until_char(']')) !== '') {
+					$data .= $part . ']';
+
+					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+
+					if($this->char === ']') { // potential end of section
+						$part = $this->copy_until_char('>');
+						$data .= $part;
+						if ($part === ']') { // end of section ("]]>")
+							break;
+						}
+					}
+				}
+
+				$tag .= $data;
+			} else { // Unknown
 				$node->nodetype = HDOM_TYPE_UNKNOWN;
 				$node->tag = 'unknown';
 			}
+
+			$node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
 
 			if ($this->char === '>') {
 				$node->_[HDOM_INFO_TEXT] .= '>';

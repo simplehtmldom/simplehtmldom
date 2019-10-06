@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added [the negation pseudo-class](https://www.w3.org/TR/selectors-3/#negation)
 - Added `simple_html_dom::expect()`.
 - Added `simple_html_dom_node::expect()`.
+- Added the ability to parse CDATA sections.
 ### Changed
 - `simple_html_dom::doc` is now unset after loading the DOM.
 - `simple_html_dom::restore_noise()` now clears restored elements.
