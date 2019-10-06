@@ -28,4 +28,10 @@ https://phpunit.de/announcements/phpunit-6.html
 		</testsuite>
 	</testsuites>
 
+	<filter>
+		<whitelist>
+			<directory>simple_html_dom.php</directory>
+		</whitelist>
+	</filter>
+
 </phpunit>
