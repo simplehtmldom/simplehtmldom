@@ -457,8 +457,10 @@ class simple_html_dom_node
 			$ret = '';
 		} elseif ($this->nodetype === HDOM_TYPE_UNKNOWN) {
 			$ret = '';
-		} elseif (is_null($this->nodes)) {
-			$ret = '';
+		}
+
+		if (is_null($this->nodes)) {
+			return '';
 		}
 
 		foreach ($this->nodes as $n) {
