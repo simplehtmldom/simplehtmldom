@@ -309,10 +309,6 @@ class simple_html_dom_node
 		global $debug_object;
 		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
 
-		if ($this->parent === null) {
-			return null;
-		}
-
 		$ancestor = $this->parent;
 
 		while (!is_null($ancestor)) {
