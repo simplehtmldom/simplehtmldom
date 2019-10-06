@@ -113,6 +113,7 @@ function str_get_html(
 	return $dom->load($str, $lowercase, $stripRN);
 }
 
+/** @codeCoverageIgnore */
 function dump_html_tree($node, $show_attr = true, $deep = 0)
 {
 	$node->dump($node);
@@ -153,6 +154,7 @@ class simple_html_dom_node
 		$this->children = null;
 	}
 
+	/** @codeCoverageIgnore */
 	function dump($show_attr = true, $depth = 0)
 	{
 		echo str_repeat("\t", $depth) . $this->tag;
@@ -174,6 +176,7 @@ class simple_html_dom_node
 		}
 	}
 
+	/** @codeCoverageIgnore */
 	function dump_node($echo = true)
 	{
 		$string = $this->tag;
