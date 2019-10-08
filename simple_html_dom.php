@@ -1716,6 +1716,7 @@ class simple_html_dom
 		unset($this->noise);
 	}
 
+	/** @codeCoverageIgnore */
 	function dump($show_attr = true)
 	{
 		$this->root->dump($show_attr);
@@ -2460,7 +2461,7 @@ class simple_html_dom
 		return $this->find($name, 0);
 	}
 
-	function getElementsByTagName($name, $idx = -1)
+	function getElementsByTagName($name, $idx = null)
 	{
 		return $this->find($name, $idx);
 	}
