@@ -26,7 +26,14 @@ include_once 'constants.php';
 
 class HtmlNode
 {
-	public $nodetype = HDOM_TYPE_TEXT;
+	const HDOM_TYPE_ELEMENT = 1;
+	const HDOM_TYPE_COMMENT = 2;
+	const HDOM_TYPE_TEXT = 3;
+	const HDOM_TYPE_ENDTAG = 4;
+	const HDOM_TYPE_ROOT = 5;
+	const HDOM_TYPE_UNKNOWN = 6;
+
+	public $nodetype = self::HDOM_TYPE_TEXT;
 	public $tag = 'text';
 	public $attr = array();
 	public $children = array();
@@ -359,11 +366,11 @@ class HtmlNode
 			$ret = '';
 		} elseif (isset($this->_[HDOM_INFO_INNER])) {
 			$ret = $this->_[HDOM_INFO_INNER];
-		} elseif ($this->nodetype === HDOM_TYPE_TEXT) {
+		} elseif ($this->nodetype === self::HDOM_TYPE_TEXT) {
 			$ret = $this->_[HDOM_INFO_TEXT];
-		} elseif ($this->nodetype === HDOM_TYPE_COMMENT) {
+		} elseif ($this->nodetype === self::HDOM_TYPE_COMMENT) {
 			$ret = '';
-		} elseif ($this->nodetype === HDOM_TYPE_UNKNOWN) {
+		} elseif ($this->nodetype === self::HDOM_TYPE_UNKNOWN) {
 			$ret = '';
 		}
 

@@ -287,7 +287,7 @@ class HtmlDocument
 		$this->root = new HtmlNode($this);
 		$this->root->tag = 'root';
 		$this->root->_[HDOM_INFO_BEGIN] = -1;
-		$this->root->nodetype = HDOM_TYPE_ROOT;
+		$this->root->nodetype = HtmlNode::HDOM_TYPE_ROOT;
 		$this->parent = $this->root;
 		if ($this->size > 0) { $this->char = $this->doc[0]; }
 	}
@@ -580,11 +580,11 @@ class HtmlDocument
 
 		if (isset($tag[0]) && $tag[0] === '!') { // Doctype, CData, Comment
 			if (isset($tag[2]) && $tag[1] === '-' && $tag[2] === '-') { // Comment ("<!--")
-				$node->nodetype = HDOM_TYPE_COMMENT;
+				$node->nodetype = HtmlNode::HDOM_TYPE_COMMENT;
 				$node->tag = 'comment';
 			} elseif (substr($tag, 1, 7) === '[CDATA[') {
 				// CDATA can contain HTML stuff, need to find closing tags first
-				$node->nodetype = HDOM_TYPE_UNKNOWN; // fixme
+				$node->nodetype = HtmlNode::HDOM_TYPE_UNKNOWN; // fixme
 				$node->tag = 'cdata';
 
 				$data = '';
@@ -605,7 +605,7 @@ class HtmlDocument
 
 				$tag .= $data;
 			} else { // Unknown
-				$node->nodetype = HDOM_TYPE_UNKNOWN;
+				$node->nodetype = HtmlNode::HDOM_TYPE_UNKNOWN;
 				$node->tag = 'unknown';
 			}
 
@@ -633,7 +633,7 @@ class HtmlDocument
 		}
 
 		// Valid tag name
-		$node->nodetype = HDOM_TYPE_ELEMENT;
+		$node->nodetype = HtmlNode::HDOM_TYPE_ELEMENT;
 		$tag_lower = strtolower($tag);
 		$node->tag = ($this->lowercase) ? $tag_lower : $tag;
 
@@ -665,7 +665,7 @@ class HtmlDocument
 			$guard = $this->pos;
 
 			if ($this->pos >= $this->size - 1 && $this->char !== '>') { // End Of File
-				$node->nodetype = HDOM_TYPE_TEXT;
+				$node->nodetype = HtmlNode::HDOM_TYPE_TEXT;
 				$node->_[HDOM_INFO_END] = 0;
 				$node->_[HDOM_INFO_TEXT] = '<' . $tag . $space[0] . $name;
 				$node->tag = 'text';

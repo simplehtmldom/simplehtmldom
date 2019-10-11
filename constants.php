@@ -22,12 +22,6 @@
  * Version $Rev$
  */
 
-define(__NAMESPACE__ . '\HDOM_TYPE_ELEMENT', 1);
-define(__NAMESPACE__ . '\HDOM_TYPE_COMMENT', 2);
-define(__NAMESPACE__ . '\HDOM_TYPE_TEXT', 3);
-define(__NAMESPACE__ . '\HDOM_TYPE_ENDTAG', 4);
-define(__NAMESPACE__ . '\HDOM_TYPE_ROOT', 5);
-define(__NAMESPACE__ . '\HDOM_TYPE_UNKNOWN', 6);
 define(__NAMESPACE__ . '\HDOM_QUOTE_DOUBLE', 0);
 define(__NAMESPACE__ . '\HDOM_QUOTE_SINGLE', 1);
 define(__NAMESPACE__ . '\HDOM_QUOTE_NO', 3);
