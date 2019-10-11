@@ -22,15 +22,6 @@
  * Version $Rev$
  */
 
-define(__NAMESPACE__ . '\HDOM_INFO_BEGIN', 0);
-define(__NAMESPACE__ . '\HDOM_INFO_END', 1);
-define(__NAMESPACE__ . '\HDOM_INFO_QUOTE', 2);
-define(__NAMESPACE__ . '\HDOM_INFO_SPACE', 3);
-define(__NAMESPACE__ . '\HDOM_INFO_TEXT', 4);
-define(__NAMESPACE__ . '\HDOM_INFO_INNER', 5);
-define(__NAMESPACE__ . '\HDOM_INFO_OUTER', 6);
-define(__NAMESPACE__ . '\HDOM_INFO_ENDSPACE', 7);
-
 defined(__NAMESPACE__ . '\DEFAULT_TARGET_CHARSET') || define(__NAMESPACE__ . '\DEFAULT_TARGET_CHARSET', 'UTF-8');
 defined(__NAMESPACE__ . '\DEFAULT_BR_TEXT') || define(__NAMESPACE__ . '\DEFAULT_BR_TEXT', "\r\n");
 defined(__NAMESPACE__ . '\DEFAULT_SPAN_TEXT') || define(__NAMESPACE__ . '\DEFAULT_SPAN_TEXT', ' ');

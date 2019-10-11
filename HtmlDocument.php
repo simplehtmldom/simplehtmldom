@@ -181,7 +181,7 @@ class HtmlDocument
 		// parsing
 		$this->parse($stripRN);
 		// end
-		$this->root->_[HDOM_INFO_END] = $this->cursor;
+		$this->root->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 		$this->parse_charset();
 		$this->decode();
 		unset($this->doc);
@@ -286,7 +286,7 @@ class HtmlDocument
 		$this->default_span_text = $defaultSpanText;
 		$this->root = new HtmlNode($this);
 		$this->root->tag = 'root';
-		$this->root->_[HDOM_INFO_BEGIN] = -1;
+		$this->root->_[HtmlNode::HDOM_INFO_BEGIN] = -1;
 		$this->root->nodetype = HtmlNode::HDOM_TYPE_ROOT;
 		$this->parent = $this->root;
 		if ($this->size > 0) { $this->char = $this->doc[0]; }
@@ -295,16 +295,16 @@ class HtmlDocument
 	protected function decode()
 	{
 		foreach($this->nodes as $node) {
-			if (isset($node->_[HDOM_INFO_TEXT])) {
-				$node->_[HDOM_INFO_TEXT] = html_entity_decode(
-					$this->restore_noise($node->_[HDOM_INFO_TEXT]),
+			if (isset($node->_[HtmlNode::HDOM_INFO_TEXT])) {
+				$node->_[HtmlNode::HDOM_INFO_TEXT] = html_entity_decode(
+					$this->restore_noise($node->_[HtmlNode::HDOM_INFO_TEXT]),
 					ENT_QUOTES | ENT_HTML5,
 					$this->_target_charset
 				);
 			}
-			if (isset($node->_[HDOM_INFO_INNER])) {
-				$node->_[HDOM_INFO_INNER] = html_entity_decode(
-					$this->restore_noise($node->_[HDOM_INFO_INNER]),
+			if (isset($node->_[HtmlNode::HDOM_INFO_INNER])) {
+				$node->_[HtmlNode::HDOM_INFO_INNER] = html_entity_decode(
+					$this->restore_noise($node->_[HtmlNode::HDOM_INFO_INNER]),
 					ENT_QUOTES | ENT_HTML5,
 					$this->_target_charset
 				);
@@ -336,7 +336,7 @@ class HtmlDocument
 
 				$node = new HtmlNode($this);
 				++$this->cursor;
-				$node->_[HDOM_INFO_TEXT] = $content;
+				$node->_[HtmlNode::HDOM_INFO_TEXT] = $content;
 				$this->link_nodes($node, false);
 
 			}
@@ -488,7 +488,7 @@ class HtmlDocument
 	protected function read_tag($trim)
 	{
 		if ($this->char !== '<') { // End Of File
-			$this->root->_[HDOM_INFO_END] = $this->cursor;
+			$this->root->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 			return false;
 		}
 
@@ -516,7 +516,7 @@ class HtmlDocument
 				if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) { // parent is optional closing + current is block tag
 
 					// Parent has no end tag (optional closing anyway)
-					$this->parent->_[HDOM_INFO_END] = 0;
+					$this->parent->_[HtmlNode::HDOM_INFO_END] = 0;
 					$org_parent = $this->parent;
 
 					// Find start tag
@@ -532,13 +532,13 @@ class HtmlDocument
 							$this->parent = $this->parent->parent;
 						}
 
-						$this->parent->_[HDOM_INFO_END] = $this->cursor;
+						$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 						return $this->as_text_node($tag);
 					}
 				} elseif (($this->parent->parent) && isset($this->block_tags[$tag_lower])) { // grandparent exists + current is block tag
 
 					// Parent has no end tag
-					$this->parent->_[HDOM_INFO_END] = 0;
+					$this->parent->_[HtmlNode::HDOM_INFO_END] = 0;
 					$org_parent = $this->parent;
 
 					// Find start tag
@@ -549,11 +549,11 @@ class HtmlDocument
 					// No start tag, close parent
 					if (strtolower($this->parent->tag) !== $tag_lower) {
 						$this->parent = $org_parent; // restore origonal parent
-						$this->parent->_[HDOM_INFO_END] = $this->cursor;
+						$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 						return $this->as_text_node($tag);
 					}
 				} elseif (($this->parent->parent) && strtolower($this->parent->parent->tag) === $tag_lower) { // Grandparent exists and current tag closes it
-					$this->parent->_[HDOM_INFO_END] = 0;
+					$this->parent->_[HtmlNode::HDOM_INFO_END] = 0;
 					$this->parent = $this->parent->parent;
 				} else { // Random tag, add as text node
 					return $this->as_text_node($tag);
@@ -561,7 +561,7 @@ class HtmlDocument
 			}
 
 			// Link with start tag
-			$this->parent->_[HDOM_INFO_END] = $this->cursor;
+			$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 
 			if ($this->parent->parent) {
 				$this->parent = $this->parent->parent;
@@ -573,7 +573,7 @@ class HtmlDocument
 
 		// Start tag: https://dev.w3.org/html5/pf-summary/syntax.html#start-tags
 		$node = new HtmlNode($this);
-		$node->_[HDOM_INFO_BEGIN] = $this->cursor++;
+		$node->_[HtmlNode::HDOM_INFO_BEGIN] = $this->cursor++;
 
 		// Tag name
 		$tag = $this->copy_until($this->token_slash);
@@ -609,10 +609,10 @@ class HtmlDocument
 				$node->tag = 'unknown';
 			}
 
-			$node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
+			$node->_[HtmlNode::HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until_char('>');
 
 			if ($this->char === '>') {
-				$node->_[HDOM_INFO_TEXT] .= '>';
+				$node->_[HtmlNode::HDOM_INFO_TEXT] .= '>';
 			}
 
 			$this->link_nodes($node, true);
@@ -621,10 +621,10 @@ class HtmlDocument
 		}
 
 		if (!preg_match('/^\w[\w:-]*$/', $tag)) { // Invalid tag name
-			$node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until('<>');
+			$node->_[HtmlNode::HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until('<>');
 
 			if ($this->char === '>') { // End tag
-				$node->_[HDOM_INFO_TEXT] .= '>';
+				$node->_[HtmlNode::HDOM_INFO_TEXT] .= '>';
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 			}
 
@@ -639,7 +639,7 @@ class HtmlDocument
 
 		if (isset($this->optional_closing_tags[$tag_lower])) { // Optional closing tag
 			while (isset($this->optional_closing_tags[$tag_lower][strtolower($this->parent->tag)])) {
-				$this->parent->_[HDOM_INFO_END] = 0;
+				$this->parent->_[HtmlNode::HDOM_INFO_END] = 0;
 				$this->parent = $this->parent->parent;
 			}
 			$node->parent = $this->parent;
@@ -666,8 +666,8 @@ class HtmlDocument
 
 			if ($this->pos >= $this->size - 1 && $this->char !== '>') { // End Of File
 				$node->nodetype = HtmlNode::HDOM_TYPE_TEXT;
-				$node->_[HDOM_INFO_END] = 0;
-				$node->_[HDOM_INFO_TEXT] = '<' . $tag . $space[0] . $name;
+				$node->_[HtmlNode::HDOM_INFO_END] = 0;
+				$node->_[HtmlNode::HDOM_INFO_TEXT] = '<' . $tag . $space[0] . $name;
 				$node->tag = 'text';
 				$this->link_nodes($node, false);
 				return true;
@@ -690,7 +690,7 @@ class HtmlDocument
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				$this->parse_attr($node, $name, $space, $trim); // get attribute value
 			} else { // Attribute without value
-				$node->_[HDOM_INFO_QUOTE][$name] = HtmlNode::HDOM_QUOTE_NO;
+				$node->_[HtmlNode::HDOM_INFO_QUOTE][$name] = HtmlNode::HDOM_QUOTE_NO;
 				$node->attr[$name] = true;
 				if ($this->char !== '>') {
 					$this->char = $this->doc[--$this->pos];
@@ -699,7 +699,7 @@ class HtmlDocument
 
 			// Space before attribute and around equal sign
 			if (!$trim && $space !== array(' ', '', '')) {
-				$node->_[HDOM_INFO_SPACE][$name] = $space;
+				$node->_[HtmlNode::HDOM_INFO_SPACE][$name] = $space;
 			}
 
 			// prepare for next attribute
@@ -714,7 +714,7 @@ class HtmlDocument
 
 		// Space after last attribute before closing the tag
 		if (!$trim && $space[0] !== '') {
-			$node->_[HDOM_INFO_ENDSPACE] = $space[0];
+			$node->_[HtmlNode::HDOM_INFO_ENDSPACE] = $space[0];
 		}
 
 		$rest = $this->copy_until_char('>');
@@ -724,23 +724,23 @@ class HtmlDocument
 
 		if (trim($rest) === '/') { // Void element
 			if ($rest !== '') {
-				if (isset($node->_[HDOM_INFO_ENDSPACE])) {
-					$node->_[HDOM_INFO_ENDSPACE] .= $rest;
+				if (isset($node->_[HtmlNode::HDOM_INFO_ENDSPACE])) {
+					$node->_[HtmlNode::HDOM_INFO_ENDSPACE] .= $rest;
 				} else {
-					$node->_[HDOM_INFO_ENDSPACE] = $rest;
+					$node->_[HtmlNode::HDOM_INFO_ENDSPACE] = $rest;
 				}
 			}
-			$node->_[HDOM_INFO_END] = 0;
+			$node->_[HtmlNode::HDOM_INFO_END] = 0;
 		} elseif (!isset($this->self_closing_tags[strtolower($node->tag)])) {
 			$innertext = $this->copy_until_char('<');
 			if ($innertext !== '') {
-				$node->_[HDOM_INFO_INNER] = $innertext;
+				$node->_[HtmlNode::HDOM_INFO_INNER] = $innertext;
 			}
 			$this->parent = $node;
 		}
 
 		if ($node->tag === 'br') {
-			$node->_[HDOM_INFO_INNER] = $this->default_br_text;
+			$node->_[HtmlNode::HDOM_INFO_INNER] = $this->default_br_text;
 		}
 
 		return true;
@@ -784,7 +784,7 @@ class HtmlDocument
 
 		if (!$is_duplicate) {
 			if ($quote_type !== HtmlNode::HDOM_QUOTE_DOUBLE) {
-				$node->_[HDOM_INFO_QUOTE][$name] = $quote_type;
+				$node->_[HtmlNode::HDOM_INFO_QUOTE][$name] = $quote_type;
 			}
 			$node->attr[$name] = $value;
 		}
@@ -803,7 +803,7 @@ class HtmlDocument
 	{
 		$node = new HtmlNode($this);
 		++$this->cursor;
-		$node->_[HDOM_INFO_TEXT] = '</' . $tag . '>';
+		$node->_[HtmlNode::HDOM_INFO_TEXT] = '</' . $tag . '>';
 		$this->link_nodes($node, false);
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 		return true;

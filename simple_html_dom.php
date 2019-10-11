@@ -66,14 +66,14 @@ define('HDOM_TYPE_UNKNOWN', \simplehtmldom\HtmlNode::HDOM_TYPE_UNKNOWN);
 define('HDOM_QUOTE_DOUBLE', \simplehtmldom\HtmlNode::HDOM_QUOTE_DOUBLE);
 define('HDOM_QUOTE_SINGLE', \simplehtmldom\HtmlNode::HDOM_QUOTE_SINGLE);
 define('HDOM_QUOTE_NO', \simplehtmldom\HtmlNode::HDOM_QUOTE_NO);
-define('HDOM_INFO_BEGIN', \simplehtmldom\HDOM_INFO_BEGIN);
-define('HDOM_INFO_END', \simplehtmldom\HDOM_INFO_END);
-define('HDOM_INFO_QUOTE', \simplehtmldom\HDOM_INFO_QUOTE);
-define('HDOM_INFO_SPACE', \simplehtmldom\HDOM_INFO_SPACE);
-define('HDOM_INFO_TEXT', \simplehtmldom\HDOM_INFO_TEXT);
-define('HDOM_INFO_INNER', \simplehtmldom\HDOM_INFO_INNER);
-define('HDOM_INFO_OUTER', \simplehtmldom\HDOM_INFO_OUTER);
-define('HDOM_INFO_ENDSPACE', \simplehtmldom\HDOM_INFO_ENDSPACE);
+define('HDOM_INFO_BEGIN', \simplehtmldom\HtmlNode::HDOM_INFO_BEGIN);
+define('HDOM_INFO_END', \simplehtmldom\HtmlNode::HDOM_INFO_END);
+define('HDOM_INFO_QUOTE', \simplehtmldom\HtmlNode::HDOM_INFO_QUOTE);
+define('HDOM_INFO_SPACE', \simplehtmldom\HtmlNode::HDOM_INFO_SPACE);
+define('HDOM_INFO_TEXT', \simplehtmldom\HtmlNode::HDOM_INFO_TEXT);
+define('HDOM_INFO_INNER', \simplehtmldom\HtmlNode::HDOM_INFO_INNER);
+define('HDOM_INFO_OUTER', \simplehtmldom\HtmlNode::HDOM_INFO_OUTER);
+define('HDOM_INFO_ENDSPACE', \simplehtmldom\HtmlNode::HDOM_INFO_ENDSPACE);
 
 define('HDOM_SMARTY_AS_TEXT', \simplehtmldom\HDOM_SMARTY_AS_TEXT);
 

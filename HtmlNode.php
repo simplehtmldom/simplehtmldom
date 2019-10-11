@@ -37,6 +37,15 @@ class HtmlNode
 	const HDOM_QUOTE_SINGLE = 1;
 	const HDOM_QUOTE_NO = 3;
 
+	const HDOM_INFO_BEGIN = 0;
+	const HDOM_INFO_END = 1;
+	const HDOM_INFO_QUOTE = 2;
+	const HDOM_INFO_SPACE = 3;
+	const HDOM_INFO_TEXT = 4;
+	const HDOM_INFO_INNER = 5;
+	const HDOM_INFO_OUTER = 6;
+	const HDOM_INFO_ENDSPACE = 7;
+
 	public $nodetype = self::HDOM_TYPE_TEXT;
 	public $tag = 'text';
 	public $attr = array();
@@ -127,8 +136,8 @@ class HtmlNode
 
 		$string .= ' HDOM_INNER_INFO: ';
 
-		if (isset($node->_[HDOM_INFO_INNER])) {
-			$string .= "'" . $node->_[HDOM_INFO_INNER] . "'";
+		if (isset($node->_[self::HDOM_INFO_INNER])) {
+			$string .= "'" . $node->_[self::HDOM_INFO_INNER] . "'";
 		} else {
 			$string .= ' NULL ';
 		}
@@ -247,10 +256,10 @@ class HtmlNode
 
 	function innertext()
 	{
-		if (isset($this->_[HDOM_INFO_INNER])) {
-			$ret = $this->_[HDOM_INFO_INNER];
-		} elseif (isset($this->_[HDOM_INFO_TEXT])) {
-			$ret = $this->_[HDOM_INFO_TEXT];
+		if (isset($this->_[self::HDOM_INFO_INNER])) {
+			$ret = $this->_[self::HDOM_INFO_INNER];
+		} elseif (isset($this->_[self::HDOM_INFO_TEXT])) {
+			$ret = $this->_[self::HDOM_INFO_TEXT];
 		} else {
 			$ret = '';
 		}
@@ -287,24 +296,24 @@ class HtmlNode
 			call_user_func_array($this->dom->callback, array($this));
 		}
 
-		if (isset($this->_[HDOM_INFO_OUTER])) {
-			return $this->_[HDOM_INFO_OUTER];
+		if (isset($this->_[self::HDOM_INFO_OUTER])) {
+			return $this->_[self::HDOM_INFO_OUTER];
 		}
 
-		if (isset($this->_[HDOM_INFO_TEXT])) {
-			return $this->_[HDOM_INFO_TEXT];
+		if (isset($this->_[self::HDOM_INFO_TEXT])) {
+			return $this->_[self::HDOM_INFO_TEXT];
 		}
 
 		$ret = '';
 
-		if ($this->dom && $this->dom->nodes[$this->_[HDOM_INFO_BEGIN]]) {
-			$ret = $this->dom->nodes[$this->_[HDOM_INFO_BEGIN]]->makeup();
+		if ($this->dom && $this->dom->nodes[$this->_[self::HDOM_INFO_BEGIN]]) {
+			$ret = $this->dom->nodes[$this->_[self::HDOM_INFO_BEGIN]]->makeup();
 		}
 
-		if (isset($this->_[HDOM_INFO_INNER])) {
-			// todo: <br> should either never have HDOM_INFO_INNER or always
+		if (isset($this->_[self::HDOM_INFO_INNER])) {
+			// todo: <br> should either never have self::HDOM_INFO_INNER or always
 			if ($this->tag !== 'br') {
-				$ret .= $this->_[HDOM_INFO_INNER];
+				$ret .= $this->_[self::HDOM_INFO_INNER];
 			}
 		}
 
@@ -314,7 +323,7 @@ class HtmlNode
 			}
 		}
 
-		if (isset($this->_[HDOM_INFO_END]) && $this->_[HDOM_INFO_END] != 0) {
+		if (isset($this->_[self::HDOM_INFO_END]) && $this->_[self::HDOM_INFO_END] != 0) {
 			$ret .= '</' . $this->tag . '>';
 		}
 
@@ -368,10 +377,10 @@ class HtmlNode
 			$ret = '';
 		} elseif (strtolower($this->tag) === 'style') {
 			$ret = '';
-		} elseif (isset($this->_[HDOM_INFO_INNER])) {
-			$ret = $this->_[HDOM_INFO_INNER];
+		} elseif (isset($this->_[self::HDOM_INFO_INNER])) {
+			$ret = $this->_[self::HDOM_INFO_INNER];
 		} elseif ($this->nodetype === self::HDOM_TYPE_TEXT) {
-			$ret = $this->_[HDOM_INFO_TEXT];
+			$ret = $this->_[self::HDOM_INFO_TEXT];
 		} elseif ($this->nodetype === self::HDOM_TYPE_COMMENT) {
 			$ret = '';
 		} elseif ($this->nodetype === self::HDOM_TYPE_UNKNOWN) {
@@ -427,8 +436,8 @@ class HtmlNode
 	function makeup()
 	{
 		// text, comment, unknown
-		if (isset($this->_[HDOM_INFO_TEXT])) {
-			return $this->_[HDOM_INFO_TEXT];
+		if (isset($this->_[self::HDOM_INFO_TEXT])) {
+			return $this->_[self::HDOM_INFO_TEXT];
 		}
 
 		$ret = '<' . $this->tag;
@@ -438,13 +447,21 @@ class HtmlNode
 			// skip removed attribute
 			if ($val === null || $val === false) { continue; }
 
-			$ret .= isset($this->_[HDOM_INFO_SPACE][$key]) ? $this->_[HDOM_INFO_SPACE][$key][0] : ' ';
+			if (isset($this->_[self::HDOM_INFO_SPACE][$key])) {
+				$ret .= $this->_[self::HDOM_INFO_SPACE][$key][0];
+			} else {
+				$ret .= ' ';
+			}
 
 			//no value attr: nowrap, checked selected...
 			if ($val === true) {
 				$ret .= $key;
 			} else {
-				$quote_type = isset($this->_[HDOM_INFO_QUOTE][$key]) ? $this->_[HDOM_INFO_QUOTE][$key] : self::HDOM_QUOTE_DOUBLE;
+				if (isset($this->_[self::HDOM_INFO_QUOTE][$key])) {
+					$quote_type = $this->_[self::HDOM_INFO_QUOTE][$key];
+				} else {
+					$quote_type = self::HDOM_QUOTE_DOUBLE;
+				}
 
 				switch ($quote_type)
 				{
@@ -455,17 +472,17 @@ class HtmlNode
 				}
 
 				$ret .= $key
-				. (isset($this->_[HDOM_INFO_SPACE][$key]) ? $this->_[HDOM_INFO_SPACE][$key][1] : '')
+				. (isset($this->_[self::HDOM_INFO_SPACE][$key]) ? $this->_[self::HDOM_INFO_SPACE][$key][1] : '')
 				. '='
-				. (isset($this->_[HDOM_INFO_SPACE][$key]) ? $this->_[HDOM_INFO_SPACE][$key][2] : '')
+				. (isset($this->_[self::HDOM_INFO_SPACE][$key]) ? $this->_[self::HDOM_INFO_SPACE][$key][2] : '')
 				. $quote
 				. $val
 				. $quote;
 			}
 		}
 
-		if(isset($this->_[HDOM_INFO_ENDSPACE])) {
-			$ret .= $this->_[HDOM_INFO_ENDSPACE];
+		if(isset($this->_[self::HDOM_INFO_ENDSPACE])) {
+			$ret .= $this->_[self::HDOM_INFO_ENDSPACE];
 		}
 
 		return $ret . '>';
@@ -483,9 +500,9 @@ class HtmlNode
 			// code tracker id 2788009
 			// used to be: if (($levle=count($selectors[0]))===0) return array();
 			if (($levle = count($selectors[$c])) === 0) { return array(); }
-			if (!isset($this->_[HDOM_INFO_BEGIN])) { return array(); }
+			if (!isset($this->_[self::HDOM_INFO_BEGIN])) { return array(); }
 
-			$head = array($this->_[HDOM_INFO_BEGIN] => 1);
+			$head = array($this->_[self::HDOM_INFO_BEGIN] => 1);
 			$cmd = ' '; // Combinator
 
 			// handle descendant selectors, no recursive!
@@ -539,18 +556,18 @@ class HtmlNode
 		if ($parent_cmd === ' ') { // Descendant Combinator
 			// Find parent closing tag if the current element doesn't have a closing
 			// tag (i.e. void element)
-			$end = (!empty($this->_[HDOM_INFO_END])) ? $this->_[HDOM_INFO_END] : 0;
+			$end = (!empty($this->_[self::HDOM_INFO_END])) ? $this->_[self::HDOM_INFO_END] : 0;
 			if ($end == 0) {
 				$parent = $this->parent;
-				while (!isset($parent->_[HDOM_INFO_END]) && $parent !== null) {
+				while (!isset($parent->_[self::HDOM_INFO_END]) && $parent !== null) {
 					$end -= 1;
 					$parent = $parent->parent;
 				}
-				$end += $parent->_[HDOM_INFO_END];
+				$end += $parent->_[self::HDOM_INFO_END];
 			}
 
 			// Get list of target nodes
-			$nodes_start = $this->_[HDOM_INFO_BEGIN] + 1;
+			$nodes_start = $this->_[self::HDOM_INFO_BEGIN] + 1;
 
 			// remove() makes $this->dom->nodes non-contiguous; use what is left.
 			$nodes = array_intersect_key(
@@ -750,7 +767,7 @@ class HtmlNode
 
 			// Found a match. Add to list and clear node
 			$pass = $ps_selector === 'not' ? !$pass : $pass;
-			if ($pass) $ret[$node->_[HDOM_INFO_BEGIN]] = 1;
+			if ($pass) $ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
 			unset($node);
 		}
 		// It's passed by reference so this is actually what this function returns.
@@ -982,12 +999,12 @@ class HtmlNode
 		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
 
 		switch ($name) {
-			case 'outertext': return $this->_[HDOM_INFO_OUTER] = $value;
+			case 'outertext': return $this->_[self::HDOM_INFO_OUTER] = $value;
 			case 'innertext':
-				if (isset($this->_[HDOM_INFO_TEXT])) {
-					return $this->_[HDOM_INFO_TEXT] = $value;
+				if (isset($this->_[self::HDOM_INFO_TEXT])) {
+					return $this->_[self::HDOM_INFO_TEXT] = $value;
 				}
-				return $this->_[HDOM_INFO_INNER] = $value;
+				return $this->_[self::HDOM_INFO_INNER] = $value;
 		}
 
 		$this->attr[$name] = $value;
