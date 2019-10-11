@@ -690,7 +690,7 @@ class HtmlDocument
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				$this->parse_attr($node, $name, $space, $trim); // get attribute value
 			} else { // Attribute without value
-				$node->_[HDOM_INFO_QUOTE][$name] = HDOM_QUOTE_NO;
+				$node->_[HDOM_INFO_QUOTE][$name] = HtmlNode::HDOM_QUOTE_NO;
 				$node->attr[$name] = true;
 				if ($this->char !== '>') {
 					$this->char = $this->doc[--$this->pos];
@@ -755,19 +755,19 @@ class HtmlDocument
 
 		switch ($this->char) {
 			case '"':
-				$quote_type = HDOM_QUOTE_DOUBLE;
+				$quote_type = HtmlNode::HDOM_QUOTE_DOUBLE;
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				$value = $this->copy_until_char('"');
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				break;
 			case '\'':
-				$quote_type = HDOM_QUOTE_SINGLE;
+				$quote_type = HtmlNode::HDOM_QUOTE_SINGLE;
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				$value = $this->copy_until_char('\'');
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				break;
 			default:
-				$quote_type = HDOM_QUOTE_NO;
+				$quote_type = HtmlNode::HDOM_QUOTE_NO;
 				$value = $this->copy_until($this->token_attr);
 		}
 
@@ -783,7 +783,7 @@ class HtmlDocument
 		}
 
 		if (!$is_duplicate) {
-			if ($quote_type !== HDOM_QUOTE_DOUBLE) {
+			if ($quote_type !== HtmlNode::HDOM_QUOTE_DOUBLE) {
 				$node->_[HDOM_INFO_QUOTE][$name] = $quote_type;
 			}
 			$node->attr[$name] = $value;

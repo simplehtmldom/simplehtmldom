@@ -33,6 +33,10 @@ class HtmlNode
 	const HDOM_TYPE_ROOT = 5;
 	const HDOM_TYPE_UNKNOWN = 6;
 
+	const HDOM_QUOTE_DOUBLE = 0;
+	const HDOM_QUOTE_SINGLE = 1;
+	const HDOM_QUOTE_NO = 3;
+
 	public $nodetype = self::HDOM_TYPE_TEXT;
 	public $tag = 'text';
 	public $attr = array();
@@ -440,13 +444,13 @@ class HtmlNode
 			if ($val === true) {
 				$ret .= $key;
 			} else {
-				$quote_type = isset($this->_[HDOM_INFO_QUOTE][$key]) ? $this->_[HDOM_INFO_QUOTE][$key] : HDOM_QUOTE_DOUBLE;
+				$quote_type = isset($this->_[HDOM_INFO_QUOTE][$key]) ? $this->_[HDOM_INFO_QUOTE][$key] : self::HDOM_QUOTE_DOUBLE;
 
 				switch ($quote_type)
 				{
-					case HDOM_QUOTE_DOUBLE: $quote = '"'; break;
-					case HDOM_QUOTE_SINGLE: $quote = '\''; break;
-					case HDOM_QUOTE_NO: $quote = ''; break;
+					case self::HDOM_QUOTE_DOUBLE: $quote = '"'; break;
+					case self::HDOM_QUOTE_SINGLE: $quote = '\''; break;
+					case self::HDOM_QUOTE_NO: $quote = ''; break;
 					default: $quote = '"';
 				}
 

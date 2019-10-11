@@ -22,9 +22,6 @@
  * Version $Rev$
  */
 
-define(__NAMESPACE__ . '\HDOM_QUOTE_DOUBLE', 0);
-define(__NAMESPACE__ . '\HDOM_QUOTE_SINGLE', 1);
-define(__NAMESPACE__ . '\HDOM_QUOTE_NO', 3);
 define(__NAMESPACE__ . '\HDOM_INFO_BEGIN', 0);
 define(__NAMESPACE__ . '\HDOM_INFO_END', 1);
 define(__NAMESPACE__ . '\HDOM_INFO_QUOTE', 2);
