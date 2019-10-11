@@ -31,6 +31,9 @@ https://phpunit.de/announcements/phpunit-6.html
 	<filter>
 		<whitelist>
 			<directory>simple_html_dom.php</directory>
+			<directory>HtmlDocument.php</directory>
+			<directory>HtmlNode.php</directory>
+			<directory>HtmlWeb.php</directory>
 		</whitelist>
 	</filter>
 
