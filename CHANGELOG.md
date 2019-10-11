@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added tests for node functions after calling remove().
   - Added tests for `maxLen` in `file_get_html`.
   - Added tests for `simple_html_dom_node`.
+  - Added tests for `HtmlWeb`.
   - Added test for bug [#172](https://sourceforge.net/p/simplehtmldom/bugs/172/)
 - Added optional argument `$trim = true` to `$node->text()`
 - Added attribute value normalization
@@ -21,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `simple_html_dom::expect()`.
 - Added `simple_html_dom_node::expect()`.
 - Added the ability to parse CDATA sections.
+- Added `HtmlWeb` to directly load webpages via cURL or fopen as DOM.
+- Added `HtmlDocument`, `HtmlNode`, `HtmlWeb` and `constants` to namespace `simplehtmldom`.
 ### Changed
 - `simple_html_dom::doc` is now unset after loading the DOM.
 - `simple_html_dom::restore_noise()` now clears restored elements.
@@ -37,6 +40,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `simple_html_dom_node::removeChild()` now removes all types of childs.
 - Increased `MAX_FILE_SIZE` from 0.6 MB (600000 Bytes) to 2.5 MiB (2621440 Bytes)
 - `HDOM_INFO_INNER` (innertext) is now stored as part of the owning element.
+- Moved and renamed `simple_html_dom` to `HtmlDocument`.
+- Moved and renamed `simple_html_dom_node` to `HtmlNode`.
+- Moved constants to `constants.php`
+- Moved `HDOM_TYPE_*`, `HDOM_INFO_*` and `HDOM_QUOTE_*` constants into `HtmlNode`.
 ### Deprecated
 ### Removed
 - Removed `/example/scraping/example_scraping_general.php`.
