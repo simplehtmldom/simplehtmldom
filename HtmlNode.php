@@ -1050,12 +1050,10 @@ class HtmlNode
 			);
 		}
 
-		if (!empty($sourceCharset)
-			&& !empty($targetCharset)
-			&& (strtoupper($sourceCharset) === strtoupper($targetCharset))) {
-			// Check if the reported encoding could have been incorrect and the text is actually already UTF-8
-			if ((strtoupper($targetCharset) === 'UTF-8')
-				&& ($this->is_utf8($text))) {
+		if (!empty($sourceCharset) && !empty($targetCharset)) {
+			if (strtoupper($sourceCharset) === strtoupper($targetCharset)) {
+				$converted_text = $text;
+			} elseif ((strtoupper($targetCharset) === 'UTF-8') && ($this->is_utf8($text))) {
 				$converted_text = $text;
 			} else {
 				$converted_text = iconv($sourceCharset, $targetCharset, $text);
