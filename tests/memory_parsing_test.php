@@ -61,12 +61,12 @@ class memory_parsing_test extends TestCase {
 	}
 
 	/**
-	 * Test if the parser properly releases memory using file_get_html (50x)
+	 * Test if the parser properly releases memory using loadFile (50x)
 	 *
 	 * Memory usage should stay stable or slightly decrease (out of our control)
 	 * when using the parser in a loop.
 	 */
-	public function test_file_get_html()
+	public function test_loadFile()
 	{
 
 		if (is_file($this->file)) {
@@ -77,7 +77,8 @@ class memory_parsing_test extends TestCase {
 			for ($i = 0; $i <= 50; $i++) {
 				$memory_start = memory_get_usage();
 
-				$html = file_get_html($this->file, false, null, 0, filesize($this->file));
+				$html = new simple_html_dom();
+				$html->loadFile($this->file, false, null, 0, filesize($this->file));
 				unset($html);
 				gc_collect_cycles(); // Trigger garbage collection
 
@@ -117,7 +118,8 @@ class memory_parsing_test extends TestCase {
 		$memory_start = memory_get_usage();
 
 		// Use actual file size to load the entire file
-		$html = file_get_html($file, false, null, 0, filesize($file));
+		$html = new simple_html_dom;
+		$html->load($file);
 		unset($html);
 		gc_collect_cycles(); // Trigger garbage collection
 

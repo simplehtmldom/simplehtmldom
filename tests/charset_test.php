@@ -21,7 +21,7 @@ class charset_test extends TestCase {
 	{
 		$expected = strtoupper(basename($path, '.html'));
 
-		$this->html = file_get_html($path);
+		$this->html->loadFile($path);
 
 		$this->assertEquals($expected, $this->html->_charset);
 	}
