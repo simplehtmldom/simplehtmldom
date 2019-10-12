@@ -59,6 +59,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed `file_get_html` to return false if the file size is larger than `maxLen`.
 - Fixed a bug that caused the parser to convert UTF-8 to UTF-8 on mistake.
 - Fixed `simple_html_dom::loadFile` to properly forward arguments to `simple_html_dom::load_file`.
+- Fixed handling of optional closing tags to end on the last element.
 ### Security
 
 ## [1.9] - 2019-05-30

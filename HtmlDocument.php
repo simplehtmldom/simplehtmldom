@@ -639,7 +639,8 @@ class HtmlDocument
 
 		if (isset($this->optional_closing_tags[$tag_lower])) { // Optional closing tag
 			while (isset($this->optional_closing_tags[$tag_lower][strtolower($this->parent->tag)])) {
-				$this->parent->_[HtmlNode::HDOM_INFO_END] = 0;
+				// Previous element was the last element of ancestor
+				$this->parent->_[HtmlNode::HDOM_INFO_END] = $node->_[HtmlNode::HDOM_INFO_BEGIN] - 1;
 				$this->parent = $this->parent->parent;
 			}
 			$node->parent = $this->parent;
