@@ -328,8 +328,8 @@ HTML;
 	 * **Example Code**:
 	 *
 	 * ```php
-	 * $file = 'Hello<a href=""> World';
-	 * $html = str_get_html($file);
+	 * $doc = 'Hello<a href=""> World';
+	 * $html->load($doc);
 	 * echo "$html->plaintext\n";
 	 * ```
 	 *

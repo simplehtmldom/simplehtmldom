@@ -17,7 +17,7 @@ class simple_html_dom_test extends TestCase {
 	public function test___get_outertext_should_return_html()
 	{
 		$doc = '<html></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($doc, $this->html->outertext);
 	}
@@ -25,7 +25,7 @@ class simple_html_dom_test extends TestCase {
 	public function test___get_innertext_should_return_html()
 	{
 		$doc = '<html></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($doc, $this->html->innertext);
 	}
@@ -34,7 +34,7 @@ class simple_html_dom_test extends TestCase {
 	{
 		$expected = 'Hello, World!';
 		$doc = '<html><p>Hello, World!</p></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->plaintext);
 	}
@@ -43,7 +43,7 @@ class simple_html_dom_test extends TestCase {
 	{
 		$expected = 'UTF-8';
 		$doc = '<html><p>Hello, World!</p></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->charset);
 	}
@@ -52,7 +52,7 @@ class simple_html_dom_test extends TestCase {
 	{
 		$expected = 'UTF-8';
 		$doc = '<html><p>Hello, World!</p></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->target_charset);
 	}
@@ -60,7 +60,7 @@ class simple_html_dom_test extends TestCase {
 	public function test___get_should_return_null_for_unknown_type()
 	{
 		$doc = '<html></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertNull($this->html->this_type_doesnt_exist_probably);
 	}
@@ -69,7 +69,7 @@ class simple_html_dom_test extends TestCase {
 	{
 		$expected = 'PHP Simple HTML DOM Parser';
 		$doc = '<p>PHP Simple HTML DOM Parser</p>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->childNodes(0)->text());
 	}
@@ -77,7 +77,7 @@ class simple_html_dom_test extends TestCase {
 	public function test_childNodes_should_return_null_if_index_out_of_range()
 	{
 		$doc = '<p>PHP Simple HTML DOM Parser</p>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertNull($this->html->childNodes(1));
 	}
@@ -86,7 +86,7 @@ class simple_html_dom_test extends TestCase {
 	{
 		$doc = '<a href="#"></a><img><p></p>';
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 		$this->html->find('img', 0)->remove();
 
 		$this->assertCount(2, $this->html->childNodes());
@@ -98,7 +98,7 @@ class simple_html_dom_test extends TestCase {
 	{
 		$doc = '<html><p id="claim">PHP Simple HTML DOM Parser</p></html>';
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertNotNull($this->html->getElementById('claim'));
 		$this->assertNull($this->html->getElementById('unknown'));
@@ -109,7 +109,7 @@ class simple_html_dom_test extends TestCase {
 		// Note, this technically doesn't make sense but it's supported
 		$doc = '<html><p id="a"></p><p id="a"></p></html>';
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertCount(2, $this->html->getElementsById('a'));
 	}
@@ -119,7 +119,7 @@ class simple_html_dom_test extends TestCase {
 		$expected = 'Hello';
 		$doc = '<html><p>Hello</p><p>World</p></html>';
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->getElementByTagName('p')->text());
 	}
@@ -128,7 +128,7 @@ class simple_html_dom_test extends TestCase {
 	{
 		$doc = '<html><p>Hello</p><p>World</p></html>';
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertCount(2, $this->html->getElementsByTagName('p'));
 	}
@@ -136,7 +136,7 @@ class simple_html_dom_test extends TestCase {
 	public function test_lastChild_should_return_null_without_children()
 	{
 		$doc = ' ';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertNull($this->html->lastChild());
 	}
@@ -145,7 +145,7 @@ class simple_html_dom_test extends TestCase {
 	{
 		$doc = '<div><a href="#"></a><p></p></div>';
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 		$this->html->find('p', 0)->remove();
 
 		$this->assertNotNull($this->html->lastChild());

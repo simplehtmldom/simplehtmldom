@@ -58,7 +58,7 @@ class entity_decoding_test extends TestCase {
 	{
 		$expected = 'Häagen-Dazs';
 
-		$this->html = str_get_html('<meta name="description" content="H&auml;agen-Dazs">');
+		$this->html->load('<meta name="description" content="H&auml;agen-Dazs">');
 
 		$description = $this->html->find('meta[name="description"]', 0);
 

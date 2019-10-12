@@ -173,7 +173,7 @@ EOD
 	{
 		// phpcs:ignore Generic.Files.LineLength
 		$expected = '<html><head><meta charset="UTF-8"><meta name="description" content="simplehtmldom"><meta name="keywords" content="simple,html,dom"><meta name="author" content="John Doe"></head></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->save());
 	}
@@ -183,7 +183,7 @@ EOD
 	{
 		// phpcs:ignore Generic.Files.LineLength
 		$expected = '<html><head><meta charset="UTF-8"><meta name="description" content="simplehtmldom"><meta name="keywords" content="simple,html,dom"><meta name="author" content="John Doe"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->save());
 	}
@@ -193,7 +193,7 @@ EOD
 	{
 		// phpcs:ignore Generic.Files.LineLength
 		$expected = '<html><body><div class="article"/><div class="article"/><div class="article"/><div class="article"/><div class="article"/><div class="article"/></body></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->save());
 	}
@@ -203,7 +203,7 @@ EOD
 	{
 		// phpcs:ignore Generic.Files.LineLength
 		$expected = '<html><body><div/><div/><div/><div/><div/><div/></body></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->save());
 	}
@@ -213,7 +213,7 @@ EOD
 	{
 		// phpcs:ignore Generic.Files.LineLength
 		$expected = '<html><body><div class="article"><div class="level1"><div class="level2"><div class="level3"><div class="level4"><div class="level5"></div></div></div></div></div></div></body></html>';
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->save());
 	}
@@ -221,7 +221,7 @@ EOD
 	/** @dataProvider provide_whitespace_in_class_values */
 	public function test_parse_removes_whitespace_in_class_values($doc)
 	{
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertCount(11, $this->html->find('.article'));
 		$this->assertCount(6, $this->html->find('.new'));
@@ -233,7 +233,7 @@ EOD
 	/** @dataProvider provide_whitespace_in_class_values */
 	public function test_find_removes_whitespace_in_class_selectors($doc)
 	{
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertCount(11, $this->html->find('.article'));
 		$this->assertCount(11, $this->html->find(' .article'));
@@ -252,7 +252,7 @@ EOD
 	/** @dataProvider provide_whitespace_in_attribute_values */
 	public function test_parse_removes_whitespace_in_attribute_values($doc)
 	{
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertCount(11, $this->html->find('[attribute*="article"]'));
 		$this->assertCount(6, $this->html->find('[attribute*="new"]'));
@@ -264,15 +264,7 @@ EOD
 	/** @dataProvider provide_whitespace_in_class_values */
 	public function test_find_keeps_whitespace_without_trim($doc)
 	{
-		$this->html = str_get_html(
-			$doc,
-			true,
-			true,
-			DEFAULT_TARGET_CHARSET,
-			false, // No trim
-			DEFAULT_BR_TEXT,
-			DEFAULT_SPAN_TEXT
-		);
+		$this->html->load($doc, true, false);
 
 		$this->assertCount(11, $this->html->find('.article'));
 		$this->assertCount(11, $this->html->find(' .article'));
@@ -300,15 +292,7 @@ EOD
 	public function test_parse_keeps_whitespace_without_trim($doc)
 	{
 		$expected = $doc;
-		$this->html = str_get_html(
-			$doc,
-			true,
-			true,
-			DEFAULT_TARGET_CHARSET,
-			false, // No trim
-			DEFAULT_BR_TEXT,
-			DEFAULT_SPAN_TEXT
-		);
+		$this->html->load($doc, true, false);
 
 		$this->assertEquals($expected, $this->html->save());
 	}
@@ -321,7 +305,7 @@ EOD
 <p>     PHP Simple HTML DOM Parser     </p>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -334,7 +318,7 @@ EOD;
 <p>   <span>     </span>  PHP Simple HTML DOM Parser     </p>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -349,7 +333,7 @@ PHP Simple HTML DOM Parser
 </p>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -367,7 +351,7 @@ PHP Simple HTML DOM Parser
 </p>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -385,7 +369,7 @@ EOD;
 <p>A fast, simple and reliable HTML document parser for PHP.</p>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -403,7 +387,7 @@ EOD;
 <div><p>A fast, simple and reliable HTML document parser for PHP.</p></div>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -418,7 +402,7 @@ EOD;
 <p>PHP Simple HTML DOM Parser. <em>A fast, simple and reliable HTML document parser for PHP.</em></p>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -440,7 +424,7 @@ EOD;
 <p>A fast, simple and reliable HTML document parser for PHP.</p>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -462,7 +446,7 @@ EOD;
 <p>&nbsp;A fast, simple and reliable HTML<span>&nbsp;&nbsp;</span>&nbsp; document parser for PHP.&nbsp;</p>
 EOD;
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals($expected, $this->html->root->text());
 	}
@@ -481,7 +465,7 @@ EOD;
 
 		$doc = '&#xAB;Hello, World&#xBB;&nbsp;';
 
-		$this->html = str_get_html($doc);
+		$this->html->load($doc);
 
 		$this->assertEquals(
 			$expected,
