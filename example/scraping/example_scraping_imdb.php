@@ -3,13 +3,12 @@
  * This example loads a page from IMDb and displays the most important details
  * in a custom format.
  */
-include_once '../../simple_html_dom.php';
-
-// (optional) Use a custom user agent for your application
-ini_set('user_agent', 'simplehtmldom_examples/1.0');
+include_once '../../HtmlWeb.php';
+use simplehtmldom\HtmlWeb;
 
 // Load the page into memory
-$html = file_get_html('https://imdb.com/title/tt0335266/');
+$doc = new HtmlWeb();
+$html = $doc->load('https://imdb.com/title/tt0335266/');
 
 // Extract details
 $title = $html->find('title', 0)->plaintext;

@@ -3,13 +3,12 @@
  * This example loads the main page from https://digg.com/, extracts news items
  * and returns the details in a custom format.
  */
-include_once '../../simple_html_dom.php';
-
-// (optional) Use a custom user agent for your application
-ini_set('user_agent', 'simplehtmldom_examples/1.0');
+include_once '../../HtmlWeb.php';
+use simplehtmldom\HtmlWeb;
 
 // Download a page
-$html = file_get_html('https://digg.com/');
+$doc = new HtmlWeb();
+$html = $doc->load('https://digg.com/');
 
 // Loop through all articles in the page
 foreach($html->find('article') as $article) {

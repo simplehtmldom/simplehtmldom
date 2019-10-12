@@ -1,6 +1,7 @@
 <?php
-// This file illustrates how to utilize the callback feature to manipulate the DOM
-include_once '../simple_html_dom.php';
+// This example illustrates how to utilize the callback feature to manipulate the DOM
+include_once '../HtmlWeb.php';
+use simplehtmldom\HtmlWeb;
 
 // Write a callback function with one parameter for the element
 function my_callback($element) {
@@ -10,7 +11,8 @@ function my_callback($element) {
 }
 
 // Load the document
-$html = file_get_html('https://www.google.com/');
+$doc = new HtmlWeb();
+$html = $doc->load('https://www.google.com/');
 
 // Register the callback function
 $html->set_callback('my_callback');

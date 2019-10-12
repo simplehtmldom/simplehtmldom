@@ -1,9 +1,11 @@
 <?php
 // This example illustrates how to modify HTML contents
-include_once '../simple_html_dom.php';
+include_once '../HtmlWeb.php';
+use simplehtmldom\HtmlWeb;
 
 // Load the document
-$html = file_get_html('https://www.google.com/');
+$doc = new HtmlWeb();
+$html = $doc->load('https://www.google.com/');
 
 // Remove all images and inputs from the DOM
 foreach($html->find('img, input') as $element) {

@@ -1,9 +1,11 @@
 <?php
-// This file illustrates how to use basic selectors to retrieve HTML contents
-include_once '../simple_html_dom.php';
+// This example illustrates how to use basic selectors to retrieve HTML contents
+include_once '../HtmlWeb.php';
+use simplehtmldom\HtmlWeb;
 
 // get DOM from URL or file
-$html = file_get_html('http://www.google.com/');
+$doc = new HtmlWeb();
+$html = $doc->load('http://www.google.com/');
 
 // find all links
 foreach($html->find('a') as $e)
@@ -28,9 +30,6 @@ foreach($html->find('span.gb1') as $e)
 // find all td tags with attribute align="center"
 foreach($html->find('td[align=center]') as $e)
 	echo $e->innertext . '<br>' . PHP_EOL;
-
-// extract text from table
-echo $html->find('td[align="center"]', 1)->plaintext . '<br><hr>' . PHP_EOL;
 
 // extract text from HTML
 echo $html->plaintext . PHP_EOL;

@@ -1,6 +1,7 @@
 <?php
-// This file illustrates how to use advanced selector features
-include_once '../simple_html_dom.php';
+// This example illustrates how to use advanced selector features
+include_once '../HtmlDocument.php';
+use simplehtmldom\HtmlDocument;
 
 // -----------------------------------------------------------------------------
 echo '<h2>Descendant selectors</h2>' . PHP_EOL;
@@ -13,7 +14,7 @@ $doc = <<<HTML
 </div>
 HTML;
 
-echo str_get_html($doc)->find('div div div', 0)->innertext . PHP_EOL;
+echo (new HtmlDocument())->load($doc)->find('div div div', 0)->innertext . PHP_EOL;
 
 // -----------------------------------------------------------------------------
 echo '<h2>Nested selectors</h2>' . PHP_EOL;
@@ -29,7 +30,7 @@ $doc = <<<HTML
 </ul>
 HTML;
 
-$html = str_get_html($doc);
+$html = (new HtmlDocument())->load($doc);
 
 foreach($html->find('ul') as $ul) {
 	foreach($ul->find('li') as $li)
@@ -47,7 +48,7 @@ $doc = <<<HTML
 </form>
 HTML;
 
-$html = str_get_html($doc);
+$html = (new HtmlDocument())->load($doc);
 
 foreach($html->find('input[type=checkbox]') as $checkbox) {
 	if ($checkbox->checked) {

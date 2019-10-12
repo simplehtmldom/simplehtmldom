@@ -3,13 +3,12 @@
  * This example loads a page from Slashdot and displays articles in a custom
  * format.
  */
-include_once '../../simple_html_dom.php';
-
-// (optional) Use a custom user agent for your application
-ini_set('user_agent', 'simplehtmldom_examples/1.0');
+include_once '../../HtmlWeb.php';
+use simplehtmldom\HtmlWeb;
 
 // Load the page into memory
-$html = file_get_html('https://slashdot.org/');
+$doc = new HtmlWeb();
+$html = $doc->load('https://slashdot.org/');
 
 // Find and extract all articles
 foreach($html->find('#firehoselist > [id^="firehose-"]') as $article) {
