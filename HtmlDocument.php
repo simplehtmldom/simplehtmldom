@@ -1011,9 +1011,8 @@ class HtmlDocument
 		return $this->find($name, $idx);
 	}
 
-	function loadFile()
+	function loadFile($file)
 	{
-		$args = func_get_args();
-		$this->load_file($args);
+		return call_user_func_array(array($this, 'load_file'), func_get_args());
 	}
 }
