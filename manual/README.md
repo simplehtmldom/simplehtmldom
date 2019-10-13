@@ -1,4 +1,4 @@
-This folder contains the source files for http://simplehtmldom.sourceforge.net/,
+This folder contains the source files for http://simplehtmldom.sourceforge.io/,
 the project page for PHP Simple HTML DOM Parser.
 
 Source files are written in Markdown: https://en.wikipedia.org/wiki/Markdown
@@ -16,7 +16,7 @@ documentation: https://www.mkdocs.org/
 
 # Adding new pages
 
-Place new files in `source`. Use subfolders (as few levels as possible) to
+Place new files in `docs`. Use subfolders (as few levels as possible) to
 separate categories.
 
 Files added to the manual will **not** appear on the project page automatically.

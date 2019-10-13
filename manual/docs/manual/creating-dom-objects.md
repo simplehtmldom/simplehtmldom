@@ -2,31 +2,36 @@
 title: Creating HTML DOM objects
 ---
 
-## Functional
+## From string
 
 ```php
-// Create a DOM object from a string
-$html = str_get_html('<html><body>Hello!</body></html>');
+<?php
+include_once 'HtmlDocument';
+use simplehtmldom\HtmlDocument;
 
-// Create a DOM object from a URL
-$html = file_get_html('http://www.google.com/');
-
-// Create a DOM object from a HTML file
-$html = file_get_html('test.htm');
+$html = new HtmlDocument();
+$html->load('<html><body>Hello!</body></html>');
 ```
 
-## Object Oriented
+## From URL
 
 ```php
-// Create a DOM object
-$html = new simple_html_dom();
+<?php
+include_once 'HtmlWeb';
+use simplehtmldom\HtmlWeb;
 
-// Load HTML from a string
-$html->load('<html><body>Hello!</body></html>');
+$html = new HtmlWeb();
+$html->load('http://www.google.com/');
 
-// Load HTML from a URL
-$html->load_file('http://www.google.com/');
+```
 
-// Load HTML from a HTML file
-$html->load_file('test.htm');
+## From file
+
+```php
+<?php
+include_once 'HtmlDocument';
+use simplehtmldom\HtmlDocument;
+
+$html = new HtmlDocument();
+$html->loadFile('test.htm');
 ```

@@ -2,8 +2,6 @@
 title: Constants
 ---
 
-# Constants
-
 Constants define how the parser treats documents. They can be defined before
 loading the parser to globally replace the default values.
 
@@ -30,4 +28,4 @@ Default: `' '`
 Defines the maximum number of bytes the parser can load into memory. This limit
 only applies to the source file or string.
 
-Default: `600000`
+Default: `2621440`

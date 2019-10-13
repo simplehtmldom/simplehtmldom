@@ -6,7 +6,7 @@ title: Customizing Parsing behavior
 // Write a function with parameter "$element"
 function my_callback($element) {
         // Hide all <b> tags
-        if ($element->tag=='b')
+        if ($element->tag === 'b')
                 $element->outertext = '';
 }
 
