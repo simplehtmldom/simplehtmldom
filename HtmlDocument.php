@@ -164,8 +164,6 @@ class HtmlDocument
 			$this->size = strlen($this->doc);
 		}
 
-		// strip out comments
-		$this->remove_noise("'<!--(.*?)-->'is");
 		// strip out <style> tags
 		$this->remove_noise("'<\s*style[^>]*[^/]>(.*?)<\s*/\s*style\s*>'is");
 		$this->remove_noise("'<\s*style\s*>(.*?)<\s*/\s*style\s*>'is");
@@ -589,30 +587,78 @@ class HtmlDocument
 
 		if (isset($tag[0]) && $tag[0] === '!') { // Doctype, CData, Comment
 			if (isset($tag[2]) && $tag[1] === '-' && $tag[2] === '-') { // Comment ("<!--")
+
+				// Go back until $tag only contains start of comment "!--".
+				while (strlen($tag) > 3) {
+					$this->char = $this->doc[--$this->pos]; // previous
+					$tag = substr($tag, 0, strlen($tag) - 1);
+				}
+
 				$node->nodetype = HtmlNode::HDOM_TYPE_COMMENT;
 				$node->tag = 'comment';
+
+				$data = '';
+
+				// There is a rare chance of empty comment: "<!---->"
+				// In which case the current char is the first "-" of the end tag
+				// But the comment could also just be a dash: "<!----->"
+				while(true) {
+					// Copy until first char of end tag
+					$data .= $this->copy_until_char('-');
+
+					// Look ahead in the document, maybe we are at the end
+					if (($this->pos + 3) > $this->size) { // End of document
+						break;
+					} elseif (substr($this->doc, $this->pos, 3) === '-->') { // end
+						$data .= $this->copy_until_char('>');
+						break;
+					}
+
+					$data .= $this->char;
+					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+				}
+
+				$tag .= $data;
+
+				// Comment starts after "!--" and ends before "--" (5 chars total)
+				$node->_[HtmlNode::HDOM_INFO_INNER] = substr($tag, 3, strlen($tag) - 5);
 			} elseif (substr($tag, 1, 7) === '[CDATA[') {
+
+				// Go back until $tag only contains start of cdata "![CDATA[".
+				while (strlen($tag) > 8) {
+					$this->char = $this->doc[--$this->pos]; // previous
+					$tag = substr($tag, 0, strlen($tag) - 1);
+				}
+
 				// CDATA can contain HTML stuff, need to find closing tags first
-				$node->nodetype = HtmlNode::HDOM_TYPE_UNKNOWN; // fixme
+				$node->nodetype = HtmlNode::HDOM_TYPE_CDATA;
 				$node->tag = 'cdata';
 
 				$data = '';
 
-				while (($part = $this->copy_until_char(']')) !== '') {
-					$data .= $part . ']';
+				// There is a rare chance of empty CDATA: "<[CDATA[]]>"
+				// In which case the current char is the first "[" of the end tag
+				// But the CDATA could also just be a bracket: "<[CDATA[]]]>"
+				while(true) {
+					// Copy until first char of end tag
+					$data .= $this->copy_until_char(']');
 
-					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-
-					if($this->char === ']') { // potential end of section
-						$part = $this->copy_until_char('>');
-						$data .= $part;
-						if ($part === ']') { // end of section ("]]>")
-							break;
-						}
+					// Look ahead in the document, maybe we are at the end
+					if (($this->pos + 3) > $this->size) { // End of document
+						break;
+					} elseif (substr($this->doc, $this->pos, 3) === ']]>') { // end
+						$data .= $this->copy_until_char('>');
+						break;
 					}
+
+					$data .= $this->char;
+					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				}
 
 				$tag .= $data;
+
+				// CDATA starts after "![CDATA[" and ends before "]]" (10 chars total)
+				$node->_[HtmlNode::HDOM_INFO_INNER] = substr($tag, 8, strlen($tag) - 10);
 			} else { // Unknown
 				$node->nodetype = HtmlNode::HDOM_TYPE_UNKNOWN;
 				$node->tag = 'unknown';

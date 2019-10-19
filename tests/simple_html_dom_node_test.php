@@ -138,7 +138,7 @@ EOD;
 
 	public function test_innertext_should_return_comment()
 	{
-		$expected = '<!--For your information-->';
+		$expected = 'For your information';
 		$doc = '<html><!--For your information--></html>';
 
 		$this->html->load($doc);
@@ -327,10 +327,10 @@ EOD;
 		$this->assertEquals($expected, $this->html->root->text());
 	}
 
-	public function test_text_should_not_include_cdata()
+	public function test_text_should_include_cdata_content()
 	{
-		$expected = 'PHP Simple HTML DOM Parser';
-		$doc = '<![CDATA[<html></html>]]><h1>PHP Simple HTML DOM Parser</h1>';
+		$expected = '<?php Simple HTML DOM Parser';
+		$doc = '<h1><![CDATA[<?php]]> Simple HTML DOM Parser</h1>';
 
 		$this->html->load($doc);
 

@@ -32,6 +32,7 @@ class HtmlNode
 	const HDOM_TYPE_ENDTAG = 4;
 	const HDOM_TYPE_ROOT = 5;
 	const HDOM_TYPE_UNKNOWN = 6;
+	const HDOM_TYPE_CDATA = 7;
 
 	const HDOM_QUOTE_DOUBLE = 0;
 	const HDOM_QUOTE_SINGLE = 1;
@@ -377,14 +378,16 @@ class HtmlNode
 			$ret = '';
 		} elseif (strtolower($this->tag) === 'style') {
 			$ret = '';
+		} elseif ($this->nodetype === self::HDOM_TYPE_COMMENT) {
+			$ret = '';
+		} elseif ($this->nodetype === self::HDOM_TYPE_CDATA) {
+			$ret = $this->_[self::HDOM_INFO_INNER];
+		} elseif ($this->nodetype === self::HDOM_TYPE_UNKNOWN) {
+			$ret = '';
 		} elseif (isset($this->_[self::HDOM_INFO_INNER])) {
 			$ret = $this->_[self::HDOM_INFO_INNER];
 		} elseif ($this->nodetype === self::HDOM_TYPE_TEXT) {
 			$ret = $this->_[self::HDOM_INFO_TEXT];
-		} elseif ($this->nodetype === self::HDOM_TYPE_COMMENT) {
-			$ret = '';
-		} elseif ($this->nodetype === self::HDOM_TYPE_UNKNOWN) {
-			$ret = '';
 		}
 
 		if (is_null($this->nodes)) {
@@ -597,6 +600,41 @@ class HtmlNode
 
 			// Skip root nodes
 			if(!$node->parent) {
+				unset($node);
+				continue;
+			}
+
+			// Handle 'text' selector
+			if($pass && $tag === 'text') {
+
+				if($node->tag === 'text') {
+					$ret[array_search($node, $this->dom->nodes, true)] = 1;
+				}
+
+				if(isset($node->_[self::HDOM_INFO_INNER])) {
+					$ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
+				}
+
+				unset($node);
+				continue;
+
+			}
+
+			// Handle 'cdata' selector
+			if($pass && $tag === 'cdata') {
+
+				if($node->tag === 'cdata') {
+					$ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
+				}
+
+				unset($node);
+				continue;
+
+			}
+
+			// Handle 'comment'
+			if($pass && $tag === 'comment' && $node->tag === 'comment') {
+				$ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
 				unset($node);
 				continue;
 			}
@@ -1002,7 +1040,7 @@ class HtmlNode
 			case 'outertext': return $this->_[self::HDOM_INFO_OUTER] = $value;
 			case 'innertext':
 				if (isset($this->_[self::HDOM_INFO_TEXT])) {
-					return $this->_[self::HDOM_INFO_TEXT] = $value;
+					$this->_[self::HDOM_INFO_TEXT] = '';
 				}
 				return $this->_[self::HDOM_INFO_INNER] = $value;
 		}

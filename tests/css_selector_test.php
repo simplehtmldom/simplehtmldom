@@ -544,4 +544,97 @@ HTML;
 	}
 
 	#endregion Pseudo Classes
+
+	/**
+	 * "comment", "cdata" and "text" selectors are specific to this parser. They
+	 * allow users to directly address these nodes and extract useful information.
+	 *
+	 * @dataProvider dataProvider_for_find_should_work_with_special_selector
+	 */
+	public function test_find_should_work_with_special_selector($selector, $expected, $doc, $message)
+	{
+		$this->html->load($doc);
+		$this->assertEquals($expected, $this->html->find($selector, 0)->innertext, $message);
+		$this->assertEquals($doc, $this->html->save());
+	}
+
+	public function dataProvider_for_find_should_work_with_special_selector()
+	{
+		$data = array(
+			'text without elements' => array(
+				'text',
+				'Hello, World!',
+				'Hello, World!',
+				'find should return text without elements'
+			),
+			'text outside html' => array(
+				'text',
+				'Hello, World!',
+				'Hello, World!<html></html>',
+				'find should return text outside html'
+			),
+			'text inside element' => array(
+				'text',
+				'Hello, World!',
+				'<html>Hello, World!</html>',
+				'find should return text inside element'
+			),
+			'text between elements' => array(
+				'text',
+				'Hello, World!',
+				'<html><head></head>Hello, World!<body></body></html>',
+				'find should return text between elements'
+			),
+			'cdata without elements' => array(
+				'cdata',
+				'Hello, World!',
+				'<![CDATA[Hello, World!]]>',
+				'find should return cdata elements'
+			),
+			'cdata outside html' => array(
+				'cdata',
+				'Hello, World!',
+				'<![CDATA[Hello, World!]]><html></html>',
+				'find should return cdata elements'
+			),
+			'cdata inside element' => array(
+				'cdata',
+				'Hello, World!',
+				'<html><![CDATA[Hello, World!]]></html>',
+				'find should return cdata elements'
+			),
+			'cdata between elements' => array(
+				'cdata',
+				'Hello, World!',
+				'<html><head></head><![CDATA[Hello, World!]]><body></body></html>',
+				'find should return cdata elements'
+			),
+			'comment without elements' => array(
+				'comment',
+				'Hello, World!',
+				'<!--Hello, World!-->',
+				'find should return comments'
+			),
+			'comment outside html' => array(
+				'comment',
+				'Hello, World!',
+				'<!--Hello, World!--><html></html>',
+				'find should return comments'
+			),
+			'comment inside element' => array(
+				'comment',
+				'Hello, World!',
+				'<html><!--Hello, World!--></html>',
+				'find should return comments'
+			),
+			'comment between elements' => array(
+				'comment',
+				'Hello, World!',
+				'<html><head></head><!--Hello, World!--><body></body></html>',
+				'find should return comments'
+			)
+		);
+
+		return $data;
+	}
 }

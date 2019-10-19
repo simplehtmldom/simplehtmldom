@@ -24,6 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added the ability to parse CDATA sections.
 - Added `HtmlWeb` to directly load webpages via cURL or fopen as DOM.
 - Added `HtmlDocument`, `HtmlNode`, `HtmlWeb` and `constants` to namespace `simplehtmldom`.
+- Added a new element type `HDOM_TYPE_CDATA` for CDATA sections.
+- Added full support for parsing comments and CDATA sections.
 ### Changed
 - `simple_html_dom::doc` is now unset after loading the DOM.
 - `simple_html_dom::restore_noise()` now clears restored elements.
@@ -60,6 +62,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed a bug that caused the parser to convert UTF-8 to UTF-8 on mistake.
 - Fixed `simple_html_dom::loadFile` to properly forward arguments to `simple_html_dom::load_file`.
 - Fixed handling of optional closing tags to end on the last element.
+- Fixed broken support for `text` nodes when using `find` (#175).
 ### Security
 
 ## [1.9] - 2019-05-30
