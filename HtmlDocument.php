@@ -489,6 +489,15 @@ class HtmlDocument
 	{
 		if ($this->char !== '<') { // End Of File
 			$this->root->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
+
+			// We might be in a nest of unclosed elements for which the end tags
+			// can be omitted. Close them for faster seek operations.
+			do {
+				if (isset($this->optional_closing_tags[strtolower($this->parent->tag)])) {
+					$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
+				}
+			} while ($this->parent = $this->parent->parent);
+
 			return false;
 		}
 
@@ -513,14 +522,14 @@ class HtmlDocument
 			if (strcasecmp($this->parent->tag, $tag)) { // Parent is not start tag
 				$parent_lower = strtolower($this->parent->tag);
 				$tag_lower = strtolower($tag);
-				if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) { // parent is optional closing + current is block tag
-
-					// Parent has no end tag (optional closing anyway)
-					$this->parent->_[HtmlNode::HDOM_INFO_END] = 0;
+				if (isset($this->optional_closing_tags[$parent_lower]) && isset($this->block_tags[$tag_lower])) {
 					$org_parent = $this->parent;
 
-					// Find start tag
+					// Look for the start tag
 					while (($this->parent->parent) && strtolower($this->parent->tag) !== $tag_lower){
+						// Close any unclosed element with optional end tags
+						if (isset($this->optional_closing_tags[strtolower($this->parent->tag)]))
+							$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 						$this->parent = $this->parent->parent;
 					}
 

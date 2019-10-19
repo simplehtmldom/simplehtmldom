@@ -622,4 +622,153 @@ HTML;
 		$this->assertEquals('A PHP based DOM parser', $dom->find('th', 1)->innertext);
 		$this->assertEquals('PHP Simple HTML DOM Parser', $dom->find('th', 2)->innertext);
 	}
+
+	/**
+	 * Checks if optional end tags are properly handled by the parser.
+	 *
+	 * @dataProvider dataProvider_for_parser_should_close_optional_end_tags
+	 */
+	public function test_parser_should_close_optional_end_tags($doc, $expected, $message)
+	{
+		$this->html->load($doc);
+		$this->assertEquals($expected, $this->html->save(), $message);
+	}
+
+	/**
+	 * @todo: The list of block tags and optional closing tags should come from
+	 * code, not copied here.
+	 */
+	public function dataProvider_for_parser_should_close_optional_end_tags()
+	{
+		$block_tags = array(
+			'body' => 1,
+			'div' => 1,
+			'form' => 1,
+			'root' => 1,
+			'span' => 1,
+			'table' => 1
+		);
+
+		// Remove root (implicitly added by the parser)
+		unset($block_tags['root']);
+
+		$optional_closing_tags = array(
+			// Not optional, see
+			// https://www.w3.org/TR/html/textlevel-semantics.html#the-b-element
+			'b' => array('b' => 1),
+			'dd' => array('dd' => 1, 'dt' => 1),
+			// Not optional, see
+			// https://www.w3.org/TR/html/grouping-content.html#the-dl-element
+			'dl' => array('dd' => 1, 'dt' => 1),
+			'dt' => array('dd' => 1, 'dt' => 1),
+			'li' => array('li' => 1),
+			'optgroup' => array('optgroup' => 1, 'option' => 1),
+			'option' => array('optgroup' => 1, 'option' => 1),
+			'p' => array('p' => 1),
+			'rp' => array('rp' => 1, 'rt' => 1),
+			'rt' => array('rp' => 1, 'rt' => 1),
+			'td' => array('td' => 1, 'th' => 1),
+			'th' => array('td' => 1, 'th' => 1),
+			'tr' => array('td' => 1, 'th' => 1, 'tr' => 1),
+		);
+
+		$data = array();
+
+		// Block tags should close optional elements
+		foreach(array_keys($block_tags) as $block) {
+			foreach(array_keys($optional_closing_tags) as $e) {
+				$data["$block should close $e"] = array(
+					"<$block><$e></$block>",
+					"<$block><$e></$e></$block>",
+					"$block should close $e"
+				);
+			}
+		}
+
+		// Special case for root (has no tags)
+		foreach(array_keys($optional_closing_tags) as $e) {
+			$data["root should close $e"] = array(
+				"<$e>",
+				"<$e></$e>",
+				"root should close $e"
+			);
+		}
+
+		// Block tags should close NESTED optional elements
+		foreach(array_keys($block_tags) as $block) {
+			foreach(array_keys($optional_closing_tags) as $e) {
+				foreach(array_keys($optional_closing_tags[$e]) as $child) {
+
+					// skip if element closes itself
+					if($e === $child) continue;
+
+					// skip if child and element are mutual exclusive
+					if(isset($optional_closing_tags[$child])
+					&& array_key_exists($e, $optional_closing_tags[$child])) {
+						continue;
+					}
+
+					$data["$block should close nested $e and $child"] = array(
+						"<$block><$e><$child></$block>",
+						"<$block><$e><$child></$child></$e></$block>",
+						"$block should close nested $e and $child"
+					);
+				}
+			}
+		}
+
+		// Special case for root (has not tags)
+		foreach(array_keys($block_tags) as $block) {
+			foreach(array_keys($optional_closing_tags) as $e) {
+				foreach(array_keys($optional_closing_tags[$e]) as $child) {
+
+					// skip if nested element closes itself
+					if($e === $child) continue;
+
+					// skip if child and element are mutual exclusive
+					if(isset($optional_closing_tags[$child])
+					&& array_key_exists($e, $optional_closing_tags[$child])) {
+						continue;
+					}
+
+					$data["root should close nested $e and $child"] = array(
+						"<$e><$child>",
+						"<$e><$child></$child></$e>",
+						"root should close nested $e and $child"
+					);
+				}
+			}
+		}
+
+		// Some optional tags should close other optional tags
+		foreach(array_keys($optional_closing_tags) as $e) {
+			foreach(array_keys($optional_closing_tags[$e]) as $child) {
+				$data["$e should close $child"] = array(
+					"<$child><$e>",
+					"<$child></$child><$e></$e>",
+					"$e should close $child"
+				);
+			}
+		}
+
+		// Optional tags should NOT close stray elements
+		foreach(array_keys($optional_closing_tags) as $e) {
+			$data["$e should NOT close a"] = array(
+				"<a><$e>",
+				"<a><$e></$e>",
+				"$e should NOT close a"
+			);
+		}
+
+		// Normal tags should NOT close optional elements
+		foreach(array_keys($optional_closing_tags) as $e) {
+			$data["a should NOT close $e"] = array(
+				"<$e><a></a>",
+				"<$e><a></a></$e>",
+				"a should NOT close $e"
+			);
+		}
+
+		return $data;
+	}
 }
