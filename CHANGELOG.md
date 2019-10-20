@@ -3,7 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [2.0-RC1] - 2019-10-20
+
+**Important**: This is a release **candidate**, which means some features might not yet be stable or emit unexpected behavior. Please don't hesitate to report broken or unstable features.
+
 ### Added
 - Added unit tests
   - Added tests for whitespace handling.
@@ -46,7 +49,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Moved and renamed `simple_html_dom_node` to `HtmlNode`.
 - Moved constants to `constants.php`
 - Moved `HDOM_TYPE_*`, `HDOM_INFO_*` and `HDOM_QUOTE_*` constants into `HtmlNode`.
-### Deprecated
 ### Removed
 - Removed `/example/scraping/example_scraping_general.php`.
 - Removed `/example/simple_html_dom_utility.php`.
@@ -63,7 +65,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed `simple_html_dom::loadFile` to properly forward arguments to `simple_html_dom::load_file`.
 - Fixed handling of optional closing tags to end on the last element.
 - Fixed broken support for `text` nodes when using `find` (#175).
-### Security
 
 ## [1.9] - 2019-05-30
 ### Added
