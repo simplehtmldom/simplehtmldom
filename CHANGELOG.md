@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.9.1] - 2019-10-20
+### Fixed
+- Fixed broken "text" selectors [#175](https://sourceforge.net/p/simplehtmldom/bugs/175/)
+
 ## [1.9] - 2019-05-30
 ### Added
 - Added unit test for bug reports

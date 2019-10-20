@@ -609,6 +609,13 @@ class simple_html_dom_node
 				$pass = false;
 			}
 
+			// Handle 'text' selector
+			if($pass && $tag === 'text' && $node->tag === 'text') {
+				$ret[array_search($node, $this->dom->nodes, true)] = 1;
+				unset($node);
+				continue;
+			}
+
 			// Skip if node isn't a child node (i.e. text nodes)
 			if($pass && !in_array($node, $node->parent->children, true)) {
 				$pass = false;
