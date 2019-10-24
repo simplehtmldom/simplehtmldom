@@ -542,8 +542,8 @@ class HtmlDocument
 						$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 						return $this->as_text_node($tag);
 					}
-				} elseif (($this->parent->parent) && isset($this->block_tags[$tag_lower])) { // grandparent exists + current is block tag
-
+				} elseif (($this->parent->parent) && isset($this->block_tags[$tag_lower])) {
+					// grandparent exists + current is block tag
 					// Parent has no end tag
 					$this->parent->_[HtmlNode::HDOM_INFO_END] = 0;
 					$org_parent = $this->parent;
@@ -559,7 +559,8 @@ class HtmlDocument
 						$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 						return $this->as_text_node($tag);
 					}
-				} elseif (($this->parent->parent) && strtolower($this->parent->parent->tag) === $tag_lower) { // Grandparent exists and current tag closes it
+				} elseif (($this->parent->parent) && strtolower($this->parent->parent->tag) === $tag_lower) {
+					// Grandparent exists and current tag closes it
 					$this->parent->_[HtmlNode::HDOM_INFO_END] = 0;
 					$this->parent = $this->parent->parent;
 				} else { // Random tag, add as text node
