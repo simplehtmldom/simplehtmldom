@@ -29,7 +29,6 @@ class HtmlNode
 	const HDOM_TYPE_ELEMENT = 1;
 	const HDOM_TYPE_COMMENT = 2;
 	const HDOM_TYPE_TEXT = 3;
-	const HDOM_TYPE_ENDTAG = 4;
 	const HDOM_TYPE_ROOT = 5;
 	const HDOM_TYPE_UNKNOWN = 6;
 	const HDOM_TYPE_CDATA = 7;
@@ -75,9 +74,6 @@ class HtmlNode
 				break;
 			case self::HDOM_TYPE_TEXT:
 				$nodetype = "HDOM_TYPE_TEXT ($this->nodetype)";
-				break;
-			case self::HDOM_TYPE_ENDTAG:
-				$nodetype = "HDOM_TYPE_ENDTAG ($this->nodetype)";
 				break;
 			case self::HDOM_TYPE_ROOT:
 				$nodetype = "HDOM_TYPE_ROOT ($this->nodetype)";

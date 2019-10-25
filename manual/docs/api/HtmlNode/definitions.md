@@ -13,7 +13,6 @@ The type of a node is determined during parsing and represented by one of the el
 | `HDOM_TYPE_ELEMENT`   | Start tag (i.e. `<html>`)
 | `HDOM_TYPE_COMMENT`   | HTML comment (i.e. `<!-- Hello, World! -->`)
 | `HDOM_TYPE_TEXT`      | Plain text (i.e. `Hello, World!`)
-| `HDOM_TYPE_ENDTAG`    | End tag (i.e. `</html>`)
 | `HDOM_TYPE_ROOT`      | Root element. There can always only be one root element in the DOM.
 | `HDOM_TYPE_UNKNOWN`   | Unknown type (i.e. CDATA, DOCTYPE, etc...)
 
@@ -31,7 +30,6 @@ _Note_: `HDOM_TYPE_ROOT` always exists regardless of the actual document structu
 | `<!DOCTYPE html>`         | `HDOM_TYPE_UNKNOWN`
 | `<html>`                  | `HDOM_TYPE_ELEMENT`
 | `<!-- Hello, World! -->`  | `HDOM_TYPE_COMMENT`
-| `</html>`                 | `HDOM_TYPE_ENDTAG`
 | `Hello, World!`           | `HDOM_TYPE_TEXT`
 
 ## Quote Types

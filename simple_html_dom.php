@@ -60,7 +60,6 @@ if (!defined('MAX_FILE_SIZE')) {
 define('HDOM_TYPE_ELEMENT', \simplehtmldom\HtmlNode::HDOM_TYPE_ELEMENT);
 define('HDOM_TYPE_COMMENT', \simplehtmldom\HtmlNode::HDOM_TYPE_COMMENT);
 define('HDOM_TYPE_TEXT', \simplehtmldom\HtmlNode::HDOM_TYPE_TEXT);
-define('HDOM_TYPE_ENDTAG', \simplehtmldom\HtmlNode::HDOM_TYPE_ENDTAG);
 define('HDOM_TYPE_ROOT', \simplehtmldom\HtmlNode::HDOM_TYPE_ROOT);
 define('HDOM_TYPE_UNKNOWN', \simplehtmldom\HtmlNode::HDOM_TYPE_UNKNOWN);
 define('HDOM_QUOTE_DOUBLE', \simplehtmldom\HtmlNode::HDOM_QUOTE_DOUBLE);
