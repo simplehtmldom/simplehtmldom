@@ -6,4 +6,4 @@ title: firstChild
 firstChild ( ) : mixed
 ```
 
-This function is a wrapper for [`first_child`](../first_child/)
+Returns the first child node of the current node or null if the current nod has no child nodes.

@@ -55,6 +55,33 @@ class HtmlNode
 	public $_ = array();
 	private $dom = null;
 
+	function __call($func, $args)
+	{
+		// Allow users to call methods with lower_case syntax
+		switch($func)
+		{
+			case 'children':
+				$actual_function = 'childNodes'; break;
+			case 'first_child':
+				$actual_function = 'firstChild'; break;
+			case 'has_child':
+				$actual_function = 'hasChildNodes'; break;
+			case 'last_child':
+				$actual_function = 'lastChild'; break;
+			case 'next_sibling':
+				$actual_function = 'nextSibling'; break;
+			case 'prev_sibling':
+				$actual_function = 'previousSibling'; break;
+			default:
+				trigger_error(
+					'Call to undefined method ' . __CLASS__ . '::' . $func . '()',
+					E_USER_ERROR
+				);
+		}
+
+		return call_user_func_array(array($this, $actual_function), $args);
+	}
+
 	function __construct($dom)
 	{
 		$this->dom = $dom;
@@ -199,70 +226,6 @@ class HtmlNode
 		}
 
 		return $this->parent;
-	}
-
-	function has_child()
-	{
-		return !empty($this->children);
-	}
-
-	function children($idx = -1)
-	{
-		if ($idx === -1) {
-			return $this->children;
-		}
-
-		if (isset($this->children[$idx])) {
-			return $this->children[$idx];
-		}
-
-		return null;
-	}
-
-	function first_child()
-	{
-		if (count($this->children) > 0) {
-			return $this->children[0];
-		}
-		return null;
-	}
-
-	function last_child()
-	{
-		if (count($this->children) > 0) {
-			return end($this->children);
-		}
-		return null;
-	}
-
-	function next_sibling()
-	{
-		if ($this->parent === null) {
-			return null;
-		}
-
-		$idx = array_search($this, $this->parent->children, true);
-
-		if ($idx !== false && isset($this->parent->children[$idx + 1])) {
-			return $this->parent->children[$idx + 1];
-		}
-
-		return null;
-	}
-
-	function prev_sibling()
-	{
-		if ($this->parent === null) {
-			return null;
-		}
-
-		$idx = array_search($this, $this->parent->children, true);
-
-		if ($idx !== false && $idx > 0) {
-			return $this->parent->children[$idx - 1];
-		}
-
-		return null;
 	}
 
 	function find_ancestor_tag($tag)
@@ -1440,32 +1403,67 @@ class HtmlNode
 
 	function childNodes($idx = -1)
 	{
-		return $this->children($idx);
+		if ($idx === -1) {
+			return $this->children;
+		}
+
+		if (isset($this->children[$idx])) {
+			return $this->children[$idx];
+		}
+
+		return null;
 	}
 
 	function firstChild()
 	{
-		return $this->first_child();
+		if (count($this->children) > 0) {
+			return $this->children[0];
+		}
+		return null;
 	}
 
 	function lastChild()
 	{
-		return $this->last_child();
+		if (count($this->children) > 0) {
+			return end($this->children);
+		}
+		return null;
 	}
 
 	function nextSibling()
 	{
-		return $this->next_sibling();
+		if ($this->parent === null) {
+			return null;
+		}
+
+		$idx = array_search($this, $this->parent->children, true);
+
+		if ($idx !== false && isset($this->parent->children[$idx + 1])) {
+			return $this->parent->children[$idx + 1];
+		}
+
+		return null;
 	}
 
 	function previousSibling()
 	{
-		return $this->prev_sibling();
+		if ($this->parent === null) {
+			return null;
+		}
+
+		$idx = array_search($this, $this->parent->children, true);
+
+		if ($idx !== false && $idx > 0) {
+			return $this->parent->children[$idx - 1];
+		}
+
+		return null;
+
 	}
 
 	function hasChildNodes()
 	{
-		return $this->has_child();
+		return !empty($this->children);
 	}
 
 	function nodeName()

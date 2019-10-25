@@ -1,9 +1,9 @@
 ---
-title: prev_sibling
+title: previousSibling
 ---
 
 ```php
-prev_sibling ( ) : object
+previousSibling ( ) : object
 ```
 
 Returns the previous sibling of the current node, or null if the current node has no previous sibling.

@@ -52,6 +52,9 @@ latest version using `pip install mkdocs` or `python3 -m pip install mkdocs`. If
 you don't have pip installed, install it via package manager or follow the
 instructions at https://pip.pypa.io/en/stable/installing/
 
+Make sure to also install the `redirects` plugin to allow for page redirects:
+`pip install mkdocs-redirects` or `python3 -m pip install mkdocs-redirects`.
+
 ## Step 2 - View the project locally
 
 MkDocs allows you to view the project files in a browser on your local machine:

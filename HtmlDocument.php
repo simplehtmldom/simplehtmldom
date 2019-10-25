@@ -96,6 +96,23 @@ class HtmlDocument
 		'tr' => array('td' => 1, 'th' => 1, 'tr' => 1),
 	);
 
+	function __call($func, $args)
+	{
+		// Allow users to call methods with lower_case syntax
+		switch($func)
+		{
+			case 'load_file':
+				$actual_function = 'loadFile'; break;
+			default:
+				trigger_error(
+					'Call to undefined method ' . __CLASS__ . '::' . $func . '()',
+					E_USER_ERROR
+				);
+		}
+
+		return call_user_func_array(array($this, $actual_function), $args);
+	}
+
 	function __construct(
 		$str = null,
 		$lowercase = true,
@@ -197,17 +214,6 @@ class HtmlDocument
 
 		// make load function chainable
 		return $this;
-	}
-
-	function load_file()
-	{
-		$args = func_get_args();
-
-		if(($doc = call_user_func_array('file_get_contents', $args)) !== false) {
-			$this->load($doc, true);
-		} else {
-			return false;
-		}
 	}
 
 	function set_callback($function_name)
@@ -1041,12 +1047,12 @@ class HtmlDocument
 
 	function firstChild()
 	{
-		return $this->root->first_child();
+		return $this->root->firstChild();
 	}
 
 	function lastChild()
 	{
-		return $this->root->last_child();
+		return $this->root->lastChild();
 	}
 
 	function createElement($name, $value = null)
@@ -1081,6 +1087,12 @@ class HtmlDocument
 
 	function loadFile($file)
 	{
-		return call_user_func_array(array($this, 'load_file'), func_get_args());
+		$args = func_get_args();
+
+		if(($doc = call_user_func_array('file_get_contents', $args)) !== false) {
+			$this->load($doc, true);
+		} else {
+			return false;
+		}
 	}
 }

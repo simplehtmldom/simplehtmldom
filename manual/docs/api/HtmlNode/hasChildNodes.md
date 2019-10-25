@@ -6,4 +6,4 @@ title: hasChildNodes
 hasChildNodes ( ) : bool
 ```
 
-This is a wrapper function for [`has_child`](../has_child/).
+Returns true if the current node has one or more child nodes.

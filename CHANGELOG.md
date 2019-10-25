@@ -9,6 +9,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added platform and dev requirements to composer.
 - Added .travis.yml
 - Added `__debugInfo` to `HtmlDocument` and `HtmlNode`.
+- Added the magic method `__call` to `HtmlDocument` and `HtmlNode` as a wrapper for deprecated methods using the lowercase calling convention (see below).
+### Deprecated
+- `HtmlDocument::load_file()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlDocument::loadFile()` instead.
+- `HtmlNode::children()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::childNodes()` instead.
+- `HtmlNode::first_child()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::firstChild()` instead.
+- `HtmlNode::has_child()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::hasChild()` instead.
+- `HtmlNode::last_child()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::lastChild()` instead.
+- `HtmlNode::next_sibling()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::nextSibling()` instead.
+- `HtmlNode::prev_sibling()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::previousSibling()` instead.
 
 ## [2.0-RC1] - 2019-10-20
 

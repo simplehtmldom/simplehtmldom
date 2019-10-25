@@ -6,4 +6,4 @@ title: nextSibling
 nextSibling ( ) : object
 ```
 
-This is a wrapper for [`next_sibling`](../next_sibling/).
+Returns the next sibling of the current node or null if the current node has no next sibling.

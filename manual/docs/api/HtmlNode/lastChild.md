@@ -6,4 +6,4 @@ title: lastChild
 lastChild ( ) : object
 ```
 
-This is a wrapper for [`last_child`](../last_child/).
+Returns the last child of the current node or null if the current node has no child elements.
