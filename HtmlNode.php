@@ -62,6 +62,42 @@ class HtmlNode
 		$dom->nodes[] = $this;
 	}
 
+	function __debugInfo()
+	{
+		// Translate node type to human-readable form
+		switch($this->nodetype)
+		{
+			case self::HDOM_TYPE_ELEMENT:
+				$nodetype = "HDOM_TYPE_ELEMENT ($this->nodetype)";
+				break;
+			case self::HDOM_TYPE_COMMENT:
+				$nodetype = "HDOM_TYPE_COMMENT ($this->nodetype)";
+				break;
+			case self::HDOM_TYPE_TEXT:
+				$nodetype = "HDOM_TYPE_TEXT ($this->nodetype)";
+				break;
+			case self::HDOM_TYPE_ENDTAG:
+				$nodetype = "HDOM_TYPE_ENDTAG ($this->nodetype)";
+				break;
+			case self::HDOM_TYPE_ROOT:
+				$nodetype = "HDOM_TYPE_ROOT ($this->nodetype)";
+				break;
+			case self::HDOM_TYPE_CDATA:
+				$nodetype = "HDOM_TYPE_CDATA ($this->nodetype)";
+				break;
+			case self::HDOM_TYPE_UNKNOWN:
+			default:
+				$nodetype = "HDOM_TYPE_UNKNOWN ($this->nodetype)";
+		}
+
+		return array(
+			'nodetype' => $nodetype,
+			'tag' => $this->tag,
+			'attributes' => empty($this->attr) ? 'none' : $this->attr,
+			'nodes' => empty($this->nodes) ? 'none' : $this->nodes
+		);
+	}
+
 	function __destruct()
 	{
 		$this->clear();

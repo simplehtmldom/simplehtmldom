@@ -1,0 +1,129 @@
+simplehtmldom\HtmlDocument Object
+(
+    [root] => simplehtmldom\HtmlNode Object
+        (
+            [nodetype] => HDOM_TYPE_ROOT (5)
+            [tag] => root
+            [attributes] => none
+            [nodes] => Array
+                (
+                    [0] => simplehtmldom\HtmlNode Object
+                        (
+                            [nodetype] => HDOM_TYPE_UNKNOWN (6)
+                            [tag] => unknown
+                            [attributes] => none
+                            [nodes] => none
+                        )
+
+                    [1] => simplehtmldom\HtmlNode Object
+                        (
+                            [nodetype] => HDOM_TYPE_ELEMENT (1)
+                            [tag] => html
+                            [attributes] => Array
+                                (
+                                    [lang] => en
+                                )
+
+                            [nodes] => Array
+                                (
+                                    [0] => simplehtmldom\HtmlNode Object
+                                        (
+                                            [nodetype] => HDOM_TYPE_ELEMENT (1)
+                                            [tag] => head
+                                            [attributes] => none
+                                            [nodes] => Array
+                                                (
+                                                    [0] => simplehtmldom\HtmlNode Object
+                                                        (
+                                                            [nodetype] => HDOM_TYPE_ELEMENT (1)
+                                                            [tag] => title
+                                                            [attributes] => none
+                                                            [nodes] => none
+                                                        )
+
+                                                )
+
+                                        )
+
+                                    [1] => simplehtmldom\HtmlNode Object
+                                        (
+                                            [nodetype] => HDOM_TYPE_COMMENT (2)
+                                            [tag] => comment
+                                            [attributes] => none
+                                            [nodes] => none
+                                        )
+
+                                    [2] => simplehtmldom\HtmlNode Object
+                                        (
+                                            [nodetype] => HDOM_TYPE_ELEMENT (1)
+                                            [tag] => body
+                                            [attributes] => none
+                                            [nodes] => Array
+                                                (
+                                                    [0] => simplehtmldom\HtmlNode Object
+                                                        (
+                                                            [nodetype] => HDOM_TYPE_ELEMENT (1)
+                                                            [tag] => div
+                                                            [attributes] => Array
+                                                                (
+                                                                    [class] => main
+                                                                )
+
+                                                            [nodes] => Array
+                                                                (
+                                                                    [0] => simplehtmldom\HtmlNode Object
+                                                                        (
+                                                                            [nodetype] => HDOM_TYPE_ELEMENT (1)
+                                                                            [tag] => p
+                                                                            [attributes] => none
+                                                                            [nodes] => Array
+                                                                                (
+                                                                                    [0] => simplehtmldom\HtmlNode Object
+                                                                                        (
+                                                                                            [nodetype] => HDOM_TYPE_CDATA (7)
+                                                                                            [tag] => cdata
+                                                                                            [attributes] => none
+                                                                                            [nodes] => none
+                                                                                        )
+
+                                                                                )
+
+                                                                        )
+
+                                                                )
+
+                                                        )
+
+                                                )
+
+                                        )
+
+                                )
+
+                        )
+
+                    [2] => simplehtmldom\HtmlNode Object
+                        (
+                            [nodetype] => HDOM_TYPE_TEXT (3)
+                            [tag] => text
+                            [attributes] => none
+                            [nodes] => none
+                        )
+
+                    [3] => simplehtmldom\HtmlNode Object
+                        (
+                            [nodetype] => HDOM_TYPE_TEXT (3)
+                            [tag] => text
+                            [attributes] => none
+                            [nodes] => none
+                        )
+
+                )
+
+        )
+
+    [noise] => none
+    [charset] => UTF-8
+    [target charset] => UTF-8
+    [original size] => 253
+)

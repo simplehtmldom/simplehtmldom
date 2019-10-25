@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added a README file.
 - Added platform and dev requirements to composer.
 - Added .travis.yml
+- Added `__debugInfo` to `HtmlDocument` and `HtmlNode`.
 
 ## [2.0-RC1] - 2019-10-20
 

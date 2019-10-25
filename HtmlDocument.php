@@ -129,6 +129,17 @@ class HtmlDocument
 		$this->_target_charset = $target_charset;
 	}
 
+	function __debugInfo()
+	{
+		return array(
+			'root' => $this->root,
+			'noise' => empty($this->noise) ? 'none' : $this->noise,
+			'charset' => $this->_charset,
+			'target charset' => $this->_target_charset,
+			'original size' => $this->original_size
+		);
+	}
+
 	function __destruct()
 	{
 		$this->clear();
