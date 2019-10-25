@@ -1307,22 +1307,22 @@ class HtmlNode
 
 	function getAttribute($name)
 	{
-		return $this->__get($name);
+		return $this->$name;
 	}
 
 	function setAttribute($name, $value)
 	{
-		$this->__set($name, $value);
+		$this->$name = $value;
 	}
 
 	function hasAttribute($name)
 	{
-		return $this->__isset($name);
+		return isset($this->$name);
 	}
 
 	function removeAttribute($name)
 	{
-		$this->__set($name, null);
+		unset($this->$name);
 	}
 
 	function remove()
