@@ -26,6 +26,18 @@ class charset_test extends TestCase {
 		$this->assertEquals($expected, $this->html->_charset);
 	}
 
+	/** @dataProvider fileProvider */
+	public function test_is_utf8($file)
+	{
+		$testdata = file_get_contents($file);
+
+		if (strtoupper(basename($file, '.html')) === 'UTF-8') {
+			$this->assertTrue(simple_html_dom_node::is_utf8($testdata));
+		} else {
+			$this->assertFalse(simple_html_dom_node::is_utf8($testdata));
+		}
+	}
+
 	public function fileProvider()
 	{
 		$files = array();
