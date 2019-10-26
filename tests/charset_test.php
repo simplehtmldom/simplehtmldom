@@ -38,6 +38,28 @@ class charset_test extends TestCase {
 		}
 	}
 
+	/** @dataProvider fileProvider */
+	public function test_convert_text_should_handle_different_encodings($file)
+	{
+		$testdata = file_get_contents($file);
+		$charset = strtoupper(basename($file, '.html'));
+		$expected = iconv($charset, 'UTF-8', $testdata);
+
+		$this->html->load(''); // We need at least the root node
+
+		if ($charset === 'UTF-8') {
+			$this->html->_charset = 'TryMe'; // Trap the parser
+			// Wrap content in BOM
+			$testdata = "\xef\xbb\xbf" . $testdata . "\xef\xbb\xbf";
+		} else {
+			$this->html->_charset = $charset; // Hint source charset
+		}
+
+		$this->html->_target_charset = 'UTF-8'; // Enforce target charset
+
+		$this->assertEquals($expected, $this->html->root->convert_text($testdata));
+	}
+
 	public function fileProvider()
 	{
 		$files = array();
