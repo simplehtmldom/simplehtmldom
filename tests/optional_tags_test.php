@@ -700,6 +700,17 @@ HTML;
 			);
 		}
 
+		// Block tags should close optional elements, even if the opening tag is missing
+		foreach(array_keys($block_tags) as $block) {
+			foreach(array_keys($optional_closing_tags) as $e) {
+				$data["$block should close $e"] = array(
+					"<$e></$block>",
+					"<$e></$e></$block>",
+					"$block should close $e"
+				);
+			}
+		}
+
 		// Block tags should close NESTED optional elements
 		foreach(array_keys($block_tags) as $block) {
 			foreach(array_keys($optional_closing_tags) as $e) {
