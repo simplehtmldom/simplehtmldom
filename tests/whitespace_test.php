@@ -14,6 +14,12 @@ class whitespace_test extends TestCase {
 		$this->html = new simple_html_dom;
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	public function provide_whitespace_around_attributes()
 	{
 		return array(array(<<<EOD

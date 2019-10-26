@@ -21,6 +21,7 @@ class callback_test extends TestCase {
 
 	protected function tearDown()
 	{
+		$this->html->clear();
 		unset($this->html);
 	}
 

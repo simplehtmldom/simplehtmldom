@@ -13,6 +13,12 @@ class htmldocument___call_test extends TestCase {
 		$this->html = new simple_html_dom();
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	function test_load_file_should_return_loadFile()
 	{
 		$file = __DIR__ . '/data/htmldocument___call/testdata.html';

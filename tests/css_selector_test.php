@@ -13,7 +13,13 @@ class css_selector_test extends TestCase {
 
 	protected function setUp()
 	{
-		$this->html = new simple_html_dom;
+		$this->html = new simple_html_dom();
+	}
+
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
 	}
 
 	/**

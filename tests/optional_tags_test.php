@@ -23,6 +23,12 @@ class optional_tags_test extends TestCase {
 		$this->html = new simple_html_dom;
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	/**
 	 * An html element’s start tag may be omitted if the first thing inside the
 	 * html element is not a comment.

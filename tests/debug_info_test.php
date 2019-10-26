@@ -13,6 +13,12 @@ class debug_info_test extends TestCase {
 		$this->html = new simple_html_dom();
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	/** @dataProvider dataProvider_for_print_r */
 	public function test_print_r($expected, $html)
 	{

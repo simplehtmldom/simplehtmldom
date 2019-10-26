@@ -14,6 +14,12 @@ class simple_html_dom_node_test extends TestCase {
 		$this->html = new simple_html_dom;
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	public function test___get_should_return_false_for_unknown_attributes()
 	{
 		$doc = '<html></html>';

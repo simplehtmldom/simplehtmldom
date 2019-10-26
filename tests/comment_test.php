@@ -14,6 +14,12 @@ class comment_test extends TestCase {
 		$this->html = new simple_html_dom;
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	/**
 	 * @dataProvider dataProvider_for_comment_should_parse
 	 */

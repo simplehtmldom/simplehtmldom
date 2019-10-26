@@ -14,6 +14,12 @@ class htmlnode___call_test extends TestCase {
 		$this->html->load('<html><head /><body /></html>');
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	function test_children_should_return_childNodes()
 	{
 		$this->assertEquals($this->html->root->childNodes(), $this->html->root->children());

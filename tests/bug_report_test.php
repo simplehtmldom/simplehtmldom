@@ -16,6 +16,12 @@ class bug_report_test extends TestCase {
 		$this->html = new simple_html_dom;
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	/**
 	 * Bug #56 (Attribute values overwritten,behaviour differs from browsers)
 	 *

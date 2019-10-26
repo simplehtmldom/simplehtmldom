@@ -52,6 +52,12 @@ class self_closing_tags_test extends TestCase {
 		$this->html = new simple_html_dom;
 	}
 
+	protected function tearDown()
+	{
+		$this->html->clear();
+		unset($this->html);
+	}
+
 	/**
 	 * @link https://www.w3.org/TR/html52/semantics-embedded-content.html#the-area-element
 	 * The area element
