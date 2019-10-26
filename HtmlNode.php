@@ -2,7 +2,6 @@
 
 /**
  * Website: http://sourceforge.net/projects/simplehtmldom/
- * Additional projects: http://sourceforge.net/projects/debugobject/
  * Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
  *
  * Licensed under The MIT License
@@ -230,16 +229,9 @@ class HtmlNode
 
 	function find_ancestor_tag($tag)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
-
 		$ancestor = $this->parent;
 
 		while (!is_null($ancestor)) {
-			if (is_object($debug_object)) {
-				$debug_object->debug_log(2, 'Current tag is: ' . $ancestor->tag);
-			}
-
 			if ($ancestor->tag === $tag) {
 				break;
 			}
@@ -269,20 +261,6 @@ class HtmlNode
 
 	function outertext()
 	{
-		global $debug_object;
-
-		if (is_object($debug_object)) {
-			$text = '';
-
-			if ($this->tag === 'text') {
-				if (!empty($this->text)) {
-					$text = ' with text: ' . $this->text;
-				}
-			}
-
-			$debug_object->debug_log(1, 'Innertext of tag: ' . $this->tag . $text);
-		}
-
 		if ($this->tag === 'root') {
 			return $this->innertext();
 		}
@@ -545,9 +523,6 @@ class HtmlNode
 
 	protected function seek($selector, &$ret, $parent_cmd, $lowercase = false)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
-
 		list($ps_selector, $tag, $ps_element, $id, $class, $attributes, $cmb) = $selector;
 		$nodes = array();
 
@@ -751,19 +726,6 @@ class HtmlNode
 							$nodeKeyValue = $node->attr[$att_name];
 						}
 
-						if (is_object($debug_object)) {
-							$debug_object->debug_log(2,
-								'testing node: '
-								. $node->tag
-								. ' for attribute: '
-								. $att_name
-								. $att_expr
-								. $att_val
-								. ' where nodes value is: '
-								. $nodeKeyValue
-							);
-						}
-
 						// If lowercase is set, do a case insensitive test of
 						// the value of the selector.
 						if ($lowercase) {
@@ -782,13 +744,6 @@ class HtmlNode
 							);
 						}
 
-						if (is_object($debug_object)) {
-							$debug_object->debug_log(2,
-								'after match: '
-								. ($check ? 'true' : 'false')
-							);
-						}
-
 						$check = $ps_element === 'not' ? !$check : $check;
 
 						if (!$check) {
@@ -803,17 +758,10 @@ class HtmlNode
 			if ($pass) $ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
 			unset($node);
 		}
-		// It's passed by reference so this is actually what this function returns.
-		if (is_object($debug_object)) {
-			$debug_object->debug_log(1, 'EXIT - ret: ', $ret);
-		}
 	}
 
 	protected function match($exp, $pattern, $value, $case_sensitivity)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) {$debug_object->debug_log_entry(1);}
-
 		if ($case_sensitivity === 'i') {
 			$pattern = strtolower($pattern);
 			$value = strtolower($value);
@@ -867,9 +815,6 @@ class HtmlNode
 
 	protected function parse_selector($selector_string)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
-
 		/**
 		 * Pattern of CSS selectors, modified from mootools (https://mootools.net/)
 		 *
@@ -930,10 +875,6 @@ class HtmlNode
 			$matches,
 			PREG_SET_ORDER
 		);
-
-		if (is_object($debug_object)) {
-			$debug_object->debug_log(2, 'Matches Array: ', $matches);
-		}
 
 		$selectors = array();
 		$result = array();
@@ -1028,9 +969,6 @@ class HtmlNode
 
 	function __set($name, $value)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
-
 		switch ($name) {
 			case 'outertext': return $this->_[self::HDOM_INFO_OUTER] = $value;
 			case 'innertext':
@@ -1061,9 +999,6 @@ class HtmlNode
 
 	function convert_text($text)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
-
 		$converted_text = $text;
 
 		$sourceCharset = '';
@@ -1072,15 +1007,6 @@ class HtmlNode
 		if ($this->dom) {
 			$sourceCharset = strtoupper($this->dom->_charset);
 			$targetCharset = strtoupper($this->dom->_target_charset);
-		}
-
-		if (is_object($debug_object)) {
-			$debug_object->debug_log(3,
-				'source charset: '
-				. $sourceCharset
-				. ' target charaset: '
-				. $targetCharset
-			);
 		}
 
 		if (!empty($sourceCharset) && !empty($targetCharset)) {
@@ -1136,8 +1062,6 @@ class HtmlNode
 
 	function get_display_size()
 	{
-		global $debug_object;
-
 		$width = -1;
 		$height = -1;
 
@@ -1248,10 +1172,6 @@ class HtmlNode
 					$this->class = $c;
 				}
 			}
-		} else {
-			if (is_object($debug_object)) {
-				$debug_object->debug_log(2, 'Invalid type: ', gettype($class));
-			}
 		}
 	}
 
@@ -1260,10 +1180,6 @@ class HtmlNode
 		if (is_string($class)) {
 			if (isset($this->class)) {
 				return in_array($class, explode(' ', $this->class), true);
-			}
-		} else {
-			if (is_object($debug_object)) {
-				$debug_object->debug_log(2, 'Invalid type: ', gettype($class));
 			}
 		}
 

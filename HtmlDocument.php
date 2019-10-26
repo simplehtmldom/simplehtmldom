@@ -2,7 +2,6 @@
 
 /**
  * Website: http://sourceforge.net/projects/simplehtmldom/
- * Additional projects: http://sourceforge.net/projects/debugobject/
  * Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
  *
  * Licensed under The MIT License
@@ -170,8 +169,6 @@ class HtmlDocument
 		$defaultSpanText = DEFAULT_SPAN_TEXT,
 		$options = 0)
 	{
-		global $debug_object;
-
 		// prepare
 		$this->prepare($str, $lowercase, $defaultBRText, $defaultSpanText);
 
@@ -364,8 +361,6 @@ class HtmlDocument
 
 	protected function parse_charset()
 	{
-		global $debug_object;
-
 		$charset = null;
 
 		if (function_exists('get_last_retrieve_url_contents_content_type')) {
@@ -373,12 +368,6 @@ class HtmlDocument
 			$success = preg_match('/charset=(.+)/', $contentTypeHeader, $matches);
 			if ($success) {
 				$charset = $matches[1];
-				if (is_object($debug_object)) {
-					$debug_object->debug_log(2,
-						'header content-type found charset of: '
-						. $charset
-					);
-				}
 			}
 		}
 
@@ -388,12 +377,6 @@ class HtmlDocument
 
 			if (!empty($el)) {
 				$fullvalue = $el->content;
-				if (is_object($debug_object)) {
-					$debug_object->debug_log(2,
-						'meta content-type tag found'
-						. $fullvalue
-					);
-				}
 
 				if (!empty($fullvalue)) {
 					$success = preg_match(
@@ -408,12 +391,6 @@ class HtmlDocument
 						// If there is a meta tag, and they don't specify the
 						// character set, research says that it's typically
 						// ISO-8859-1
-						if (is_object($debug_object)) {
-							$debug_object->debug_log(2,
-								'meta content-type tag couldn\'t be parsed. using iso-8859 default.'
-							);
-						}
-
 						$charset = 'ISO-8859-1';
 					}
 				}
@@ -424,9 +401,6 @@ class HtmlDocument
 			// https://www.w3.org/TR/html/document-metadata.html#character-encoding-declaration
 			if ($meta = $this->root->find('meta[charset]', 0)) {
 				$charset = $meta->charset;
-				if (is_object($debug_object)) {
-					$debug_object->debug_log(2, 'meta charset: ' . $charset);
-				}
 			}
 		}
 
@@ -465,9 +439,6 @@ class HtmlDocument
 
 				if ($encoding !== false) {
 					$charset = $encoding;
-					if (is_object($debug_object)) {
-						$debug_object->debug_log(2, 'mb_detect: ' . $charset);
-					}
 				}
 			}
 		}
@@ -475,9 +446,6 @@ class HtmlDocument
 		if (empty($charset)) {
 			// Assume it's UTF-8 as it is the most likely charset to be used
 			$charset = 'UTF-8';
-			if (is_object($debug_object)) {
-				$debug_object->debug_log(2, 'No match found, assume ' . $charset);
-			}
 		}
 
 		// Since CP1252 is a superset, if we get one of it's subsets, we want
@@ -486,15 +454,6 @@ class HtmlDocument
 			|| (strtolower($charset) == 'latin1')
 			|| (strtolower($charset) == 'latin-1')) {
 			$charset = 'CP1252';
-			if (is_object($debug_object)) {
-				$debug_object->debug_log(2,
-					'replacing ' . $charset . ' with CP1252 as its a superset'
-				);
-			}
-		}
-
-		if (is_object($debug_object)) {
-			$debug_object->debug_log(1, 'EXIT - ' . $charset);
 		}
 
 		return $this->_charset = $charset;
@@ -929,9 +888,6 @@ class HtmlDocument
 
 	protected function remove_noise($pattern, $remove_tag = false)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
-
 		$count = preg_match_all(
 			$pattern,
 			$this->doc,
@@ -941,10 +897,6 @@ class HtmlDocument
 
 		for ($i = $count - 1; $i > -1; --$i) {
 			$key = '___noise___' . sprintf('% 5d', count($this->noise) + 1000);
-
-			if (is_object($debug_object)) {
-				$debug_object->debug_log(2, 'key is: ' . $key);
-			}
 
 			$idx = ($remove_tag) ? 0 : 1; // 0 = entire match, 1 = submatch
 			$this->noise[$key] = $matches[$i][$idx][0];
@@ -961,9 +913,6 @@ class HtmlDocument
 
 	function restore_noise($text)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
-
 		while (($pos = strpos($text, '___noise___')) !== false) {
 			// Sometimes there is a broken piece of markup, and we don't GET the
 			// pos+11 etc... token which indicates a problem outside of us...
@@ -978,10 +927,6 @@ class HtmlDocument
 				. $text[$pos + 13]
 				. $text[$pos + 14]
 				. $text[$pos + 15];
-
-				if (is_object($debug_object)) {
-					$debug_object->debug_log(2, 'located key of: ' . $key);
-				}
 
 				if (isset($this->noise[$key])) {
 					$text = substr($text, 0, $pos)
@@ -1009,9 +954,6 @@ class HtmlDocument
 
 	function search_noise($text)
 	{
-		global $debug_object;
-		if (is_object($debug_object)) { $debug_object->debug_log_entry(1); }
-
 		foreach($this->noise as $noiseElement) {
 			if (strpos($noiseElement, $text) !== false) {
 				return $noiseElement;
