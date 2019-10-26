@@ -1086,7 +1086,7 @@ class HtmlNode
 		if (!empty($sourceCharset) && !empty($targetCharset)) {
 			if (strtoupper($sourceCharset) === strtoupper($targetCharset)) {
 				$converted_text = $text;
-			} elseif ((strtoupper($targetCharset) === 'UTF-8') && ($this->is_utf8($text))) {
+			} elseif ((strtoupper($targetCharset) === 'UTF-8') && (self::is_utf8($text))) {
 				$converted_text = $text;
 			} else {
 				$converted_text = iconv($sourceCharset, $targetCharset, $text);
