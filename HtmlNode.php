@@ -441,9 +441,9 @@ class HtmlNode
 
 				switch ($quote_type)
 				{
-					case self::HDOM_QUOTE_DOUBLE: $quote = '"'; break;
 					case self::HDOM_QUOTE_SINGLE: $quote = '\''; break;
 					case self::HDOM_QUOTE_NO: $quote = ''; break;
+					case self::HDOM_QUOTE_DOUBLE:
 					default: $quote = '"';
 				}
 
