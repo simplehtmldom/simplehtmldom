@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests for simple_html_dom
  */
-class simple_html_dom_test extends TestCase {
+class htmldocument_test extends TestCase {
 
 	private $html;
 
