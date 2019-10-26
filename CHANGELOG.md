@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `.travis.yml` for automated unit tests with `Travis-CI`.
 - Added the magic method `__debugInfo` to `HtmlDocument` and `HtmlNode` in order to reduce the memory footprint and to prevent recursion errors when using `print_r` and `var_dump`.
 - Added the magic method `__call` to `HtmlDocument` and `HtmlNode` as a wrapper for deprecated methods using the lowercase calling convention (see below).
+- Added unit tests `attribute_test.php`, `callback_test.php`, `debug_info_test.php`, `doctype_test.php`.
+### Changed
+- Renamed unit test `simple_html_dom_test.php` to `htmldocument_test.php`.
+- Renamed unit test `simple_html_dom_node_test.php` to `htmlnode_test.php`.
 ### Deprecated
 - `HtmlDocument::load_file()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlDocument::loadFile()` instead.
 - `HtmlNode::children()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::childNodes()` instead.
