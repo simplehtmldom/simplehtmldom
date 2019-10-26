@@ -249,16 +249,6 @@ class HtmlDocument
 			}
 		}
 
-		// This add next line is documented in the sourceforge repository.
-		// 2977248 as a fix for ongoing memory leaks that occur even with the
-		// use of clear.
-		if (isset($this->children)) {
-			foreach ($this->children as $n) {
-				$n->clear();
-				$n = null;
-			}
-		}
-
 		if (isset($this->parent)) {
 			$this->parent->clear();
 			unset($this->parent);
