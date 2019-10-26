@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `HtmlNode::last_child()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::lastChild()` instead.
 - `HtmlNode::next_sibling()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::nextSibling()` instead.
 - `HtmlNode::prev_sibling()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::previousSibling()` instead.
+### Fixed
+- Fixed a bug with boolean attributes that were incorrectly represented with a value of "1" when saving the DOM.
 
 ## [2.0-RC1] - 2019-10-20
 

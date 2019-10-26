@@ -313,6 +313,7 @@ class HtmlDocument
 			}
 			if (isset($node->attr) && is_array($node->attr)) {
 				foreach($node->attr as $a => $v) {
+					if ($v === true) continue;
 					$node->attr[$a] = html_entity_decode(
 						$v,
 						ENT_QUOTES | ENT_HTML5,
