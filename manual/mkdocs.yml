@@ -129,6 +129,13 @@ nav:
       - 'api/HtmlNode/setAttribute.md'
       - 'api/HtmlNode/text.md'
       - 'api/HtmlNode/xmltext.md'
+    - Debug:
+      - 'api/Debug/index.md'
+      - 'api/Debug/enable.md'
+      - 'api/Debug/disable.md'
+      - 'api/Debug/log.md'
+      - 'api/Debug/log_once.md'
+      - 'api/Debug/setDebugHandler.md'
 
 plugins:
   - redirects:

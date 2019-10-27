@@ -34,6 +34,7 @@ https://phpunit.de/announcements/phpunit-6.html
 			<directory>HtmlDocument.php</directory>
 			<directory>HtmlNode.php</directory>
 			<directory>HtmlWeb.php</directory>
+			<directory>Debug.php</directory>
 		</whitelist>
 	</filter>
 

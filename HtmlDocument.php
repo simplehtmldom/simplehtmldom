@@ -23,6 +23,7 @@
 
 include_once 'constants.php';
 include_once 'HtmlNode.php';
+include_once 'Debug.php';
 
 class HtmlDocument
 {
@@ -108,6 +109,9 @@ class HtmlDocument
 					E_USER_ERROR
 				);
 		}
+
+		// phpcs:ignore Generic.Files.LineLength
+		Debug::log(__CLASS__ . '->' . $func . '() has been deprecated and will be removed in the next major version of simplehtmldom. Use ' . __CLASS__ . '->' . $actual_function . '() instead.');
 
 		return call_user_func_array(array($this, $actual_function), $args);
 	}
@@ -360,6 +364,9 @@ class HtmlDocument
 			if ($success) {
 				$charset = $matches[1];
 			}
+
+			// phpcs:ignore Generic.Files.LineLength
+			Debug::log('Determining charset using get_last_retrieve_url_contents_content_type() ' . ($success ? 'successful' : 'failed'));
 		}
 
 		if (empty($charset)) {
@@ -435,7 +442,7 @@ class HtmlDocument
 		}
 
 		if (empty($charset)) {
-			// Assume it's UTF-8 as it is the most likely charset to be used
+			Debug::log('Unable to determine charset from source document. Assuming UTF-8');
 			$charset = 'UTF-8';
 		}
 
@@ -481,6 +488,8 @@ class HtmlDocument
 
 			// Skip attributes and whitespace in end tags
 			if ($trim && ($pos = strpos($tag, ' ')) !== false) {
+				// phpcs:ignore Generic.Files.LineLength
+				Debug::log_once('Source document contains superfluous whitespace in end tags (</html   >).');
 				$tag = substr($tag, 0, $pos);
 			}
 
@@ -576,6 +585,7 @@ class HtmlDocument
 
 					// Look ahead in the document, maybe we are at the end
 					if (($this->pos + 3) > $this->size) { // End of document
+						Debug::log('Source document ended unexpectedly!');
 						break;
 					} elseif (substr($this->doc, $this->pos, 3) === '-->') { // end
 						$data .= $this->copy_until_char('>');
@@ -613,6 +623,7 @@ class HtmlDocument
 
 					// Look ahead in the document, maybe we are at the end
 					if (($this->pos + 3) > $this->size) { // End of document
+						Debug::log('Source document ended unexpectedly!');
 						break;
 					} elseif (substr($this->doc, $this->pos, 3) === ']]>') { // end
 						$data .= $this->copy_until_char('>');
@@ -628,6 +639,7 @@ class HtmlDocument
 				// CDATA starts after "![CDATA[" and ends before "]]" (10 chars total)
 				$node->_[HtmlNode::HDOM_INFO_INNER] = substr($tag, 8, strlen($tag) - 10);
 			} else { // Unknown
+				Debug::log('Source document contains unknown declaration: <' . $tag);
 				$node->nodetype = HtmlNode::HDOM_TYPE_UNKNOWN;
 				$node->tag = 'unknown';
 			}
@@ -652,6 +664,7 @@ class HtmlDocument
 			}
 
 			$this->link_nodes($node, false);
+			Debug::log('Source document contains invalid tag name: ' . $node->_[HtmlNode::HDOM_INFO_TEXT]);
 			return true;
 		}
 
@@ -689,6 +702,7 @@ class HtmlDocument
 			$guard = $this->pos;
 
 			if ($this->pos >= $this->size - 1 && $this->char !== '>') { // End Of File
+				Debug::log('Source document ended unexpectedly!');
 				$node->nodetype = HtmlNode::HDOM_TYPE_TEXT;
 				$node->_[HtmlNode::HDOM_INFO_END] = 0;
 				$node->_[HtmlNode::HDOM_INFO_TEXT] = '<' . $tag . $space[0] . $name;
@@ -723,6 +737,8 @@ class HtmlDocument
 
 			// Space before attribute and around equal sign
 			if (!$trim && $space !== array(' ', '', '')) {
+				// phpcs:ignore Generic.Files.LineLength
+				Debug::log_once('Source document contains superfluous whitespace in attributes (<e    attribute  =  "value">). Enable trimming or fix attribute spacing for best performance.');
 				$node->_[HtmlNode::HDOM_INFO_SPACE][$name] = $space;
 			}
 
@@ -738,6 +754,8 @@ class HtmlDocument
 
 		// Space after last attribute before closing the tag
 		if (!$trim && $space[0] !== '') {
+			// phpcs:ignore Generic.Files.LineLength
+			Debug::log_once('Source document contains superfluous whitespace before the closing braket (<e attribute="value"     >). Enable trimming or remove spaces before closing brackets for best performance.');
 			$node->_[HtmlNode::HDOM_INFO_ENDSPACE] = $space[0];
 		}
 
@@ -785,12 +803,16 @@ class HtmlDocument
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				break;
 			case '\'':
+				// phpcs:ignore Generic.Files.LineLength
+				Debug::log_once('Source document contains attribute values with single quotes (<e attribute=\'value\'>). Use double quotes for best performance.');
 				$quote_type = HtmlNode::HDOM_QUOTE_SINGLE;
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				$value = $this->copy_until_char('\'');
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 				break;
 			default:
+				// phpcs:ignore Generic.Files.LineLength
+				Debug::log_once('Source document contains attribute values without quotes (<e attribute=value>). Use double quotes for best performance');
 				$quote_type = HtmlNode::HDOM_QUOTE_NO;
 				$value = $this->copy_until($this->token_attr);
 		}
@@ -926,7 +948,9 @@ class HtmlDocument
 
 					unset($this->noise[$key]);
 				} else {
+					Debug::log_once('Noise restoration failed. DOM has been corrupted!');
 					// do this to prevent an infinite loop.
+					// FIXME: THis causes an infinite loop because the keyword ___NOISE___ is included in the key!
 					$text = substr($text, 0, $pos)
 					. 'UNDEFINED NOISE FOR KEY: '
 					. $key
@@ -935,6 +959,7 @@ class HtmlDocument
 			} else {
 				// There is no valid key being given back to us... We must get
 				// rid of the ___noise___ or we will have a problem.
+				Debug::log_once('Noise restoration failed. The provided key is incomplete: ' . $text);
 				$text = substr($text, 0, $pos)
 				. 'NO NUMERIC NOISE KEY'
 				. substr($text, $pos + 11);

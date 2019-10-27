@@ -22,6 +22,7 @@
  */
 
 include_once 'constants.php';
+include_once 'Debug.php';
 
 class HtmlNode
 {
@@ -77,6 +78,9 @@ class HtmlNode
 					E_USER_ERROR
 				);
 		}
+
+		// phpcs:ignore Generic.Files.LineLength
+		Debug::log(__CLASS__ . '->' . $func . '() has been deprecated and will be removed in the next major version of simplehtmldom. Use ' . __CLASS__ . '->' . $actual_function . '() instead.');
 
 		return call_user_func_array(array($this, $actual_function), $args);
 	}
@@ -475,8 +479,15 @@ class HtmlNode
 			// The change on the below line was documented on the sourceforge
 			// code tracker id 2788009
 			// used to be: if (($levle=count($selectors[0]))===0) return array();
-			if (($levle = count($selectors[$c])) === 0) { return array(); }
-			if (!isset($this->_[self::HDOM_INFO_BEGIN])) { return array(); }
+			if (($levle = count($selectors[$c])) === 0) {
+				Debug::log_once('Empty selector (' . $selector . ') matches nothing.');
+				return array();
+			}
+
+			if (!isset($this->_[self::HDOM_INFO_BEGIN])) {
+				Debug::log_once('Invalid operation. The current node has no start tag.');
+				return array();
+			}
 
 			$head = array($this->_[self::HDOM_INFO_BEGIN] => 1);
 			$cmd = ' '; // Combinator
@@ -810,6 +821,8 @@ class HtmlNode
 				 */
 				return in_array($pattern, explode(' ', trim($value)), true);
 		}
+
+		Debug::log('Unhandled attribute selector: ' . $exp . '!');
 		return false;
 	}
 
@@ -1013,6 +1026,7 @@ class HtmlNode
 			if (strtoupper($sourceCharset) === strtoupper($targetCharset)) {
 				$converted_text = $text;
 			} elseif ((strtoupper($targetCharset) === 'UTF-8') && (self::is_utf8($text))) {
+				Debug::log_once('The source charset was incorrectly detected as ' . $sourceCharset . ' but should have been UTF-8');
 				$converted_text = $text;
 			} else {
 				$converted_text = iconv($sourceCharset, $targetCharset, $text);
