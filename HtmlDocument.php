@@ -597,6 +597,7 @@ class HtmlDocument
 				}
 
 				$tag .= $data;
+				$tag = $this->restore_noise($tag);
 
 				// Comment starts after "!--" and ends before "--" (5 chars total)
 				$node->_[HtmlNode::HDOM_INFO_INNER] = substr($tag, 3, strlen($tag) - 5);
@@ -635,6 +636,7 @@ class HtmlDocument
 				}
 
 				$tag .= $data;
+				$tag = $this->restore_noise($tag);
 
 				// CDATA starts after "![CDATA[" and ends before "]]" (10 chars total)
 				$node->_[HtmlNode::HDOM_INFO_INNER] = substr($tag, 8, strlen($tag) - 10);
