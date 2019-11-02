@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `HtmlNode::last_child()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::lastChild()` instead.
 - `HtmlNode::next_sibling()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::nextSibling()` instead.
 - `HtmlNode::prev_sibling()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::previousSibling()` instead.
+### Removed
+- Removed the `testcase/` folder as all tests are covered by unit tests inside `tests/`.
 ### Fixed
 - Fixed a bug with boolean attributes that were incorrectly represented with a value of "1" when saving the DOM.
 - Fixed a bug with comment and CDATA parsing that could cause an infinite loop if any of these elements contained `script`, `style`, `code`, server-side php or Smarty tags.
