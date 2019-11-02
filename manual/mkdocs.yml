@@ -44,7 +44,6 @@ nav:
       - 'api/HtmlDocument/save.md'
       - 'api/HtmlDocument/expect.md'
       - 'api/HtmlDocument/find.md'
-      - 'api/HtmlDocument/clear.md'
       - 'api/HtmlDocument/decode.md'
       - 'api/HtmlDocument/dump.md'
       - 'api/HtmlDocument/prepare.md'
@@ -141,6 +140,7 @@ plugins:
   - redirects:
       redirect_maps:
         'api/HtmlDocument/load_file.md': 'api/HtmlDocument/loadFile.md'
+        'api/HtmlDocument/clear.md': 'api/HtmlDocument/__destruct.md'
         'api/HtmlNode/children.md': 'api/HtmlNode/childNodes.md'
         'api/HtmlNode/first_child.md': 'api/HtmlNode/firstChild.md'
         'api/HtmlNode/has_child.md': 'api/HtmlNode/hasChildNodes.md'

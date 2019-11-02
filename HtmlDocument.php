@@ -103,6 +103,7 @@ class HtmlDocument
 		{
 			case 'load_file':
 				$actual_function = 'loadFile'; break;
+			case 'clear': return; /* no-op */
 			default:
 				trigger_error(
 					'Call to undefined method ' . __CLASS__ . '::' . $func . '()',
@@ -162,7 +163,11 @@ class HtmlDocument
 
 	function __destruct()
 	{
-		$this->clear();
+		if (isset($this->nodes)) {
+			foreach ($this->nodes as $n) {
+				$n->clear();
+			}
+		}
 	}
 
 	function load(
@@ -242,29 +247,6 @@ class HtmlDocument
 	function expect($selector, $idx = null, $lowercase = false)
 	{
 		return $this->root->expect($selector, $idx, $lowercase);
-	}
-
-	function clear()
-	{
-		if (isset($this->nodes)) {
-			foreach ($this->nodes as $n) {
-				$n->clear();
-				$n = null;
-			}
-		}
-
-		if (isset($this->parent)) {
-			$this->parent->clear();
-			unset($this->parent);
-		}
-
-		if (isset($this->root)) {
-			$this->root->clear();
-			unset($this->root);
-		}
-
-		unset($this->doc);
-		unset($this->noise);
 	}
 
 	/** @codeCoverageIgnore */

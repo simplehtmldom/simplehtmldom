@@ -124,11 +124,6 @@ class HtmlNode
 		);
 	}
 
-	function __destruct()
-	{
-		$this->clear();
-	}
-
 	function __toString()
 	{
 		return $this->outertext();
@@ -136,10 +131,8 @@ class HtmlNode
 
 	function clear()
 	{
-		$this->dom = null;
-		$this->nodes = null;
-		$this->parent = null;
-		$this->children = null;
+		unset($this->dom); // Break link to origin
+		unset($this->parent); // Break link to branch
 	}
 
 	/** @codeCoverageIgnore */

@@ -15,7 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Renamed unit test `simple_html_dom_test.php` to `htmldocument_test.php`.
 - Renamed unit test `simple_html_dom_node_test.php` to `htmlnode_test.php`.
+- Changed the implementation of destructors for better garbage collection.
 ### Deprecated
+- `HtmlDocument::clear()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `unset()` instead.
 - `HtmlDocument::load_file()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlDocument::loadFile()` instead.
 - `HtmlNode::children()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::childNodes()` instead.
 - `HtmlNode::first_child()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::firstChild()` instead.
