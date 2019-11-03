@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added and extended unit tests for `cdata_test.php` and `comment_test.php`.
 - Added a new `Debug` class to inform users about deprecated functions, malformed documents and parsing issues.
 - Added full support for `script` element parsing.
-### Change
+### Changed
 - Renamed unit test `simple_html_dom_test.php` to `htmldocument_test.php`.
 - Renamed unit test `simple_html_dom_node_test.php` to `htmlnode_test.php`.
 - Changed the implementation of destructors for better garbage collection.
