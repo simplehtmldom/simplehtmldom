@@ -196,7 +196,7 @@ class HtmlDocument
 			$this->doc = preg_replace('/([\t\s]*[\r\n]^[\t\s]*)/m', ' ', $this->doc);
 
 			// Restore temporarily removed elements and calculate new size
-			//$this->doc = $this->restore_noise($this->doc);
+			$this->doc = $this->restore_noise($this->doc);
 			$this->size = strlen($this->doc);
 		}
 
@@ -765,6 +765,36 @@ class HtmlDocument
 
 		if ($node->tag === 'br') {
 			$node->_[HtmlNode::HDOM_INFO_INNER] = $this->default_br_text;
+		} elseif ($node->tag === 'script') {
+			$data = '';
+
+			// There is a rare chance of empty script: "<script></script>"
+			// In which case the current char is the start of the end tag
+			// But the script could also just contain tags: "<script><div></script>"
+			while(true) {
+				// Copy until first char of end tag
+				$data .= $this->copy_until_char('<');
+
+				// Look ahead in the document, maybe we are at the end
+				if (($this->pos + 9) > $this->size) { // End of document
+					Debug::log('Source document ended unexpectedly!');
+					break;
+				} elseif (substr($this->doc, $this->pos, 8) === '</script') { // end
+					$this->skip('>'); // don't include the end tag
+					break;
+				}
+
+				// Note: A script tag may contain any other tag except </script>
+				// which needs to be escaped as <\/script>
+
+				$data .= $this->char;
+				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+			}
+
+			$node = new HtmlNode($this);
+			++$this->cursor;
+			$node->_[HtmlNode::HDOM_INFO_TEXT] = $data;
+			$this->link_nodes($node, false);
 		}
 
 		return true;
