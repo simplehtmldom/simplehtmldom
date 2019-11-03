@@ -702,7 +702,7 @@ class HtmlDocument
 			}
 
 			// [1] Whitespace after attribute name
-			$space[1] = $this->copy_skip($this->token_blank);
+			$space[1] = (strpos($this->token_blank, $this->char) === false) ? '' : $this->copy_skip($this->token_blank);
 
 			$name = $this->restore_noise($name); // might be a noisy name
 
@@ -730,7 +730,7 @@ class HtmlDocument
 
 			// prepare for next attribute
 			$space = array(
-				$this->copy_skip($this->token_blank),
+				((strpos($this->token_blank, $this->char) === false) ? '' : $this->copy_skip($this->token_blank)),
 				'',
 				''
 			);
@@ -779,7 +779,7 @@ class HtmlDocument
 		$is_duplicate = isset($node->attr[$name]);
 
 		if (!$is_duplicate) // Copy whitespace between "=" and value
-			$space[2] = $this->copy_skip($this->token_blank);
+			$space[2] = (strpos($this->token_blank, $this->char) === false) ? '' : $this->copy_skip($this->token_blank);
 
 		switch ($this->char) {
 			case '"':
@@ -851,9 +851,9 @@ class HtmlDocument
 	{
 		$pos = $this->pos;
 		$len = strspn($this->doc, $chars, $pos);
+		if ($len === 0) { return ''; }
 		$this->pos += $len;
 		$this->char = ($this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-		if ($len === 0) { return ''; }
 		return substr($this->doc, $pos, $len);
 	}
 
