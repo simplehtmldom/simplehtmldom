@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - Added a `README` file.
-- Added `platform` and `dev` requirements to composer.
+- Added a `composer` file.
 - Added `.travis.yml` for automated unit tests with `Travis-CI`.
 - Added the magic method `__debugInfo` to `HtmlDocument` and `HtmlNode` in order to reduce the memory footprint and to prevent recursion errors when using `print_r` and `var_dump`.
 - Added the magic method `__call` to `HtmlDocument` and `HtmlNode` as a wrapper for deprecated methods using the lowercase calling convention (see below).
