@@ -438,10 +438,17 @@ class HtmlNode
 
 				switch ($quote_type)
 				{
-					case self::HDOM_QUOTE_SINGLE: $quote = '\''; break;
-					case self::HDOM_QUOTE_NO: $quote = ''; break;
+					case self::HDOM_QUOTE_SINGLE:
+						$quote = '\'';
+						$val = htmlentities($val, ENT_QUOTES, $this->dom->charset);
+						break;
+					case self::HDOM_QUOTE_NO:
+						$quote = '';
+						break;
 					case self::HDOM_QUOTE_DOUBLE:
-					default: $quote = '"';
+					default:
+						$quote = '"';
+						$val = htmlentities($val, ENT_COMPAT, $this->dom->charset);
 				}
 
 				$ret .= $key
