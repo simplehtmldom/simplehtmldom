@@ -314,20 +314,22 @@ class HtmlDocument
 	{
 		while (true) {
 
-			$content = $this->copy_until_char('<');
+			if ($this->char !== '<') {
+				$content = $this->copy_until_char('<');
 
-			if ($content !== '') {
+				if ($content !== '') {
 
-				// Skip whitespace between tags? (</a> <b>)
-				if ($trim && trim($content) === '') {
-					continue;
+					// Skip whitespace between tags? (</a> <b>)
+					if ($trim && trim($content) === '') {
+						continue;
+					}
+
+					$node = new HtmlNode($this);
+					++$this->cursor;
+					$node->_[HtmlNode::HDOM_INFO_TEXT] = $content;
+					$this->link_nodes($node, false);
+
 				}
-
-				$node = new HtmlNode($this);
-				++$this->cursor;
-				$node->_[HtmlNode::HDOM_INFO_TEXT] = $content;
-				$this->link_nodes($node, false);
-
 			}
 
 			if($this->read_tag($trim) === false) {
@@ -743,7 +745,7 @@ class HtmlDocument
 			$node->_[HtmlNode::HDOM_INFO_ENDSPACE] = $space[0];
 		}
 
-		$rest = $this->copy_until_char('>');
+		$rest = ($this->char === '>') ? '' : $this->copy_until_char('>');
 		$rest = ($trim) ? trim($rest) : $rest; // <html   /   >
 
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
