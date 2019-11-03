@@ -37,7 +37,7 @@ class cdata_test extends TestCase {
 				'',
 				'<![CDATA[]]>',
 			),
-			'whitespace' => array(
+			'space' => array(
 				' ',
 				'<![CDATA[ ]]>',
 			),
@@ -53,6 +53,17 @@ class cdata_test extends TestCase {
 				'<!-- Hello, World! -->',
 				'<![CDATA[<!-- Hello, World! -->]]>'
 			),
+			'newline' => array(
+				"Hello\nWorld!",
+				"<![CDATA[Hello\nWorld!]]>"
+			),
 		);
+	}
+
+	public function test_html_inside_cdata_should_not_appear_in_the_dom()
+	{
+		$this->html->load('<![CDATA[<div>Hello, World!</div>]]>');
+		$this->assertNotNull($this->html->find('cdata', 0));
+		$this->assertNull($this->html->find('div', 0));
 	}
 }

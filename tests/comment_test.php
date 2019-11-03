@@ -37,7 +37,7 @@ class comment_test extends TestCase {
 				'',
 				'<!---->',
 			),
-			'whitespace' => array(
+			'space' => array(
 				' ',
 				'<!-- -->',
 			),
@@ -53,6 +53,17 @@ class comment_test extends TestCase {
 				'<![CDATA[Hello, World!]]>',
 				'<!--<![CDATA[Hello, World!]]>-->'
 			),
+			'newline' => array(
+				"Hello\nWorld!",
+				"<!--Hello\nWorld!-->"
+			),
 		);
+	}
+
+	public function test_html_inside_comment_should_not_appear_in_the_dom()
+	{
+		$this->html->load('<!-- <div>Hello, World!</div> -->');
+		$this->assertNotNull($this->html->find('comment', 0));
+		$this->assertNull($this->html->find('div', 0));
 	}
 }

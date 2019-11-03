@@ -181,30 +181,26 @@ class HtmlDocument
 		// prepare
 		$this->prepare($str, $lowercase, $defaultBRText, $defaultSpanText);
 
-		// Per sourceforge http://sourceforge.net/tracker/?func=detail&aid=2949097&group_id=218559&atid=1044037
-		// Script tags removal now preceeds style tag removal.
-		// strip out <script> tags
-		$this->remove_noise("'<\s*script[^>]*[^/]>(.*?)<\s*/\s*script\s*>'is");
-		$this->remove_noise("'<\s*script\s*>(.*?)<\s*/\s*script\s*>'is");
-
 		if ($stripRN) {
+			// Temporarily remove any element that shouldn't loose whitespace
+			$this->remove_noise("'<\s*script[^>]*>(.*?)<\s*/\s*script\s*>'is");
+			$this->remove_noise("'<!\[CDATA\[(.*?)\]\]>'is");
+			$this->remove_noise("'<!--(.*?)-->'is");
+			$this->remove_noise("'<\s*style[^>]*>(.*?)<\s*/\s*style\s*>'is");
+			$this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
+
 			// Remove whitespace and newlines between tags
 			$this->doc = preg_replace('/\>([\t\s]*[\r\n]^[\t\s]*)\</m', '><', $this->doc);
 
 			// Remove whitespace and newlines in text
 			$this->doc = preg_replace('/([\t\s]*[\r\n]^[\t\s]*)/m', ' ', $this->doc);
 
-			// set the length of content since we have changed it.
+			// Restore temporarily removed elements and calculate new size
+			//$this->doc = $this->restore_noise($this->doc);
 			$this->size = strlen($this->doc);
 		}
 
-		// strip out <style> tags
-		$this->remove_noise("'<\s*style[^>]*[^/]>(.*?)<\s*/\s*style\s*>'is");
-		$this->remove_noise("'<\s*style\s*>(.*?)<\s*/\s*style\s*>'is");
-		// strip out preformatted tags
-		$this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
-		// strip out server side scripts
-		$this->remove_noise("'(<\?)(.*?)(\?>)'s", true);
+		$this->remove_noise("'(<\?)(.*?)(\?>)'s", true); // server-side script
 
 		if($options & HDOM_SMARTY_AS_TEXT) { // Strip Smarty scripts
 			$this->remove_noise("'(\{\w)(.*?)(\})'s", true);
@@ -912,7 +908,9 @@ class HtmlDocument
 
 	function restore_noise($text)
 	{
-		while (($pos = strpos($text, '___noise___')) !== false) {
+		if (empty($this->noise)) return $text; // nothing to restore
+		$pos = 0;
+		while (($pos = strpos($text, '___noise___', $pos)) !== false) {
 			// Sometimes there is a broken piece of markup, and we don't GET the
 			// pos+11 etc... token which indicates a problem outside of us...
 

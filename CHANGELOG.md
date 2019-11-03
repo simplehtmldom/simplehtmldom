@@ -10,12 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `.travis.yml` for automated unit tests with `Travis-CI`.
 - Added the magic method `__debugInfo` to `HtmlDocument` and `HtmlNode` in order to reduce the memory footprint and to prevent recursion errors when using `print_r` and `var_dump`.
 - Added the magic method `__call` to `HtmlDocument` and `HtmlNode` as a wrapper for deprecated methods using the lowercase calling convention (see below).
-- Added unit tests `attribute_test.php`, `callback_test.php`, `debug_info_test.php`, `doctype_test.php`.
+- Added unit tests `attribute_test.php`, `callback_test.php`, `debug_info_test.php`, `doctype_test.php`, `script_test.php`, `server_side_script_test.php` and `style_test.php`.
+- Added and extended unit tests for `cdata_test.php` and `comment_test.php`.
 - Added a new `Debug` class to inform users about deprecated functions, malformed documents and parsing issues.
-### Changed
+### Change
 - Renamed unit test `simple_html_dom_test.php` to `htmldocument_test.php`.
 - Renamed unit test `simple_html_dom_node_test.php` to `htmlnode_test.php`.
 - Changed the implementation of destructors for better garbage collection.
+- Changed how literal elements (`script`, `style`, `cdata`, "comment" and `code`) are handled by `HtmlDocument`.
 ### Deprecated
 - `HtmlDocument::clear()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `unset()` instead.
 - `HtmlDocument::load_file()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlDocument::loadFile()` instead.
@@ -30,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Fixed a bug with boolean attributes that were incorrectly represented with a value of "1" when saving the DOM.
 - Fixed a bug with comment and CDATA parsing that could cause an infinite loop if any of these elements contained `script`, `style`, `code`, server-side php or Smarty tags.
+- Fixed a bug with comment and CDATA parsing that resulted in whitespace and newlines being removed when loading a document with `$stripRN = true` (default setting).
 
 ## [2.0-RC1] - 2019-10-20
 
