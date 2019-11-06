@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed a bug with comment and CDATA parsing that could cause an infinite loop if any of these elements contained `script`, `style`, `code`, server-side php or Smarty tags.
 - Fixed a bug with comment and CDATA parsing that resulted in whitespace and newlines being removed when loading a document with `$stripRN = true` (default setting).
 - Fixed a bug with attribute values that resulted in incorrectly encoded content when using `outertext()`, `innertext()` or `save()`.
+- Fixed a bug with charset encoding that resulted in partially encoded documents depending on the use of `outertext()` and `innertext()` [#178](https://sourceforge.net/p/simplehtmldom/bugs/178/)
 
 ## [2.0-RC1] - 2019-10-20
 

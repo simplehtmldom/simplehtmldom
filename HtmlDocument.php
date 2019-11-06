@@ -365,11 +365,6 @@ class HtmlDocument
 
 					if ($success) {
 						$charset = $matches[1];
-					} else {
-						// If there is a meta tag, and they don't specify the
-						// character set, research says that it's typically
-						// ISO-8859-1
-						$charset = 'ISO-8859-1';
 					}
 				}
 			}

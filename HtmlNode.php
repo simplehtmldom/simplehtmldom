@@ -253,7 +253,7 @@ class HtmlNode
 			$ret .= $n->outertext();
 		}
 
-		return $ret;
+		return $this->convert_text($ret);
 	}
 
 	function outertext()
@@ -268,11 +268,11 @@ class HtmlNode
 		}
 
 		if (isset($this->_[self::HDOM_INFO_OUTER])) {
-			return $this->_[self::HDOM_INFO_OUTER];
+			return $this->convert_text($this->_[self::HDOM_INFO_OUTER]);
 		}
 
 		if (isset($this->_[self::HDOM_INFO_TEXT])) {
-			return $this->_[self::HDOM_INFO_TEXT];
+			return $this->convert_text($this->_[self::HDOM_INFO_TEXT]);
 		}
 
 		$ret = '';
@@ -290,7 +290,7 @@ class HtmlNode
 
 		if ($this->nodes) {
 			foreach ($this->nodes as $n) {
-				$ret .= $this->convert_text($n->outertext());
+				$ret .= $n->outertext();
 			}
 		}
 
@@ -298,7 +298,7 @@ class HtmlNode
 			$ret .= '</' . $this->tag . '>';
 		}
 
-		return $ret;
+		return $this->convert_text($ret);
 	}
 
 	/**
@@ -440,7 +440,7 @@ class HtmlNode
 				{
 					case self::HDOM_QUOTE_SINGLE:
 						$quote = '\'';
-						$val = htmlentities($val, ENT_QUOTES, $this->dom->charset);
+						$val = htmlentities($val, ENT_QUOTES, $this->dom->target_charset);
 						break;
 					case self::HDOM_QUOTE_NO:
 						$quote = '';
@@ -448,7 +448,7 @@ class HtmlNode
 					case self::HDOM_QUOTE_DOUBLE:
 					default:
 						$quote = '"';
-						$val = htmlentities($val, ENT_COMPAT, $this->dom->charset);
+						$val = htmlentities($val, ENT_COMPAT, $this->dom->target_charset);
 				}
 
 				$ret .= $key

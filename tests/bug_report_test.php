@@ -429,4 +429,48 @@ HTML;
 		$this->assertEquals($expected, $this->html->save());
 	}
 
+	/**
+	 * Bug #178 (Charset not handled properly)
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/178/ Bug #178
+	 */
+	public function test_bug_178()
+	{
+		/**
+		 * Note: The testdata must be encoded in order to work for machines with
+		 * different codepages!
+		 */
+
+		$expected = chr(hexdec('c4')); // "č"
+
+		/**
+		 * <!DOCTYPE html>
+		 * <html lang="windows-1250">
+		 * <head>
+		 *     <meta http-equiv="Content-Type" content="text/html; charset=windows-1250">
+		 * </head>
+		 * <body>
+		 *     a><span>K�</span></a>
+		 *     <b>K�</b>
+		 * </body>
+		 * </html>
+		 */
+		// phpcs:ignore Generic.Files.LineLength
+		$data = base64_decode('PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9IndpbmRvd3MtMTI1MCI+CjxoZWFkPgogICAgPG1ldGEgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBlIiBjb250ZW50PSJ0ZXh0L2h0bWw7IGNoYXJzZXQ9d2luZG93cy0xMjUwIj4KPC9oZWFkPgo8Ym9keT4KICAgIDxhPjxzcGFuPkvoPC9zcGFuPjwvYT4KICAgIDxiPkvoPC9iPgo8L2JvZHk+CjwvaHRtbD4=');
+
+		$this->html = str_get_html($data);
+
+		$this->assertEquals(
+			$expected,
+			$this->html->find('a', 0)->innertext[7],
+			'outertext() should convert text inside elements'
+		); // note: innertext() calls outertext() internally
+
+		$this->assertEquals(
+			$expected,
+			$this->html->find('b', 0)->innertext[1],
+			'innertext() should convert text inside elements'
+		);
+	}
+
 }
