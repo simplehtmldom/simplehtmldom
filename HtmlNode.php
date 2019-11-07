@@ -985,15 +985,17 @@ class HtmlNode
 	function __set($name, $value)
 	{
 		switch ($name) {
-			case 'outertext': return $this->_[self::HDOM_INFO_OUTER] = $value;
+			case 'outertext':
+				$this->_[self::HDOM_INFO_OUTER] = $value;
+				break;
 			case 'innertext':
 				if (isset($this->_[self::HDOM_INFO_TEXT])) {
 					$this->_[self::HDOM_INFO_TEXT] = '';
 				}
-				return $this->_[self::HDOM_INFO_INNER] = $value;
+				$this->_[self::HDOM_INFO_INNER] = $value;
+				break;
+			default: $this->attr[$name] = $value;
 		}
-
-		$this->attr[$name] = $value;
 	}
 
 	function __isset($name)
