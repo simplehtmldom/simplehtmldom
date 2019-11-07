@@ -1001,8 +1001,8 @@ class HtmlNode
 			case 'innertext': return true;
 			case 'plaintext': return true;
 		}
-		//no value attr: nowrap, checked selected...
-		return (array_key_exists($name, $this->attr)) ? true : isset($this->attr[$name]);
+
+		return isset($this->attr[$name]);
 	}
 
 	function __unset($name)
