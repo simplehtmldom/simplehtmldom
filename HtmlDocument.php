@@ -201,9 +201,15 @@ class HtmlDocument
 		}
 
 		$this->remove_noise("'(<\?)(.*?)(\?>)'s", true); // server-side script
+		if (count($this->noise)) {
+			// phpcs:ignore Generic.Files.LineLength
+			Debug::log('Support for server-side scripts has been deprecated and will be removed in the next major version of simplehtmldom.');
+		}
 
 		if($options & HDOM_SMARTY_AS_TEXT) { // Strip Smarty scripts
 			$this->remove_noise("'(\{\w)(.*?)(\})'s", true);
+			// phpcs:ignore Generic.Files.LineLength
+			Debug::log('Support for Smarty scripts has been deprecated and will be removed in the next major version of simplehtmldom.');
 		}
 
 		// parsing

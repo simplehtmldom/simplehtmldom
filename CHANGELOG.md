@@ -28,6 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `HtmlNode::last_child()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::lastChild()` instead.
 - `HtmlNode::next_sibling()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::nextSibling()` instead.
 - `HtmlNode::prev_sibling()` has been deprecated and will be removed in the next major version of simplehtmldom. Use `HtmlNode::previousSibling()` instead.
+- Support for Smarty scripts has been deprecated and will be removed in the next major version of simplehtmldom.
+- Support for server-side scripts has been deprecated and will be removed in the next major version of simplehtmldom.
 ### Removed
 - Removed the `testcase/` folder as all tests are covered by unit tests inside `tests/`.
 ### Fixed
