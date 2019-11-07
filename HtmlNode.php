@@ -971,13 +971,15 @@ class HtmlNode
 		if (isset($this->attr[$name])) {
 			return $this->convert_text($this->attr[$name]);
 		}
+
 		switch ($name) {
 			case 'outertext': return $this->outertext();
 			case 'innertext': return $this->innertext();
 			case 'plaintext': return $this->text();
 			case 'xmltext': return $this->xmltext();
-			default: return array_key_exists($name, $this->attr);
 		}
+
+		return false;
 	}
 
 	function __set($name, $value)
