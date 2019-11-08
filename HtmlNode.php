@@ -277,7 +277,7 @@ class HtmlNode
 
 		$ret = '';
 
-		if ($this->dom && $this->dom->nodes[$this->_[self::HDOM_INFO_BEGIN]]) {
+		if ($this->dom && isset($this->_[self::HDOM_INFO_BEGIN]) && $this->dom->nodes[$this->_[self::HDOM_INFO_BEGIN]]) {
 			$ret = $this->dom->nodes[$this->_[self::HDOM_INFO_BEGIN]]->makeup();
 		}
 
