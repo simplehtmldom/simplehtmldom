@@ -87,6 +87,8 @@ class HtmlNode
 
 	function __construct($dom)
 	{
+		if ($dom === null) return $this;
+
 		$this->dom = $dom;
 		$dom->nodes[] = $this;
 	}
@@ -226,6 +228,8 @@ class HtmlNode
 
 	function find_ancestor_tag($tag)
 	{
+		if ($this->parent === null) return null;
+
 		$ancestor = $this->parent;
 
 		while (!is_null($ancestor)) {
@@ -277,8 +281,8 @@ class HtmlNode
 
 		$ret = '';
 
-		if ($this->dom && isset($this->_[self::HDOM_INFO_BEGIN]) && $this->dom->nodes[$this->_[self::HDOM_INFO_BEGIN]]) {
-			$ret = $this->dom->nodes[$this->_[self::HDOM_INFO_BEGIN]]->makeup();
+		if (isset($this->_[self::HDOM_INFO_BEGIN])) {
+			$ret = $this->makeup();
 		}
 
 		if (isset($this->_[self::HDOM_INFO_INNER])) {
@@ -541,9 +545,9 @@ class HtmlNode
 			// Find parent closing tag if the current element doesn't have a closing
 			// tag (i.e. void element)
 			$end = (!empty($this->_[self::HDOM_INFO_END])) ? $this->_[self::HDOM_INFO_END] : 0;
-			if ($end == 0) {
+			if ($end == 0 && $this->parent) {
 				$parent = $this->parent;
-				while (!isset($parent->_[self::HDOM_INFO_END]) && $parent !== null) {
+				while ($parent !== null && !isset($parent->_[self::HDOM_INFO_END])) {
 					$end -= 1;
 					$parent = $parent->parent;
 				}
@@ -1407,8 +1411,10 @@ class HtmlNode
 
 	function appendChild($node)
 	{
-		$node->parent($this);
-		return $node;
+		$node->parent = $this;
+		$this->nodes[] = $node;
+		$this->children[] = $node;
+		return $this;
 	}
 
 }

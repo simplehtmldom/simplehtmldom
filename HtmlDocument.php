@@ -140,6 +140,8 @@ class HtmlDocument
 					$options
 				);
 			}
+		} else {
+			$this->prepare($str, $lowercase, $defaultBRText, $defaultSpanText);
 		}
 		// Forcing tags to be closed implies that we don't trust the html, but
 		// it can lead to parsing errors if we SHOULD trust the html.
@@ -1030,12 +1032,30 @@ class HtmlDocument
 
 	function createElement($name, $value = null)
 	{
-		return @str_get_html("<$name>$value</$name>")->firstChild();
+		$node = new HtmlNode(null);
+		$node->nodetype = HtmlNode::HDOM_TYPE_ELEMENT;
+		$node->_[HtmlNode::HDOM_INFO_BEGIN] = 1;
+		$node->_[HtmlNode::HDOM_INFO_END] = 1;
+
+		if ($value !== null) {
+			$node->_[HtmlNode::HDOM_INFO_INNER] = $value;
+		}
+
+		$node->tag = $name;
+
+		return $node;
 	}
 
 	function createTextNode($value)
 	{
-		return @end(str_get_html($value)->nodes);
+		$node = new HtmlNode($this);
+		$node->nodetype = HtmlNode::HDOM_TYPE_TEXT;
+
+		if ($value !== null) {
+			$node->_[HtmlNode::HDOM_INFO_TEXT] = $value;
+		}
+
+		return $node;
 	}
 
 	function getElementById($id)

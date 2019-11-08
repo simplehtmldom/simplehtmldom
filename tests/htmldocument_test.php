@@ -157,4 +157,93 @@ class htmldocument_test extends TestCase {
 		$this->assertNotNull($this->html->lastChild());
 	}
 
+	public function test_createElement_should_return_an_element()
+	{
+		$this->assertEquals(
+			'<html></html>',
+			$this->html->createElement('html')->save()
+		);
+	}
+
+	public function test_createElement_should_create_element_with_content()
+	{
+		$this->assertEquals(
+			'<html>Hello, World!</html>',
+			$this->html->createElement('html', 'Hello, World!')->save()
+		);
+	}
+
+	/** @dataProvider dataProvider_for_createElement_should_not_affect_the_dom */
+	public function test_createElement_should_not_affect_the_dom($doc)
+	{
+		$this->html->load($doc);
+
+		$this->assertEquals(
+			'<html></html>',
+			$this->html->createElement('html')->save()
+		);
+		$this->assertEquals(
+			'<head></head>',
+			$this->html->createElement('head')->save()
+		);
+		$this->assertEquals(
+			'<body></body>',
+			$this->html->createElement('body')->save()
+		);
+		$this->assertEquals(
+			$doc,
+			$this->html->save()
+		);
+
+		$this->assertNull($this->html->find('html', 0));
+		$this->assertNull($this->html->find('head', 0));
+		$this->assertNull($this->html->find('body', 0));
+	}
+
+	public function dataProvider_for_createElement_should_not_affect_the_dom()
+	{
+		return array(
+			'empty' => array(''),
+			'single' => array('<div></div>'),
+			'nested' => array('<table><tr></tr><tr></tr></table>'),
+		);
+	}
+
+	public function test_createTextNode_should_return_a_node()
+	{
+		$this->assertNotNull($this->html->createTextNode('<html>'));
+	}
+
+	public function test_createTextNode_should_create_a_text_node()
+	{
+		$this->assertEquals(
+			'Hello, World!',
+			$this->html->createTextNode('Hello, World!')->save()
+		);
+	}
+
+	/** @dataProvider dataProvider_for_createTextNode_should_not_affect_the_dom */
+	public function test_createTextNode_should_not_affect_the_dom($doc)
+	{
+		$this->html->load($doc);
+
+		$this->assertEquals(
+			'Hello, World!',
+			$this->html->createTextNode('Hello, World!')->save()
+		);
+		$this->assertEquals(
+			$doc,
+			$this->html->save()
+		);
+	}
+
+	public function dataProvider_for_createTextNode_should_not_affect_the_dom()
+	{
+		return array(
+			'empty' => array(''),
+			'single' => array('<div></div>'),
+			'nested' => array('<table><tr></tr><tr></tr></table>'),
+		);
+	}
+
 }
