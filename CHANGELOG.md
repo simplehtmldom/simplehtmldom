@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `.travis.yml` for automated unit tests with `Travis-CI`.
 - Added the magic method `__debugInfo` to `HtmlDocument` and `HtmlNode` in order to reduce the memory footprint and to prevent recursion errors when using `print_r` and `var_dump`.
 - Added the magic method `__call` to `HtmlDocument` and `HtmlNode` as a wrapper for deprecated methods using the lowercase calling convention (see below).
-- Added unit tests `attribute_test.php`, `callback_test.php`, `debug_info_test.php`, `doctype_test.php`, `script_test.php`, `server_side_script_test.php` and `style_test.php`.
+- Added unit tests `attribute_test.php`, `callback_test.php`, `debug_info_test.php`, `doctype_test.php`, `script_test.php`, `server_side_script_test.php`, `style_test.php` and `dom_manipulation_test.php`.
 - Added and extended unit tests for `cdata_test.php` and `comment_test.php`.
 - Added a new `Debug` class to inform users about deprecated functions, malformed documents and parsing issues.
 - Added full support for `script` element parsing.
@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed a bug with comment and CDATA parsing that resulted in whitespace and newlines being removed when loading a document with `$stripRN = true` (default setting).
 - Fixed a bug with attribute values that resulted in incorrectly encoded content when using `outertext()`, `innertext()` or `save()`.
 - Fixed a bug with charset encoding that resulted in partially encoded documents depending on the use of `outertext()` and `innertext()` [#178](https://sourceforge.net/p/simplehtmldom/bugs/178/)
+- Fixed multiple bugs related to DOM manipulation when using `HtmlDocument::createElement()`, `HtmlDocument::createTextNode()` and `HtmlNode::appendChild()`.
 
 ## [2.0-RC1] - 2019-10-20
 

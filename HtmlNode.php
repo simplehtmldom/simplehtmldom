@@ -554,6 +554,10 @@ class HtmlNode
 				$end += $parent->_[self::HDOM_INFO_END];
 			}
 
+			if ($end === 0) {
+				$end = count($this->dom->nodes);
+			}
+
 			// Get list of target nodes
 			$nodes_start = $this->_[self::HDOM_INFO_BEGIN] + 1;
 
@@ -1414,6 +1418,23 @@ class HtmlNode
 		$node->parent = $this;
 		$this->nodes[] = $node;
 		$this->children[] = $node;
+
+		if ($this->dom) { // Attach current node to DOM (recursively)
+			$children = array($node);
+
+			while($children) {
+				$child = array_pop($children);
+				$children = array_merge($children, $child->children);
+
+				$this->dom->nodes[] = $child;
+				$child->dom = $this->dom;
+				$child->_[self::HDOM_INFO_BEGIN] = count($this->dom->nodes) - 1;
+				$child->_[self::HDOM_INFO_END] = $child->_[self::HDOM_INFO_BEGIN];
+			}
+
+			$this->dom->root->_[self::HDOM_INFO_END] = count($this->dom->nodes) - 1;
+		}
+
 		return $this;
 	}
 
