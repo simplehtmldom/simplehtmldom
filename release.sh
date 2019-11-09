@@ -2,13 +2,31 @@
 
 # This file automates the release process based on the tag of the current commit
 #
-# 1) Tag current version: "git tag x.y", where x is the major and y the minor
-#   version number. For example: "git tag 1.6"
+# 1) Tag current version: "git tag x.y.z", where x is the major, y the minor
+#   and z the patch version number. For example: "git tag 2.0.0"
 #
 # 2) Build release file: "sh release.sh". For the example above, this will build
-#   "simplehtmldom_1_6.zip"
+#   "simplehtmldom_2_0_0.zip"
 
 tag=$(git tag -l --points-at HEAD)
+
+# Check if the tag follows https://semver.org/
+version="$(echo ${tag} | cut -d'-' -f1)"
+major="$(echo ${version} | cut -d'.' -f1)"
+minor="$(echo ${version} | cut -d'.' -f2)"
+patch="$(echo ${version} | cut -d'.' -f3)"
+suffix="$(echo ${tag} | cut -d'-' -f2)"
+
+echo "Building release for ${tag}..."
+
+if [ -z "$major" ]; then echo "Major version is missing in ${tag}"; fi;
+if [ -z "$minor" ]; then echo "Minor version is missing in ${tag}"; fi;
+if [ -z "$patch" ]; then echo "Patch version is missing in ${tag}"; fi;
+
+if [ -z "$major" ] || [ -z "$minor" ] || [ -z "$patch" ]; then
+  echo "Aborting script!"
+  exit
+fi;
 
 # Archive file
 prefix="simplehtmldom_"
