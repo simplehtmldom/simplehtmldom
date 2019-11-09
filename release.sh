@@ -10,12 +10,31 @@
 
 tag=$(git tag -l --points-at HEAD)
 
+if [ -z "$tag" ]; then
+  echo "The current commit is not tagged!"
+  echo "Insert valid tag name or press Ctrl+C to abort."
+  read -p "Format: Major.Minor.Patch[-Suffix]: " tag
+  if [ -z "$tag" ]; then
+    echo "No tag name provided."
+    exit
+  fi;
+  $(git tag ${tag})
+fi;
+
 # Check if the tag follows https://semver.org/
 version="$(echo ${tag} | cut -d'-' -f1)"
 major="$(echo ${version} | cut -d'.' -f1)"
 minor="$(echo ${version} | cut -d'.' -f2)"
 patch="$(echo ${version} | cut -d'.' -f3)"
 suffix="$(echo ${tag} | cut -d'-' -f2)"
+
+# git tag could return an error
+tag=$(git tag -l --points-at HEAD)
+
+if [ -z "$tag" ]; then
+  echo "Something went wrong!"
+  exit
+fi;
 
 echo "Building release for ${tag}..."
 
@@ -47,6 +66,4 @@ if [ "$version" ]; then
   # Clenup
   git checkout .;
   git gc --prune;
-else
-  echo "Your commit is not tagged!";
 fi;
