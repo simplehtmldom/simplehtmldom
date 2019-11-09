@@ -353,7 +353,7 @@ class simple_html_dom_node
 			$ret .= $n->outertext();
 		}
 
-		return $ret;
+		return $this->convert_text($ret);
 	}
 
 	function outertext()
@@ -382,11 +382,11 @@ class simple_html_dom_node
 		}
 
 		if (isset($this->_[HDOM_INFO_OUTER])) {
-			return $this->_[HDOM_INFO_OUTER];
+			return $this->convert_text($this->_[self::HDOM_INFO_OUTER]);
 		}
 
 		if (isset($this->_[HDOM_INFO_TEXT])) {
-			return $this->dom->restore_noise($this->_[HDOM_INFO_TEXT]);
+			return $this->convert_text($this->dom->restore_noise($this->_[HDOM_INFO_TEXT]));
 		}
 
 		$ret = '';
@@ -402,7 +402,7 @@ class simple_html_dom_node
 			}
 		} elseif ($this->nodes) {
 			foreach ($this->nodes as $n) {
-				$ret .= $this->convert_text($n->outertext());
+				$ret .= $n->outertext();
 			}
 		}
 
@@ -410,7 +410,7 @@ class simple_html_dom_node
 			$ret .= '</' . $this->tag . '>';
 		}
 
-		return $ret;
+		return $this->convert_text($ret);
 	}
 
 	function text()
@@ -1708,17 +1708,6 @@ class simple_html_dom
 
 					if ($success) {
 						$charset = $matches[1];
-					} else {
-						// If there is a meta tag, and they don't specify the
-						// character set, research says that it's typically
-						// ISO-8859-1
-						if (is_object($debug_object)) {
-							$debug_object->debug_log(2,
-								'meta content-type tag couldn\'t be parsed. using iso-8859 default.'
-							);
-						}
-
-						$charset = 'ISO-8859-1';
 					}
 				}
 			}
