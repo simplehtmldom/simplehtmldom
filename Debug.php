@@ -1,6 +1,27 @@
 <?php namespace simplehtmldom;
 
 /**
+ * Website: http://sourceforge.net/projects/simplehtmldom/
+ * Acknowledge: Jose Solorzano (https://sourceforge.net/projects/php-html/)
+ *
+ * Licensed under The MIT License
+ * See the LICENSE file in the project root for more information.
+ *
+ * Authors:
+ *   S.C. Chen
+ *   John Schlick
+ *   Rus Carroll
+ *   logmanoriginal
+ *
+ * Contributors:
+ *   Yousuke Kumakura
+ *   Vadim Voituk
+ *   Antcs
+ *
+ * Version $Rev$
+ */
+
+/**
  * Implements functions for debugging purposes. Debugging can be enabled and
  * disabled on demand. Debug messages are send to error_log by default but it
  * is also possible to register a custom debug handler.
