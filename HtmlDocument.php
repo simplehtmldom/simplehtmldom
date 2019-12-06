@@ -187,7 +187,7 @@ class HtmlDocument
 			// Temporarily remove any element that shouldn't loose whitespace
 			$this->remove_noise("'<\s*script[^>]*>(.*?)<\s*/\s*script\s*>'is");
 			$this->remove_noise("'<!\[CDATA\[(.*?)\]\]>'is");
-			$this->remove_noise("'<!--(.*?)-->'is");
+			$this->remove_noise("'<!--(?!>|\->)(.*?)-->'is");
 			$this->remove_noise("'<\s*style[^>]*>(.*?)<\s*/\s*style\s*>'is");
 			$this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
 
@@ -548,6 +548,21 @@ class HtmlDocument
 		if (isset($tag[0]) && $tag[0] === '!') { // Doctype, CData, Comment
 			if (isset($tag[2]) && $tag[1] === '-' && $tag[2] === '-') { // Comment ("<!--")
 
+				/**
+				 * Comments must have the following format:
+				 *
+				 * 1. The string "<!--"
+				 *
+				 * 2. Optionally, text, with the additional restriction that the
+				 * text must not start with the string ">", nor start with the
+				 * string "->", nor contain the strings "<!--", "-->", or "--!>",
+				 * nor end with the string "<!-".
+				 *
+				 * 3. The string "-->"
+				 *
+				 * -- https://www.w3.org/TR/html53/syntax.html#comments
+				 */
+
 				// Go back until $tag only contains start of comment "!--".
 				while (strlen($tag) > 3) {
 					$this->char = $this->doc[--$this->pos]; // previous
@@ -559,9 +574,6 @@ class HtmlDocument
 
 				$data = '';
 
-				// There is a rare chance of empty comment: "<!---->"
-				// In which case the current char is the first "-" of the end tag
-				// But the comment could also just be a dash: "<!----->"
 				while(true) {
 					// Copy until first char of end tag
 					$data .= $this->copy_until_char('-');
@@ -577,6 +589,35 @@ class HtmlDocument
 
 					$data .= $this->char;
 					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+				}
+
+				if (substr($data, 0, 1) === '>') { // "<!-->"
+					Debug::log('Comment must not start with the string ">"!');
+					$this->pos -= strlen($data);
+					$this->char = $this->doc[$this->pos];
+					$data = '';
+				}
+
+				if (substr($data, 0, 2) === '->') { // "<!--->"
+					Debug::log('Comment must not start with the string "->"!');
+					$this->pos -= strlen($data);
+					$this->char = $this->doc[$this->pos];
+					$data = '';
+				}
+
+				if (strpos($data, '<!--') !== false) { // "<!--<!---->"
+					Debug::log('Comment must not contain the string "<!--"!');
+					// simplehtmldom can work with it anyway
+				}
+
+				if (strpos($data, '--!>') !== false) { // "<!----!>-->"
+					Debug::log('Comment must not contain the string "--!>"!');
+					// simplehtmldom can work with it anyway
+				}
+
+				if (substr($data, -3, 3) === '<!-') { // "<!--<!--->"
+					Debug::log('Comment must not end with "<!-"!');
+					// simplehtmldom can work with it anyway
 				}
 
 				$tag .= $data;

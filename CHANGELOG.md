@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+
+## [Unreleased]
+### Changed
+- Comments that start with `>` or `->` are now considered malformed in accordance with [section 12.1.6](https://html.spec.whatwg.org/multipage/syntax.html#comments) of the [HTML specification](https://html.spec.whatwg.org/multipage/). Comments may still contain the strings `<!--` or `--!>` and they may still end with `<!-` contrary to the specification.
+
 ## [2.0-RC2] - 2019-11-09
 
 **Important**: This is a release **candidate**, which means some features might not yet be stable or emit unexpected behavior. Please don't hesitate to report broken or unstable features.

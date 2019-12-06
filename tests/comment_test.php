@@ -51,11 +51,23 @@ class comment_test extends TestCase {
 			),
 			'cdata' => array(
 				'<![CDATA[Hello, World!]]>',
-				'<!--<![CDATA[Hello, World!]]>-->'
+				'<!--<![CDATA[Hello, World!]]>-->',
 			),
 			'newline' => array(
 				"Hello\nWorld!",
-				"<!--Hello\nWorld!-->"
+				"<!--Hello\nWorld!-->",
+			),
+			'nested comment start tag' => array(
+				'<!--',
+				'<!--<!---->',
+			),
+			'reverse comment start tag' => array(
+				'--!>',
+				'<!----!>-->',
+			),
+			'almost comment start tag' => array(
+				'<!-',
+				'<!--<!--->',
 			),
 		);
 	}
@@ -65,5 +77,17 @@ class comment_test extends TestCase {
 		$this->html->load('<!-- <div>Hello, World!</div> -->');
 		$this->assertNotNull($this->html->find('comment', 0));
 		$this->assertNull($this->html->find('div', 0));
+	}
+
+	public function test_comment_starting_with_greater_than_sign_should_break_comment()
+	{
+		$this->html->load('<!--><div>Hello, World!</div>-->');
+		$this->assertEquals('Hello, World!', $this->html->find('div', 0)->plaintext);
+	}
+
+	public function test_comment_starting_with_dash_plus_greater_than_sign_should_break_comment()
+	{
+		$this->html->load('<!---><div>Hello, World!</div>-->');
+		$this->assertEquals('Hello, World!', $this->html->find('div', 0)->plaintext);
 	}
 }
