@@ -41,6 +41,9 @@
             "/testcase/",
             "/tests/",
             "simple_html_dom.php"
+        ],
+        "files": [
+            "simple_html_dom.php"
         ]
     },
     "require": {
