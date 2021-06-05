@@ -1,5 +1,6 @@
 # Build files
 simplehtmldom_*.zip
+/composer.lock
 
 # Unit test data files
 tests/data/*
@@ -7,6 +8,10 @@ tests/data/*
 
 # vscode configuration files
 .vscode/
+/.idea
 
 # Generated site data
 manual/site/
+
+# vendor libs
+/vendor
