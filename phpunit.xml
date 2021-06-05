@@ -6,36 +6,36 @@ Unit tests are based on PHPUnit 6
 https://phpunit.de/announcements/phpunit-6.html
 -->
 <phpunit
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.5/phpunit.xsd"
-	colors="true"
-	processIsolation="false"
-	timeoutForSmallTests="1"
-	timeoutForMediumTests="1"
-	timeoutForLargeTests="6" >
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.5/phpunit.xsd"
+        colors="true"
+        processIsolation="false"
+        timeoutForSmallTests="1"
+        timeoutForMediumTests="1"
+        timeoutForLargeTests="6">
 
-	<testsuites>
-		<testsuite name="standard">
-			<directory suffix='_test.php'>tests</directory>
-			<exclude>tests/memory_parsing_test.php</exclude>
-			<exclude>tests/entity_decoding_test.php</exclude>
-		</testsuite>
-		<testsuite name="memory">
-			<file>tests/memory_parsing_test.php</file>
-		</testsuite>
-		<testsuite name="entity_decoding">
-			<file>tests/entity_decoding_test.php</file>
-		</testsuite>
-	</testsuites>
+    <testsuites>
+        <testsuite name="standard">
+            <directory suffix='_test.php'>tests</directory>
+            <exclude>tests/memory_parsing_test.php</exclude>
+            <exclude>tests/entity_decoding_test.php</exclude>
+        </testsuite>
+        <testsuite name="memory">
+            <file>tests/memory_parsing_test.php</file>
+        </testsuite>
+        <testsuite name="entity_decoding">
+            <file>tests/entity_decoding_test.php</file>
+        </testsuite>
+    </testsuites>
 
-	<filter>
-		<whitelist>
-			<directory>simple_html_dom.php</directory>
-			<directory>HtmlDocument.php</directory>
-			<directory>HtmlNode.php</directory>
-			<directory>HtmlWeb.php</directory>
-			<directory>Debug.php</directory>
-		</whitelist>
-	</filter>
+    <filter>
+        <whitelist>
+            <directory>simple_html_dom.php</directory>
+            <directory>HtmlDocument.php</directory>
+            <directory>HtmlNode.php</directory>
+            <directory>HtmlWeb.php</directory>
+            <directory>Debug.php</directory>
+        </whitelist>
+    </filter>
 
 </phpunit>
