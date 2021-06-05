@@ -1332,17 +1332,17 @@ class HtmlDocument
      * @param ?string $value
      * @throws Exception
      */
-    /*
+    /** WITH THIS NOT PASS TESTS !!!
     public function __set($name, $value)
     {
-        switch ($name) {
-            case 'charset':
-                $this->_charset = $value;
-                break;
+    switch ($name) {
+    case 'charset':
+    $this->_charset = $value;
+    break;
 
-            case 'target_charset':
-                $this->_target_charset = $value;
-                break;
+    case 'target_charset':
+    $this->_target_charset = $value;
+    break;
 
             default:
                 $this->root->{$name} = $value;
@@ -1361,9 +1361,13 @@ class HtmlDocument
             case 'innertext':
             case 'outertext':
             case 'plaintext':
+                return true;
+
             case 'charset':
+                return $this->_charset !== null;
+
             case 'target_charset':
-                return $this->__get($name) !== null;
+                return $this->_target_charset !== null;
 
             default:
                 return isset($this->root->{$name});
