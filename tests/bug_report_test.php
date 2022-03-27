@@ -459,6 +459,7 @@ HTML;
 		$data = base64_decode('PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9IndpbmRvd3MtMTI1MCI+CjxoZWFkPgogICAgPG1ldGEgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBlIiBjb250ZW50PSJ0ZXh0L2h0bWw7IGNoYXJzZXQ9d2luZG93cy0xMjUwIj4KPC9oZWFkPgo8Ym9keT4KICAgIDxhPjxzcGFuPkvoPC9zcGFuPjwvYT4KICAgIDxiPkvoPC9iPgo8L2JvZHk+CjwvaHRtbD4=');
 
 		$this->html = str_get_html($data);
+		$this->html->targetCharset = "Windows-1251";
 
 		$this->assertEquals(
 			$expected,
@@ -473,4 +474,15 @@ HTML;
 		);
 	}
 
+	/**
+	 * Bug #181 (Save method does not encode &amp;nbsp;)
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/181/ Bug #181
+	 */
+	public function test_bug_181()
+	{
+		$doc = "<p>&nbsp;</p>";
+		$this->html->load($doc);
+		$this->assertEquals($doc, $this->html->save());
+	}
 }

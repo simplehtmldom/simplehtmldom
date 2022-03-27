@@ -286,9 +286,22 @@ class HtmlNode
 		}
 
 		if (isset($this->_[self::HDOM_INFO_INNER])) {
-			// todo: <br> should either never have self::HDOM_INFO_INNER or always
-			if ($this->tag !== 'br') {
-				$ret .= $this->_[self::HDOM_INFO_INNER];
+			switch ($this->tag)
+			{
+				case 'br':
+					// todo: <br> should either never have self::HDOM_INFO_INNER or always
+					break;
+				case 'script':
+					$ret .= $this->_[self::HDOM_INFO_INNER];
+					break;
+				default:
+					if ($this->dom && $this->dom->targetCharset) {
+						$charset = $this->dom->targetCharset;
+					} else {
+						$charset = DEFAULT_TARGET_CHARSET;
+					}
+					$ret .= htmlentities($this->_[self::HDOM_INFO_INNER], ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+					break;
 			}
 		}
 
