@@ -1057,6 +1057,11 @@ class HtmlNode
 
 	static function is_utf8($str)
 	{
+        if (extension_loaded('mbstring')){
+            return mb_detect_encoding($str, ["UTF-8"], true) === "UTF-8";
+        }
+
+        // This code was copied from https://www.php.net/manual/en/function.mb-detect-encoding.php#85294
 		$c = 0; $b = 0;
 		$bits = 0;
 		$len = strlen($str);
