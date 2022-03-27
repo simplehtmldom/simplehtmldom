@@ -5,8 +5,14 @@ simplehtmldom_*.zip
 tests/data/*
 !tests/data/.gitkeep
 
-# vscode configuration files
+# Visual Studio Code
 .vscode/
 
+# PhpStorm
+.idea/
+
 # Generated site data
-manual/site/
+/manual/site/
+
+# Composer
+/vendor/
