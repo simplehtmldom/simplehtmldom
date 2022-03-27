@@ -104,6 +104,8 @@ class Debug {
 			if (!isset($caller['class']) || strpos($caller['class'], 'simplehtmldom\\') !== 0) {
 				break;
 			}
+
+            $idx++;
 		}
 
 		$output = '[DEBUG] ' . trim($debugmessage) . ' "' . $message . '"';
