@@ -22,19 +22,19 @@
  */
 
 if (defined('DEFAULT_TARGET_CHARSET')) {
-	define('\simplehtmldom\DEFAULT_TARGET_CHARSET', DEFAULT_TARGET_CHARSET);
+	define('simplehtmldom\DEFAULT_TARGET_CHARSET', DEFAULT_TARGET_CHARSET);
 }
 
 if (defined('DEFAULT_BR_TEXT')) {
-	define('\simplehtmldom\DEFAULT_BR_TEXT', DEFAULT_BR_TEXT);
+	define('simplehtmldom\DEFAULT_BR_TEXT', DEFAULT_BR_TEXT);
 }
 
 if (defined('DEFAULT_SPAN_TEXT')) {
-	define('\simplehtmldom\DEFAULT_SPAN_TEXT', DEFAULT_SPAN_TEXT);
+	define('simplehtmldom\DEFAULT_SPAN_TEXT', DEFAULT_SPAN_TEXT);
 }
 
 if (defined('MAX_FILE_SIZE')) {
-	define('\simplehtmldom\MAX_FILE_SIZE', MAX_FILE_SIZE);
+	define('simplehtmldom\MAX_FILE_SIZE', MAX_FILE_SIZE);
 }
 
 include_once 'HtmlDocument.php';
