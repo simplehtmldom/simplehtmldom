@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset name="Ruleset">
   <description>Created with the PHP Coding Standard Generator. http://edorian.github.com/php-coding-standard-generator/</description>
-  <exclude-pattern>./app</exclude-pattern>
   <exclude-pattern>./example</exclude-pattern>
   <exclude-pattern>./manual</exclude-pattern>
   <exclude-pattern>./testcase</exclude-pattern>
