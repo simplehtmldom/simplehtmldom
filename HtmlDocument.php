@@ -184,7 +184,7 @@ class HtmlDocument
 		$this->prepare($str, $lowercase, $defaultBRText, $defaultSpanText);
 
 		if ($stripRN) {
-			// Temporarily remove any element that shouldn't loose whitespace
+			// Temporarily remove any element that shouldn't lose whitespace
 			$this->remove_noise("'<\s*script[^>]*>(.*?)<\s*/\s*script\s*>'is");
 			$this->remove_noise("'<!\[CDATA\[(.*?)\]\]>'is");
 			$this->remove_noise("'<!--(?!>|\->)(.*?)-->'is");
@@ -362,12 +362,12 @@ class HtmlDocument
 			$el = $this->root->find('meta[http-equiv=Content-Type]', 0, true);
 
 			if (!empty($el)) {
-				$fullvalue = $el->content;
+				$fullValue = $el->content;
 
-				if (!empty($fullvalue)) {
+				if (!empty($fullValue)) {
 					$success = preg_match(
 						'/charset=(.+)/i',
-						$fullvalue,
+						$fullValue,
 						$matches
 					);
 
@@ -429,7 +429,7 @@ class HtmlDocument
 			$charset = 'UTF-8';
 		}
 
-		// Since CP1252 is a superset, if we get one of it's subsets, we want
+		// Since CP1252 is a superset, if we get one of its subsets, we want
 		// it instead.
 		if ((strtolower($charset) == 'iso-8859-1')
 			|| (strtolower($charset) == 'latin1')
@@ -514,7 +514,7 @@ class HtmlDocument
 
 					// No start tag, close parent
 					if (strtolower($this->parent->tag) !== $tag_lower) {
-						$this->parent = $org_parent; // restore origonal parent
+						$this->parent = $org_parent; // restore original parent
 						$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 						return $this->as_text_node($tag);
 					}
@@ -781,7 +781,7 @@ class HtmlDocument
 		// Space after last attribute before closing the tag
 		if (!$trim && $space[0] !== '') {
 			// phpcs:ignore Generic.Files.LineLength
-			Debug::log_once('Source document contains superfluous whitespace before the closing braket (<e attribute="value"     >). Enable trimming or remove spaces before closing brackets for best performance.');
+			Debug::log_once('Source document contains superfluous whitespace before the closing bracket (<e attribute="value"     >). Enable trimming or remove spaces before closing brackets for best performance.');
 			$node->_[HtmlNode::HDOM_INFO_ENDSPACE] = $space[0];
 		}
 
@@ -967,7 +967,7 @@ class HtmlDocument
 		for ($i = $count - 1; $i > -1; --$i) {
 			$key = '___noise___' . sprintf('% 5d', count($this->noise) + 1000);
 
-			$idx = ($remove_tag) ? 0 : 1; // 0 = entire match, 1 = submatch
+			$idx = ($remove_tag) ? 0 : 1; // 0 = entire match, 1 = sub-match
 			$this->noise[$key] = $matches[$i][$idx][0];
 			$this->doc = substr_replace($this->doc, $key, $matches[$i][$idx][1], strlen($matches[$i][$idx][0]));
 		}
@@ -986,7 +986,7 @@ class HtmlDocument
 		$pos = 0;
 		while (($pos = strpos($text, '___noise___', $pos)) !== false) {
 			// Sometimes there is a broken piece of markup, and we don't GET the
-			// pos+11 etc... token which indicates a problem outside of us...
+			// pos+11 etc... token which indicates a problem outside us...
 
 			// todo: "___noise___1000" (or any number with four or more digits)
 			// in the DOM causes an infinite loop which could be utilized by

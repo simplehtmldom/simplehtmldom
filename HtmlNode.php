@@ -215,7 +215,7 @@ class HtmlNode
 	function parent($parent = null)
 	{
 		// I am SURE that this doesn't work properly.
-		// It fails to unset the current node from it's current parents nodes or
+		// It fails to unset the current node from its current parents nodes or
 		// children list first.
 		if ($parent !== null) {
 			$this->parent = $parent;
@@ -478,12 +478,8 @@ class HtmlNode
 		if (($count = count($selectors)) === 0) { return array(); }
 		$found_keys = array();
 
-		// find each selector
 		for ($c = 0; $c < $count; ++$c) {
-			// The change on the below line was documented on the sourceforge
-			// code tracker id 2788009
-			// used to be: if (($levle=count($selectors[0]))===0) return array();
-			if (($levle = count($selectors[$c])) === 0) {
+			if (($level = count($selectors[$c])) === 0) {
 				Debug::log_once('Empty selector (' . $selector . ') matches nothing.');
 				return array();
 			}
@@ -497,7 +493,7 @@ class HtmlNode
 			$cmd = ' '; // Combinator
 
 			// handle descendant selectors, no recursive!
-			for ($l = 0; $l < $levle; ++$l) {
+			for ($l = 0; $l < $level; ++$l) {
 				$ret = array();
 
 				foreach ($head as $k => $v) {
@@ -581,7 +577,7 @@ class HtmlNode
 				$nodes = array_slice($this->parent->children, $index);
 		}
 
-		// Go throgh each element starting at this element until the end tag
+		// Go through each element starting at this element until the end tag
 		// Note: If this element is a void tag, any previous void element is
 		// skipped.
 		foreach($nodes as $node) {
@@ -745,7 +741,7 @@ class HtmlNode
 							$nodeKeyValue = $node->attr[$att_name];
 						}
 
-						// If lowercase is set, do a case insensitive test of
+						// If lowercase is set, do a case-insensitive test of
 						// the value of the selector.
 						if ($lowercase) {
 							$check = $this->match(
@@ -824,7 +820,7 @@ class HtmlNode
 				 * Represents an element with the att attribute whose value is a
 				 * whitespace-separated list of words, one of which is exactly
 				 * "val". If "val" contains whitespace, it will never represent
-				 * anything (since the words are separated by spaces). Also if
+				 * anything (since the words are separated by spaces). Also, if
 				 * "val" is the empty string, it will never represent anything.
 				 */
 				return in_array($pattern, explode(' ', trim($value)), true);
@@ -847,7 +843,7 @@ class HtmlNode
 		 *
 		 * Notice the \[ starting the attribute? and the @? following? This
 		 * implies that an attribute can begin with an @ sign that is not
-		 * captured. This implies that an html attribute specifier may start
+		 * captured. This implies that a html attribute specifier may start
 		 * with an @ sign that is NOT captured by the expression. Farther study
 		 * is required to determine of this should be documented or removed.
 		 *
@@ -870,7 +866,7 @@ class HtmlNode
 		 *
 		 * [4] - id name
 		 *     (?:\#([\w-]+))
-		 *     Optionally matches a id name, consisting of an "#" followed by
+		 *     Optionally matches an id name, consisting of an "#" followed by
 		 *     the id name (one or more words and hyphens).
 		 *
 		 * [5] - class names (including dots)
@@ -1045,7 +1041,7 @@ class HtmlNode
 			}
 		}
 
-		// Lets make sure that we don't have that silly BOM issue with any of the utf-8 text we output.
+		// Let's make sure that we don't have that silly BOM issue with any of the utf-8 text we output.
 		if ($targetCharset === 'UTF-8') {
 			if (substr($converted_text, 0, 3) === "\xef\xbb\xbf") {
 				$converted_text = substr($converted_text, 3);
@@ -1153,11 +1149,11 @@ class HtmlNode
 		// Far future enhancement
 		// Look at all the parent tags of this image to see if they specify a
 		// class or id that has an img selector that specifies a height or width
-		// Note that in this case, the class or id will have the img subselector
+		// Note that in this case, the class or id will have the img sub-selector
 		// for it to apply to the image.
 
 		// ridiculously far future development
-		// If the class or id is specified in a SEPARATE css file thats not on
+		// If the class or id is specified in a SEPARATE css file that's not on
 		// the page, go get it and do what we were just doing for the ones on
 		// the page.
 

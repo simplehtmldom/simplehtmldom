@@ -80,7 +80,7 @@ class Debug {
 	private static function log_trace($message, $backtrace)
 	{
 		$idx = 0;
-		$debugmessage = '';
+		$debugMessage = '';
 
 		foreach($backtrace as $caller)
 		{
@@ -88,17 +88,17 @@ class Debug {
 				break; // Unknown caller
 			}
 
-			$debugmessage .= ' [' . $caller['file'] . ':' . $caller['line'];
+			$debugMessage .= ' [' . $caller['file'] . ':' . $caller['line'];
 
 			if ($idx > 1) { // Do not include the call to Debug::log
-				$debugmessage .= ' '
+				$debugMessage .= ' '
 				. $caller['class']
 				. $caller['type']
 				. $caller['function']
 				. '()';
 			}
 
-			$debugmessage .= ']';
+			$debugMessage .= ']';
 
 			// Stop at the first caller that isn't part of simplehtmldom
 			if (!isset($caller['class']) || strpos($caller['class'], 'simplehtmldom\\') !== 0) {
@@ -108,7 +108,7 @@ class Debug {
             $idx++;
 		}
 
-		$output = '[DEBUG] ' . trim($debugmessage) . ' "' . $message . '"';
+		$output = '[DEBUG] ' . trim($debugMessage) . ' "' . $message . '"';
 
 		if (is_null(self::$debugHandler)) {
 			error_log($output);
