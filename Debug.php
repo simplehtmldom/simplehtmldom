@@ -119,7 +119,7 @@ class Debug {
 	 * Adds a debug message to error_log if debug mode is enabled. Does nothing
 	 * if debug mode is disabled.
 	 *
-	 * @param string $text The message to add to error_log
+	 * @param string $message The message to add to error_log
 	 */
 	public static function log($message)
 	{
@@ -133,7 +133,7 @@ class Debug {
 	 * Adds a debug message to error_log if debug mode is enabled. Does nothing
 	 * if debug mode is disabled. Each message is logged only once.
 	 *
-	 * @param string $text The message to add to error_log
+	 * @param string $message The message to add to error_log
 	 */
 	public static function log_once($message)
 	{
