@@ -428,16 +428,23 @@ HTML;
 	{
 		$doc = <<<HTML
 <html>
+<p>This should be ignored.</p>
+<p>This should be ignored.</p>
 <body>
-	<p id="title">PHP Simple HTML DOM Parser</p>
-	<p id="subtitle">A PHP based DOM parser</p>
+	<p id="title">This should be included</p>
+	<div>
+		<p id="subtitle">This should be included</p>
+	</div>
+	<p id="subtitle">This should be included</p>
 </body>
+<p>This should be ignored.</p>
+<p>This should be ignored.</p>
 </html>
 HTML;
 
 		$this->html->load($doc);
 
-		$this->assertCount(2, $this->html->find('html body p'));
+		$this->assertCount(3, $this->html->find('body p'));
 	}
 
 	/**

@@ -485,4 +485,16 @@ HTML;
 		$this->html->load($doc);
 		$this->assertEquals($doc, $this->html->save());
 	}
+
+	/**
+	 * Bug #186 (Child selector not working correctly)
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/186/
+	 */
+	public function test_bug_186()
+	{
+		$doc = "<html><body><p></p><p></p></body><p></p></html>";
+		$this->html->load($doc);
+		$this->assertCount(2, $this->html->find('body p'));
+	}
 }

@@ -528,7 +528,7 @@ class HtmlDocument
 			}
 
 			// Link with start tag
-			$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
+			$this->parent->_[HtmlNode::HDOM_INFO_END] = $this->cursor - 1;
 
 			if ($this->parent->parent) {
 				$this->parent = $this->parent->parent;
