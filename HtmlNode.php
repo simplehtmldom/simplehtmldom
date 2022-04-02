@@ -889,7 +889,7 @@ class HtmlNode
 		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
 		 * [6] - attributes
-		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?
+		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:(?:[!*^$|~]?=)(?![\"'])(?:.*?)(?![\"'])|(?:[!*^$|~]?=)[\"']{1}(?:.*?)[\"']{1}))?(?:\s*?(?:[iIsS])?)?\])+)?
 		 *     Optionally matches the attributes list
 		 *
 		 * [7] - separator
@@ -897,7 +897,7 @@ class HtmlNode
 		 *     Matches the selector list separator
 		 */
 		// phpcs:ignore Generic.Files.LineLength
-		$pattern = "/(?:\:(\w+)\()?([\w:\*-]*)(?:\:(\w+)\()?(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?(?:\))?(?:\))?([\/, >+~]+)/is";
+		$pattern = "/(?:\:(\w+)\()?([\w:\*-]*)(?:\:(\w+)\()?(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:(?:[!*^$|~]?=)(?![\"'])(?:.*?)(?![\"'])|(?:[!*^$|~]?=)[\"']{1}(?:.*?)[\"']{1}))?(?:\s*?(?:[iIsS])?)?\])+)?(?:\))?(?:\))?([\/, >+~]+)/is";
 
 		preg_match_all(
 			$pattern,
@@ -930,14 +930,16 @@ class HtmlNode
 			 * [0] - full match
 			 * [1] - attribute name
 			 * [2] - attribute expression
-			 * [3] - attribute value
+			 * [3] - attribute value (with quotes)
 			 * [4] - case sensitivity
 			 *
-			 * Note: Attributes can be negated with a "!" prefix to their name
+			 * Note:
+			 *   Attributes can be negated with a "!" prefix to their name
+			 *   Attribute values may contain closing brackets "]"
 			 */
 			if($m[5] !== '') {
 				preg_match_all(
-					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?(?:\s+?([iIsS])?)?\]/is",
+					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)((?![\"'])(?:.*?)(?![\"'])|[\"']{1}(?:.*?)[\"']{1}))?(?:\s+?([iIsS])?)?\]/is",
 					trim($m[5]),
 					$attributes,
 					PREG_SET_ORDER
@@ -949,6 +951,11 @@ class HtmlNode
 				foreach($attributes as $att) {
 					// Skip empty matches
 					if(trim($att[0]) === '') { continue; }
+
+					// Remove quotes from value
+					if (isset($att[3]) && $att[3] !== "" && ($att[3][0] === '"' || $att[3][0] === "'")) {
+						$att[3] = substr($att[3], 1, strlen($att[3]) - 2);
+					}
 
 					$inverted = (isset($att[1][0]) && $att[1][0] === '!');
 					$m[5][] = array(

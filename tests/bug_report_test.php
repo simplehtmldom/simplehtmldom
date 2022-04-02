@@ -497,4 +497,16 @@ HTML;
 		$this->html->load($doc);
 		$this->assertCount(2, $this->html->find('body p'));
 	}
+
+	/**
+	 * Bug #190 (attribute values containing closing bracket ']' not working)
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/190/
+	 */
+	public function test_bug_190()
+	{
+		$doc = '<form><input name="state[enabled]"></form>';
+		$this->html->load($doc);
+		$this->assertCount(1, $this->html->find('input[name="state[enabled]"]'));
+	}
 }
