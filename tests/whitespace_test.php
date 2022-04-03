@@ -380,6 +380,23 @@ EOD;
 		$this->assertEquals($expected, $this->html->root->text());
 	}
 
+	public function test_text_should_add_newline_after_paragraph()
+	{
+		$expected = <<<EOD
+PHP Simple HTML DOM Parser
+
+A fast, simple and reliable HTML document parser for PHP.
+EOD;
+
+		$doc = <<<EOD
+<p>PHP Simple HTML DOM Parser</p>A fast, simple and reliable HTML document parser for PHP.
+EOD;
+
+		$this->html->load($doc);
+
+		$this->assertEquals($expected, $this->html->root->text());
+	}
+
 	public function test_text_should_add_newline_between_nested_paragraph()
 	{
 		$expected = <<<EOD

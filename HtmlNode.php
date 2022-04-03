@@ -389,7 +389,7 @@ class HtmlNode
 				if (empty($block))
 					continue;
 
-				$ret = rtrim($ret) . "\n\n" . $block;
+				$ret = rtrim($ret) . "\n\n" . $block . "\n\n";
 
 			} elseif ($this->is_inline_element($n)) {
 				// todo: <br> introduces code smell because no space but \n

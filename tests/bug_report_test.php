@@ -509,4 +509,23 @@ HTML;
 		$this->html->load($doc);
 		$this->assertCount(1, $this->html->find('input[name="state[enabled]"]'));
 	}
+
+	/**
+	 * Bug #191 (line-break missing after paragraphs)
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/191/
+	 */
+	public function test_bug_191()
+	{
+		$expected = <<<EOD
+First line
+
+Second line
+
+Third line
+EOD;
+		$doc = 'First line<p>Second line</p>Third line';
+		$this->html->load($doc);
+		$this->assertEquals($expected, $this->html->root->text());
+	}
 }
