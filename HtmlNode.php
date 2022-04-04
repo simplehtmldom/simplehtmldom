@@ -953,7 +953,7 @@ class HtmlNode
 					if(trim($att[0]) === '') { continue; }
 
 					// Remove quotes from value
-					if (isset($att[3]) && $att[3] !== "" && ($att[3][0] === '"' || $att[3][0] === "'")) {
+					if (isset($att[3]) && $att[3] !== '' && ($att[3][0] === '"' || $att[3][0] === "'")) {
 						$att[3] = substr($att[3], 1, strlen($att[3]) - 2);
 					}
 
@@ -1077,11 +1077,11 @@ class HtmlNode
 
 	static function is_utf8($str)
 	{
-        if (extension_loaded('mbstring')){
-            return mb_detect_encoding($str, ["UTF-8"], true) === "UTF-8";
-        }
+		if (extension_loaded('mbstring')){
+			return mb_detect_encoding($str, ['UTF-8'], true) === 'UTF-8';
+		}
 
-        // This code was copied from https://www.php.net/manual/en/function.mb-detect-encoding.php#85294
+		// This code was copied from https://www.php.net/manual/en/function.mb-detect-encoding.php#85294
 		$c = 0; $b = 0;
 		$bits = 0;
 		$len = strlen($str);

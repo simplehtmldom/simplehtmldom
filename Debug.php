@@ -105,7 +105,7 @@ class Debug {
 				break;
 			}
 
-            $idx++;
+			$idx++;
 		}
 
 		$output = '[DEBUG] ' . trim($debugMessage) . ' "' . $message . '"';
