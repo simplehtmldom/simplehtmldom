@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ruleset name="Ruleset">
-  <description>Created with the PHP Coding Standard Generator. http://edorian.github.com/php-coding-standard-generator/</description>
-  <exclude-pattern>./example</exclude-pattern>
-  <exclude-pattern>./manual</exclude-pattern>
-  <exclude-pattern>./testcase</exclude-pattern>
+<ruleset name="PHPCS Coding Standards for simplehtmldom">
+
+  <!-- Exclude composer files -->
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+
+  <!-- Exclude examples -->
+  <!-- TODO: Enforce coding standards on examples -->
+  <exclude-pattern>*/example/*</exclude-pattern>
+
+  <!-- Exclude manuals -->
+  <exclude-pattern>*/manual/*</exclude-pattern>
+
+  <!-- Exclude tests -->
+  <!-- TODO: Enforce coding standards on tests -->
+  <exclude-pattern>*/tests/*</exclude-pattern>
+
+  <!-- Check only files with .php extension -->
+  <arg name="extensions" value="php"/>
+
+  <!-- Show progress -->
+  <arg value="p"/>
+
+  <!-- Strip root folder from file paths -->
+  <arg name="basepath" value="./"/>
+
   <rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
   <rule ref="Generic.Classes.DuplicateClassName"/>
   <rule ref="PSR2.Methods.MethodDeclaration" />
