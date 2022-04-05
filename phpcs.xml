@@ -21,9 +21,6 @@
   <!-- Show progress -->
   <arg value="p"/>
 
-  <!-- Strip root folder from file paths -->
-  <arg name="basepath" value="./"/>
-
   <rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
   <rule ref="Generic.Classes.DuplicateClassName"/>
   <rule ref="PSR2.Methods.MethodDeclaration" />
@@ -51,12 +48,15 @@
       <property name="equalsSpacing" value="1"/>
     </properties>
   </rule>
+  <!-- TODO: Enforce absolute line limit with phpcs 3.x -->
+  <!--
   <rule ref="Generic.Files.LineLength">
     <properties>
       <property name="lineLimit" value="80"/>
       <property name="absoluteLineLimit" value="120"/>
     </properties>
   </rule>
+  -->
   <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
   <rule ref="Generic.PHP.LowerCaseConstant"/>
   <rule ref="Squiz.Strings.DoubleQuoteUsage">
