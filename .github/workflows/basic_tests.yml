@@ -39,6 +39,7 @@ jobs:
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
@@ -47,3 +48,6 @@ jobs:
 
       - name: Check coding standards and report violations
         run: vendor/bin/phpcs . --standard=phpcs.xml --warning-severity=0 -q --report=checkstyle | cs2pr
+
+      - name: Check PHP compatibility and report issues
+        run: vendor/bin/phpcs . --standard=phpcompatibility.xml -q --report=checkstyle | cs2pr
