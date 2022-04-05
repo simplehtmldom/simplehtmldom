@@ -528,4 +528,18 @@ EOD;
 		$this->html->load($doc);
 		$this->assertEquals($expected, $this->html->root->text());
 	}
+
+	/**
+	 * Bug #195 (unquoted attribute not quoted when value is changed)
+	 *
+	 * @link https://sourceforge.net/p/simplehtmldom/bugs/195/ Bug #195
+	 */
+	public function test_bug_195()
+	{
+		$expected = '<e attribute="new value">';
+		$doc = '<e attribute=value>';
+		$this->html->load($doc);
+		$this->html->find('e', 0)->setAttribute('attribute', 'new value');
+		$this->assertEquals($expected, $this->html->save());
+	}
 }

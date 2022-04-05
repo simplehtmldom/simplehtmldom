@@ -488,6 +488,56 @@ EOD;
 		$this->assertEquals($doc, $this->html->root->outertext());
 	}
 
+	public function test_outertext_should_add_quotes_to_attribute_values_with_space()
+	{
+		$expected = '<e attribute="new' . ' ' . 'value">';
+
+		$this->html->load('<e attribute=value>');
+		$this->html->find('e', 0)->setAttribute('attribute', 'new value');
+
+		$this->assertEquals($expected, $this->html->root->save());
+	}
+
+	public function test_outertext_should_add_quotes_to_attribute_values_with_tabulation()
+	{
+		$expected = '<e attribute="new' . "\t" . 'value">';
+
+		$this->html->load('<e attribute=value>');
+		$this->html->find('e', 0)->setAttribute('attribute', "new\tvalue");
+
+		$this->assertEquals($expected, $this->html->root->save());
+	}
+
+	public function test_outertext_should_add_quotes_to_attribute_values_with_form_feed()
+	{
+		$expected = '<e attribute="new' . "\f" . 'value">';
+
+		$this->html->load('<e attribute=value>');
+		$this->html->find('e', 0)->setAttribute('attribute', "new\fvalue");
+
+		$this->assertEquals($expected, $this->html->root->save());
+	}
+
+	public function test_outertext_should_add_quotes_to_attribute_values_with_carriage_return()
+	{
+		$expected = '<e attribute="new' . "\r" . 'value">';
+
+		$this->html->load('<e attribute=value>');
+		$this->html->find('e', 0)->setAttribute('attribute', "new\rvalue");
+
+		$this->assertEquals($expected, $this->html->root->save());
+	}
+
+	public function test_outertext_should_add_quotes_to_attribute_values_with_line_feed()
+	{
+		$expected = '<e attribute="new' . "\n" . 'value">';
+
+		$this->html->load('<e attribute=value>');
+		$this->html->find('e', 0)->setAttribute('attribute', "new\nvalue");
+
+		$this->assertEquals($expected, $this->html->root->save());
+	}
+
 	public function test_outertext_should_return_custom_outertext()
 	{
 		$expected = '<html>Hello, World!</html>';

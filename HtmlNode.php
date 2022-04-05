@@ -460,7 +460,15 @@ class HtmlNode
 						$val = htmlentities($val, ENT_QUOTES, $this->dom->target_charset);
 						break;
 					case self::HDOM_QUOTE_NO:
-						$quote = '';
+						if (strpos($val, ' ') !== false ||
+							strpos($val, "\t") !== false ||
+							strpos($val, "\f") !== false ||
+							strpos($val, "\r") !== false ||
+							strpos($val, "\n") !== false) {
+							$quote = '"';
+						} else {
+							$quote = '';
+						}
 						break;
 					case self::HDOM_QUOTE_DOUBLE:
 					default:
