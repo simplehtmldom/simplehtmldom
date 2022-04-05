@@ -266,7 +266,7 @@ class HtmlDocument
 	{
 		$this->clear();
 
-		$this->doc = trim($str);
+		$this->doc = isset($str) ? trim($str) : '';
 		$this->size = strlen($this->doc);
 		$this->original_size = $this->size; // original size of the html
 		$this->pos = 0;
