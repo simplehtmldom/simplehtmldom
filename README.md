@@ -1,8 +1,8 @@
 # PHP Simple HTML DOM Parser
 
 [![LICENSE](https://img.shields.io/github/license/simplehtmldom/simplehtmldom?logo=github&style=for-the-badge)](https://github.com/simplehtmldom/simplehtmldom/blob/master/LICENSE)
-[![RELEASE](https://img.shields.io/github/v/tag/simplehtmldom/simplehtmldom?label=release&logo=github&style=for-the-badge)](https://sourceforge.com/projects/simplehtmldom/files/simplehtmldom/)
-[![BUILD STATUS](https://img.shields.io/travis/com/simplehtmldom/simplehtmldom?logo=travis&style=for-the-badge)](https://travis-ci.com/simplehtmldom/simplehtmldom)
+[![RELEASE](https://img.shields.io/github/v/tag/simplehtmldom/simplehtmldom?label=release&logo=sourceforge&style=for-the-badge)](https://sourceforge.com/projects/simplehtmldom/files/simplehtmldom/)
+[![BASIC TESTS](https://img.shields.io/github/workflow/status/simplehtmldom/simplehtmldom/Basic%20Tests?label=Basic%20Tests&logo=github&style=for-the-badge)](https://github.com/simplehtmldom/simplehtmldom/actions/workflows/basic_tests.yml)
 [![PACKAGIST](https://img.shields.io/packagist/v/simplehtmldom/simplehtmldom?logo=composer&style=for-the-badge)](https://packagist.org/packages/simplehtmldom/simplehtmldom)
 
 simplehtmldom is a fast and reliable HTML DOM parser for PHP.
