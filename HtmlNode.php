@@ -288,10 +288,10 @@ class HtmlNode
 		if (isset($this->_[self::HDOM_INFO_INNER])) {
 			switch ($this->tag)
 			{
-				case 'br':
+				case HtmlElement::BR:
 					// todo: <br> should either never have self::HDOM_INFO_INNER or always
 					break;
-				case 'script':
+				case HtmlElement::SCRIPT:
 					$ret .= $this->_[self::HDOM_INFO_INNER];
 					break;
 				default:
@@ -324,46 +324,34 @@ class HtmlNode
 	 */
 	protected function is_block_element($node)
 	{
-		// todo: When we have the utility class this should be moved there
-		return in_array(strtolower($node->tag), array(
-			'p',
-			'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-			'ol', 'ul',
-			'pre',
-			'address',
-			'blockquote',
-			'dl',
-			'div',
-			'fieldset',
-			'form',
-			'hr',
-			'noscript',
-			'table'
-		));
-	}
-
-	/**
-	 * Returns true if the provided element is an inline level element
-	 * @link https://www.w3resource.com/html/HTML-block-level-and-inline-elements.php
-	 */
-	protected function is_inline_element($node)
-	{
-		// todo: When we have the utility class this should be moved there
-		return in_array(strtolower($node->tag), array(
-			'b', 'big', 'i', 'small', 'tt',
-			'abbr', 'acronym', 'cite', 'code', 'dfn', 'em', 'kbd', 'strong', 'samp', 'var',
-			'a', 'bdo', 'br', 'img', 'map', 'object', 'q', 'script', 'span', 'sub', 'sup',
-			'button', 'input', 'label', 'select', 'textarea'
-		));
+		return !HtmlElement::isMetadataContent($node->tag)
+			&& !HtmlElement::isEmbeddedContent($node->tag)
+			&& !HtmlElement::isInteractiveContent($node->tag)
+			&& (HtmlElement::isHeadingContent($node->tag)
+			|| HtmlElement::isSectioningContent($node->tag)
+			|| in_array(strtolower($node->tag), array(
+			HtmlElement::P,
+			HtmlElement::OL,
+			HtmlElement::UL,
+			HtmlELement::PRE,
+			HtmlElement::ADDRESS,
+			HtmlElement::BLOCKQUOTE,
+			HtmlElement::DL,
+			HtmlElement::DIV,
+			HtmlElement::FIELDSET,
+			HtmlElement::FORM,
+			HtmlElement::HR,
+			HtmlElement::TABLE
+		)));
 	}
 
 	function text($trim = true)
 	{
 		$ret = '';
 
-		if (strtolower($this->tag) === 'script') {
+		if (strtolower($this->tag) === HtmlElement::SCRIPT) {
 			$ret = '';
-		} elseif (strtolower($this->tag) === 'style') {
+		} elseif (strtolower($this->tag) === HtmlElement::STYLE) {
 			$ret = '';
 		} elseif ($this->nodetype === self::HDOM_TYPE_COMMENT) {
 			$ret = '';
@@ -391,9 +379,9 @@ class HtmlNode
 
 				$ret = rtrim($ret) . "\n\n" . $block . "\n\n";
 
-			} elseif ($this->is_inline_element($n)) {
+			} elseif (HtmlElement::isPhrasingContent($n->tag)) {
 				// todo: <br> introduces code smell because no space but \n
-				if (strtolower($n->tag) === 'br') {
+				if (strtolower($n->tag) === HtmlElement::BR) {
 					$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
 				} else {
 					$inline = ltrim($this->convert_text($n->text(false)));
@@ -457,7 +445,6 @@ class HtmlNode
 				{
 					case self::HDOM_QUOTE_SINGLE:
 						$quote = '\'';
-						$val = htmlentities($val, ENT_QUOTES, $this->dom->target_charset);
 						break;
 					case self::HDOM_QUOTE_NO:
 						if (strpos($val, ' ') !== false ||
@@ -473,7 +460,6 @@ class HtmlNode
 					case self::HDOM_QUOTE_DOUBLE:
 					default:
 						$quote = '"';
-						$val = htmlentities($val, ENT_COMPAT, $this->dom->target_charset);
 				}
 
 				$ret .= $key
@@ -481,7 +467,7 @@ class HtmlNode
 				. '='
 				. (isset($this->_[self::HDOM_INFO_SPACE][$key]) ? $this->_[self::HDOM_INFO_SPACE][$key][2] : '')
 				. $quote
-				. $val
+				. htmlentities($val, ENT_COMPAT, $this->dom->target_charset)
 				. $quote;
 			}
 		}

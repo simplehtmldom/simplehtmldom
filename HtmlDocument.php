@@ -23,6 +23,7 @@
 
 include_once 'constants.php';
 include_once 'HtmlNode.php';
+include_once 'HtmlElement.php';
 include_once 'Debug.php';
 
 class HtmlDocument
@@ -52,22 +53,8 @@ class HtmlDocument
 	public $default_br_text = '';
 	public $default_span_text = '';
 
-	protected $self_closing_tags = array(
-		'area' => 1,
-		'base' => 1,
-		'br' => 1,
-		'col' => 1,
-		'embed' => 1,
-		'hr' => 1,
-		'img' => 1,
-		'input' => 1,
-		'link' => 1,
-		'meta' => 1,
-		'param' => 1,
-		'source' => 1,
-		'track' => 1,
-		'wbr' => 1
-	);
+	// The end tags of these elements will close any unclosed element with optional end tags it contains.
+	// Example: <table><tr>...</table> - the 'table' element closes the 'tr' element.
 	protected $block_tags = array(
 		'body' => 1,
 		'div' => 1,
@@ -76,6 +63,10 @@ class HtmlDocument
 		'span' => 1,
 		'table' => 1
 	);
+
+	// The key specifies an element for which the closing tag is optional.
+	// The value specifies elements that implicitly close the key element.
+	// Example: <li>...<li>... - the second 'li' element closes the first 'li' element.
 	protected $optional_closing_tags = array(
 		// Not optional, see
 		// https://www.w3.org/TR/html/textlevel-semantics.html#the-b-element
@@ -799,7 +790,7 @@ class HtmlDocument
 				}
 			}
 			$node->_[HtmlNode::HDOM_INFO_END] = 0;
-		} elseif (!isset($this->self_closing_tags[strtolower($node->tag)])) {
+		} elseif (!HtmlElement::isVoidElement($node->tag)) {
 			$innertext = $this->copy_until_char('<');
 			if ($innertext !== '') {
 				$node->_[HtmlNode::HDOM_INFO_INNER] = $innertext;
@@ -807,9 +798,9 @@ class HtmlDocument
 			$this->parent = $node;
 		}
 
-		if ($node->tag === 'br') {
+		if ($node->tag === HtmlElement::BR) {
 			$node->_[HtmlNode::HDOM_INFO_INNER] = $this->default_br_text;
-		} elseif ($node->tag === 'script') {
+		} elseif ($node->tag === HtmlElement::SCRIPT) {
 			$data = '';
 
 			// There is a rare chance of empty script: "<script></script>"
