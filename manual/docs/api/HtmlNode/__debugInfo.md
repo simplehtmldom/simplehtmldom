@@ -1,7 +1,3 @@
----
-title: __debugInfo
----
-
 ```php
 __debugInfo ( )
 ```

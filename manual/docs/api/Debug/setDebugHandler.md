@@ -1,7 +1,3 @@
----
-title: setDebugHandler()
----
-
 ```php
 Debug::setDebugHandler ( [$function = null] )
 ```

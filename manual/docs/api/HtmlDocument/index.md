@@ -1,7 +1,3 @@
----
-title: HtmlDocument
----
-
 Represents the [DOM](https://en.wikipedia.org/wiki/Document_Object_Model) in memory. Provides functions to parse documents and access individual elements (see [`HtmlNode`](../HtmlNode/)).
 
 ## Public Properties

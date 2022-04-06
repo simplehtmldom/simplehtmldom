@@ -1,7 +1,3 @@
----
-title: getElementsById
----
-
 ```php
 getElementsById ( string $id [, int $idx = null] ) : mixed
 ```

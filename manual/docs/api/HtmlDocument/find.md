@@ -1,7 +1,3 @@
----
-title: find
----
-
 ```php
 find ( string $selector [, int $idx = null [, bool $lowercase = false ]] ) : mixed
 ```

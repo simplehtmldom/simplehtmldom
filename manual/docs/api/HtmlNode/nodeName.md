@@ -1,7 +1,3 @@
----
-title: nodeName
----
-
 ```php
 nodeName ( ) : string
 ```

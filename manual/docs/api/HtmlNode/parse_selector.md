@@ -1,7 +1,3 @@
----
-title: parse_selector (protected)
----
-
 ```php
 parse_selector ( string $selector_string ) : array
 ```

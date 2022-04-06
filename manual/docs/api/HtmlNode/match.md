@@ -1,7 +1,3 @@
----
-title: match (protected)
----
-
 ```php
 match (
     string $exp

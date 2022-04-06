@@ -1,7 +1,3 @@
----
-title: Traversing the DOM tree
----
-
 If you are not so familiar with HTML DOM, check this [link](http://php.net/manual/en/book.dom.php) to learn more...
 
 ```php

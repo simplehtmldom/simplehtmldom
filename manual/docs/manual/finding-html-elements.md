@@ -1,7 +1,3 @@
----
-title: Finding HTML Elements
----
-
 ## By tag name
 
 ```php

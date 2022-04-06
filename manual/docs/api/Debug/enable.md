@@ -1,7 +1,3 @@
----
-title: enable()
----
-
 ```php
 Debug::enable ()
 ```

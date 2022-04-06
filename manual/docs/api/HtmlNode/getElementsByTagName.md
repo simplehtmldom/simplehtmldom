@@ -1,7 +1,3 @@
----
-title: getElementsByTagName
----
-
 ```php
 getElementsByTagName ( string $name [, int $idx = null ] ) : mixed
 ```

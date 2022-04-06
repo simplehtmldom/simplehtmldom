@@ -1,7 +1,3 @@
----
-title: decode (protected)
----
-
 ```php
 decode ()
 ```

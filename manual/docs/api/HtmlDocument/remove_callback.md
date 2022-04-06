@@ -1,7 +1,3 @@
----
-title: remove_callback
----
-
 ```php
 remove_callback ()
 ```

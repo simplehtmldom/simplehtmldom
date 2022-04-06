@@ -1,7 +1,3 @@
----
-title: innertext
----
-
 ```php
 innertext ( ) : string
 ```

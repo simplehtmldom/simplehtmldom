@@ -1,7 +1,3 @@
----
-title: expect
----
-
 ```php
 expect (
     string $selector

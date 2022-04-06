@@ -1,7 +1,3 @@
----
-title: parent
----
-
 ```php
 parent ( [ object $parent = null ] ) : object
 ```

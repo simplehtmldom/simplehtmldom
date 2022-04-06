@@ -1,7 +1,3 @@
----
-title: childNodes
----
-
 ```php
 childNodes ( [ int $idx = -1 ] ) : mixed
 ```

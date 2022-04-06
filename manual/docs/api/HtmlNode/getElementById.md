@@ -1,7 +1,3 @@
----
-title: getElementById
----
-
 ```php
 getElementById ( string $id ) : object
 ```

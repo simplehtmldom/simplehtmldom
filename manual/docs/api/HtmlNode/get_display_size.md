@@ -1,7 +1,3 @@
----
-title: get_display_size
----
-
 ```php
 get_display_size ( ) : mixed
 ```

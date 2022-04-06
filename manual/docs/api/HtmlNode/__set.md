@@ -1,7 +1,3 @@
----
-title: __set
----
-
 ```php
 __set ( string $name, mixed $value )
 ```

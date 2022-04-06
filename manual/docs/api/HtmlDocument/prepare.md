@@ -1,7 +1,3 @@
----
-title: prepare (protected)
----
-
 ```php
 prepare ( string $str [, bool $lowercase = true [, string $defaultBRText = DEFAULT_BR_TEXT [, string $defaultSpanText = DEFAULT_SPAN_TEXT ]]] )
 ```

@@ -1,7 +1,3 @@
----
-title: seek (protected)
----
-
 ```php
 seek (
     string $selector

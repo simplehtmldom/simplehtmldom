@@ -1,7 +1,3 @@
----
-title: outertext
----
-
 ```php
 outertext ( ) : string
 ```

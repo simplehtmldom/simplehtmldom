@@ -1,7 +1,3 @@
----
-title: __destruct
----
-
 ```php
 __destruct ()
 ```

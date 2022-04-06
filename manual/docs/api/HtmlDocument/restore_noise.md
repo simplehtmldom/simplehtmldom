@@ -1,7 +1,3 @@
----
-title: restore_noise (protected)
----
-
 ```php
 restore_noise ( string $text ) : string
 ```

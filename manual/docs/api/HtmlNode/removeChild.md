@@ -1,7 +1,3 @@
----
-title: removeChild
----
-
 ```php
 removeChild ( object $node )
 ```

@@ -1,7 +1,3 @@
----
-title: find
----
-
 ```php
 find (
     string $selector

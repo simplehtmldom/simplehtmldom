@@ -1,7 +1,3 @@
----
-title: read_tag (protected)
----
-
 ```php
 read_tag () : bool
 ```

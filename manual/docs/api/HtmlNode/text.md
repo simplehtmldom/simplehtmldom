@@ -1,7 +1,3 @@
----
-title: text
----
-
 ```php
 text ( [ bool $trim = true ] ) : string
 ```

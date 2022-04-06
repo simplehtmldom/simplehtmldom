@@ -1,7 +1,3 @@
----
-title: getAllAttributes
----
-
 ```php
 getAllAttributes ( ) : array
 ```

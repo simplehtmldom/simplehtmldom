@@ -1,7 +1,3 @@
----
-title: dump
----
-
 ```php
 dump ( [ bool show_attr = true ] ) : string
 ```

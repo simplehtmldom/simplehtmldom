@@ -1,7 +1,3 @@
----
-title: xmltext
----
-
 ```php
 xmltext ( ) : string
 ```

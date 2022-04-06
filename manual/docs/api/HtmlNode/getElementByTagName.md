@@ -1,7 +1,3 @@
----
-title: getElementByTagName
----
-
 ```php
 getElementByTagName ( string $name ) : object
 ```

@@ -1,7 +1,3 @@
----
-title: __unset
----
-
 ```php
 __unset ( string $name )
 ```

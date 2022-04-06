@@ -1,7 +1,3 @@
----
-title: Adding Nodes to the DOM
----
-
 The parser allows you to add new elements to an existing document. Find below an
 example for that.
 

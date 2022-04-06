@@ -1,7 +1,3 @@
----
-title: save
----
-
 ```php
 save ( [ string $filepath = '' ] ) : string
 ```

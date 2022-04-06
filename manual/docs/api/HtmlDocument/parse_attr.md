@@ -1,7 +1,3 @@
----
-title: parse_attr (protected)
----
-
 ```php
 parse_attr ( object $node, string $name, array &$space )
 ```

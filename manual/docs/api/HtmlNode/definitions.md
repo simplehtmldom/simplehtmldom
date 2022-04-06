@@ -1,7 +1,3 @@
----
-title: Definitions
----
-
 The definitions below are an essential part of the parser.
 
 ## Node Types

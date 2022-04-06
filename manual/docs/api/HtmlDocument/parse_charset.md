@@ -1,7 +1,3 @@
----
-title: parse_charset (protected)
----
-
 ```php
 parse_charset ()
 ```

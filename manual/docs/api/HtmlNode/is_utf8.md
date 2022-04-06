@@ -1,7 +1,3 @@
----
-title: is_utf8 (static)
----
-
 ```php
 is_utf8 ( string $str ) : bool
 ```

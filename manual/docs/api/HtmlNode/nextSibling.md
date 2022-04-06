@@ -1,7 +1,3 @@
----
-title: nextSibling
----
-
 ```php
 nextSibling ( ) : object
 ```

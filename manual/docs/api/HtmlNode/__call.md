@@ -1,7 +1,3 @@
----
-title: __call
----
-
 ```php
 __call ($function, $arguments)
 ```

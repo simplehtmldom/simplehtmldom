@@ -1,7 +1,3 @@
----
-title: __toString
----
-
 ```php
 __toString ( ) : string
 ```

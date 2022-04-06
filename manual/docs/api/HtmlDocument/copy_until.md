@@ -1,7 +1,3 @@
----
-title: copy_until (protected)
----
-
 ```php
 copy_until ( string $chars ) : string
 ```

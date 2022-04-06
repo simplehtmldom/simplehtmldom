@@ -1,7 +1,3 @@
----
-title: dump_node
----
-
 ```php
 dump_node ( [ bool $echo = true ] ) : mixed
 ```

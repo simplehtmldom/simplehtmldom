@@ -1,7 +1,3 @@
----
-title: createTextNode
----
-
 ```php
 createTextNode ( string $value ) : object
 ```

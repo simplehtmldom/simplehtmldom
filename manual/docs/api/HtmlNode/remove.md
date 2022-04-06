@@ -1,7 +1,3 @@
----
-title: remove
----
-
 ```php
 remove ( )
 ```

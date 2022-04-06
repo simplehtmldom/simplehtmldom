@@ -1,7 +1,3 @@
----
-title: find_ancestor_tag
----
-
 ```php
 find_ancestor_tag ( string $tag ) : object
 ```

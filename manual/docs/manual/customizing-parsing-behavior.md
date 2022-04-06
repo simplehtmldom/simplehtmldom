@@ -1,7 +1,3 @@
----
-title: Customizing Parsing behavior
----
-
 ```php
 // Write a function with parameter "$element"
 function my_callback($element) {

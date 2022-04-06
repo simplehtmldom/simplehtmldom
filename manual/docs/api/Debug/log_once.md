@@ -1,7 +1,3 @@
----
-title: log_once()
----
-
 ```php
 Debug::log_once (string $message)
 ```

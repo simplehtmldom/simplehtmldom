@@ -1,7 +1,3 @@
----
-title: copy_skip (protected)
----
-
 ```php
 copy_skip ( string $chars ) : string
 ```

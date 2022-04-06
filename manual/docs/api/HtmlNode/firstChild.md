@@ -1,7 +1,3 @@
----
-title: firstChild
----
-
 ```php
 firstChild ( ) : mixed
 ```

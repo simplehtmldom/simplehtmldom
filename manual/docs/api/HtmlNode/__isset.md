@@ -1,7 +1,3 @@
----
-title: __isset
----
-
 ```php
 __isset ( string $name ) : bool
 ```

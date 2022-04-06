@@ -1,7 +1,3 @@
----
-title: appendChild
----
-
 ```php
 appendChild ( object $node ) : object
 ```

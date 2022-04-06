@@ -1,7 +1,3 @@
----
-title: is_block_element
----
-
 ```php
 is_block_element ( object $node ) : bool
 ```

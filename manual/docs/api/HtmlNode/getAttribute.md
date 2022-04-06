@@ -1,7 +1,3 @@
----
-title: getAttribute
----
-
 ```php
 getAttribute ( string $name ) : mixed
 ```

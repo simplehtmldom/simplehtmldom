@@ -1,7 +1,3 @@
----
-title: hasChildNodes
----
-
 ```php
 hasChildNodes ( ) : bool
 ```

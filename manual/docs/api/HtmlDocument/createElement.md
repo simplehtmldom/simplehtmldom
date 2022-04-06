@@ -1,7 +1,3 @@
----
-title: createElement
----
-
 ```php
 createElement ( string $name [, string $value = null ] ) : object
 ```

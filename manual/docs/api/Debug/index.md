@@ -1,7 +1,3 @@
----
-title: Debug
----
-
 Provides the ability to see debug messages for deprecated functions, malformed documents and parsing issues. Debug messages can be send to a custom message handler or written to error_log (default).
 
 ## Example

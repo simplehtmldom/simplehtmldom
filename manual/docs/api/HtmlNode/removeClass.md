@@ -1,7 +1,3 @@
----
-title: removeClass
----
-
 ```php
 removeClass ( [ mixed $class = null ] )
 ```

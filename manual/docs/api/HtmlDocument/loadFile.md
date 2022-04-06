@@ -1,7 +1,3 @@
----
-title: loadFile
----
-
 ```php
 loadFile (...)
 ```

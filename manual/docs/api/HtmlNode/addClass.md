@@ -1,7 +1,3 @@
----
-title: addClass
----
-
 ```php
 addClass ( mixed $class )
 ```

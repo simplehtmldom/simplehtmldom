@@ -1,7 +1,3 @@
----
-title: Creating HTML DOM objects
----
-
 ## From string
 
 ```php

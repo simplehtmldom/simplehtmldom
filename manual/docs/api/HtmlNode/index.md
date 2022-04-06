@@ -1,7 +1,3 @@
----
-title: HtmlNode
----
-
 Represents a single node in the DOM tree (see [`HtmlDocument`](../HtmlDocument/)).
 
 ## Public Properties

@@ -1,7 +1,3 @@
----
-title: __get
----
-
 ```php
 __get ( string $name ) : mixed
 ```

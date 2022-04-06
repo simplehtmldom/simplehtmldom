@@ -1,7 +1,3 @@
----
-title: parse (protected)
----
-
 ```php
 parse ()
 ```

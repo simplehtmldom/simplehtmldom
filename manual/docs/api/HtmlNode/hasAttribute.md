@@ -1,7 +1,3 @@
----
-title: hasAttribute
----
-
 ```php
 hasAttribute ( string $name ) : bool
 ```

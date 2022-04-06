@@ -1,7 +1,3 @@
----
-title: lastChild
----
-
 ```php
 lastChild ( ) : object
 ```

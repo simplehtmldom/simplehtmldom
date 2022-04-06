@@ -1,7 +1,3 @@
----
-title: convert_text
----
-
 ```php
 convert_text ( string $text ) : string
 ```

@@ -1,7 +1,3 @@
----
-title: set_callback
----
-
 ```php
 set_callback ( string $function_name )
 ```

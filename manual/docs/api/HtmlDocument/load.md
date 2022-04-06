@@ -1,7 +1,3 @@
----
-title: load
----
-
 ```php
 load ( string $str [, bool $lowercase = true [, bool $stripRN = true [, string $defaultBRText = DEFAULT_BR_TEXT [, string $defaultSpanText = DEFAULT_SPAN_TEXT [, int $options = 0 ]]]]]) : object
 ```

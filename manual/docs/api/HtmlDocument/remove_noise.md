@@ -1,7 +1,3 @@
----
-title: remove_noise (protected)
----
-
 ```php
 remove_noise ( string $pattern [, bool $remove_tag = false] )
 ```

@@ -1,7 +1,3 @@
----
-title: log()
----
-
 ```php
 Debug::log (string $message)
 ```

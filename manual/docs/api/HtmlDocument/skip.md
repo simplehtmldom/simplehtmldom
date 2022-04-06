@@ -1,8 +1,3 @@
-
----
-title: skip (protected)
----
-
 ```php
 skip ( string $chars )
 ```

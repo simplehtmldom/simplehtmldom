@@ -1,7 +1,3 @@
----
-title: removeAttribute
----
-
 ```php
 removeAttribute ( string $name )
 ```

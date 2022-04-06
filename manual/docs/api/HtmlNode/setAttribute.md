@@ -1,7 +1,3 @@
----
-title: setAttribute
----
-
 ```php
 setAttribute ( string $name, string $value )
 ```

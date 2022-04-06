@@ -1,7 +1,3 @@
----
-title: Saving DOM objects
----
-
 ```php
 // Dumps the internal DOM tree back into string
 $str = $html->save();

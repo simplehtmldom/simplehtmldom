@@ -1,7 +1,3 @@
----
-title: parentNode
----
-
 ```php
 parentNode () : object
 ```

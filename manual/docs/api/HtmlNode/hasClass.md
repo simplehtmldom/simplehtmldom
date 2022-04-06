@@ -1,7 +1,3 @@
----
-title: hasClass
----
-
 ```php
 hasClass ( string $class ) : bool
 ```

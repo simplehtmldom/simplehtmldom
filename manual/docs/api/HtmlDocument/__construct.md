@@ -1,7 +1,3 @@
----
-title: __construct
----
-
 ```php
 __construct ( [ string $str = null [, bool $lowercase = true [, bool $forceTagsClosed = true [, string $target_charset = DEFAULT_TARGET_CHARSET [, bool $stripRN = true [, string $defaultBRText = DEFAULT_BR_TEXT [, string $defaultSpanText = DEFAULT_SPAN_TEXT [, int $options = 0 ]]]]]]]]) : object
 ```

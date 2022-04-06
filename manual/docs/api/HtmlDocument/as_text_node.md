@@ -1,7 +1,3 @@
----
-title: as_text_node (protected)
----
-
 ```php
 as_text_node ( string $tag ) : bool
 ```

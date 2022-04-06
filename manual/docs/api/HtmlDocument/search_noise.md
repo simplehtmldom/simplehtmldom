@@ -1,7 +1,3 @@
----
-title: search_noise (protected)
----
-
 ```php
 search_noise ( string $text ) : string
 ```

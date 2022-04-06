@@ -1,7 +1,3 @@
----
-title: __construct
----
-
 ```php
 __construct ( [ object $dom ] ) : object
 ```

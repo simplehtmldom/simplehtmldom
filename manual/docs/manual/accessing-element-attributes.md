@@ -1,7 +1,3 @@
----
-title: Accessing HTML element attributes
----
-
 # Get, Set and Remove attributes
 
 ```php

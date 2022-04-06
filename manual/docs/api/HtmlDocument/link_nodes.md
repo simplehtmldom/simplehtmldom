@@ -1,7 +1,3 @@
----
-title: link_nodes (protected)
----
-
 ```php
 link_nodes ( object &$node, bool $is_child )
 ```

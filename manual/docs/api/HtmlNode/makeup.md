@@ -1,7 +1,3 @@
----
-title: makeup
----
-
 ```php
 makeup ( ) : string
 ```
