@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../simple_html_dom.php';
 use PHPUnit\Framework\TestCase;
+use simplehtmldom\HtmlElement;
 
 /**
  * Tests for simple_html_dom_node
@@ -8,6 +9,14 @@ use PHPUnit\Framework\TestCase;
 class htmlnode_test extends TestCase {
 
 	private $html;
+
+	public function rawTextElementProvider()
+	{
+		return [
+			HtmlElement::SCRIPT => [HtmlElement::SCRIPT],
+			HtmlElement::STYLE => [HtmlElement::STYLE]
+		];
+	}
 
 	protected function setUp()
 	{
@@ -547,6 +556,16 @@ EOD;
 		$this->html->find('p', 0)->outertext = 'Hello, World!';
 
 		$this->assertEquals($expected, $this->html->find('html', 0)->outertext());
+	}
+
+	/**
+	 * @dataProvider rawTextElementProvider
+	 */
+	public function test_outertext_should_return_raw_text_for_raw_text_elements($element)
+	{
+		$doc = "<{$element}>var data = '<div>';</{$element}>";
+		$this->html->load($doc);
+		$this->assertEquals($doc, $this->html->root->outertext());
 	}
 
 	public function test_next_sibling_should_work_after_remove()

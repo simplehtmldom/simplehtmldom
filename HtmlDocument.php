@@ -800,21 +800,21 @@ class HtmlDocument
 
 		if ($node->tag === HtmlElement::BR) {
 			$node->_[HtmlNode::HDOM_INFO_INNER] = $this->default_br_text;
-		} elseif ($node->tag === HtmlElement::SCRIPT) {
+		} elseif (HtmlElement::isRawTextElement($node->tag)) {
 			$data = '';
 
-			// There is a rare chance of empty script: "<script></script>"
-			// In which case the current char is the start of the end tag
-			// But the script could also just contain tags: "<script><div></script>"
+			// There is a rare chance of an empty element: "<e></e>",
+			// in which case the current char is the start of the end tag.
+			// But the script could also just contain tags: "<e><t></e>"
 			while(true) {
 				// Copy until first char of end tag
 				$data .= $this->copy_until_char('<');
 
 				// Look ahead in the document, maybe we are at the end
-				if (($this->pos + 9) > $this->size) { // End of document
+				if (($this->pos + strlen("</{$node->tag}>")) > $this->size) { // End of document
 					Debug::log('Source document ended unexpectedly!');
 					break;
-				} elseif (substr($this->doc, $this->pos, 8) === '</script') { // end
+				} elseif (substr($this->doc, $this->pos, strlen("</{$node->tag}")) === "</{$node->tag}") { // end
 					$this->skip('>'); // don't include the end tag
 					break;
 				}

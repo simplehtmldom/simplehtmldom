@@ -291,7 +291,7 @@ class HtmlNode
 				case HtmlElement::BR:
 					// todo: <br> should either never have self::HDOM_INFO_INNER or always
 					break;
-				case HtmlElement::SCRIPT:
+				case HtmlElement::isRawTextElement($this->tag):
 					$ret .= $this->_[self::HDOM_INFO_INNER];
 					break;
 				default:
@@ -349,9 +349,7 @@ class HtmlNode
 	{
 		$ret = '';
 
-		if (strtolower($this->tag) === HtmlElement::SCRIPT) {
-			$ret = '';
-		} elseif (strtolower($this->tag) === HtmlElement::STYLE) {
+		if (HtmlElement::isRawTextElement($this->tag)) {
 			$ret = '';
 		} elseif ($this->nodetype === self::HDOM_TYPE_COMMENT) {
 			$ret = '';
