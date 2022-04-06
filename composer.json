@@ -37,8 +37,7 @@
         ],
         "exclude-from-classmap": [
             "/example/",
-            "/manual/",
-            "/testcase/",
+            "/docs/",
             "/tests/",
             "simple_html_dom.php"
         ]

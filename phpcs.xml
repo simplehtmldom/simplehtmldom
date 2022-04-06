@@ -8,8 +8,8 @@
   <!-- TODO: Enforce coding standards on examples -->
   <exclude-pattern>*/example/*</exclude-pattern>
 
-  <!-- Exclude manuals -->
-  <exclude-pattern>*/manual/*</exclude-pattern>
+  <!-- Exclude docs -->
+  <exclude-pattern>*/docs/*</exclude-pattern>
 
   <!-- Exclude tests -->
   <!-- TODO: Enforce coding standards on tests -->

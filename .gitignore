@@ -11,8 +11,8 @@ tests/data/*
 # PhpStorm
 .idea/
 
-# Generated site data
-/manual/site/
+# MkDocs generated files
+/site/
 
 # Composer
 /vendor/

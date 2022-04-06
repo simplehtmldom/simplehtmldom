@@ -47,7 +47,7 @@ foreach($html->find('a') as $element)
     echo $element->href . '<br>';
 ```
 
-Loads the specified document into memory and returns a list of image sources as well as anchor links. Note that [`find`](manual/finding-html-elements.md) supports [CSS](https://www.w3.org/TR/selectors/) selectors to find elements in the DOM.
+Loads the specified document into memory and returns a list of image sources as well as anchor links. Note that [`find`](examples/finding-html-elements.md) supports [CSS](https://www.w3.org/TR/selectors/) selectors to find elements in the DOM.
 
 ## Modify HTML documents
 
@@ -67,7 +67,7 @@ echo $html; // <div id="hello">foo</div><div id="world" class="bar">World!</div>
 
 Parses the provided HTML string and replaces elements in the DOM before returning the updated HTML string. In this example, the class for the second `div` element is set to `bar` and the inner text for the first `div` element to `foo`.
 
-Note that [`find`](manual/finding-html-elements.md) supports a second parameter to return a single element from the array of matches.
+Note that [`find`](examples/finding-html-elements.md) supports a second parameter to return a single element from the array of matches.
 
 Note that attributes can be accessed directly by the means of magic methods (`->class` and `->innertext` in the example above).
 
