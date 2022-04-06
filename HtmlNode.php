@@ -324,25 +324,11 @@ class HtmlNode
 	 */
 	protected function is_block_element($node)
 	{
-		return !HtmlElement::isMetadataContent($node->tag)
-			&& !HtmlElement::isEmbeddedContent($node->tag)
-			&& !HtmlElement::isInteractiveContent($node->tag)
-			&& (HtmlElement::isHeadingContent($node->tag)
-			|| HtmlElement::isSectioningContent($node->tag)
-			|| in_array(strtolower($node->tag), array(
-			HtmlElement::P,
-			HtmlElement::OL,
-			HtmlElement::UL,
-			HtmlELement::PRE,
-			HtmlElement::ADDRESS,
-			HtmlElement::BLOCKQUOTE,
-			HtmlElement::DL,
-			HtmlElement::DIV,
-			HtmlElement::FIELDSET,
-			HtmlElement::FORM,
-			HtmlElement::HR,
-			HtmlElement::TABLE
-		)));
+		return HtmlElement::isPalpableContent($node->tag) &&
+			!HtmlElement::isMetadataContent($node->tag) &&
+			!HtmlElement::isPhrasingContent($node->tag) &&
+			!HtmlElement::isEmbeddedContent($node->tag) &&
+			!HtmlElement::isInteractiveContent($node->tag);
 	}
 
 	function text($trim = true)
