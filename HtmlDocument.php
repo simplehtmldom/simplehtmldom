@@ -177,13 +177,13 @@ class HtmlDocument
 		if ($stripRN) {
 			// Temporarily remove any element that shouldn't lose whitespace
 			$this->remove_noise("'<\s*script[^>]*>(.*?)<\s*/\s*script\s*>'is");
-			$this->remove_noise("'<!\[CDATA\[(.*?)\]\]>'is");
-			$this->remove_noise("'<!--(?!>|\->)(.*?)-->'is");
+			$this->remove_noise("'<!\[CDATA\[(.*?)]]>'is");
+			$this->remove_noise("'<!--(?!>|->)(.*?)-->'is");
 			$this->remove_noise("'<\s*style[^>]*>(.*?)<\s*/\s*style\s*>'is");
-			$this->remove_noise("'<\s*(?:code)[^>]*>(.*?)<\s*/\s*(?:code)\s*>'is");
+			$this->remove_noise("'<\s*code[^>]*>(.*?)<\s*/\s*code\s*>'is");
 
 			// Remove whitespace and newlines between tags
-			$this->doc = preg_replace('/\>([\t\s]*[\r\n]^[\t\s]*)\</m', '><', $this->doc);
+			$this->doc = preg_replace('/>([\t\s]*[\r\n]^[\t\s]*)</m', '><', $this->doc);
 
 			// Remove whitespace and newlines in text
 			$this->doc = preg_replace('/([\t\s]*[\r\n]^[\t\s]*)/m', ' ', $this->doc);
@@ -200,7 +200,7 @@ class HtmlDocument
 		}
 
 		if($options & HDOM_SMARTY_AS_TEXT) { // Strip Smarty scripts
-			$this->remove_noise("'(\{\w)(.*?)(\})'s", true);
+			$this->remove_noise("'({\w)(.*?)(})'s", true);
 			// phpcs:ignore Generic.Files.LineLength
 			Debug::log('Support for Smarty scripts has been deprecated and will be removed in the next major version of simplehtmldom.');
 		}
