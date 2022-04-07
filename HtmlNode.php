@@ -87,10 +87,11 @@ class HtmlNode
 
 	function __construct($dom)
 	{
-		if ($dom === null) return $this;
-
-		$this->dom = $dom;
-		$dom->nodes[] = $this;
+		if ($dom instanceof HtmlDocument)
+		{
+			$this->dom = $dom;
+			$dom->nodes[] = $this;
+		}
 	}
 
 	function __debugInfo()
