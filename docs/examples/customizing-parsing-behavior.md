@@ -6,7 +6,7 @@ function my_callback($element) {
                 $element->outertext = '';
 }
 
-// Register the callback function with it's function name
+// Register the callback function with its function name
 $html->set_callback('my_callback');
 
 // Callback function will be invoked while dumping

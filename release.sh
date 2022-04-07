@@ -63,7 +63,7 @@ if [ "$version" ]; then
   # Create stash commit (otherwise git archive won't work)
   stash=$(git stash create);
   git archive --format=zip --output="$prefix$version".zip --worktree-attributes "$stash";
-  # Clenup
+  # Cleanup
   git checkout .;
   git gc --prune;
 fi;

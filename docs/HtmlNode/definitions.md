@@ -2,7 +2,7 @@ The definitions below are an essential part of the parser.
 
 ## Node Types
 
-The type of a node is determined during parsing and represented by one of the elements in the list below.
+The type of node is determined during parsing and represented by one of the elements in the list below.
 
 | Type                | Description                                                         |
 |---------------------|---------------------------------------------------------------------|

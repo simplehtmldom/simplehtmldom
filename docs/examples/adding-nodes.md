@@ -31,7 +31,7 @@ $data = array(
     array('Atlantic Ocean', 310410900),
     array('Indian Ocean', 264000000),
     array('Pacific Ocean', 660000000),
-    array('Souce China Sea', 9880000),
+    array('South China Sea', 9880000),
     array('Southern Ocean', 71800000)
 );
 
@@ -110,7 +110,7 @@ echo $html . PHP_EOL;
  *     <tr><td>Atlantic Ocean</td><td volume="310410900">310,410,900</td></tr>
  *     <tr><td>Indian Ocean</td><td volume="264000000">264,000,000</td></tr>
  *     <tr><td>Pacific Ocean</td><td volume="660000000">660,000,000</td></tr>
- *     <tr><td>Souce China Sea</td><td volume="9880000">9,880,000</td></tr>
+ *     <tr><td>South China Sea</td><td volume="9880000">9,880,000</td></tr>
  *     <tr><td>Southern Ocean</td><td volume="71800000">71,800,000</td></tr>
  *   </table>
  * </body>

@@ -16,7 +16,7 @@ documentation: https://www.mkdocs.org/
 
 # Adding new pages
 
-Place new files in `docs`. Use subfolders (as few levels as possible) to
+Place new files in `docs`. Use sub-folders (as few levels as possible) to
 separate categories.
 
 Files added to the manual will **not** appear on the project page automatically.
@@ -37,7 +37,7 @@ specification for this file at https://www.mkdocs.org/user-guide/configuration/.
 
 # Building project pages
 
-The build process depends on your installation of MkDocs. Typically MkDocs is
+The build process depends on your installation of MkDocs. Typically, MkDocs is
 made available via the command line.
 
 ## Step 1 - Check your version of MkDocs

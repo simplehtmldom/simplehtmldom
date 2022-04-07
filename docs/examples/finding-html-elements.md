@@ -1,7 +1,7 @@
 ## By tag name
 
 ```php
-// Find all anchors, returns a array of element objects
+// Find all anchors, returns an array of element objects
 $ret = $html->find('a');
 
 // Find all anchors and images, returns an array of element objects
@@ -52,7 +52,7 @@ $es = $html->find('div div div');
 // Find all <td> in <table> which class=hello
 $es = $html->find('table.hello td');
 
-// Find all td tags with attribite align=center in table tags
+// Find all td tags with attribute align=center in table tags
 $es = $html->find('table td[align=center]');
 ```
 

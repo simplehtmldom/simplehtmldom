@@ -6,4 +6,4 @@ removeAttribute ( string $name )
 |-----------|----------------------------------|
 | `name`    | Name of the attribute to remove. |
 
-Removes the attribute with the speicified name from the current node.
+Removes the attribute with the specified name from the current node.

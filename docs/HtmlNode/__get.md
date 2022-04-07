@@ -8,7 +8,7 @@ __get ( string $name ) : mixed
 
 See [magic methods](http://php.net/manual/en/language.oop5.overloading.php#object.get)
 
-If the provided name is a valid attribute name, returns the attribute value. Otherwise a value according to the table below.
+If the provided name is a valid attribute name, returns the attribute value. Otherwise, a value according to the table below.
 
 | Name        | Description                                                                               |
 |-------------|-------------------------------------------------------------------------------------------|

@@ -77,8 +77,8 @@ const HDOM_INFO_ENDSPACE = HtmlNode::HDOM_INFO_ENDSPACE;
 
 const HDOM_SMARTY_AS_TEXT = \simplehtmldom\HDOM_SMARTY_AS_TEXT;
 
-class_alias('\simplehtmldom\HtmlDocument', 'simple_html_dom', true);
-class_alias('\simplehtmldom\HtmlNode', 'simple_html_dom_node', true);
+class_alias('\simplehtmldom\HtmlDocument', 'simple_html_dom');
+class_alias('\simplehtmldom\HtmlNode', 'simple_html_dom_node');
 
 function file_get_html(
 	$url,
