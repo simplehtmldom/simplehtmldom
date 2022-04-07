@@ -9,8 +9,6 @@ https://phpunit.de/announcements/phpunit-6.html
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.5/phpunit.xsd"
 	colors="true"
-	processIsolation="false"
-	timeoutForSmallTests="1"
 	timeoutForMediumTests="1"
 	timeoutForLargeTests="6" >
 
