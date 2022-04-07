@@ -997,9 +997,9 @@ class HtmlNode
 	function __isset($name)
 	{
 		switch ($name) {
+			case 'innertext':
+			case 'plaintext':
 			case 'outertext': return true;
-			case 'innertext': return true;
-			case 'plaintext': return true;
 		}
 
 		return isset($this->attr[$name]);

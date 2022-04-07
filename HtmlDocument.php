@@ -1034,9 +1034,8 @@ class HtmlDocument
 	function __get($name)
 	{
 		switch ($name) {
-			case 'outertext':
-				return $this->root->innertext();
 			case 'innertext':
+			case 'outertext':
 				return $this->root->innertext();
 			case 'plaintext':
 				return $this->root->text();
