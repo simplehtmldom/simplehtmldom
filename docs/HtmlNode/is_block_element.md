@@ -2,9 +2,9 @@
 is_block_element ( object $node ) : bool
 ```
 
-| Parameter | Description
-| --------- | -----------
-| `node`    | A node
+| Parameter | Description |
+|-----------|-------------|
+| `node`    | A node      |
 
 Returns true if the provided element is a block level element.
 

@@ -9,11 +9,11 @@ echo $html->getElementById("div1")->childNodes(1)->childNodes(1)->childNodes(2)-
 
 You can also call methods using the **Camel naming conventions**.
 
-Method | Description
------- | -----------
-`$e->children( [int $index] ) : mixed` | Returns the Nth **child object** if **index** is set, otherwise return an **array of children**.
-`$e->parent() : element` | Returns the **parent** of element.
-`$e->first_child() : element` | Returns the **first child** of element, or **null** if not found.
-`$e->last_child() : element` | Returns the **last child** of element, or **null** if not found.
-`$e->next_sibling() : element` | Returns the **next sibling** of element, or **null** if not found.
-`$e->prev_sibling() : element` | Returns the **previous sibling** of element, or **null** if not found.
+| Method                                 | Description                                                                                      |
+|----------------------------------------|--------------------------------------------------------------------------------------------------|
+| `$e->children( [int $index] ) : mixed` | Returns the Nth **child object** if **index** is set, otherwise return an **array of children**. |
+| `$e->parent() : element`               | Returns the **parent** of element.                                                               |
+| `$e->first_child() : element`          | Returns the **first child** of element, or **null** if not found.                                |
+| `$e->last_child() : element`           | Returns the **last child** of element, or **null** if not found.                                 |
+| `$e->next_sibling() : element`         | Returns the **next sibling** of element, or **null** if not found.                               |
+| `$e->prev_sibling() : element`         | Returns the **previous sibling** of element, or **null** if not found.                           |

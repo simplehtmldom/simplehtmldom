@@ -28,9 +28,9 @@ echo $e->innertext; // Returns: " foo <b>bar</b>"
 echo $e->plaintext; // Returns: " foo bar"
 ```
 
-Attribute name | Description
--------------- | -----------
-`$e->tag`      | Read or write the **tag name** of element.
-`$e->outertext`| Read or write the **outer HTML text** of element.
-`$e->innertext`| Read or write the **inner HTML text** of element.
-`$e->plaintext`| Read or write the **plain text** of element.
+| Attribute name  | Description                                       |
+|-----------------|---------------------------------------------------|
+| `$e->tag`       | Read or write the **tag name** of element.        |
+| `$e->outertext` | Read or write the **outer HTML text** of element. |
+| `$e->innertext` | Read or write the **inner HTML text** of element. |
+| `$e->plaintext` | Read or write the **plain text** of element.      |

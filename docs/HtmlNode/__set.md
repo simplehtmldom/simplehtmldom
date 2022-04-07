@@ -2,10 +2,10 @@
 __set ( string $name, mixed $value )
 ```
 
-| Parameter | Description
-| --------- | -----------
-| `name`    | `outertext`, `innertext` or attribute name.
-| `value`   | Value to set.
+| Parameter | Description                                 |
+|-----------|---------------------------------------------|
+| `name`    | `outertext`, `innertext` or attribute name. |
+| `value`   | Value to set.                               |
 
 See [magic methods](http://php.net/manual/en/language.oop5.overloading.php#object.get)
 

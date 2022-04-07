@@ -2,9 +2,9 @@
 removeClass ( [ mixed $class = null ] )
 ```
 
-| Parameter | Description
-| --------- | -----------
-| `class`   | Specifies one or more class names to be removed.
+| Parameter | Description                                      |
+|-----------|--------------------------------------------------|
+| `class`   | Specifies one or more class names to be removed. |
 
 Removes one or more class names from the current node.
 

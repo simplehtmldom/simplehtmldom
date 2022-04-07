@@ -2,9 +2,9 @@
 addClass ( mixed $class )
 ```
 
-| Parameter | Description
-| --------- | -----------
-| `class`   | Specifies one or more class names to be added.
+| Parameter | Description                                    |
+|-----------|------------------------------------------------|
+| `class`   | Specifies one or more class names to be added. |
 
 Adds one or more class names to the current node.
 

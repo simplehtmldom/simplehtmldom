@@ -6,10 +6,10 @@ See [magic methods](http://php.net/manual/en/language.oop5.overloading.php#objec
 
 Supports following names:
 
-| Name              | Description
-| ----              | -----------
-| `outertext`       | Returns the outer text of the root element.
-| `innertext`       | Returns the inner text of the root element.
-| `plaintext`       | Returns the plain text of the root element.
-| `charset`         | Returns the charset for the document.
-| `target_charset`  | Returns the target charset for the document.
+| Name             | Description                                  |
+|------------------|----------------------------------------------|
+| `outertext`      | Returns the outer text of the root element.  |
+| `innertext`      | Returns the inner text of the root element.  |
+| `plaintext`      | Returns the plain text of the root element.  |
+| `charset`        | Returns the charset for the document.        |
+| `target_charset` | Returns the target charset for the document. |

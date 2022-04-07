@@ -2,9 +2,9 @@
 removeChild ( object $node )
 ```
 
-| Parameter | Description
-| --------- | -----------
-| `node`    | Node to remove from current element, must be a child of the current element.
+| Parameter | Description                                                                  |
+|-----------|------------------------------------------------------------------------------|
+| `node`    | Node to remove from current element, must be a child of the current element. |
 
 Removes the node recursively from the DOM.
 Does nothing if the provided node is not a child of the current node.

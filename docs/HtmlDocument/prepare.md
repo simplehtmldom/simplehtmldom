@@ -4,9 +4,9 @@ prepare ( string $str [, bool $lowercase = true [, string $defaultBRText = DEFAU
 
 Initializes the DOM object.
 
-| Parameters        | Description
-| ----------        | -----------
-| `str`             | The HTML document string.
-| `lowercase`       | Tag names are parsed in lowercase letters if enabled.
-| `defaultBRText`   | Defines the default text to return for `<br>` elements.
-| `defaultSpanText` | Defines the default text to return for `<span>` elements.
+| Parameters        | Description                                               |
+|-------------------|-----------------------------------------------------------|
+| `str`             | The HTML document string.                                 |
+| `lowercase`       | Tag names are parsed in lowercase letters if enabled.     |
+| `defaultBRText`   | Defines the default text to return for `<br>` elements.   |
+| `defaultSpanText` | Defines the default text to return for `<span>` elements. |
