@@ -1022,15 +1022,11 @@ class HtmlNode
 			$targetCharset = strtoupper($this->dom->_target_charset);
 		}
 
-		if (!empty($sourceCharset) && !empty($targetCharset)) {
-			if (strtoupper($sourceCharset) === strtoupper($targetCharset)) {
-				$converted_text = $text;
-			} elseif ((strtoupper($targetCharset) === 'UTF-8') && (self::is_utf8($text))) {
-				Debug::log_once('The source charset was incorrectly detected as ' . $sourceCharset . ' but should have been UTF-8');
-				$converted_text = $text;
-			} else {
-				$converted_text = iconv($sourceCharset, $targetCharset, $text);
-			}
+		if ($sourceCharset !== '' &&
+			$targetCharset !== '' &&
+			$sourceCharset !== $targetCharset &&
+			!($targetCharset === 'UTF-8' &&  self::is_utf8($text))) {
+			$converted_text = iconv($sourceCharset, $targetCharset, $text);
 		}
 
 		// Let's make sure that we don't have that silly BOM issue with any of the utf-8 text we output.
