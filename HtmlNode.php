@@ -190,7 +190,7 @@ class HtmlNode
 		}
 
 		if (isset($this->text)) {
-			$string .= " text: ({$this->text})";
+			$string .= " text: ($this->text)";
 		}
 
 		$string .= ' HDOM_INNER_INFO: ';

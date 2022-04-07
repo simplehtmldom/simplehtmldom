@@ -811,10 +811,10 @@ class HtmlDocument
 				$data .= $this->copy_until_char('<');
 
 				// Look ahead in the document, maybe we are at the end
-				if (($this->pos + strlen("</{$node->tag}>")) > $this->size) { // End of document
+				if (($this->pos + strlen("</$node->tag>")) > $this->size) { // End of document
 					Debug::log('Source document ended unexpectedly!');
 					break;
-				} elseif (substr($this->doc, $this->pos, strlen("</{$node->tag}")) === "</{$node->tag}") { // end
+				} elseif (substr($this->doc, $this->pos, strlen("</$node->tag")) === "</$node->tag") { // end
 					$this->skip('>'); // don't include the end tag
 					break;
 				}
