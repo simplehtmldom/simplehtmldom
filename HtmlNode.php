@@ -334,24 +334,24 @@ class HtmlNode
 
 	function text($trim = true)
 	{
-		$ret = '';
-
 		if (HtmlElement::isRawTextElement($this->tag)) {
-			$ret = '';
-		} elseif ($this->nodetype === self::HDOM_TYPE_COMMENT) {
-			$ret = '';
-		} elseif ($this->nodetype === self::HDOM_TYPE_CDATA) {
-			$ret = $this->_[self::HDOM_INFO_INNER];
-		} elseif ($this->nodetype === self::HDOM_TYPE_UNKNOWN) {
-			$ret = '';
-		} elseif (isset($this->_[self::HDOM_INFO_INNER])) {
-			$ret = $this->_[self::HDOM_INFO_INNER];
-		} elseif ($this->nodetype === self::HDOM_TYPE_TEXT) {
-			$ret = $this->_[self::HDOM_INFO_TEXT];
+			return '';
 		}
 
-		if (is_null($this->nodes)) {
-			return '';
+		$ret = '';
+
+		switch ($this->nodetype) {
+			case self::HDOM_TYPE_COMMENT:
+			case self::HDOM_TYPE_UNKNOWN:
+				return '';
+			case self::HDOM_TYPE_TEXT:
+				$ret = $this->_[self::HDOM_INFO_TEXT];
+				break;
+			default:
+				if (isset($this->_[self::HDOM_INFO_INNER])) {
+					$ret = $this->_[self::HDOM_INFO_INNER];
+				}
+				break;
 		}
 
 		foreach ($this->nodes as $n) {
