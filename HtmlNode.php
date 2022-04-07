@@ -573,7 +573,6 @@ class HtmlNode
 		// Note: If this element is a void tag, any previous void element is
 		// skipped.
 		foreach($nodes as $node) {
-			$pass = true;
 
 			// Skip root nodes
 			if(!$node->parent) {
@@ -582,7 +581,7 @@ class HtmlNode
 			}
 
 			// Handle 'text' selector
-			if($pass && $tag === 'text') {
+			if($tag === 'text') {
 
 				if($node->tag === 'text') {
 					$ret[array_search($node, $this->dom->nodes, true)] = 1;
@@ -598,7 +597,7 @@ class HtmlNode
 			}
 
 			// Handle 'cdata' selector
-			if($pass && $tag === 'cdata') {
+			if($tag === 'cdata') {
 
 				if($node->tag === 'cdata') {
 					$ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
@@ -610,20 +609,22 @@ class HtmlNode
 			}
 
 			// Handle 'comment'
-			if($pass && $tag === 'comment' && $node->tag === 'comment') {
+			if($tag === 'comment' && $node->tag === 'comment') {
 				$ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
 				unset($node);
 				continue;
 			}
 
 			// Skip if node isn't a child node (i.e. text nodes)
-			if($pass && !in_array($node, $node->parent->children, true)) {
+			if(!in_array($node, $node->parent->children, true)) {
 				unset($node);
 				continue;
 			}
 
+			$pass = true;
+
 			// Skip if tag doesn't match
-			if ($pass && $tag !== '' && $tag !== $node->tag && $tag !== '*') {
+			if ($tag !== '' && $tag !== $node->tag && $tag !== '*') {
 				$pass = false;
 			}
 
