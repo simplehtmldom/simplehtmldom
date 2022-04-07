@@ -6,4 +6,4 @@ parse_selector ( string $selector_string ) : array
 |-------------------|---------------------|
 | `selector_string` | The selector string |
 
-Parses a CSS selector into an internal format for further use. See also [`find`](../find/).
+Parses a CSS selector into an internal format for further use. See also [`find`](find.md).

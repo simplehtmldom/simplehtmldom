@@ -1,4 +1,4 @@
-Represents a single node in the DOM tree (see [`HtmlDocument`](../HtmlDocument/)).
+Represents a single node in the DOM tree (see [`HtmlDocument`](../HtmlDocument/index.md)).
 
 ## Public Properties
 
@@ -19,6 +19,6 @@ None.
 
 ## Private Properties
 
-| Property | Description                                              |
-|----------|----------------------------------------------------------|
-| `dom`    | The DOM object (see [`HtmlDocument`](../HtmlDocument/)). |
+| Property | Description                                                      |
+|----------|------------------------------------------------------------------|
+| `dom`    | The DOM object (see [`HtmlDocument`](../HtmlDocument/index.md)). |

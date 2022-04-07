@@ -14,4 +14,4 @@ match (
 | `value`            | Value            |
 | `case_sensitivity` | Case sensitivity |
 
-Matches a single attribute value against the specified attribute selector. See also [`find`](../find/).
+Matches a single attribute value against the specified attribute selector. See also [`find`](find.md).

@@ -6,10 +6,10 @@ example for that.
 - It is not possible to create nodes via `->outertext`, `->innertext`, or
 `->plaintext`. These properties only change the text representation of a node
 and will return undesired results if used incorrectly.
-- Use [`$html->createElement`](/api/HtmlDocument/createElement) and
-[`$html->createTextNode`](/api/HtmlDocument/createTextNode) to create
+- Use [`$html->createElement`](../HtmlDocument/createElement.md) and
+[`$html->createTextNode`](../HtmlDocument/createTextNode.md) to create
 new nodes.
-- Use [`$node->appendChild`](/api/HtmlNode/appendChild) to add a
+- Use [`$node->appendChild`](../HtmlNode/appendChild.md) to add a
 node as child to another node.
 - Nodes can be combined in any order.
 

@@ -8,4 +8,4 @@ expect (
 
 Finds elements in the DOM.
 Returns null if no match was found.
-See [`find`](./find/) for a description of parameters and selectors.
+See [`find`](find.md) for a description of parameters and selectors.
