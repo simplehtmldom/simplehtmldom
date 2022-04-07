@@ -843,39 +843,32 @@ class HtmlNode
 		 * [0] - full match
 		 *
 		 * [1] - pseudo selector
-		 *     (?:\:(\w+)\()?
 		 *     Matches the pseudo selector (optional)
 		 *
 		 * [2] - tag name
-		 *     ([\w:\*-]*)
 		 *     Matches the tag name consisting of zero or more words, colons,
 		 *     asterisks and hyphens.
 		 *
 		 * [3] - pseudo selector
-		 *     (?:\:(\w+)\()?
 		 *     Matches the pseudo selector (optional)
 		 *
 		 * [4] - id name
-		 *     (?:\#([\w-]+))
 		 *     Optionally matches an id name, consisting of an "#" followed by
 		 *     the id name (one or more words and hyphens).
 		 *
 		 * [5] - class names (including dots)
-		 *     (?:\.([\w\.-]+))?
 		 *     Optionally matches a list of classs, consisting of an "."
 		 *     followed by the class name (one or more words and hyphens)
 		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
 		 * [6] - attributes
-		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:(?:[!*^$|~]?=)(?![\"'])(?:.*?)(?![\"'])|(?:[!*^$|~]?=)[\"']{1}(?:.*?)[\"']{1}))?(?:\s*?(?:[iIsS])?)?\])+)?
 		 *     Optionally matches the attributes list
 		 *
 		 * [7] - separator
-		 *     ([\/, >+~]+)
 		 *     Matches the selector list separator
 		 */
 		// phpcs:ignore Generic.Files.LineLength
-		$pattern = "/(?:\:(\w+)\()?([\w:\*-]*)(?:\:(\w+)\()?(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:(?:[!*^$|~]?=)(?![\"'])(?:.*?)(?![\"'])|(?:[!*^$|~]?=)[\"']{1}(?:.*?)[\"']{1}))?(?:\s*?(?:[iIsS])?)?\])+)?(?:\))?(?:\))?([\/, >+~]+)/is";
+		$pattern = "/(?::(\w+)\()?([\w:*-]*)(?::(\w+)\()?(?:#([\w-]+))?(?:|\.([\w.-]+))?((?:\[@?!?[\w:-]+(?:[!*^$|~]?=(?![\"']).*?(?![\"'])|[!*^$|~]?=[\"'].*?[\"'])?(?:\s*?[iIsS]?)?])+)?\)?\)?([\/, >+~]+)/is";
 
 		preg_match_all(
 			$pattern,
@@ -917,7 +910,7 @@ class HtmlNode
 			 */
 			if($m[5] !== '') {
 				preg_match_all(
-					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)((?![\"'])(?:.*?)(?![\"'])|[\"']{1}(?:.*?)[\"']{1}))?(?:\s+?([iIsS])?)?\]/is",
+					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)((?![\"']).*?(?![\"'])|[\"'].*?[\"']))?(?:\s+?([iIsS])?)?]/is",
 					trim($m[5]),
 					$attributes,
 					PREG_SET_ORDER
