@@ -354,38 +354,68 @@ class HtmlNode
 				break;
 		}
 
-		foreach ($this->nodes as $n) {
-			if ($this->is_block_element($n)) {
-
-				$block = ltrim($this->convert_text($n->text(false)));
-
-				if (empty($block))
-					continue;
-
-				$ret = rtrim($ret) . "\n\n" . $block . "\n\n";
-
-			} elseif (HtmlElement::isPhrasingContent($n->tag)) {
-				// todo: <br> introduces code smell because no space but \n
-				if (strtolower($n->tag) === HtmlElement::BR) {
-					$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
-				} else {
-					$inline = ltrim($this->convert_text($n->text(false)));
-
-					if (empty($inline))
-						continue;
-
-					$ret = $ret . $this->convert_text($n->text(false));
-				}
-			} else {
-				$ret .= $this->convert_text($n->text(false));
-			}
-		}
-
 		// Reduce whitespace at start/end to a single (or none) space
 		$ret = preg_replace('/[ \t\n\r\0\x0B\xC2\xA0]+$/u', $trim ? '' : ' ', $ret);
 		$ret = preg_replace('/^[ \t\n\r\0\x0B\xC2\xA0]+/u', $trim ? '' : ' ', $ret);
 
-		return $ret;
+		// TODO: Remove BR_TEXT customization.
+		//		 It has no practical use and only makes the code harder to read.
+		if ($this->dom){ // for the root node, ->dom is undefined.
+			$br_text = $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
+		}
+
+		foreach ($this->nodes as $n) {
+
+			if ($this->is_block_element($n)) {
+				$block = $this->convert_text($n->text($trim));
+
+				if ($block === '') {
+					$ret = rtrim($ret) . "\n\n";
+					continue;
+				}
+
+				if ($ret === ''){
+					$ret = $block . "\n\n";
+					continue;
+				}
+
+				$ret = rtrim($ret) . "\n\n" . $block . "\n\n";
+				continue;
+			}
+
+			if (strtolower($n->tag) === HtmlElement::BR) {
+
+				if ($ret === ''){
+					// Don't start with a line break.
+					continue;
+				}
+
+				$ret .= $br_text;
+				continue;
+			}
+
+			$text = $this->convert_text($n->text($trim));
+
+			if ($text === ''){
+				continue;
+			}
+
+			if ($ret === ''){
+				$ret = ltrim($text);
+				continue;
+			}
+
+			if (substr($ret, -1) === "\n" ||
+				substr($ret, -1) === ' ' ||
+				substr($ret, -strlen($br_text)) === $br_text){
+				$ret .= ltrim($text);
+				continue;
+			}
+
+			$ret .= ' ' . ltrim($text);
+		}
+
+		return trim($ret);
 	}
 
 	function xmltext()

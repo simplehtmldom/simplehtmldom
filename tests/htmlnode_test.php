@@ -301,7 +301,7 @@ EOD;
 		$this->assertEquals($expected, $this->html->find('html', 0)->getAttribute('lang'));
 	}
 
-	public function test_text_should_be_empty_after_clear()
+	public function test_text_after_clear_should_be_empty()
 	{
 		$doc = '<html></html>';
 
@@ -312,44 +312,79 @@ EOD;
 		$this->assertEmpty($element->text());
 	}
 
-	public function test_text_should_not_include_script_elements()
+	public function textDataProvider()
 	{
-		$expected = 'PHP Simple HTML DOM Parser';
-		$doc = '<script>alert();</script><h1>PHP Simple HTML DOM Parser</h1>';
-
-		$this->html->load($doc);
-
-		$this->assertEquals($expected, $this->html->root->text());
+		return [
+			'<script> should not be included' => [
+				'<script>This should not be included</script>',
+				''
+			],
+			'<style> should not be included' => [
+				'<style>This should not be included</style>',
+				''
+			],
+			'HTML comments should not be included' => [
+				'<!--This should not be included-->',
+				''
+			],
+			'CDATA should be included' => [
+				'<![CDATA[This should be included]]>',
+				'This should be included'
+			],
+			'<br> as first element should not add line break' => [
+				'<br>',
+				''
+			],
+			'<br> as first element inside <span> should not add line break as first element' => [
+				'<span><br></span>',
+				''
+			],
+			'<br> should add line break' => [
+				'A<br>B',
+				"A\r\nB"
+			],
+			'Text should not start with line break with <p> as first element' => [
+				'<p></p>',
+				''
+			],
+			'Empty <p> element should add line breaks' => [
+				'A<p></p>B',
+				"A\n\nB"
+			],
+			'<p> element should add line breaks before and after' => [
+				'A<p>B</p>C',
+				"A\n\nB\n\nC"
+			],
+			'Multiple empty <p> elements should collapse to a single set of line breaks' => [
+				'A<p></p><p></p>B',
+				"A\n\nB"
+			],
+			'Plain text nodes should be included' => [
+				'A',
+				'A'
+			],
+			'Whitespace at the beginning should be removed' => [
+				" \t\n\r\0\x0B\xC2\xA0A",
+				'A'
+			],
+			'Whitespace at the end should be removed' => [
+				"A \t\n\r\0\x0B\xC2\xA0",
+				'A'
+			],
+			'Spaces between elements should collapse to a single space' => [
+				'A  <span>   B  </span>  C',
+				'A B C'
+			],
+		];
 	}
 
-	public function test_text_should_not_include_style_elements()
+	/**
+	 * @dataProvider textDataProvider
+	 */
+	public function test_text_after_load_should_return_expected_text($doc, $expected_text)
 	{
-		$expected = 'PHP Simple HTML DOM Parser';
-		$doc = '<style>h1{color: blue;}</style><h1>PHP Simple HTML DOM Parser</h1>';
-
 		$this->html->load($doc);
-
-		$this->assertEquals($expected, $this->html->root->text());
-	}
-
-	public function test_text_should_not_include_comments()
-	{
-		$expected = 'PHP Simple HTML DOM Parser';
-		$doc = '<!--Hi there :)--><h1>PHP Simple HTML DOM Parser</h1>';
-
-		$this->html->load($doc);
-
-		$this->assertEquals($expected, $this->html->root->text());
-	}
-
-	public function test_text_should_include_cdata_content()
-	{
-		$expected = '<?php Simple HTML DOM Parser';
-		$doc = '<h1><![CDATA[<?php]]> Simple HTML DOM Parser</h1>';
-
-		$this->html->load($doc);
-
-		$this->assertEquals($expected, $this->html->root->text());
+		$this->assertEquals($expected_text, $this->html->root->text());
 	}
 
 	public function test_save_should_create_file()
