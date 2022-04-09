@@ -119,7 +119,7 @@ class memory_parsing_test extends TestCase {
 
 		// Use actual file size to load the entire file
 		$html = new simple_html_dom;
-		$html->load($file);
+		$html->loadFile($file);
 		unset($html);
 		gc_collect_cycles(); // Trigger garbage collection
 
