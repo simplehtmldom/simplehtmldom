@@ -119,7 +119,7 @@ class HtmlDocument
 		$options = 0)
 	{
 		if ($str) {
-			if (preg_match('/^http:\/\//i', $str) || $str <= PHP_MAXPATHLEN && is_file($str)) {
+			if (preg_match('/^http:\/\//i', $str) || strlen($str) <= PHP_MAXPATHLEN && is_file($str)) {
 				$this->load_file($str);
 			} else {
 				$this->load(
