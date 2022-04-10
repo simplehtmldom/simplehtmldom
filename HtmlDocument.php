@@ -174,25 +174,6 @@ class HtmlDocument
 		// prepare
 		$this->prepare($str, $lowercase, $defaultBRText, $defaultSpanText);
 
-		if ($stripRN) {
-			// Temporarily remove any element that shouldn't lose whitespace
-			$this->remove_noise("'<\s*script[^>]*>(.*?)<\s*/\s*script\s*>'is");
-			$this->remove_noise("'<!\[CDATA\[(.*?)]]>'is");
-			$this->remove_noise("'<!--(?!>|->)(.*?)-->'is");
-			$this->remove_noise("'<\s*style[^>]*>(.*?)<\s*/\s*style\s*>'is");
-			$this->remove_noise("'<\s*code[^>]*>(.*?)<\s*/\s*code\s*>'is");
-
-			// Remove whitespace and newlines between tags
-			$this->doc = preg_replace('/>([\t\s]*[\r\n]^[\t\s]*)</m', '><', $this->doc);
-
-			// Remove whitespace and newlines in text
-			$this->doc = preg_replace('/([\t\s]*[\r\n]^[\t\s]*)/m', ' ', $this->doc);
-
-			// Restore temporarily removed elements and calculate new size
-			$this->doc = $this->restore_noise($this->doc);
-			$this->size = strlen($this->doc);
-		}
-
 		$this->remove_noise("'(<\?)(.*?)(\?>)'s", true); // server-side script
 		if (count($this->noise)) {
 			// phpcs:ignore Generic.Files.LineLength
@@ -458,7 +439,7 @@ class HtmlDocument
 			$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
 			$tag = $this->copy_until_char('>');
-			$tag = $trim ? ltrim($tag, $this->token_blank) : $tag;
+			$tag = $trim ? trim($tag, $this->token_blank) : $tag;
 
 			// Skip attributes and whitespace in end tags
 			if ($trim && ($pos = strpos($tag, ' ')) !== false) {
@@ -790,46 +771,51 @@ class HtmlDocument
 				}
 			}
 			$node->_[HtmlNode::HDOM_INFO_END] = 0;
-		} elseif (!HtmlElement::isVoidElement($node->tag)) {
-			$innertext = $this->copy_until_char('<');
-			if ($innertext !== '') {
-				$node->_[HtmlNode::HDOM_INFO_INNER] = $innertext;
-			}
-			$this->parent = $node;
 		}
 
 		if ($node->tag === HtmlElement::BR) {
 			$node->_[HtmlNode::HDOM_INFO_INNER] = $this->default_br_text;
-		} elseif (HtmlElement::isRawTextElement($node->tag)) {
-			$data = '';
+		}
+
+		if (HtmlElement::isRawTextElement($node->tag)){
+			$node->_[HtmlNode::HDOM_INFO_INNER] = '';
 
 			// There is a rare chance of an empty element: "<e></e>",
 			// in which case the current char is the start of the end tag.
 			// But the script could also just contain tags: "<e><t></e>"
 			while(true) {
 				// Copy until first char of end tag
-				$data .= $this->copy_until_char('<');
+				$node->_[HtmlNode::HDOM_INFO_INNER] .= $this->copy_until_char('<');
 
 				// Look ahead in the document, maybe we are at the end
 				if (($this->pos + strlen("</$node->tag>")) > $this->size) { // End of document
 					Debug::log('Source document ended unexpectedly!');
 					break;
-				} elseif (substr($this->doc, $this->pos, strlen("</$node->tag")) === "</$node->tag") { // end
-					$this->skip('>'); // don't include the end tag
+				}
+
+				if (substr($this->doc, $this->pos, strlen("</$node->tag")) === "</$node->tag"){
 					break;
 				}
 
 				// Note: A script tag may contain any other tag except </script>
 				// which needs to be escaped as <\/script>
-
-				$data .= $this->char;
+				$node->_[HtmlNode::HDOM_INFO_INNER] .= $this->char;
 				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 			}
 
-			$node = new HtmlNode($this);
-			++$this->cursor;
-			$node->_[HtmlNode::HDOM_INFO_TEXT] = $data;
-			$this->link_nodes($node, false);
+			$this->parent = $node;
+		} elseif (!HtmlElement::isVoidElement($node->tag)) {
+			$innertext = $this->copy_until_char('<');
+
+			if ($trim){
+				$innertext = ltrim($innertext);
+			}
+
+			if ($innertext !== '') {
+				$node->_[HtmlNode::HDOM_INFO_INNER] = $innertext;
+			}
+
+			$this->parent = $node;
 		}
 
 		return true;

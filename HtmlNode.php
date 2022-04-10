@@ -287,22 +287,17 @@ class HtmlNode
 		}
 
 		if (isset($this->_[self::HDOM_INFO_INNER])) {
-			switch ($this->tag)
-			{
-				case HtmlElement::BR:
-					// todo: <br> should either never have self::HDOM_INFO_INNER or always
-					break;
-				case HtmlElement::isRawTextElement($this->tag):
-					$ret .= $this->_[self::HDOM_INFO_INNER];
-					break;
-				default:
-					if ($this->dom && $this->dom->targetCharset) {
-						$charset = $this->dom->targetCharset;
-					} else {
-						$charset = DEFAULT_TARGET_CHARSET;
-					}
-					$ret .= htmlentities($this->_[self::HDOM_INFO_INNER], ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-					break;
+			if ($this->tag === HtmlElement::BR){
+				// TODO: <br> should either never have self::HDOM_INFO_INNER or always
+			} elseif (HtmlElement::isRawTextElement($this->tag)){
+				$ret .= $this->_[self::HDOM_INFO_INNER];
+			} else {
+				if ($this->dom && $this->dom->targetCharset) {
+					$charset = $this->dom->targetCharset;
+				} else {
+					$charset = DEFAULT_TARGET_CHARSET;
+				}
+				$ret .= htmlentities($this->_[self::HDOM_INFO_INNER], ENT_QUOTES | ENT_SUBSTITUTE, $charset);
 			}
 		}
 

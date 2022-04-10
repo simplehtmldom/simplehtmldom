@@ -286,7 +286,7 @@ HTML;
 		$this->assertCount(1, $this->html->find('p'));
 
 		$this->assertEquals(
-			'{PHP Simple HTML DOM Parser</p><p>{A PHP based DOM parser}',
+			"{PHP Simple HTML DOM Parser</p>\n<p>{A PHP based DOM parser}",
 			$this->html->find('p', 0)->innertext
 		);
 

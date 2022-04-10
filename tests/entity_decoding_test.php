@@ -28,7 +28,6 @@ class entity_decoding_test extends TestCase {
 
 		foreach($html->find('table tr') as $tr) {
 			$char = $tr->find('td.character', 0)->innertext;
-			$char = substr($char, 1); /* first character is always space */
 
 			$name = $tr->find('td.named > code', 0)->plaintext;
 			$name = explode(' ', $name)[0]; /* may contain multiple representations */
