@@ -430,7 +430,7 @@ class HtmlDocument
 
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
-		if ($trim) { // "<   /html>"
+		if ($trim && strpos($this->token_blank, $this->char) !== false) { // "<   /html>"
 			$this->skip($this->token_blank);
 		}
 
@@ -442,7 +442,7 @@ class HtmlDocument
 			$tag = $trim ? trim($tag, $this->token_blank) : $tag;
 
 			// Skip attributes and whitespace in end tags
-			if ($trim && ($pos = strpos($tag, ' ')) !== false) {
+			if ($trim && $this->char !== '>' && ($pos = strpos($tag, ' ')) !== false) {
 				// phpcs:ignore Generic.Files.LineLength
 				Debug::log_once('Source document contains superfluous whitespace in end tags (</html   >).');
 				$tag = substr($tag, 0, $pos);
@@ -685,68 +685,70 @@ class HtmlDocument
 		// [0] Space between tag and first attribute
 		$space = array($this->copy_skip($this->token_blank), '', '');
 
-		do { // Parse attributes
-			$name = $this->copy_until($this->token_equal);
+		if ($this->char !== '/' && $this->char !== '>') {
+			do { // Parse attributes
+				$name = $this->copy_until($this->token_equal);
 
-			if ($name === '' && $this->char !== null && $space[0] === '') {
-				break;
-			}
+				if ($name === '' && $this->char !== null && $space[0] === '') {
+					break;
+				}
 
-			if ($guard === $this->pos) { // Escape infinite loop
-				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-				continue;
-			}
+				if ($guard === $this->pos) { // Escape infinite loop
+					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+					continue;
+				}
 
-			$guard = $this->pos;
+				$guard = $this->pos;
 
-			if ($this->pos >= $this->size - 1 && $this->char !== '>') { // End Of File
-				Debug::log('Source document ended unexpectedly!');
-				$node->nodetype = HtmlNode::HDOM_TYPE_TEXT;
-				$node->_[HtmlNode::HDOM_INFO_END] = 0;
-				$node->_[HtmlNode::HDOM_INFO_TEXT] = '<' . $tag . $space[0] . $name;
-				$node->tag = 'text';
-				$this->link_nodes($node, false);
-				return true;
-			}
+				if ($this->pos >= $this->size - 1 && $this->char !== '>') { // End Of File
+					Debug::log('Source document ended unexpectedly!');
+					$node->nodetype = HtmlNode::HDOM_TYPE_TEXT;
+					$node->_[HtmlNode::HDOM_INFO_END] = 0;
+					$node->_[HtmlNode::HDOM_INFO_TEXT] = '<' . $tag . $space[0] . $name;
+					$node->tag = 'text';
+					$this->link_nodes($node, false);
+					return true;
+				}
 
-			if ($name === '/' || $name === '') { // No more attributes
-				break;
-			}
+				if ($name === '/' || $name === '') { // No more attributes
+					break;
+				}
 
-			// [1] Whitespace after attribute name
-			$space[1] = (strpos($this->token_blank, $this->char) === false) ? '' : $this->copy_skip($this->token_blank);
+				// [1] Whitespace after attribute name
+				$space[1] = (strpos($this->token_blank, $this->char) === false) ? '' : $this->copy_skip($this->token_blank);
 
-			$name = $this->restore_noise($name); // might be a noisy name
+				$name = $this->restore_noise($name); // might be a noisy name
 
-			if ($this->lowercase) {
-				$name = strtolower($name);
-			}
+				if ($this->lowercase) {
+					$name = strtolower($name);
+				}
 
-			if ($this->char === '=') { // Attribute with value
-				$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
-				$this->parse_attr($node, $name, $space, $trim); // get attribute value
-			} else { // Attribute without value
-				$node->_[HtmlNode::HDOM_INFO_QUOTE][$name] = HtmlNode::HDOM_QUOTE_NO;
-				$node->attr[$name] = true;
-				if ($this->char !== '>') {
-					$this->char = $this->doc[--$this->pos];
-				} // prev
-			}
+				if ($this->char === '=') { // Attribute with value
+					$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+					$this->parse_attr($node, $name, $space, $trim); // get attribute value
+				} else { // Attribute without value
+					$node->_[HtmlNode::HDOM_INFO_QUOTE][$name] = HtmlNode::HDOM_QUOTE_NO;
+					$node->attr[$name] = true;
+					if ($this->char !== '>') {
+						$this->char = $this->doc[--$this->pos];
+					} // prev
+				}
 
-			// Space before attribute and around equal sign
-			if (!$trim && $space !== array(' ', '', '')) {
-				// phpcs:ignore Generic.Files.LineLength
-				Debug::log_once('Source document contains superfluous whitespace in attributes (<e    attribute  =  "value">). Enable trimming or fix attribute spacing for best performance.');
-				$node->_[HtmlNode::HDOM_INFO_SPACE][$name] = $space;
-			}
+				// Space before attribute and around equal sign
+				if (!$trim && $space !== array(' ', '', '')) {
+					// phpcs:ignore Generic.Files.LineLength
+					Debug::log_once('Source document contains superfluous whitespace in attributes (<e    attribute  =  "value">). Enable trimming or fix attribute spacing for best performance.');
+					$node->_[HtmlNode::HDOM_INFO_SPACE][$name] = $space;
+				}
 
-			// prepare for next attribute
-			$space = array(
-				((strpos($this->token_blank, $this->char) === false) ? '' : $this->copy_skip($this->token_blank)),
-				'',
-				''
-			);
-		} while ($this->char !== '>' && $this->char !== '/');
+				// prepare for next attribute
+				$space = array(
+					((strpos($this->token_blank, $this->char) === false) ? '' : $this->copy_skip($this->token_blank)),
+					'',
+					''
+				);
+			} while ($this->char !== '>' && $this->char !== '/');
+		}
 
 		$this->link_nodes($node, true);
 
