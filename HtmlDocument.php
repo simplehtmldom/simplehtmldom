@@ -653,7 +653,7 @@ class HtmlDocument
 			return true;
 		}
 
-		if (!preg_match('/^\w[\w:-]*$/', $tag)) { // Invalid tag name
+		if (!ctype_alnum(str_replace([':','-'], '', $tag))) { // Invalid tag name
 			$node->_[HtmlNode::HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until('<>');
 
 			if ($this->char === '>') { // End tag
@@ -857,7 +857,7 @@ class HtmlDocument
 			// https://www.w3.org/TR/html/dom.html#text-content
 			// https://www.w3.org/TR/html/syntax.html#attribute-values
 			// https://www.w3.org/TR/xml/#AVNormalize
-			$value = preg_replace("/[\r\n\t\s]+/u", ' ', $value);
+			$value = str_replace(["\r","\n","\t"], ' ', $value);
 			$value = trim($value);
 		}
 
