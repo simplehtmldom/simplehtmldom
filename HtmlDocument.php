@@ -431,7 +431,8 @@ class HtmlDocument
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 
 		if ($trim && strpos($this->token_blank, $this->char) !== false) { // "<   /html>"
-			$this->skip($this->token_blank);
+			$this->pos += strspn($this->doc, $this->token_blank, $this->pos);
+			$this->char = ($this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 		}
 
 		// End tag: https://dev.w3.org/html5/pf-summary/syntax.html#end-tags
@@ -888,12 +889,6 @@ class HtmlDocument
 		$this->link_nodes($node, false);
 		$this->char = (++$this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 		return true;
-	}
-
-	protected function skip($chars)
-	{
-		$this->pos += strspn($this->doc, $chars, $this->pos);
-		$this->char = ($this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
 	}
 
 	protected function copy_skip($chars)
