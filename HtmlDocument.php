@@ -907,21 +907,21 @@ class HtmlDocument
 		$len = strcspn($this->doc, $chars, $pos);
 		$this->pos += $len;
 		$this->char = ($this->pos < $this->size) ? $this->doc[$this->pos] : null; // next
+		if ($len === 0) { return ''; }
 		return substr($this->doc, $pos, $len);
 	}
 
 	protected function copy_until_char($char)
 	{
+		if ($this->char === $char) { return ''; }
 		if ($this->char === null) { return ''; }
 
 		if (($pos = strpos($this->doc, $char, $this->pos)) === false) {
-			$ret = substr($this->doc, $this->pos, $this->size - $this->pos);
+			$ret = substr($this->doc, $this->pos);
 			$this->char = null;
 			$this->pos = $this->size;
 			return $ret;
 		}
-
-		if ($pos === $this->pos) { return ''; }
 
 		$pos_old = $this->pos;
 		$this->char = $this->doc[$pos];
