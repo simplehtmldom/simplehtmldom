@@ -43,9 +43,6 @@ class HtmlDocument
 	protected $parent;
 	protected $noise = array();
 	protected $token_blank = " \t\r\n";
-	protected $token_equal = ' =/>';
-	protected $token_slash = " />\r\n\t";
-	protected $token_attr = ' >';
 
 	public $_charset = '';
 	public $_target_charset = '';
@@ -514,7 +511,7 @@ class HtmlDocument
 		$node->_[HtmlNode::HDOM_INFO_BEGIN] = $this->cursor++;
 
 		// Tag name
-		$tag = $this->copy_until($this->token_slash);
+		$tag = $this->copy_until(" />\r\n\t");
 
 		if (isset($tag[0]) && $tag[0] === '!') { // Doctype, CData, Comment
 			if (isset($tag[2]) && $tag[1] === '-' && $tag[2] === '-') { // Comment ("<!--")
@@ -686,7 +683,7 @@ class HtmlDocument
 
 		if ($this->char !== '/' && $this->char !== '>') {
 			do { // Parse attributes
-				$name = $this->copy_until($this->token_equal);
+				$name = $this->copy_until(' =/>');
 
 				if ($name === '' && $this->char !== null && $space[0] === '') {
 					break;
@@ -848,7 +845,7 @@ class HtmlDocument
 				// phpcs:ignore Generic.Files.LineLength
 				Debug::log_once('Source document contains attribute values without quotes (<e attribute=value>). Use double quotes for best performance');
 				$quote_type = HtmlNode::HDOM_QUOTE_NO;
-				$value = $this->copy_until($this->token_attr);
+				$value = $this->copy_until(' >');
 		}
 
 		$value = $this->restore_noise($value);
