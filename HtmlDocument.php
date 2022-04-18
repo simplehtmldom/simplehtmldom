@@ -188,7 +188,6 @@ class HtmlDocument
 		// end
 		$this->root->_[HtmlNode::HDOM_INFO_END] = $this->cursor;
 		$this->parse_charset();
-		$this->decode();
 		unset($this->doc);
 
 		// make load function chainable
@@ -251,36 +250,6 @@ class HtmlDocument
 		if ($this->size > 0) { $this->char = $this->doc[0]; }
 	}
 
-	protected function decode()
-	{
-		foreach($this->nodes as $node) {
-			if (isset($node->_[HtmlNode::HDOM_INFO_TEXT])) {
-				$node->_[HtmlNode::HDOM_INFO_TEXT] = html_entity_decode(
-					$this->restore_noise($node->_[HtmlNode::HDOM_INFO_TEXT]),
-					ENT_QUOTES | ENT_HTML5,
-					$this->_target_charset
-				);
-			}
-			if (isset($node->_[HtmlNode::HDOM_INFO_INNER])) {
-				$node->_[HtmlNode::HDOM_INFO_INNER] = html_entity_decode(
-					$this->restore_noise($node->_[HtmlNode::HDOM_INFO_INNER]),
-					ENT_QUOTES | ENT_HTML5,
-					$this->_target_charset
-				);
-			}
-			if (isset($node->attr) && is_array($node->attr)) {
-				foreach($node->attr as $a => $v) {
-					if ($v === true) continue;
-					$node->attr[$a] = html_entity_decode(
-						$v,
-						ENT_QUOTES | ENT_HTML5,
-						$this->_target_charset
-					);
-				}
-			}
-		}
-	}
-
 	protected function parse($trim = false)
 	{
 		while (true) {
@@ -297,7 +266,11 @@ class HtmlDocument
 
 					$node = new HtmlNode($this);
 					++$this->cursor;
-					$node->_[HtmlNode::HDOM_INFO_TEXT] = $content;
+					$node->_[HtmlNode::HDOM_INFO_TEXT] = html_entity_decode(
+						$this->restore_noise($content),
+						ENT_QUOTES | ENT_HTML5,
+						$this->_target_charset
+					);
 					$this->link_nodes($node, false);
 
 				}
@@ -810,7 +783,11 @@ class HtmlDocument
 			}
 
 			if ($innertext !== '') {
-				$node->_[HtmlNode::HDOM_INFO_INNER] = $innertext;
+				$node->_[HtmlNode::HDOM_INFO_INNER] = html_entity_decode(
+					$this->restore_noise($innertext),
+					ENT_QUOTES | ENT_HTML5,
+					$this->_target_charset
+				);
 			}
 
 			$this->parent = $node;
@@ -863,7 +840,11 @@ class HtmlDocument
 			if ($quote_type !== HtmlNode::HDOM_QUOTE_DOUBLE) {
 				$node->_[HtmlNode::HDOM_INFO_QUOTE][$name] = $quote_type;
 			}
-			$node->attr[$name] = $value;
+			$node->attr[$name] = html_entity_decode(
+				$value,
+				ENT_QUOTES | ENT_HTML5,
+				$this->_target_charset
+			);
 		}
 	}
 
