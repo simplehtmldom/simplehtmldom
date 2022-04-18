@@ -137,7 +137,7 @@ class HtmlDocument
 		// Forcing tags to be closed implies that we don't trust the html, but
 		// it can lead to parsing errors if we SHOULD trust the html.
 		if (!$forceTagsClosed) {
-			$this->optional_closing_array = array();
+			$this->optional_closing_tags = array();
 		}
 
 		$this->_target_charset = $target_charset;
