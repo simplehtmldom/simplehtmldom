@@ -63,7 +63,6 @@ nav:
     - (protected) copy_skip: 'HtmlDocument/copy_skip.md'
     - (protected) copy_until: 'HtmlDocument/copy_until.md'
     - (protected) copy_until_char: 'HtmlDocument/copy_until_char.md'
-    - (protected) decode: 'HtmlDocument/decode.md'
     - (protected) link_nodes: 'HtmlDocument/link_nodes.md'
     - (protected) parse: 'HtmlDocument/parse.md'
     - (protected) parse_attr: 'HtmlDocument/parse_attr.md'
@@ -73,7 +72,6 @@ nav:
     - (protected) remove_noise: 'HtmlDocument/remove_noise.md'
     - (protected) restore_noise: 'HtmlDocument/restore_noise.md'
     - (protected) search_noise: 'HtmlDocument/search_noise.md'
-    - (protected) skip: 'HtmlDocument/skip.md'
   - HtmlNode:
     - HtmlNode: 'HtmlNode/index.md'
     - Definitions: 'HtmlNode/definitions.md'
