@@ -120,7 +120,7 @@ class HtmlDocument
 	{
 		if ($str) {
 			if (preg_match('/^http:\/\//i', $str) || strlen($str) <= PHP_MAXPATHLEN && is_file($str)) {
-				$this->load_file($str);
+				$this->loadFile($str);
 			} else {
 				$this->load(
 					$str,
@@ -236,8 +236,6 @@ class HtmlDocument
 		$defaultBRText = DEFAULT_BR_TEXT,
 		$defaultSpanText = DEFAULT_SPAN_TEXT)
 	{
-		$this->clear();
-
 		$this->doc = isset($str) ? trim($str) : '';
 		$this->size = strlen($this->doc);
 		$this->original_size = $this->size; // original size of the html
