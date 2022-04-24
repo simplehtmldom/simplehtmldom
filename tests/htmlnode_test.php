@@ -375,6 +375,50 @@ EOD;
 				'A  <span>   B  </span>  C',
 				'A B C'
 			],
+			'Carriage returns inside text should be returned as spaces' => [
+				"<p>A\rB\rC</p>",
+				'A B C'
+			],
+			'Newlines inside text should be returned as spaces' => [
+				"<p>A\nB\nC</p>",
+				'A B C'
+			],
+			'Tabs inside text should be returned as spaces' => [
+				"<p>A\tB\tC</p>",
+				'A B C'
+			],
+			'Vertical tabs inside text should be returned as spaces' => [
+				"<p>A\vB\vC</p>",
+				'A B C'
+			],
+			'Form feeds inside text should be returned as spaces' => [
+				"<p>A\fB\fC</p>",
+				'A B C'
+			],
+			'Multiple carriage returns inside text should collapse to a single whitespace' => [
+				"<p>A\r\r\rB\r\r\rC</p>",
+				'A B C'
+			],
+			'Multiple newlines inside text should collapse to a single whitespace' => [
+				"<p>A\n\n\nB\n\n\nC</p>",
+				'A B C'
+			],
+			'Multiple tabs inside text should collapse to a single whitespace' => [
+				"<p>A\t\t\tB\t\t\tC</p>",
+				'A B C'
+			],
+			'Multiple vertical tabs inside text should collapse to a single whitespace' => [
+				"<p>A\v\v\vB\v\v\vC</p>",
+				'A B C'
+			],
+			'Multiple form feeds inside text should collapse to a single whitespace' => [
+				"<p>A\f\f\fB\f\f\fC</p>",
+				'A B C'
+			],
+			'Whitespace inside and outside paragraph should collapse to single whitespace' => [
+				"A\r\n\t\f\v<p>\r\n\f\vB</p>C",
+				"A\n\nB\n\nC"
+			],
 		];
 	}
 

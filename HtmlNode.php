@@ -347,6 +347,9 @@ class HtmlNode
 				break;
 		}
 
+		// Replace and collapse whitespace
+		$ret = preg_replace('/\s+/', ' ', $ret);
+
 		// Reduce whitespace at start/end to a single (or none) space
 		$ret = preg_replace('/[ \t\n\r\0\x0B\xC2\xA0]+$/u', $trim ? '' : ' ', $ret);
 		$ret = preg_replace('/^[ \t\n\r\0\x0B\xC2\xA0]+/u', $trim ? '' : ' ', $ret);
