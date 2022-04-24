@@ -286,10 +286,8 @@ class HtmlNode
 			$ret = $this->makeup();
 		}
 
-		if (isset($this->_[self::HDOM_INFO_INNER])) {
-			if ($this->tag === HtmlElement::BR){
-				// TODO: <br> should either never have self::HDOM_INFO_INNER or always
-			} elseif (HtmlElement::isRawTextElement($this->tag)){
+		if (isset($this->_[self::HDOM_INFO_INNER]) && $this->tag !== HtmlElement::BR) {
+			if (HtmlElement::isRawTextElement($this->tag)){
 				$ret .= $this->_[self::HDOM_INFO_INNER];
 			} else {
 				if ($this->dom && $this->dom->targetCharset) {
