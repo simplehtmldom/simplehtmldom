@@ -353,7 +353,13 @@ class HtmlDocument
 					// 'CP1251'/'ISO-8859-5' will be detected as
 					// 'CP1252'/'ISO-8859-1'. This will cause iconv to fail, in
 					// which case we can simply assume it is the other charset.
-					if (!@iconv('CP1252', 'UTF-8', $this->doc)) {
+					try {
+						if (!iconv('CP1252', 'UTF-8', $this->doc)){
+							$encoding = 'CP1251';
+						}
+					} catch (\Exception $e) {
+						$encoding = 'CP1251';
+					} /** TODO: Require PHP >=7.0 */ catch (\Throwable $t) {
 						$encoding = 'CP1251';
 					}
 				}
