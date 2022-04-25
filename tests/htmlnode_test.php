@@ -419,6 +419,10 @@ EOD;
 				"A\r\n\t\f\v<p>\r\n\f\vB</p>C",
 				"A\n\nB\n\nC"
 			],
+			'MEDIUM MATHEMATICAL SPACE should be handled as whitespace' => [
+				"A\u{205F}B\u{205F}C",
+				"A B C"
+			],
 		];
 	}
 
