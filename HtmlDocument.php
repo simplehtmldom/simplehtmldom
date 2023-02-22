@@ -211,6 +211,12 @@ class HtmlDocument
 		return $ret;
 	}
 
+    /**
+     * @param $selector
+     * @param null $idx
+     * @param false $lowercase
+     * @return null | HtmlNode | HtmlNode[]
+     */
 	function find($selector, $idx = null, $lowercase = false)
 	{
 		return $this->root->find($selector, $idx, $lowercase);
