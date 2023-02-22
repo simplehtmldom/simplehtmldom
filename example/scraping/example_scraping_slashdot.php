@@ -10,6 +10,8 @@ use simplehtmldom\HtmlWeb;
 $doc = new HtmlWeb();
 $html = $doc->load('https://slashdot.org/');
 
+$data = array();
+
 // Find and extract all articles
 foreach($html->find('#firehoselist > [id^="firehose-"]') as $article) {
 	$item['title'] = trim($article->find('[id^="title-"]', 0)->plaintext);

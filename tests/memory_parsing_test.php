@@ -112,20 +112,46 @@ class memory_parsing_test extends TestCase {
 		}
 
 		// Cleanup before doing anything
-		gc_enable();
 		gc_collect_cycles();
 
-		$memory_start = memory_get_usage();
+		// Notice: PHP allocates memory in chunks from the system. These chunks stay reserved,
+		//		   even when it is no longer used by the script. This allocation adds additional overhead,
+		//		   which results in higher memory usage, even after releasing all objects.
+		//		   -- https://github.com/php/php-src/blob/master/Zend/zend_alloc.c
+		//
+		//		   How is this relevant?
+		//		   1. When we parse the DOM of a large document, a lot of memory is allocated. In this particular case,
+		//		      it amounts to several hundred MiBs and hundreds of thousands of nodes.
+		//		   2. Every time the memory manager allocates a new chunk of memory it reserves some portion of that
+		//		      memory for internal use.
+		//		   3. When releasing objects, chunks will stay reserved and thus the final memory usage will never go
+		//			  back to the original memory usage.
+		//
+		//		   We have to account for this when comparing values. Unfortunately, there is no good way to know how
+		//		   much memory is reserved by the memory manager. Instead, we have to parse the document twice, which
+		//		   doubles the amount of time but produces reliable results (because memory is re-used on the second
+		//		   pass).
+		for ($i = 0; $i <= 2; $i++){
+			$memory_usage_before = memory_get_usage();
 
-		// Use actual file size to load the entire file
-		$html = new simple_html_dom;
-		$html->load($file);
-		unset($html);
-		gc_collect_cycles(); // Trigger garbage collection
+			$html = new simple_html_dom;
 
-		$memory_end = memory_get_usage();
+			try {
+				// Temporarily disable GC for better performance.
+				gc_disable();
+				$html->loadFile($file);
+			} finally {
+				// Ensure that GC is enabled again!
+				gc_enable();
+			}
 
-		$this->assertEquals($memory_start, $memory_end);
+			unset($html);
+
+			$memory_usage_after = memory_get_usage();
+		}
+
+
+		$this->assertEquals($memory_usage_before, $memory_usage_after);
 	}
 
 }

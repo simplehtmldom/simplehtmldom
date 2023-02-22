@@ -9,8 +9,6 @@ https://phpunit.de/announcements/phpunit-6.html
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/6.5/phpunit.xsd"
 	colors="true"
-	processIsolation="false"
-	timeoutForSmallTests="1"
 	timeoutForMediumTests="1"
 	timeoutForLargeTests="6" >
 
@@ -32,6 +30,7 @@ https://phpunit.de/announcements/phpunit-6.html
 		<whitelist>
 			<directory>simple_html_dom.php</directory>
 			<directory>HtmlDocument.php</directory>
+			<directory>HtmlElement.php</directory>
 			<directory>HtmlNode.php</directory>
 			<directory>HtmlWeb.php</directory>
 			<directory>Debug.php</directory>

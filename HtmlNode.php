@@ -87,10 +87,11 @@ class HtmlNode
 
 	function __construct($dom)
 	{
-		if ($dom === null) return $this;
-
-		$this->dom = $dom;
-		$dom->nodes[] = $this;
+		if ($dom instanceof HtmlDocument)
+		{
+			$this->dom = $dom;
+			$dom->nodes[] = $this;
+		}
 	}
 
 	function __debugInfo()
@@ -189,7 +190,7 @@ class HtmlNode
 		}
 
 		if (isset($this->text)) {
-			$string .= " text: ({$this->text})";
+			$string .= " text: ($this->text)";
 		}
 
 		$string .= ' HDOM_INNER_INFO: ';
@@ -215,7 +216,7 @@ class HtmlNode
 	function parent($parent = null)
 	{
 		// I am SURE that this doesn't work properly.
-		// It fails to unset the current node from it's current parents nodes or
+		// It fails to unset the current node from its current parents nodes or
 		// children list first.
 		if ($parent !== null) {
 			$this->parent = $parent;
@@ -285,10 +286,16 @@ class HtmlNode
 			$ret = $this->makeup();
 		}
 
-		if (isset($this->_[self::HDOM_INFO_INNER])) {
-			// todo: <br> should either never have self::HDOM_INFO_INNER or always
-			if ($this->tag !== 'br') {
+		if (isset($this->_[self::HDOM_INFO_INNER]) && $this->tag !== HtmlElement::BR) {
+			if (HtmlElement::isRawTextElement($this->tag)){
 				$ret .= $this->_[self::HDOM_INFO_INNER];
+			} else {
+				if ($this->dom && $this->dom->targetCharset) {
+					$charset = $this->dom->targetCharset;
+				} else {
+					$charset = DEFAULT_TARGET_CHARSET;
+				}
+				$ret .= htmlentities($this->_[self::HDOM_INFO_INNER], ENT_QUOTES | ENT_SUBSTITUTE, $charset);
 			}
 		}
 
@@ -311,95 +318,100 @@ class HtmlNode
 	 */
 	protected function is_block_element($node)
 	{
-		// todo: When we have the utility class this should be moved there
-		return in_array(strtolower($node->tag), array(
-			'p',
-			'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-			'ol', 'ul',
-			'pre',
-			'address',
-			'blockquote',
-			'dl',
-			'div',
-			'fieldset',
-			'form',
-			'hr',
-			'noscript',
-			'table'
-		));
-	}
-
-	/**
-	 * Returns true if the provided element is an inline level element
-	 * @link https://www.w3resource.com/html/HTML-block-level-and-inline-elements.php
-	 */
-	protected function is_inline_element($node)
-	{
-		// todo: When we have the utility class this should be moved there
-		return in_array(strtolower($node->tag), array(
-			'b', 'big', 'i', 'small', 'tt',
-			'abbr', 'acronym', 'cite', 'code', 'dfn', 'em', 'kbd', 'strong', 'samp', 'var',
-			'a', 'bdo', 'br', 'img', 'map', 'object', 'q', 'script', 'span', 'sub', 'sup',
-			'button', 'input', 'label', 'select', 'textarea'
-		));
+		return HtmlElement::isPalpableContent($node->tag) &&
+			!HtmlElement::isMetadataContent($node->tag) &&
+			!HtmlElement::isPhrasingContent($node->tag) &&
+			!HtmlElement::isEmbeddedContent($node->tag) &&
+			!HtmlElement::isInteractiveContent($node->tag);
 	}
 
 	function text($trim = true)
 	{
-		$ret = '';
-
-		if (strtolower($this->tag) === 'script') {
-			$ret = '';
-		} elseif (strtolower($this->tag) === 'style') {
-			$ret = '';
-		} elseif ($this->nodetype === self::HDOM_TYPE_COMMENT) {
-			$ret = '';
-		} elseif ($this->nodetype === self::HDOM_TYPE_CDATA) {
-			$ret = $this->_[self::HDOM_INFO_INNER];
-		} elseif ($this->nodetype === self::HDOM_TYPE_UNKNOWN) {
-			$ret = '';
-		} elseif (isset($this->_[self::HDOM_INFO_INNER])) {
-			$ret = $this->_[self::HDOM_INFO_INNER];
-		} elseif ($this->nodetype === self::HDOM_TYPE_TEXT) {
-			$ret = $this->_[self::HDOM_INFO_TEXT];
-		}
-
-		if (is_null($this->nodes)) {
+		if (HtmlElement::isRawTextElement($this->tag)) {
 			return '';
 		}
 
-		foreach ($this->nodes as $n) {
-			if ($this->is_block_element($n)) {
+		$ret = '';
 
-				$block = ltrim($this->convert_text($n->text(false)));
-
-				if (empty($block))
-					continue;
-
-				$ret = rtrim($ret) . "\n\n" . $block;
-
-			} elseif ($this->is_inline_element($n)) {
-				// todo: <br> introduces code smell because no space but \n
-				if (strtolower($n->tag) === 'br') {
-					$ret .= $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
-				} else {
-					$inline = ltrim($this->convert_text($n->text(false)));
-
-					if (empty($inline))
-						continue;
-
-					$ret = $ret . $this->convert_text($n->text(false));
+		switch ($this->nodetype) {
+			case self::HDOM_TYPE_COMMENT:
+			case self::HDOM_TYPE_UNKNOWN:
+				return '';
+			case self::HDOM_TYPE_TEXT:
+				$ret = $this->_[self::HDOM_INFO_TEXT];
+				break;
+			default:
+				if (isset($this->_[self::HDOM_INFO_INNER])) {
+					$ret = $this->_[self::HDOM_INFO_INNER];
 				}
-			} else {
-				$ret .= $this->convert_text($n->text(false));
-			}
+				break;
 		}
+
+		// Replace and collapse whitespace
+		$ret = preg_replace('/\s+/u', ' ', $ret);
 
 		// Reduce whitespace at start/end to a single (or none) space
 		$ret = preg_replace('/[ \t\n\r\0\x0B\xC2\xA0]+$/u', $trim ? '' : ' ', $ret);
 		$ret = preg_replace('/^[ \t\n\r\0\x0B\xC2\xA0]+/u', $trim ? '' : ' ', $ret);
 
-		return $ret;
+		// TODO: Remove BR_TEXT customization.
+		//		 It has no practical use and only makes the code harder to read.
+		if ($this->dom){ // for the root node, ->dom is undefined.
+			$br_text = $this->dom->default_br_text ?: DEFAULT_BR_TEXT;
+		}
+
+		foreach ($this->nodes as $n) {
+
+			if ($this->is_block_element($n)) {
+				$block = $this->convert_text($n->text($trim));
+
+				if ($block === '') {
+					$ret = rtrim($ret) . "\n\n";
+					continue;
+				}
+
+				if ($ret === ''){
+					$ret = $block . "\n\n";
+					continue;
+				}
+
+				$ret = rtrim($ret) . "\n\n" . $block . "\n\n";
+				continue;
+			}
+
+			if (strtolower($n->tag) === HtmlElement::BR) {
+
+				if ($ret === ''){
+					// Don't start with a line break.
+					continue;
+				}
+
+				$ret .= $br_text;
+				continue;
+			}
+
+			$text = $this->convert_text($n->text($trim));
+
+			if ($text === ''){
+				continue;
+			}
+
+			if ($ret === ''){
+				$ret = ltrim($text);
+				continue;
+			}
+
+			if (substr($ret, -1) === "\n" ||
+				substr($ret, -1) === ' ' ||
+				substr($ret, -strlen($br_text)) === $br_text){
+				$ret .= ltrim($text);
+				continue;
+			}
+
+			$ret .= ' ' . ltrim($text);
+		}
+
+		return trim($ret);
 	}
 
 	function xmltext()
@@ -444,15 +456,21 @@ class HtmlNode
 				{
 					case self::HDOM_QUOTE_SINGLE:
 						$quote = '\'';
-						$val = htmlentities($val, ENT_QUOTES, $this->dom->target_charset);
 						break;
 					case self::HDOM_QUOTE_NO:
-						$quote = '';
+						if (strpos($val, ' ') !== false ||
+							strpos($val, "\t") !== false ||
+							strpos($val, "\f") !== false ||
+							strpos($val, "\r") !== false ||
+							strpos($val, "\n") !== false) {
+							$quote = '"';
+						} else {
+							$quote = '';
+						}
 						break;
 					case self::HDOM_QUOTE_DOUBLE:
 					default:
 						$quote = '"';
-						$val = htmlentities($val, ENT_COMPAT, $this->dom->target_charset);
 				}
 
 				$ret .= $key
@@ -460,7 +478,7 @@ class HtmlNode
 				. '='
 				. (isset($this->_[self::HDOM_INFO_SPACE][$key]) ? $this->_[self::HDOM_INFO_SPACE][$key][2] : '')
 				. $quote
-				. $val
+				. htmlentities($val, ENT_COMPAT, $this->dom->target_charset)
 				. $quote;
 			}
 		}
@@ -478,12 +496,8 @@ class HtmlNode
 		if (($count = count($selectors)) === 0) { return array(); }
 		$found_keys = array();
 
-		// find each selector
 		for ($c = 0; $c < $count; ++$c) {
-			// The change on the below line was documented on the sourceforge
-			// code tracker id 2788009
-			// used to be: if (($levle=count($selectors[0]))===0) return array();
-			if (($levle = count($selectors[$c])) === 0) {
+			if (($level = count($selectors[$c])) === 0) {
 				Debug::log_once('Empty selector (' . $selector . ') matches nothing.');
 				return array();
 			}
@@ -497,7 +511,7 @@ class HtmlNode
 			$cmd = ' '; // Combinator
 
 			// handle descendant selectors, no recursive!
-			for ($l = 0; $l < $levle; ++$l) {
+			for ($l = 0; $l < $level; ++$l) {
 				$ret = array();
 
 				foreach ($head as $k => $v) {
@@ -581,11 +595,10 @@ class HtmlNode
 				$nodes = array_slice($this->parent->children, $index);
 		}
 
-		// Go throgh each element starting at this element until the end tag
+		// Go through each element starting at this element until the end tag
 		// Note: If this element is a void tag, any previous void element is
 		// skipped.
 		foreach($nodes as $node) {
-			$pass = true;
 
 			// Skip root nodes
 			if(!$node->parent) {
@@ -594,7 +607,7 @@ class HtmlNode
 			}
 
 			// Handle 'text' selector
-			if($pass && $tag === 'text') {
+			if($tag === 'text') {
 
 				if($node->tag === 'text') {
 					$ret[array_search($node, $this->dom->nodes, true)] = 1;
@@ -610,7 +623,7 @@ class HtmlNode
 			}
 
 			// Handle 'cdata' selector
-			if($pass && $tag === 'cdata') {
+			if($tag === 'cdata') {
 
 				if($node->tag === 'cdata') {
 					$ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
@@ -622,20 +635,22 @@ class HtmlNode
 			}
 
 			// Handle 'comment'
-			if($pass && $tag === 'comment' && $node->tag === 'comment') {
+			if($tag === 'comment' && $node->tag === 'comment') {
 				$ret[$node->_[self::HDOM_INFO_BEGIN]] = 1;
 				unset($node);
 				continue;
 			}
 
 			// Skip if node isn't a child node (i.e. text nodes)
-			if($pass && !in_array($node, $node->parent->children, true)) {
+			if(!in_array($node, $node->parent->children, true)) {
 				unset($node);
 				continue;
 			}
 
+			$pass = true;
+
 			// Skip if tag doesn't match
-			if ($pass && $tag !== '' && $tag !== $node->tag && $tag !== '*') {
+			if ($tag !== '' && $tag !== $node->tag && $tag !== '*') {
 				$pass = false;
 			}
 
@@ -745,7 +760,7 @@ class HtmlNode
 							$nodeKeyValue = $node->attr[$att_name];
 						}
 
-						// If lowercase is set, do a case insensitive test of
+						// If lowercase is set, do a case-insensitive test of
 						// the value of the selector.
 						if ($lowercase) {
 							$check = $this->match(
@@ -824,7 +839,7 @@ class HtmlNode
 				 * Represents an element with the att attribute whose value is a
 				 * whitespace-separated list of words, one of which is exactly
 				 * "val". If "val" contains whitespace, it will never represent
-				 * anything (since the words are separated by spaces). Also if
+				 * anything (since the words are separated by spaces). Also, if
 				 * "val" is the empty string, it will never represent anything.
 				 */
 				return in_array($pattern, explode(' ', trim($value)), true);
@@ -847,7 +862,7 @@ class HtmlNode
 		 *
 		 * Notice the \[ starting the attribute? and the @? following? This
 		 * implies that an attribute can begin with an @ sign that is not
-		 * captured. This implies that an html attribute specifier may start
+		 * captured. This implies that a html attribute specifier may start
 		 * with an @ sign that is NOT captured by the expression. Farther study
 		 * is required to determine of this should be documented or removed.
 		 *
@@ -856,39 +871,32 @@ class HtmlNode
 		 * [0] - full match
 		 *
 		 * [1] - pseudo selector
-		 *     (?:\:(\w+)\()?
 		 *     Matches the pseudo selector (optional)
 		 *
 		 * [2] - tag name
-		 *     ([\w:\*-]*)
 		 *     Matches the tag name consisting of zero or more words, colons,
 		 *     asterisks and hyphens.
 		 *
 		 * [3] - pseudo selector
-		 *     (?:\:(\w+)\()?
 		 *     Matches the pseudo selector (optional)
 		 *
 		 * [4] - id name
-		 *     (?:\#([\w-]+))
-		 *     Optionally matches a id name, consisting of an "#" followed by
+		 *     Optionally matches an id name, consisting of an "#" followed by
 		 *     the id name (one or more words and hyphens).
 		 *
 		 * [5] - class names (including dots)
-		 *     (?:\.([\w\.-]+))?
 		 *     Optionally matches a list of classs, consisting of an "."
 		 *     followed by the class name (one or more words and hyphens)
 		 *     where multiple classes can be chained (i.e. ".foo.bar.baz")
 		 *
 		 * [6] - attributes
-		 *     ((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?
 		 *     Optionally matches the attributes list
 		 *
 		 * [7] - separator
-		 *     ([\/, >+~]+)
 		 *     Matches the selector list separator
 		 */
 		// phpcs:ignore Generic.Files.LineLength
-		$pattern = "/(?:\:(\w+)\()?([\w:\*-]*)(?:\:(\w+)\()?(?:\#([\w-]+))?(?:|\.([\w\.-]+))?((?:\[@?(?:!?[\w:-]+)(?:(?:[!*^$|~]?=)[\"']?(?:.*?)[\"']?)?(?:\s*?(?:[iIsS])?)?\])+)?(?:\))?(?:\))?([\/, >+~]+)/is";
+		$pattern = "/(?::(\w+)\()?([\w:*-]*)(?::(\w+)\()?(?:#([\w-]+))?(?:|\.([\w.-]+))?((?:\[@?!?[\w:-]+(?:[!*^$|~]?=(?![\"']).*?(?![\"'])|[!*^$|~]?=[\"'].*?[\"'])?(?:\s*?[iIsS]?)?])+)?\)?\)?([\/, >+~]+)/is";
 
 		preg_match_all(
 			$pattern,
@@ -921,14 +929,16 @@ class HtmlNode
 			 * [0] - full match
 			 * [1] - attribute name
 			 * [2] - attribute expression
-			 * [3] - attribute value
+			 * [3] - attribute value (with quotes)
 			 * [4] - case sensitivity
 			 *
-			 * Note: Attributes can be negated with a "!" prefix to their name
+			 * Note:
+			 *   Attributes can be negated with a "!" prefix to their name
+			 *   Attribute values may contain closing brackets "]"
 			 */
 			if($m[5] !== '') {
 				preg_match_all(
-					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)[\"']?(.*?)[\"']?)?(?:\s+?([iIsS])?)?\]/is",
+					"/\[@?(!?[\w:-]+)(?:([!*^$|~]?=)((?![\"']).*?(?![\"'])|[\"'].*?[\"']))?(?:\s+?([iIsS])?)?]/is",
 					trim($m[5]),
 					$attributes,
 					PREG_SET_ORDER
@@ -940,6 +950,11 @@ class HtmlNode
 				foreach($attributes as $att) {
 					// Skip empty matches
 					if(trim($att[0]) === '') { continue; }
+
+					// Remove quotes from value
+					if (isset($att[3]) && $att[3] !== '' && ($att[3][0] === '"' || $att[3][0] === "'")) {
+						$att[3] = substr($att[3], 1, strlen($att[3]) - 2);
+					}
 
 					$inverted = (isset($att[1][0]) && $att[1][0] === '!');
 					$m[5][] = array(
@@ -1009,9 +1024,9 @@ class HtmlNode
 	function __isset($name)
 	{
 		switch ($name) {
+			case 'innertext':
+			case 'plaintext':
 			case 'outertext': return true;
-			case 'innertext': return true;
-			case 'plaintext': return true;
 		}
 
 		return isset($this->attr[$name]);
@@ -1034,25 +1049,17 @@ class HtmlNode
 			$targetCharset = strtoupper($this->dom->_target_charset);
 		}
 
-		if (!empty($sourceCharset) && !empty($targetCharset)) {
-			if (strtoupper($sourceCharset) === strtoupper($targetCharset)) {
-				$converted_text = $text;
-			} elseif ((strtoupper($targetCharset) === 'UTF-8') && (self::is_utf8($text))) {
-				Debug::log_once('The source charset was incorrectly detected as ' . $sourceCharset . ' but should have been UTF-8');
-				$converted_text = $text;
-			} else {
-				$converted_text = iconv($sourceCharset, $targetCharset, $text);
-			}
+		if ($sourceCharset !== '' &&
+			$targetCharset !== '' &&
+			$sourceCharset !== $targetCharset &&
+			!($targetCharset === 'UTF-8' &&  self::is_utf8($text))) {
+			$converted_text = iconv($sourceCharset, $targetCharset, $text);
 		}
 
-		// Lets make sure that we don't have that silly BOM issue with any of the utf-8 text we output.
+		// Let's make sure that we don't have that silly BOM issue with any of the utf-8 text we output.
 		if ($targetCharset === 'UTF-8') {
 			if (substr($converted_text, 0, 3) === "\xef\xbb\xbf") {
 				$converted_text = substr($converted_text, 3);
-			}
-
-			if (substr($converted_text, -3) === "\xef\xbb\xbf") {
-				$converted_text = substr($converted_text, 0, -3);
 			}
 		}
 
@@ -1061,6 +1068,11 @@ class HtmlNode
 
 	static function is_utf8($str)
 	{
+		if (extension_loaded('mbstring')){
+			return mb_detect_encoding($str, ['UTF-8'], true) === 'UTF-8';
+		}
+
+		// This code was copied from https://www.php.net/manual/en/function.mb-detect-encoding.php#85294
 		$c = 0; $b = 0;
 		$bits = 0;
 		$len = strlen($str);
@@ -1153,11 +1165,11 @@ class HtmlNode
 		// Far future enhancement
 		// Look at all the parent tags of this image to see if they specify a
 		// class or id that has an img selector that specifies a height or width
-		// Note that in this case, the class or id will have the img subselector
+		// Note that in this case, the class or id will have the img sub-selector
 		// for it to apply to the image.
 
 		// ridiculously far future development
-		// If the class or id is specified in a SEPARATE css file thats not on
+		// If the class or id is specified in a SEPARATE css file that's not on
 		// the page, go get it and do what we were just doing for the ones on
 		// the page.
 

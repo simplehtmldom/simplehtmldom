@@ -87,7 +87,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `simple_html_dom_node::text()` now supports all block and inline level elements.
 - `simple_html_dom_node::text()` now skips empty block elements.
 - `simple_html_dom_node::text()` now properly handles `&nbsp` characters.
-- `simple_html_dom_node::removeChild()` now removes all types of childs.
+- `simple_html_dom_node::removeChild()` now removes all types of children.
 - Increased `MAX_FILE_SIZE` from 0.6 MB (600000 Bytes) to 2.5 MiB (2621440 Bytes)
 - `HDOM_INFO_INNER` (innertext) is now stored as part of the owning element.
 - Moved and renamed `simple_html_dom` to `HtmlDocument`.
@@ -164,7 +164,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added support for Next Sibling Combinator (`+`)
   - Added support for Subsequent Sibling Combinator (`~`)
 - Added support for multiclass selectors (`.class.class.class`)
-- Added support for multiattribute selectors (`[attr1][attr2][attribute3]`)
+- Added support for multi-attribute selectors (`[attr1][attr2][attribute3]`)
 - Added support for attribute selectors
   - Added support for pipe selectors (`|=`)
   - Added support for tilde selectors (`~=`)
@@ -214,7 +214,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Added 'track'
   - Added 'wbr'
 - Updated list of `simple_html_dom::$optional_closing_tags`
-  - Removed "nobr" (obsolete)
+  - Removed `nobr` (obsolete)
   - Added 'th' as closable element to 'td'
   - Added 'td' as closable element to 'th'
   - Added 'optgroup' with 'optgroup' and 'option' as closable elements
@@ -238,7 +238,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed typo (#147)
 - Fixed handling of incorrectly escaped text (#160)
 - Restore functionality of `$maxLen` in `file_get_html()`
-- Fixed load_file breaks if an error ocurred in another script
+- Fixed load_file breaks if an error occurred in another script
 
 ## [1.6] - 2014-05-28
 ### Added
@@ -286,7 +286,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - New method "getAllAttributes" of "simple_html_dom_node"
 - Supports full javascript string in selector: `$e->find("a[onclick=alert('hello')]")`
 ### Changed
-- Changed selector "*=" to case-insentive
+- Changed selector "*=" to case-insensitive
 ### Fixed
 - Fixed the bug of selector in some critical conditions
 - Fixed the bug of striping php tags
@@ -319,7 +319,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fixed the bug of $dom->clear()
 - Fixed the bug of text nodes' innertext
 - Fixed the bug of comment nodes' innertext
-- Fixed the bug of decendent selector with optional tags
+- Fixed the bug of descendant selector with optional tags
 
 ## [0.97] - 2008-05-09
 ### Added
@@ -365,5 +365,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add FAQ section in manual
 ### Fixed
 - Fixed infinity loop while the source content is BAD HTML
-- Fixed the bug of adding new attributes to self closing tags
+- Fixed the bug of adding new attributes to self-closing tags
 - Fixed the bug of customize parser without $dom->remove_noise()

@@ -1,0 +1,151 @@
+site_name: Simple HTML DOM documentation
+site_url: https://simplehtmldom.sourceforge.io/
+site_description: A simple HTML DOM parser written in PHP
+
+repo_name: SourceForge
+repo_url: https://sourceforge.net/projects/simplehtmldom/
+
+theme:
+  name: readthedocs
+  custom_dir: '.mkdocs/custom_theme/'
+  prev_next_buttons_location: both
+  analytics:
+    gtag: G-03SYX57C4L
+
+markdown_extensions:
+  - footnotes
+
+extra_css:
+  - css/extra.css
+
+nav:
+  - Home: 'index.md'
+  - Requirements: 'requirements.md'
+  - Quick Start: 'quick-start.md'
+  - FAQ:
+    - Why is the parser so memory hungry?: 'faq/0001.md'
+  - Examples:
+    - Accessing HTML element attributes: 'examples/accessing-element-attributes.md'
+    - Adding Nodes to the DOM: 'examples/adding-nodes.md'
+    - Creating HTML DOM objects: 'examples/creating-dom-objects.md'
+    - Customizing Parsing behavior: 'examples/customizing-parsing-behavior.md'
+    - Finding HTML Elements: 'examples/finding-html-elements.md'
+    - Saving DOM objects: 'examples/saving-dom-objects.md'
+    - Traversing the DOM tree: 'examples/traversing-dom-tree.md'
+  - Constants:
+    - Constants: 'constants.md'
+  - HtmlDocument:
+    - HtmlDocument: 'HtmlDocument/index.md'
+    - __call: 'HtmlDocument/__call.md'
+    - __construct: 'HtmlDocument/__construct.md'
+    - __debugInfo: 'HtmlDocument/__debugInfo.md'
+    - __destruct: 'HtmlDocument/__destruct.md'
+    - __get: 'HtmlDocument/__get.md'
+    - __toString: 'HtmlDocument/__toString.md'
+    - childNodes: 'HtmlDocument/childNodes.md'
+    - createElement: 'HtmlDocument/createElement.md'
+    - createTextNode: 'HtmlDocument/createTextNode.md'
+    - dump: 'HtmlDocument/dump.md'
+    - expect: 'HtmlDocument/expect.md'
+    - find: 'HtmlDocument/find.md'
+    - firstChild: 'HtmlDocument/firstChild.md'
+    - getElementById: 'HtmlDocument/getElementById.md'
+    - getElementByTagName: 'HtmlDocument/getElementByTagName.md'
+    - getElementsById: 'HtmlDocument/getElementsById.md'
+    - getElementsByTagName: 'HtmlDocument/getElementsByTagName.md'
+    - lastChild: 'HtmlDocument/lastChild.md'
+    - load: 'HtmlDocument/load.md'
+    - loadFile: 'HtmlDocument/loadFile.md'
+    - remove_callback: 'HtmlDocument/remove_callback.md'
+    - save: 'HtmlDocument/save.md'
+    - set_callback: 'HtmlDocument/set_callback.md'
+    - (protected) as_text_node: 'HtmlDocument/as_text_node.md'
+    - (protected) copy_skip: 'HtmlDocument/copy_skip.md'
+    - (protected) copy_until: 'HtmlDocument/copy_until.md'
+    - (protected) copy_until_char: 'HtmlDocument/copy_until_char.md'
+    - (protected) link_nodes: 'HtmlDocument/link_nodes.md'
+    - (protected) parse: 'HtmlDocument/parse.md'
+    - (protected) parse_attr: 'HtmlDocument/parse_attr.md'
+    - (protected) parse_charset: 'HtmlDocument/parse_charset.md'
+    - (protected) prepare: 'HtmlDocument/prepare.md'
+    - (protected) read_tag: 'HtmlDocument/read_tag.md'
+    - (protected) remove_noise: 'HtmlDocument/remove_noise.md'
+    - (protected) restore_noise: 'HtmlDocument/restore_noise.md'
+    - (protected) search_noise: 'HtmlDocument/search_noise.md'
+  - HtmlNode:
+    - HtmlNode: 'HtmlNode/index.md'
+    - Definitions: 'HtmlNode/definitions.md'
+    - __call: 'HtmlNode/__call.md'
+    - __construct: 'HtmlNode/__construct.md'
+    - __debugInfo: 'HtmlNode/__debugInfo.md'
+    - __destruct: 'HtmlNode/__destruct.md'
+    - __get: 'HtmlNode/__get.md'
+    - __isset: 'HtmlNode/__isset.md'
+    - __set: 'HtmlNode/__set.md'
+    - __toString: 'HtmlNode/__toString.md'
+    - __unset: 'HtmlNode/__unset.md'
+    - addClass: 'HtmlNode/addClass.md'
+    - appendChild: 'HtmlNode/appendChild.md'
+    - childNodes: 'HtmlNode/childNodes.md'
+    - clear: 'HtmlNode/clear.md'
+    - convert_text: 'HtmlNode/convert_text.md'
+    - dump: 'HtmlNode/dump.md'
+    - dump_node: 'HtmlNode/dump_node.md'
+    - expect: 'HtmlNode/expect.md'
+    - find: 'HtmlNode/find.md'
+    - find_ancestor_tag: 'HtmlNode/find_ancestor_tag.md'
+    - firstChild: 'HtmlNode/firstChild.md'
+    - get_display_size: 'HtmlNode/get_display_size.md'
+    - getAllAttributes: 'HtmlNode/getAllAttributes.md'
+    - getAttribute: 'HtmlNode/getAttribute.md'
+    - getElementById: 'HtmlNode/getElementById.md'
+    - getElementByTagName: 'HtmlNode/getElementByTagName.md'
+    - getElementsById: 'HtmlNode/getElementsById.md'
+    - getElementsByTagName: 'HtmlNode/getElementsByTagName.md'
+    - hasAttribute: 'HtmlNode/hasAttribute.md'
+    - hasChildNodes: 'HtmlNode/hasChildNodes.md'
+    - hasClass: 'HtmlNode/hasClass.md'
+    - innertext: 'HtmlNode/innertext.md'
+    - is_utf8: 'HtmlNode/is_utf8.md'
+    - lastChild: 'HtmlNode/lastChild.md'
+    - makeup: 'HtmlNode/makeup.md'
+    - nextSibling: 'HtmlNode/nextSibling.md'
+    - nodeName: 'HtmlNode/nodeName.md'
+    - outertext: 'HtmlNode/outertext.md'
+    - parent: 'HtmlNode/parent.md'
+    - parentNode: 'HtmlNode/parentNode.md'
+    - previousSibling: 'HtmlNode/previousSibling.md'
+    - remove: 'HtmlNode/remove.md'
+    - removeAttribute: 'HtmlNode/removeAttribute.md'
+    - removeChild: 'HtmlNode/removeChild.md'
+    - removeClass: 'HtmlNode/removeClass.md'
+    - save: 'HtmlNode/save.md'
+    - setAttribute: 'HtmlNode/setAttribute.md'
+    - text: 'HtmlNode/text.md'
+    - xmltext: 'HtmlNode/xmltext.md'
+    - (protected) is_block_element: 'HtmlNode/is_block_element.md'
+    - (protected) match: 'HtmlNode/match.md'
+    - (protected) parse_selector: 'HtmlNode/parse_selector.md'
+    - (protected) seek: 'HtmlNode/seek.md'
+  - Debug:
+    - Debug: 'Debug/index.md'
+    - disable: 'Debug/disable.md'
+    - enable: 'Debug/enable.md'
+    - log: 'Debug/log.md'
+    - log_once: 'Debug/log_once.md'
+    - setDebugHandler: 'Debug/setDebugHandler.md'
+
+plugins:
+  - redirects:
+      redirect_maps:
+        'HtmlDocument/load_file.md': 'HtmlDocument/loadFile.md'
+        'HtmlDocument/clear.md': 'HtmlDocument/__destruct.md'
+        'HtmlNode/children.md': 'HtmlNode/childNodes.md'
+        'HtmlNode/first_child.md': 'HtmlNode/firstChild.md'
+        'HtmlNode/has_child.md': 'HtmlNode/hasChildNodes.md'
+        'HtmlNode/last_child.md': 'HtmlNode/lastChild.md'
+        'HtmlNode/next_sibling.md': 'HtmlNode/nextSibling.md'
+        'HtmlNode/prev_sibling.md': 'HtmlNode/previousSibling.md'
+        'HtmlNode/prevSibling.md': 'HtmlNode/previousSibling.md'
+
+docs_dir: 'docs'

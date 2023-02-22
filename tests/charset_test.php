@@ -55,8 +55,8 @@ class charset_test extends TestCase {
 
 		if ($charset === 'UTF-8') {
 			$this->html->_charset = 'TryMe'; // Trap the parser
-			// Wrap content in BOM
-			$testdata = "\xef\xbb\xbf" . $testdata . "\xef\xbb\xbf";
+			// Add UTF-8 BOM
+			$testdata = "\xef\xbb\xbf" . $testdata;
 		} else {
 			$this->html->_charset = $charset; // Hint source charset
 		}

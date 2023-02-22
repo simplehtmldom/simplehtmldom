@@ -37,8 +37,7 @@
         ],
         "exclude-from-classmap": [
             "/example/",
-            "/manual/",
-            "/testcase/",
+            "/docs/",
             "/tests/",
             "simple_html_dom.php"
         ]
@@ -48,11 +47,20 @@
         "ext-iconv": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6 || ^7"
+        "phpunit/phpunit": "^6 || ^7",
+        "squizlabs/php_codesniffer": "^2",
+        "phpcompatibility/php-compatibility": "^9",
+        "dealerdirect/phpcodesniffer-composer-installer": "*"
     },
     "suggest": {
         "ext-mbstring": "Allows better decoding for multi-byte documents",
         "ext-curl": "Needed to support cURL downloads in class HtmlWeb",
         "ext-openssl": "Allows loading HTTPS pages when using cURL"
+    },
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

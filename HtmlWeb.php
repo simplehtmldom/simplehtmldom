@@ -66,6 +66,7 @@ class HtmlWeb {
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_ENCODING, '');
 
 		// There is no guarantee this request will be fulfilled
 		// -- https://www.php.net/manual/en/function.curl-setopt.php

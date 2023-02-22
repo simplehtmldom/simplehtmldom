@@ -21,20 +21,22 @@
  * Version $Rev$
  */
 
+use simplehtmldom\HtmlNode;
+
 if (defined('DEFAULT_TARGET_CHARSET')) {
-	define('\simplehtmldom\DEFAULT_TARGET_CHARSET', DEFAULT_TARGET_CHARSET);
+	define('simplehtmldom\DEFAULT_TARGET_CHARSET', DEFAULT_TARGET_CHARSET);
 }
 
 if (defined('DEFAULT_BR_TEXT')) {
-	define('\simplehtmldom\DEFAULT_BR_TEXT', DEFAULT_BR_TEXT);
+	define('simplehtmldom\DEFAULT_BR_TEXT', DEFAULT_BR_TEXT);
 }
 
 if (defined('DEFAULT_SPAN_TEXT')) {
-	define('\simplehtmldom\DEFAULT_SPAN_TEXT', DEFAULT_SPAN_TEXT);
+	define('simplehtmldom\DEFAULT_SPAN_TEXT', DEFAULT_SPAN_TEXT);
 }
 
 if (defined('MAX_FILE_SIZE')) {
-	define('\simplehtmldom\MAX_FILE_SIZE', MAX_FILE_SIZE);
+	define('simplehtmldom\MAX_FILE_SIZE', MAX_FILE_SIZE);
 }
 
 include_once 'HtmlDocument.php';
@@ -56,27 +58,27 @@ if (!defined('MAX_FILE_SIZE')) {
 	define('MAX_FILE_SIZE', \simplehtmldom\MAX_FILE_SIZE);
 }
 
-define('HDOM_TYPE_ELEMENT', \simplehtmldom\HtmlNode::HDOM_TYPE_ELEMENT);
-define('HDOM_TYPE_COMMENT', \simplehtmldom\HtmlNode::HDOM_TYPE_COMMENT);
-define('HDOM_TYPE_TEXT', \simplehtmldom\HtmlNode::HDOM_TYPE_TEXT);
-define('HDOM_TYPE_ROOT', \simplehtmldom\HtmlNode::HDOM_TYPE_ROOT);
-define('HDOM_TYPE_UNKNOWN', \simplehtmldom\HtmlNode::HDOM_TYPE_UNKNOWN);
-define('HDOM_QUOTE_DOUBLE', \simplehtmldom\HtmlNode::HDOM_QUOTE_DOUBLE);
-define('HDOM_QUOTE_SINGLE', \simplehtmldom\HtmlNode::HDOM_QUOTE_SINGLE);
-define('HDOM_QUOTE_NO', \simplehtmldom\HtmlNode::HDOM_QUOTE_NO);
-define('HDOM_INFO_BEGIN', \simplehtmldom\HtmlNode::HDOM_INFO_BEGIN);
-define('HDOM_INFO_END', \simplehtmldom\HtmlNode::HDOM_INFO_END);
-define('HDOM_INFO_QUOTE', \simplehtmldom\HtmlNode::HDOM_INFO_QUOTE);
-define('HDOM_INFO_SPACE', \simplehtmldom\HtmlNode::HDOM_INFO_SPACE);
-define('HDOM_INFO_TEXT', \simplehtmldom\HtmlNode::HDOM_INFO_TEXT);
-define('HDOM_INFO_INNER', \simplehtmldom\HtmlNode::HDOM_INFO_INNER);
-define('HDOM_INFO_OUTER', \simplehtmldom\HtmlNode::HDOM_INFO_OUTER);
-define('HDOM_INFO_ENDSPACE', \simplehtmldom\HtmlNode::HDOM_INFO_ENDSPACE);
+const HDOM_TYPE_ELEMENT = HtmlNode::HDOM_TYPE_ELEMENT;
+const HDOM_TYPE_COMMENT = HtmlNode::HDOM_TYPE_COMMENT;
+const HDOM_TYPE_TEXT = HtmlNode::HDOM_TYPE_TEXT;
+const HDOM_TYPE_ROOT = HtmlNode::HDOM_TYPE_ROOT;
+const HDOM_TYPE_UNKNOWN = HtmlNode::HDOM_TYPE_UNKNOWN;
+const HDOM_QUOTE_DOUBLE = HtmlNode::HDOM_QUOTE_DOUBLE;
+const HDOM_QUOTE_SINGLE = HtmlNode::HDOM_QUOTE_SINGLE;
+const HDOM_QUOTE_NO = HtmlNode::HDOM_QUOTE_NO;
+const HDOM_INFO_BEGIN = HtmlNode::HDOM_INFO_BEGIN;
+const HDOM_INFO_END = HtmlNode::HDOM_INFO_END;
+const HDOM_INFO_QUOTE = HtmlNode::HDOM_INFO_QUOTE;
+const HDOM_INFO_SPACE = HtmlNode::HDOM_INFO_SPACE;
+const HDOM_INFO_TEXT = HtmlNode::HDOM_INFO_TEXT;
+const HDOM_INFO_INNER = HtmlNode::HDOM_INFO_INNER;
+const HDOM_INFO_OUTER = HtmlNode::HDOM_INFO_OUTER;
+const HDOM_INFO_ENDSPACE = HtmlNode::HDOM_INFO_ENDSPACE;
 
-define('HDOM_SMARTY_AS_TEXT', \simplehtmldom\HDOM_SMARTY_AS_TEXT);
+const HDOM_SMARTY_AS_TEXT = \simplehtmldom\HDOM_SMARTY_AS_TEXT;
 
-class_alias('\simplehtmldom\HtmlDocument', 'simple_html_dom', true);
-class_alias('\simplehtmldom\HtmlNode', 'simple_html_dom_node', true);
+class_alias('\simplehtmldom\HtmlDocument', 'simple_html_dom');
+class_alias('\simplehtmldom\HtmlNode', 'simple_html_dom_node');
 
 function file_get_html(
 	$url,

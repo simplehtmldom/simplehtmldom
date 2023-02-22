@@ -10,6 +10,8 @@ use simplehtmldom\HtmlWeb;
 $doc = new HtmlWeb();
 $html = $doc->load('https://digg.com/');
 
+$data = array();
+
 // Loop through all articles in the page
 foreach($html->find('article') as $article) {
 
